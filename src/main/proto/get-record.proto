@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package com.spectrum.workfolio.proto;
+
+import "common.proto";
+
+option java_multiple_files = true;
+
+message ListRecordResponse {
+  repeated Record records = 1;
+}

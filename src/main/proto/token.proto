@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package com.spectrum.workfolio.proto;
+
+message TokenResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+}

@@ -1,0 +1,136 @@
+syntax = "proto3";
+
+package com.spectrum.workfolio.proto;
+
+option java_multiple_files = true;
+
+message Worker {
+  string id = 1;
+  string name = 2;
+
+  int64 created_at = 100;
+  int64 updated_at = 101;
+}
+
+message Company {
+  string id = 1;
+  string public_id = 2;
+  string name = 3;
+  int64 started_at = 4;
+  int64 ended_at = 5;
+  bool is_working = 6;
+  Worker worker = 7;
+
+  int64 created_at = 100;
+  int64 updated_at = 101;
+}
+
+message Position {
+  string id = 1;
+  string public_id = 2;
+  string name = 3;
+  int64 started_at = 4;
+  int64 ended_at = 5;
+  Company company = 6;
+
+  int64 created_at = 100;
+  int64 updated_at = 101;
+}
+
+message Salary {
+  string id = 1;
+  string public_id = 2;
+  int64 amount = 3;
+  int64 started_at = 4;
+  int64 ended_at = 5;
+  Company company = 6;
+
+  int64 created_at = 100;
+  int64 updated_at = 101;
+}
+
+message Account {
+  enum AccountType {
+    ACCOUNT_TYPE_UNSPECIFIED = 0;
+    ACCOUNT_TYPE_BASIC = 1;
+    ACCOUNT_TYPE_PREMIUM = 2;
+  }
+
+  string id = 1;
+  AccountType type = 2;
+  string provider_id = 3;
+  string email = 4;
+  Worker worker = 5;
+
+  int64 created_at = 100;
+  int64 updated_at = 101;
+}
+
+message Certifications {
+  string id = 1;
+  string name = 2;
+  string number = 3;
+  string issuer = 4;
+  int64 issued_at = 5;
+  int64 expiration_period = 6;
+  Worker worker = 7;
+
+  int64 created_at = 100;
+  int64 updated_at = 101;
+}
+
+message Degrees {
+  string id = 1;
+  string name = 2;
+  string major = 3;
+  int64 started_at = 4;
+  int64 ended_at = 5;
+  Worker worker = 6;
+
+  int64 created_at = 100;
+  int64 updated_at = 101;
+}
+
+message Education {
+  string id = 1;
+  string name = 2;
+  int64 started_at = 3;
+  int64 ended_at = 4;
+  string agency = 5;
+  Worker worker = 6;
+
+  int64 created_at = 100;
+  int64 updated_at = 101;
+}
+
+message Record {
+  enum RecordType {
+    TIME = 0;
+    DAY = 1;
+    MULTI_DAY = 2;
+  }
+
+  string id = 1;
+  string title = 2;
+  RecordType type = 3;
+  string description = 4;
+  int64 started_at = 5;
+  int64 ended_at = 6;
+  RecordGroup record_group = 7;
+  Worker worker = 8;
+
+  int64 created_at = 100;
+  int64 updated_at = 101;
+}
+
+message RecordGroup {
+  string id = 1;
+  string title = 2;
+  bool is_public = 3;
+  string public_id = 4;
+  int64 priority = 5;
+  Worker worker = 6;
+
+  int64 created_at = 100;
+  int64 updated_at = 101;
+}
