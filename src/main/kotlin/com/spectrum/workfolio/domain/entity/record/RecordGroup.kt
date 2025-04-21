@@ -19,6 +19,7 @@ import java.util.*
 )
 class RecordGroup(
     title: String,
+    color: String,
     isPublic: Boolean,
     publicId: String,
     priority: Long,
@@ -26,6 +27,10 @@ class RecordGroup(
 ) : BaseEntity("RG") {
     @Column(name = "title", nullable = false)
     var title: String = title
+        protected set
+
+    @Column(name = "color", nullable = false)
+    var color: String = color // hex code
         protected set
 
     @Column(name = "is_public", nullable = false)

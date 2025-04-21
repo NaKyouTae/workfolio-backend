@@ -7,7 +7,8 @@ option java_multiple_files = true;
 
 message CreateRecordGroupRequest {
   string title = 1;
-  int64 priority = 2;
+  string color = 2;
+  int64 priority = 100;
 }
 
 message ListRecordGroupResponse {
@@ -19,8 +20,8 @@ message CreateRecordGroupResponse {
   bool is_public = 2;
   string public_id = 3;
   string title = 4;
-  int64 priority = 5;
-
+  string color = 5;
+  int64 priority = 99;
   int64 created_at = 100;
   int64 updated_at = 101;
 }

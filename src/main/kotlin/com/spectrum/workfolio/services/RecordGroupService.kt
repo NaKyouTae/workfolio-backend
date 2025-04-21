@@ -33,6 +33,7 @@ class RecordGroupService(
         return recordGroupRepository.save(
             RecordGroup(
                 title = params.title,
+                color = params.color,
                 isPublic = false,
                 publicId = RecordGroup.generateShortPublicId(),
                 priority = params.priority,

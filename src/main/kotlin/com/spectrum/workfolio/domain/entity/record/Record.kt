@@ -4,6 +4,7 @@ import com.spectrum.workfolio.domain.entity.BaseEntity
 import com.spectrum.workfolio.domain.entity.Worker
 import com.spectrum.workfolio.domain.model.RecordType
 import jakarta.persistence.*
+import java.time.Duration
 import java.time.LocalDateTime
 
 /**
@@ -34,6 +35,7 @@ class Record(
     var description: String = description
         protected set
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
     var type: RecordType = type
         protected set
@@ -55,4 +57,26 @@ class Record(
     @JoinColumn(name = "record_group_id", nullable = false)
     var recordGroup: RecordGroup = recordGroup
         protected set
+
+    fun getDuration(): Int {
+        return Duration.between(startedAt, endedAt).toDays().toInt()
+    }
+
+    fun getPriority(): Int {
+        Duration.between(startedAt, endedAt).toDays().toInt()
+
+        return 0
+    }
+
+    companion object {
+        fun generateRecordType(startedAt: LocalDateTime, endedAt: LocalDateTime): RecordType {
+            val duration = Duration.between(startedAt, endedAt)
+
+            return when {
+                duration.toDays() >= 1 -> RecordType.MULTI_DAY
+                duration.toHours() < 24 -> RecordType.TIME
+                else -> RecordType.DAY
+            }
+        }
+    }
 }

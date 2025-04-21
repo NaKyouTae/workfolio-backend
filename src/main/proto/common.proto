@@ -105,9 +105,10 @@ message Education {
 
 message Record {
   enum RecordType {
-    TIME = 0;
-    DAY = 1;
-    MULTI_DAY = 2;
+    UNKNOWN = 0;
+    TIME = 1;
+    DAY = 2;
+    MULTI_DAY = 3;
   }
 
   string id = 1;
@@ -128,9 +129,10 @@ message RecordGroup {
   string title = 2;
   bool is_public = 3;
   string public_id = 4;
-  int64 priority = 5;
-  Worker worker = 6;
+  string color = 5;
 
+  int64 priority = 98;
+  Worker worker = 99;
   int64 created_at = 100;
   int64 updated_at = 101;
 }

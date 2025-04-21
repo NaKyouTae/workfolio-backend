@@ -519,6 +519,11 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: color
+                  type: VARCHAR(128)
+                  constraints:
+                    nullable: false
+              - column:
                   name: is_public
                   type: BOOLEAN
                   constraints:

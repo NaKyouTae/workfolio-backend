@@ -1,6 +1,7 @@
 package com.spectrum.workfolio.services
 
 import com.spectrum.workfolio.domain.entity.record.Record
+import com.spectrum.workfolio.domain.entity.record.Record.Companion.generateRecordType
 import com.spectrum.workfolio.domain.extensions.toRecordProto
 import com.spectrum.workfolio.domain.model.RecordType
 import com.spectrum.workfolio.domain.repository.RecordRepository
@@ -22,12 +23,13 @@ class RecordService(
 
     @Transactional(readOnly = true)
     fun listProto(workerId: String): ListRecordResponse {
-        val list = list(workerId)
-        val listResponse = list.map { it.toRecordProto() }
+        val list = listByWorker(workerId)
+        val sortedList = list.sortedWith(compareBy<Record> { it.startedAt }.thenByDescending { it.getDuration() })
+        val listResponse = sortedList.map { it.toRecordProto() }
         return ListRecordResponse.newBuilder().addAllRecords(listResponse).build()
     }
 
-    private fun list(workerId: String): List<Record> {
+    private fun listByWorker(workerId: String): List<Record> {
         val worker =
             workerService.getWorker(workerId).orElseThrow { throw WorkfolioException("Worker $workerId not found") }
         return recordRepository.findAllByWorker(worker)
@@ -41,11 +43,11 @@ class RecordService(
             .orElseThrow { throw WorkfolioException("RecordGroup ${params.recordGroupId} does not exist") }
         val startedAt = TimeUtil.ofEpochMilli(params.startedAt)
         val endedAt = TimeUtil.ofEpochMilli(params.endedAt)
-        val type = generateRecordType(startedAt, endedAt)
+
         val record = Record(
             title = params.title,
             description = params.memo,
-            type = type,
+            type = generateRecordType(startedAt, endedAt),
             startedAt = startedAt,
             endedAt = endedAt,
             recordGroup,
@@ -53,15 +55,5 @@ class RecordService(
         )
 
         return recordRepository.save(record)
-    }
-
-    fun generateRecordType(startedAt: LocalDateTime, endedAt: LocalDateTime): RecordType {
-        val duration = Duration.between(startedAt, endedAt)
-
-        return when {
-            duration.toDays() >= 1 -> RecordType.MULTI_DAY
-            duration.toHours() < 24 -> RecordType.TIME
-            else -> RecordType.DAY
-        }
     }
 }
