@@ -24,7 +24,7 @@ class RecordService(
     @Transactional(readOnly = true)
     fun listProto(workerId: String): ListRecordResponse {
         val list = listByWorker(workerId)
-        val sortedList = list.sortedWith(compareBy<Record> { it.startedAt }.thenByDescending { it.getDuration() })
+        val sortedList = list.sortedWith(compareBy<Record> { it.startedAt.toLocalDate() }.thenByDescending { it.getDuration() })
         val listResponse = sortedList.map { it.toRecordProto() }
         return ListRecordResponse.newBuilder().addAllRecords(listResponse).build()
     }
