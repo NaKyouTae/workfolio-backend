@@ -27,6 +27,12 @@ message CreateRecordResponse {
   int64 updated_at = 101;
 }
 
+message ListRecordRequest {
+  uint64 year = 1;
+  uint64 month = 2;
+  repeated string record_group_ids = 3;
+}
+
 message ListRecordResponse {
   repeated Record records = 1;
 }

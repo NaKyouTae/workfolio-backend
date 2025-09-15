@@ -13,22 +13,8 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class WorkerRecordGroupService(
     private val workerService: WorkerService,
-    private val recordGroupService: RecordGroupService,
     private val workerRecordGroupRepository: WorkerRecordGroupRepository,
 ) {
-    @Transactional
-    fun joinRecordGroup(workerId: String, request: JoinRecordGroupRequest): RecordGroup {
-        val recordGroup = recordGroupService.getRecordGroup(request.recordGroupId)
-
-        if(recordGroup.worker.id != workerId) {
-            throw WorkfolioException(MsgKOR.NOT_MATCH_RECORD_GROUP_OWNER.message)
-        }
-
-        this.createWorkerRecordGroup(request.targetWorkerId, recordGroup)
-
-        return recordGroup
-    }
-
     @Transactional(readOnly = true)
     fun getWorkerRecordGroup(workerId: String, recordGroupId: String): WorkerRecordGroup? {
         return workerRecordGroupRepository.findByWorkerIdAndRecordGroupId(workerId, recordGroupId)

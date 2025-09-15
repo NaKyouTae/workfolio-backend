@@ -50,6 +50,18 @@ class RecordGroup(
     var worker: Worker = worker
         protected set
 
+    fun changeRecordGroup(
+        title: String,
+        color: String,
+        isPublic: Boolean,
+        priority: Long,
+    ) {
+        this.title = title
+        this.color = color
+        this.isPublic = isPublic
+        this.priority = priority
+    }
+
     companion object {
         fun generateShortPublicId(): String {
             val uuid = UUID.randomUUID().toString()

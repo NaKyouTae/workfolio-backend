@@ -11,7 +11,7 @@ option java_outer_classname = "RecordGroupProto";
 message CreateRecordGroupRequest {
   string title = 1;
   string color = 2;
-  int64 priority = 100;
+  uint64 priority = 100;
 }
 
 message CreateRecordGroupResponse {
@@ -20,9 +20,9 @@ message CreateRecordGroupResponse {
   string public_id = 3;
   string title = 4;
   string color = 5;
-  int64 priority = 99;
-  int64 created_at = 100;
-  int64 updated_at = 101;
+  uint64 priority = 99;
+  uint64 created_at = 100;
+  uint64 updated_at = 101;
 }
 
 message ListRecordGroupResponse {
@@ -35,5 +35,16 @@ message JoinRecordGroupRequest {
 }
 
 message JoinRecordGroupResponse {
+  bool is_success = 1;
+}
+
+message UpdateRecordGroupRequest {
+  string title = 1;
+  bool is_public = 2;
+  string color = 3;
+  uint64 priority = 4;
+}
+
+message UpdateRecordGroupResponse {
   bool is_success = 1;
 }
