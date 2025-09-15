@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional
 class RecordGroupService(
     private val workerService: WorkerService,
     private val recordGroupRepository: RecordGroupRepository,
-    private val workerRecordGroupService: WorkerRecordGroupService,
 ) {
 
     @Transactional(readOnly = true)

@@ -5,6 +5,7 @@ import com.spectrum.workfolio.domain.entity.record.WorkerRecordGroup
 import com.spectrum.workfolio.domain.model.MsgKOR
 import com.spectrum.workfolio.domain.repository.WorkerRecordGroupRepository
 import com.spectrum.workfolio.proto.record_group.JoinRecordGroupRequest
+import com.spectrum.workfolio.utils.StringUtil
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -41,7 +42,7 @@ class WorkerRecordGroupService(
         val worker = workerService.getWorker(workerId)
 
         val workerRecordGroup = WorkerRecordGroup(
-            publicId = "",
+            publicId = StringUtil.generateRandomString(16),
             worker = worker,
             recordGroup = recordGroup,
         )

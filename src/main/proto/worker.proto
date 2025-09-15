@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package com.spectrum.workfolio.proto;
+
+option java_multiple_files = true;
+option java_package = "com.spectrum.workfolio.proto.worker";
+option java_outer_classname = "WorkerProto";
+
+message WorkerGetResponse {
+  Worker worker = 1;
+}
+
+message WorkerListResponse {
+  repeated Worker workers = 1;
+}

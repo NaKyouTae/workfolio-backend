@@ -1,5 +1,6 @@
 package com.spectrum.workfolio.domain.entity
 
+import com.spectrum.workfolio.utils.StringUtil
 import jakarta.persistence.*
 import org.hibernate.proxy.HibernateProxy
 import org.springframework.data.annotation.CreatedDate
@@ -20,7 +21,7 @@ abstract class BaseEntity(
 ): Persistable<String> {
     @Id
     @Column(length = 16, nullable = false, updatable = false)
-    private val id: String = generateUUID(prefix)
+    private val id: String = StringUtil.generateUUID(prefix)
 
     @CreatedDate
     @Column(name = "created_At", updatable = false)
@@ -63,10 +64,5 @@ abstract class BaseEntity(
     @PostLoad
     protected fun load() {
         _isNew = false
-    }
-
-    private fun generateUUID(prefix: String): String {
-        val sf = UUID.randomUUID().toString().replace("-", "").substring(0, 14).uppercase()
-        return prefix + sf
     }
 }

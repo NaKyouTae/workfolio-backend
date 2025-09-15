@@ -1,15 +1,34 @@
 package com.spectrum.workfolio.controllers
 
-import org.springframework.web.bind.annotation.PostMapping
+import com.spectrum.workfolio.config.annotation.AuthenticatedUser
+import com.spectrum.workfolio.domain.extensions.toWorkerProto
+import com.spectrum.workfolio.proto.worker.WorkerGetResponse
+import com.spectrum.workfolio.proto.worker.WorkerListResponse
+import com.spectrum.workfolio.services.WorkerService
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/workers")
-class WorkerController {
+class WorkerController(
+    private val workerService: WorkerService,
+) {
 
-    @PostMapping("")
-    fun test(): String {
-        return "Hello World"
+    @GetMapping("/me")
+    fun getWorker(
+        @AuthenticatedUser workerId: String,
+    ): WorkerGetResponse {
+        val worker = workerService.getWorker(workerId)
+        return WorkerGetResponse.newBuilder().setWorker(worker.toWorkerProto()).build()
+    }
+
+    @GetMapping("/{nickname}")
+    fun getWorkerByNickName(
+        @PathVariable nickname: String
+    ): WorkerListResponse {
+        val workers = workerService.getWorkersByNickName(nickname)
+        return WorkerListResponse.newBuilder().addAllWorkers(workers.map { it.toWorkerProto() }).build()
     }
 }

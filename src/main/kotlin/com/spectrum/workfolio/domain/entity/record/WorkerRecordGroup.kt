@@ -23,7 +23,7 @@ class WorkerRecordGroup(
     recordGroup: RecordGroup,
 ) : BaseEntity("WR") {
 
-    @Column(name = "public_id", nullable = false)
+    @Column(name = "public_id", length = 16, nullable = false)
     var publicId: String = publicId
         protected set
 

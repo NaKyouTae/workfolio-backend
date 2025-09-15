@@ -8,6 +8,7 @@ import com.spectrum.workfolio.domain.entity.record.RecordGroup
 import com.spectrum.workfolio.domain.model.AccountType
 import com.spectrum.workfolio.proto.record.CreateRecordRequest
 import com.spectrum.workfolio.proto.record_group.CreateRecordGroupRequest
+import com.spectrum.workfolio.utils.StringUtil
 import com.spectrum.workfolio.utils.TimeUtil
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -61,7 +62,7 @@ class UserRegistrationService(
     }
     
     private fun createWorker(oauthUserInfo: OAuthUserInfo): Worker {
-        val worker = Worker(name = oauthUserInfo.name, nickName = UUID.randomUUID().toString())
+        val worker = Worker(name = oauthUserInfo.name, nickName = StringUtil.generateRandomString(8))
         return workerService.createWorker(worker)
     }
     

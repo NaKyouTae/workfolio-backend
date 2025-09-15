@@ -542,7 +542,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: public_id
-                  type: VARCHAR(256)
+                  type: VARCHAR(16)
                   constraints:
                     nullable: false
                     unique: true

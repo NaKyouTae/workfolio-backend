@@ -6,7 +6,6 @@ import com.spectrum.workfolio.domain.repository.WorkerRepository
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.Optional
 
 @Service
 class WorkerService(
@@ -15,6 +14,11 @@ class WorkerService(
     @Transactional(readOnly = true)
     fun getWorker(id: String): Worker {
         return workerRepository.findById(id).orElseThrow { WorkfolioException(MsgKOR.NOT_FOUND_WORKER.message) }
+    }
+
+    @Transactional(readOnly = true)
+    fun getWorkersByNickName(id: String): List<Worker> {
+        return workerRepository.findByNickNameStartingWith(id)
     }
 
     @Transactional

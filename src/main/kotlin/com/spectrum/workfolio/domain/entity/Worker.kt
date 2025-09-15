@@ -13,7 +13,7 @@ import jakarta.persistence.Table
     name = "worker",
     indexes = [
         Index(name = "idx_worker_name", columnList = "name"),
-        Index(name = "idx_worker_nick_name", columnList = "nickName"),
+        Index(name = "idx_worker_nick_name", columnList = "nick_name"),
     ]
 )
 class Worker(
