@@ -1,6 +1,6 @@
 package com.spectrum.workfolio.config.exception
 
-import com.spectrum.workfolio.proto.ErrorResponse
+import com.spectrum.workfolio.proto.error.ErrorResponse
 import com.spectrum.workfolio.utils.TimeUtil
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.http.HttpStatus

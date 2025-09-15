@@ -1,7 +1,7 @@
 package com.spectrum.workfolio.domain.extensions
 
 import com.spectrum.workfolio.domain.entity.record.RecordGroup
-import com.spectrum.workfolio.proto.CreateRecordGroupResponse
+import com.spectrum.workfolio.proto.record_group.CreateRecordGroupResponse
 import com.spectrum.workfolio.utils.TimeUtil
 
 fun RecordGroup.toProtoResponse(): CreateRecordGroupResponse {
@@ -17,8 +17,8 @@ fun RecordGroup.toProtoResponse(): CreateRecordGroupResponse {
         .build()
 }
 
-fun RecordGroup.toRecordGroupProto(): com.spectrum.workfolio.proto.RecordGroup {
-    return com.spectrum.workfolio.proto.RecordGroup.newBuilder()
+fun RecordGroup.toRecordGroupProto(): com.spectrum.workfolio.proto.common.RecordGroup {
+    return com.spectrum.workfolio.proto.common.RecordGroup.newBuilder()
         .setId(this.id)
         .setTitle(this.title)
         .setIsPublic(this.isPublic)

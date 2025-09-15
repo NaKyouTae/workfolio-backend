@@ -9,12 +9,9 @@ import jakarta.persistence.*
 @Table(
     name = "account",
     indexes = [
-        Index(name = "IDX_ACCOUNT_TYPE", columnList = "type"),
-        Index(name = "IDX_ACCOUNT_PROVIDER_ID", columnList = "provider_id"),
+        Index(name = "idx_account_type", columnList = "type"),
+        Index(name = "idx_account_provider_id", columnList = "provider_id"),
     ],
-    uniqueConstraints = [
-        UniqueConstraint(columnNames = ["provider_id"])
-    ]
 )
 class Account(
     type: AccountType,
@@ -27,7 +24,7 @@ class Account(
     var type: AccountType = type
         protected set
 
-    @Column(name = "provider_id", nullable = false)
+    @Column(name = "provider_id", nullable = false, unique = true)
     var providerId: String = providerId
         protected set
 

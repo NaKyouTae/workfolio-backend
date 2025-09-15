@@ -1,8 +1,12 @@
 syntax = "proto3";
 
+import "common.proto";
+
 package com.spectrum.workfolio.proto;
 
 option java_multiple_files = true;
+option java_package = "com.spectrum.workfolio.proto.record";
+option java_outer_classname = "RecordProto";
 
 message CreateRecordRequest {
   string title = 1;
@@ -21,4 +25,8 @@ message CreateRecordResponse {
 
   int64 created_at = 100;
   int64 updated_at = 101;
+}
+
+message ListRecordResponse {
+  repeated Record records = 1;
 }

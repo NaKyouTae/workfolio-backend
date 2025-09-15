@@ -3,16 +3,12 @@ package com.spectrum.workfolio.services
 import com.spectrum.workfolio.domain.entity.record.Record
 import com.spectrum.workfolio.domain.entity.record.Record.Companion.generateRecordType
 import com.spectrum.workfolio.domain.extensions.toRecordProto
-import com.spectrum.workfolio.domain.model.RecordType
 import com.spectrum.workfolio.domain.repository.RecordRepository
-import com.spectrum.workfolio.proto.CreateRecordRequest
-import com.spectrum.workfolio.proto.ListRecordResponse
+import com.spectrum.workfolio.proto.record.CreateRecordRequest
+import com.spectrum.workfolio.proto.record.ListRecordResponse
 import com.spectrum.workfolio.utils.TimeUtil
-import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.Duration
-import java.time.LocalDateTime
 
 @Service
 class RecordService(
@@ -31,16 +27,14 @@ class RecordService(
 
     private fun listByWorker(workerId: String): List<Record> {
         val worker =
-            workerService.getWorker(workerId).orElseThrow { throw WorkfolioException("Worker $workerId not found") }
+            workerService.getWorker(workerId)
         return recordRepository.findAllByWorker(worker)
     }
 
     @Transactional
     fun create(workerId: String, params: CreateRecordRequest): Record {
         val worker = workerService.getWorker(workerId)
-            .orElseThrow { throw WorkfolioException("Worker $workerId does not exist") }
         val recordGroup = recordGroupService.getRecordGroup(params.recordGroupId)
-            .orElseThrow { throw WorkfolioException("RecordGroup ${params.recordGroupId} does not exist") }
         val startedAt = TimeUtil.ofEpochMilli(params.startedAt)
         val endedAt = TimeUtil.ofEpochMilli(params.endedAt)
 

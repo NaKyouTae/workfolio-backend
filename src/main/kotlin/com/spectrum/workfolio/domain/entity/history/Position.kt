@@ -11,8 +11,8 @@ import java.time.LocalDate
 @Table(
     name = "position",
     indexes = [
-        Index(name = "IDX_POSITION_NAME", columnList = "name"),
-        Index(name = "IDX_POSITION_COMPANY_ID", columnList = "company_id")
+        Index(name = "idx_position_name", columnList = "name"),
+        Index(name = "idx_position_company_id", columnList = "company_id")
     ]
 )
 class Position(

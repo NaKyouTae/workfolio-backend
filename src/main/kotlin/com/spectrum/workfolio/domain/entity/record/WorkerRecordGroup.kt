@@ -9,12 +9,15 @@ import jakarta.persistence.*
  */
 @Entity
 @Table(
-    name = "worker_record_group_mapping",
+    name = "worker_record_group",
     indexes = [
-        Index(name = "IDX_RECORD_GROUP_PUBLIC_ID", columnList = "public_id"),
+        Index(name = "idx_record_group_public_id", columnList = "public_id"),
+        Index(name = "idx_record_group_worker_id", columnList = "worker_id"),
+        Index(name = "idx_record_group_record_group_id", columnList = "record_group_id"),
+        Index(name = "idx_record_group_worker_id_record_group_id", columnList = "worker_id, record_group_id"),
     ]
 )
-class WorkerRecordGroupMapping(
+class WorkerRecordGroup(
     publicId: String,
     worker: Worker,
     recordGroup: RecordGroup,

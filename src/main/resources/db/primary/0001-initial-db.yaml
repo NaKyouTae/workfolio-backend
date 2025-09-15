@@ -18,6 +18,11 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: nick_name
+                  type: VARCHAR(512)
+                  constraints:
+                    nullable: true
+              - column:
                   name: created_at
                   type: TIMESTAMP
                   defaultValueComputed: CURRENT_TIMESTAMP
@@ -30,11 +35,18 @@ databaseChangeLog:
                   constraints:
                     nullable: false
         - createIndex:
-            indexName: IDX_WORKER_NAME
-            tableName: worker
             columns:
               - column:
                   name: name
+            indexName: idx_worker_name
+            tableName: worker
+        - createIndex:
+            columns:
+              - column:
+                  name: nick_name
+            indexName: idx_worker_nick_name
+            tableName: worker
+            unique: true
 
         - createTable:
             tableName: record
@@ -88,17 +100,17 @@ databaseChangeLog:
                   constraints:
                     nullable: false
         - createIndex:
-            indexName: IDX_WORK_TITLE
-            tableName: record
             columns:
               - column:
                   name: title
-        - createIndex:
-            indexName: IDX_WORK_WORKER_ID
+            indexName: idx_work_title
             tableName: record
+        - createIndex:
             columns:
               - column:
                   name: worker_id
+            indexName: idx_work_worker_id
+            tableName: record
 
         - createTable:
             tableName: salary
@@ -142,17 +154,17 @@ databaseChangeLog:
                   constraints:
                     nullable: false
         - createIndex:
-            indexName: IDX_SALARY_AMOUNT
-            tableName: salary
             columns:
               - column:
                   name: amount
-        - createIndex:
-            indexName: IDX_SALARY_COMPANY_ID
+            indexName: idx_salary_amount
             tableName: salary
+        - createIndex:
             columns:
               - column:
                   name: company_id
+            indexName: idx_salary_company_id
+            tableName: salary
 
         - createTable:
             tableName: position
@@ -196,17 +208,17 @@ databaseChangeLog:
                   constraints:
                     nullable: false
         - createIndex:
-            indexName: IDX_POSITION_NAME
-            tableName: position
             columns:
               - column:
                   name: name
-        - createIndex:
-            indexName: IDX_POSITION_COMPANY_ID
+            indexName: idx_position_name
             tableName: position
+        - createIndex:
             columns:
               - column:
                   name: company_id
+            indexName: idx_position_company_id
+            tableName: position
 
         - createTable:
             tableName: educations
@@ -255,17 +267,17 @@ databaseChangeLog:
                   constraints:
                     nullable: false
         - createIndex:
-            indexName: IDX_EDUCATIONS_NAME
-            tableName: educations
             columns:
               - column:
                   name: name
-        - createIndex:
-            indexName: IDX_EDUCATIONS_WORKER_ID
+            indexName: idx_educations_name
             tableName: educations
+        - createIndex:
             columns:
               - column:
                   name: worker_id
+            indexName: idx_educations_worker_id
+            tableName: educations
 
         - createTable:
             tableName: degrees
@@ -314,17 +326,17 @@ databaseChangeLog:
                   constraints:
                     nullable: false
         - createIndex:
-            indexName: IDX_DEGREES_NAME
-            tableName: degrees
             columns:
               - column:
                   name: name
-        - createIndex:
-            indexName: IDX_DEGREES_WORKER_ID
+            indexName: idx_degrees_name
             tableName: degrees
+        - createIndex:
             columns:
               - column:
                   name: worker_id
+            indexName: idx_degrees_worker_id
+            tableName: degrees
 
         - createTable:
             tableName: company
@@ -373,17 +385,17 @@ databaseChangeLog:
                   constraints:
                     nullable: false
         - createIndex:
-            indexName: IDX_COMPANY_NAME
-            tableName: company
             columns:
               - column:
                   name: name
-        - createIndex:
-            indexName: IDX_COMPANY_WORKER_ID
+            indexName: idx_company_name
             tableName: company
+        - createIndex:
             columns:
               - column:
                   name: worker_id
+            indexName: idx_company_worker_id
+            tableName: company
 
         - createTable:
             tableName: certifications
@@ -437,17 +449,17 @@ databaseChangeLog:
                   constraints:
                     nullable: false
         - createIndex:
-            indexName: IDX_CERTIFICATIONS_NAME
-            tableName: certifications
             columns:
               - column:
                   name: name
-        - createIndex:
-            indexName: IDX_CERTIFICATIONS_WORKER_ID
+            indexName: idx_certifications_name
             tableName: certifications
+        - createIndex:
             columns:
               - column:
                   name: worker_id
+            indexName: idx_certifications_worker_id
+            tableName: certifications
 
         - createTable:
             tableName: account
@@ -492,17 +504,17 @@ databaseChangeLog:
                   constraints:
                     nullable: false
         - createIndex:
-            indexName: IDX_ACCOUNT_TYPE
-            tableName: account
             columns:
               - column:
                   name: type
-        - createIndex:
-            indexName: IDX_ACCOUNT_PROVIDER_ID
+            indexName: idx_account_type
             tableName: account
+        - createIndex:
             columns:
               - column:
                   name: provider_id
+            indexName: idx_account_provider_id
+            tableName: account
 
         - createTable:
             tableName: record_group
@@ -557,15 +569,15 @@ databaseChangeLog:
                   constraints:
                     nullable: false
         - createIndex:
-            indexName: IDX_RECORD_GROUP_PUBLIC_ID
-            tableName: record_group
             columns:
               - column:
                   name: public_id
+            indexName: idx_record_group_public_id
+            tableName: record_group
 
 
         - createTable:
-            tableName: worker_record_group_mapping
+            tableName: worker_record_group
             columns:
               - column:
                   name: id
@@ -603,8 +615,28 @@ databaseChangeLog:
                   constraints:
                     nullable: false
         - createIndex:
-            indexName: IDX_RECORD_GROUP_PUBLIC_ID
-            tableName: worker_record_group_mapping
             columns:
               - column:
                   name: public_id
+            indexName: idx_record_group_public_id
+            tableName: worker_record_group
+        - createIndex:
+            columns:
+              - column:
+                  name: worker_id
+            indexName: idx_record_group_worker_id
+            tableName: worker_record_group
+        - createIndex:
+            columns:
+              - column:
+                  name: record_group_id
+            indexName: idx_record_group_record_group_id
+            tableName: worker_record_group
+        - createIndex:
+            columns:
+              - column:
+                  name: worker_id
+              - column:
+                  name: record_group_id
+            indexName: idx_record_group_worker_id_record_group_id
+            tableName: worker_record_group

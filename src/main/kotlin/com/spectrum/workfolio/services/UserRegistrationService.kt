@@ -6,13 +6,13 @@ import com.spectrum.workfolio.domain.entity.Worker
 import com.spectrum.workfolio.domain.entity.primary.Account
 import com.spectrum.workfolio.domain.entity.record.RecordGroup
 import com.spectrum.workfolio.domain.model.AccountType
-import com.spectrum.workfolio.domain.model.RecordType
-import com.spectrum.workfolio.proto.CreateRecordGroupRequest
-import com.spectrum.workfolio.proto.CreateRecordRequest
+import com.spectrum.workfolio.proto.record.CreateRecordRequest
+import com.spectrum.workfolio.proto.record_group.CreateRecordGroupRequest
 import com.spectrum.workfolio.utils.TimeUtil
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.UUID
 
 /**
  * 사용자 등록 관련 비즈니스 로직을 담당하는 서비스
@@ -61,7 +61,7 @@ class UserRegistrationService(
     }
     
     private fun createWorker(oauthUserInfo: OAuthUserInfo): Worker {
-        val worker = Worker(name = oauthUserInfo.name)
+        val worker = Worker(name = oauthUserInfo.name, nickName = UUID.randomUUID().toString())
         return workerService.createWorker(worker)
     }
     

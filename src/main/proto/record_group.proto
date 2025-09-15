@@ -1,18 +1,17 @@
 syntax = "proto3";
+
 import "common.proto";
 
 package com.spectrum.workfolio.proto;
 
 option java_multiple_files = true;
+option java_package = "com.spectrum.workfolio.proto.record_group";
+option java_outer_classname = "RecordGroupProto";
 
 message CreateRecordGroupRequest {
   string title = 1;
   string color = 2;
   int64 priority = 100;
-}
-
-message ListRecordGroupResponse {
-  repeated CreateRecordGroupResponse groups = 1;
 }
 
 message CreateRecordGroupResponse {
@@ -24,4 +23,17 @@ message CreateRecordGroupResponse {
   int64 priority = 99;
   int64 created_at = 100;
   int64 updated_at = 101;
+}
+
+message ListRecordGroupResponse {
+  repeated CreateRecordGroupResponse groups = 1;
+}
+
+message JoinRecordGroupRequest {
+  string record_group_id = 1;
+  string target_worker_id = 2;
+}
+
+message JoinRecordGroupResponse {
+  bool is_success = 1;
 }

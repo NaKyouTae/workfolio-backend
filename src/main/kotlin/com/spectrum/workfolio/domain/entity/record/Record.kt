@@ -14,8 +14,8 @@ import java.time.LocalDateTime
 @Table(
     name = "record",
     indexes = [
-        Index(name = "IDX_RECORD_TITLE", columnList = "title"),
-        Index(name = "IDX_RECORD_WORKER_ID", columnList = "worker_id")
+        Index(name = "idx_record_title", columnList = "title"),
+        Index(name = "idx_record_worker_id", columnList = "worker_id")
     ]
 )
 class Record(

@@ -14,7 +14,7 @@ import java.util.*
 @Table(
     name = "record_group",
     indexes = [
-        Index(name = "IDX_RECORD_GROUP_PUBLIC_ID", columnList = "public_id"),
+        Index(name = "idx_record_group_public_id", columnList = "public_id"),
     ]
 )
 class RecordGroup(
