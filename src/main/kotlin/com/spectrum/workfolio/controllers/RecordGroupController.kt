@@ -10,7 +10,6 @@ import com.spectrum.workfolio.proto.record_group.ListRecordGroupResponse
 import com.spectrum.workfolio.proto.record_group.UpdateRecordGroupRequest
 import com.spectrum.workfolio.proto.record_group.UpdateRecordGroupResponse
 import com.spectrum.workfolio.services.RecordGroupService
-import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -25,12 +24,16 @@ class RecordGroupController(
     private val recordGroupService: RecordGroupService,
 ) {
 
-    @GetMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun listRecordGroup(@AuthenticatedUser workerId: String): ListRecordGroupResponse {
-        val recordGroups = recordGroupService.listRecordGroups(workerId)
-        val groups = recordGroups.map { it.toProtoResponse() }
+    @GetMapping("/owned")
+    fun listOwnedRecordGroup(@AuthenticatedUser workerId: String): ListRecordGroupResponse {
+        val recordGroups = recordGroupService.listOwnedRecordGroups(workerId)
+        return ListRecordGroupResponse.newBuilder().addAllGroups(recordGroups).build()
+    }
 
-        return ListRecordGroupResponse.newBuilder().addAllGroups(groups).build()
+    @GetMapping("/shared")
+    fun listSharedRecordGroup(@AuthenticatedUser workerId: String): ListRecordGroupResponse {
+        val recordGroups = recordGroupService.listSharedRecordGroups(workerId)
+        return ListRecordGroupResponse.newBuilder().addAllGroups(recordGroups).build()
     }
 
     @PostMapping

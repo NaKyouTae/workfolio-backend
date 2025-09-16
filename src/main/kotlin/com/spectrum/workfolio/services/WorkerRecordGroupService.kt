@@ -20,6 +20,11 @@ class WorkerRecordGroupService(
         return workerRecordGroupRepository.findByWorkerIdAndRecordGroupId(workerId, recordGroupId)
     }
 
+    @Transactional(readOnly = true)
+    fun listWorkerRecordGroup(workerId: String): List<WorkerRecordGroup> {
+        return workerRecordGroupRepository.findByWorkerId(workerId)
+    }
+
     @Transactional
     fun createWorkerRecordGroup(workerId: String, recordGroup: RecordGroup): WorkerRecordGroup {
         if (workerRecordGroupRepository.existsByWorkerIdAndRecordGroupId(workerId, recordGroup.id)) {

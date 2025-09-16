@@ -12,7 +12,7 @@ import java.time.LocalDateTime
 interface RecordRepository: JpaRepository<Record, String> {
     fun findAllByWorker(worker: Worker): List<Record>
     // BETWEEN 사용 (권장)
-    @Query("SELECT r FROM Record r WHERE r.worker = :worker AND r.startedAt >= :startDate AND r.startedAt < :endDate")
-    fun findByDateRange(@Param("worker") worker: Worker, @Param("startDate") startDate: LocalDateTime, @Param("endDate") endDate: LocalDateTime): List<Record>
+    @Query("SELECT r FROM Record r WHERE r.recordGroup.id in (:recordGroupIds) AND r.startedAt >= :startDate AND r.startedAt < :endDate")
+    fun findByDateRange(@Param("recordGroupIds") recordGroupIds: List<String>, @Param("startDate") startDate: LocalDateTime, @Param("endDate") endDate: LocalDateTime): List<Record>
 
 }

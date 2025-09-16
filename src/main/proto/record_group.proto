@@ -26,7 +26,7 @@ message CreateRecordGroupResponse {
 }
 
 message ListRecordGroupResponse {
-  repeated CreateRecordGroupResponse groups = 1;
+  repeated RecordGroup groups = 1;
 }
 
 message JoinRecordGroupRequest {

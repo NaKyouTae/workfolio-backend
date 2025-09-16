@@ -88,6 +88,11 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: record_group_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
                   name: created_at
                   type: TIMESTAMP
                   defaultValueComputed: CURRENT_TIMESTAMP
@@ -103,13 +108,21 @@ databaseChangeLog:
             columns:
               - column:
                   name: title
-            indexName: idx_work_title
+            indexName: idx_record_title
             tableName: record
         - createIndex:
             columns:
               - column:
-                  name: worker_id
-            indexName: idx_work_worker_id
+                  name: record_group_id
+            indexName: idx_record_record_group_id
+            tableName: record
+        - createIndex:
+            columns:
+              - column:
+                  name: record_group_id
+              - column:
+                  name: started_at
+            indexName: idx_record_record_group_id_started_at
             tableName: record
 
         - createTable:

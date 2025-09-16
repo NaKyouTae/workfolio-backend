@@ -1,17 +1,17 @@
 package com.spectrum.workfolio.services
 
-import com.spectrum.workfolio.config.annotation.AuthenticatedUser
 import com.spectrum.workfolio.domain.entity.record.RecordGroup
+import com.spectrum.workfolio.domain.extensions.toProtoResponse
+import com.spectrum.workfolio.domain.extensions.toRecordGroupProto
 import com.spectrum.workfolio.domain.model.MsgKOR
 import com.spectrum.workfolio.domain.repository.RecordGroupRepository
 import com.spectrum.workfolio.proto.record_group.CreateRecordGroupRequest
+import com.spectrum.workfolio.proto.record_group.CreateRecordGroupResponse
 import com.spectrum.workfolio.proto.record_group.JoinRecordGroupRequest
 import com.spectrum.workfolio.proto.record_group.UpdateRecordGroupRequest
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestBody
 
 @Service
 class RecordGroupService(
@@ -26,8 +26,16 @@ class RecordGroupService(
     }
 
     @Transactional(readOnly = true)
-    fun listRecordGroups(workerId: String): List<RecordGroup> {
-        return recordGroupRepository.findByWorkerIdOrderByPriorityDesc(workerId)
+    fun listOwnedRecordGroups(workerId: String): List<com.spectrum.workfolio.proto.common.RecordGroup> {
+        val recordGroups = recordGroupRepository.findByWorkerIdOrderByPriorityDesc(workerId)
+        return recordGroups.map { it.toRecordGroupProto() }
+    }
+
+    @Transactional(readOnly = true)
+    fun listSharedRecordGroups(workerId: String): List<com.spectrum.workfolio.proto.common.RecordGroup> {
+        val workerRecordGroups = workerRecordGroupService.listWorkerRecordGroup(workerId)
+        val recordGroups = workerRecordGroups.map { it -> it.recordGroup }.sortedBy { it.priority }
+        return recordGroups.map { it.toRecordGroupProto() }
     }
 
     @Transactional

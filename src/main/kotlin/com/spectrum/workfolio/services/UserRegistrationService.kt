@@ -5,7 +5,6 @@ import com.spectrum.workfolio.config.service.oauth.UserRegistrationException
 import com.spectrum.workfolio.domain.entity.Worker
 import com.spectrum.workfolio.domain.entity.primary.Account
 import com.spectrum.workfolio.domain.entity.record.RecordGroup
-import com.spectrum.workfolio.domain.entity.record.WorkerRecordGroup
 import com.spectrum.workfolio.domain.model.AccountType
 import com.spectrum.workfolio.proto.record.CreateRecordRequest
 import com.spectrum.workfolio.proto.record_group.CreateRecordGroupRequest
@@ -14,7 +13,6 @@ import com.spectrum.workfolio.utils.TimeUtil
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.UUID
 
 /**
  * 사용자 등록 관련 비즈니스 로직을 담당하는 서비스
@@ -25,7 +23,6 @@ class UserRegistrationService(
     private val workerService: WorkerService,
     private val accountService: AccountService,
     private val recordGroupService: RecordGroupService,
-    private val workerRecordGroupService: WorkerRecordGroupService,
 ) {
     
     private val logger = LoggerFactory.getLogger(UserRegistrationService::class.java)
@@ -48,9 +45,6 @@ class UserRegistrationService(
             // 2. 기본 RecordGroup 생성
             val recordGroup = createDefaultRecordGroup(worker.id)
 
-            // 기본 Worker RecordGroup 생성
-            createDefaultWorkerRecordGroup(worker.id, recordGroup)
-            
             // 3. 기본 Record 생성
             createDefaultRecord(worker.id, recordGroup.id)
             
@@ -79,10 +73,6 @@ class UserRegistrationService(
             .build()
         
         return recordGroupService.createRecordGroup(workerId, recordGroupRequest)
-    }
-
-    private fun createDefaultWorkerRecordGroup(workerId: String, recordGroup: RecordGroup): WorkerRecordGroup {
-        return workerRecordGroupService.createWorkerRecordGroup(workerId, recordGroup)
     }
     
     private fun createDefaultRecord(workerId: String, recordGroupId: String) {

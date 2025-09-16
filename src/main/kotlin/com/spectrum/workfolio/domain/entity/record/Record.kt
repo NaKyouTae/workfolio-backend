@@ -15,7 +15,8 @@ import java.time.LocalDateTime
     name = "record",
     indexes = [
         Index(name = "idx_record_title", columnList = "title"),
-        Index(name = "idx_record_worker_id", columnList = "worker_id")
+        Index(name = "idx_record_worker_id", columnList = "worker_id"),
+        Index(name = "idx_record_record_group_id_started_at", columnList = "record_group_id, started_at"),
     ]
 )
 class Record(
