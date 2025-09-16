@@ -15,3 +15,7 @@ message WorkerGetResponse {
 message WorkerListResponse {
   repeated Worker workers = 1;
 }
+
+message WorkerUpdateNickNameResponse {
+  bool is_success = 1;
+}

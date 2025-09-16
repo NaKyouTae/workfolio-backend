@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface WorkerRepository: JpaRepository<Worker, String> {
-    fun findByNickName(nickName: String): List<Worker>
+    fun findByNickName(nickName: String): Worker?
     fun findByNickNameStartingWith(nickName: String): List<Worker>
 }

@@ -5,6 +5,7 @@ enum class MsgKOR(val message: String) {
     DUPLICATION_EMAIL("중복 된 이메일입니다."),
     NOT_FOUND_WORKER("존재하지 않는 유저입니다."),
     NOT_FOUND_RECORD_GROUP("존재하지 않는 레코드 그룹입니다."),
+    ALREADY_EXIST_WORKER_NICK_NAME("현재 닉네임과 동일합니다."),
     ALREADY_EXIST_WORKER_RECORD_GROUP("레코드 그룹에 이미 존재하는 멤버입니다."),
     NOT_MATCH_RECORD_GROUP_OWNER("레코드 그룹의 소유자가 아닙니다."),
     NOT_MATCH_RECORD_GROUP_EDITOR("레코드 그룹의 에디터가 아닙니다."),

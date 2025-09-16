@@ -17,12 +17,29 @@ class WorkerService(
     }
 
     @Transactional(readOnly = true)
-    fun getWorkersByNickName(id: String): List<Worker> {
-        return workerRepository.findByNickNameStartingWith(id)
+    fun getWorkersByNickName(nickName: String): List<Worker> {
+        return workerRepository.findByNickNameStartingWith(nickName)
     }
 
     @Transactional
     fun createWorker(worker: Worker): Worker {
+        return workerRepository.save(worker)
+    }
+
+    @Transactional
+    fun changeWorkerNickName(workerId: String, nickName: String): Worker {
+        val worker = getWorker(workerId)
+        val existsNicknameWorker = workerRepository.findByNickName(nickName)
+
+        if (worker.nickName == nickName) {
+            throw WorkfolioException(MsgKOR.ALREADY_EXIST_WORKER_NICK_NAME.message)
+        }
+        if (existsNicknameWorker != null) {
+            throw WorkfolioException(MsgKOR.ALREADY_EXIST_WORKER_NICK_NAME.message)
+        }
+
+        worker.changeNickName(nickName)
+
         return workerRepository.save(worker)
     }
 }

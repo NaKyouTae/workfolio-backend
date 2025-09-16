@@ -24,7 +24,11 @@ class Worker(
     var name: String = name
         protected set
 
-    @Column(name = "nick_name", length = 512, nullable = false)
+    @Column(name = "nick_name", length = 512, nullable = false, unique = true)
     var nickName: String? = nickName
         protected set
+
+    fun changeNickName(nickName: String) {
+        this.nickName = nickName
+    }
 }
