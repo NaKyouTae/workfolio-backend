@@ -45,7 +45,7 @@ class RecordGroup(
     var priority: Long = priority
         protected set
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @JoinColumn(name = "worker_id", nullable = false)
     var worker: Worker = worker
         protected set

@@ -23,6 +23,9 @@ class KakaoUtil(
 
     @Value("\${spring.security.oauth2.client.registration.kakao.redirect-uri}")
     private lateinit var redirectUri: String
+    
+    @Value("\${kakao.api.admin-key}")
+    private lateinit var adminKey: String
 
     val objectMapper = jacksonObjectMapper()
 

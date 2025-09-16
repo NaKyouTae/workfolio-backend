@@ -49,12 +49,12 @@ class Record(
     var endedAt: LocalDateTime? = endedAt
         protected set
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @JoinColumn(name = "worker_id", nullable = false)
     var worker: Worker = worker
         protected set
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @JoinColumn(name = "record_group_id", nullable = false)
     var recordGroup: RecordGroup = recordGroup
         protected set

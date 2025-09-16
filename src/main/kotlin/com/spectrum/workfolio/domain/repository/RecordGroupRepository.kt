@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface RecordGroupRepository: JpaRepository<RecordGroup, String> {
     fun findByWorkerIdOrderByPriorityDesc(workerId: String): List<RecordGroup>
+    fun findByWorkerId(workerId: String): List<RecordGroup>
 }
