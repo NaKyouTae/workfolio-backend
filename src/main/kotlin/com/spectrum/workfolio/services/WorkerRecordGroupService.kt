@@ -25,6 +25,13 @@ class WorkerRecordGroupService(
         return workerRecordGroupRepository.findByWorkerId(workerId)
     }
 
+    @Transactional(readOnly = true)
+    fun listWorkerRecordGroupForEditable(workerId: String): List<WorkerRecordGroup> {
+        val editableRecordGroup = workerRecordGroupRepository.findByWorkerId(workerId)
+        // TODO 편집 가능한 권한이 있는 Record Group만 조회하도록 수정 필요
+        return editableRecordGroup
+    }
+
     @Transactional
     fun createWorkerRecordGroup(workerId: String, recordGroup: RecordGroup): WorkerRecordGroup {
         if (workerRecordGroupRepository.existsByWorkerIdAndRecordGroupId(workerId, recordGroup.id)) {

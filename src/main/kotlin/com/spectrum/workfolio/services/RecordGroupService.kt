@@ -38,6 +38,15 @@ class RecordGroupService(
         return recordGroups.map { it.toRecordGroupProto() }
     }
 
+    @Transactional(readOnly = true)
+    fun listEditableRecordGroups(workerId: String): List<com.spectrum.workfolio.proto.common.RecordGroup> {
+        val ownedRecordGroup = this.listOwnedRecordGroups(workerId)
+        val editableWorkerRecordGroup = workerRecordGroupService.listWorkerRecordGroupForEditable(workerId)
+        val editableRecordGroups = editableWorkerRecordGroup.map { it -> it.recordGroup.toRecordGroupProto() }
+
+        return ownedRecordGroup + editableRecordGroups
+    }
+
     @Transactional
     fun createRecordGroup(
         workerId: String,
@@ -79,8 +88,15 @@ class RecordGroupService(
     fun joinRecordGroup(workerId: String, request: JoinRecordGroupRequest): RecordGroup {
         val recordGroup = this.getRecordGroup(request.recordGroupId)
 
+        // 소유주만 멤버를 추가할수 있다.
+        // TODO 권한이 생긴다면 권한에 맞게 멤버 추가 권한을 체크하는 로직 필요
         if(recordGroup.worker.id != workerId) {
             throw WorkfolioException(MsgKOR.NOT_MATCH_RECORD_GROUP_OWNER.message)
+        }
+
+        // 소유주가 가지고 있는 레코드 그룹에 멤버로 소유주가 들어가는 경우 방지
+        if(recordGroup.worker.id == request.targetWorkerId) {
+            throw WorkfolioException(MsgKOR.ALREADY_EXIST_WORKER_RECORD_GROUP.message)
         }
 
         workerRecordGroupService.createWorkerRecordGroup(request.targetWorkerId, recordGroup)

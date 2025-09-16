@@ -36,6 +36,12 @@ class RecordGroupController(
         return ListRecordGroupResponse.newBuilder().addAllGroups(recordGroups).build()
     }
 
+    @GetMapping("/editable")
+    fun listEditableRecordGroup(@AuthenticatedUser workerId: String): ListRecordGroupResponse {
+        val recordGroups = recordGroupService.listEditableRecordGroups(workerId)
+        return ListRecordGroupResponse.newBuilder().addAllGroups(recordGroups).build()
+    }
+
     @PostMapping
     fun createRecordGroup(
         @AuthenticatedUser workerId: String,
