@@ -59,6 +59,8 @@ class RecordService(
         val startedAt = TimeUtil.ofEpochMilli(params.startedAt)
         val endedAt = TimeUtil.ofEpochMilli(params.endedAt)
 
+        // TODO TIME을 제외한 나머지 일자의 시간 조정 필요
+
         val record = Record(
             title = params.title,
             description = params.memo,
