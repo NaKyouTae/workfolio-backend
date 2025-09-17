@@ -18,9 +18,9 @@ class WorkerDetailService(
     @Throws(UsernameNotFoundException::class)
     override fun loadUserByUsername(id: String): UserDetails {
         return try {
-            val user = workerRepository.findById(id)
+            val worker = workerRepository.findById(id)
                 .orElseThrow { UsernameNotFoundException(MsgKOR.NOT_FOUND_WORKER.message) }
-            CustomUserDetails(user)
+            CustomUserDetails(worker)
         } catch (e: UsernameNotFoundException) {
             throw WorkfolioException(MsgKOR.NOT_FOUND_WORKER.message, ErrorCode.SIGN)
         }

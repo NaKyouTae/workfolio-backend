@@ -1,5 +1,7 @@
 package com.spectrum.workfolio.config.provider
 
+import com.spectrum.workfolio.config.service.WorkerDetailService
+import com.spectrum.workfolio.domain.dto.CustomUserDetails
 import com.spectrum.workfolio.domain.entity.primary.Account
 import com.spectrum.workfolio.domain.model.WorkfolioToken
 import com.spectrum.workfolio.domain.model.ErrorCode
@@ -8,6 +10,9 @@ import io.jsonwebtoken.*
 import io.jsonwebtoken.security.Keys
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.PropertySource
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Component
 import java.time.ZonedDateTime
 import java.util.*
@@ -19,6 +24,7 @@ class JwtTokenProvider(
     @Value("\${jwt.secret-key}") private val secretKey: String,
     @Value("\${jwt.access.expiration-hours}") private val accessTokenExpTime: Long,
     @Value("\${jwt.refresh.expiration-days}") private val refreshTokenExpDay: Long,
+    private val workerDetailsService: WorkerDetailService,
 ) {
     private val invalidatedTokens = mutableSetOf<String>()
 
@@ -85,6 +91,13 @@ class JwtTokenProvider(
             }
             false
         }
+    }
+
+    fun getAuthentication(token: String): Authentication {
+        val claims = parseClaims(token)
+        val id = claims["id"] as String
+        val userDetails = workerDetailsService.loadUserByUsername(id)
+        return UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
     }
 
     fun parseClaims(str: String): Claims {

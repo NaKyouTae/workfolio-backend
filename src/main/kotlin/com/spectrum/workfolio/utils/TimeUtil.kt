@@ -16,4 +16,8 @@ object TimeUtil {
     fun nowToLong(): Long {
         return toEpochMilli(LocalDateTime.now())
     }
+
+    fun nowToString(): String {
+        return LocalDateTime.now().toString()
+    }
 }

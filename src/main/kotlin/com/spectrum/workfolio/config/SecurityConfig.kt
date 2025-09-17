@@ -1,7 +1,8 @@
 package com.spectrum.workfolio.config
 
 import com.spectrum.workfolio.config.entry.WorkfolioAuthenticationEntryPoint
-import com.spectrum.workfolio.config.filter.JwtAuthFilter
+import com.spectrum.workfolio.config.filter.JwtExceptionFilter
+import com.spectrum.workfolio.config.filter.JwtAuthenticationFilter
 import com.spectrum.workfolio.config.handler.WorkfolioAccessDeniedHandler
 import com.spectrum.workfolio.config.handler.WorkfolioOAuth2LogoutSuccessHandler
 import com.spectrum.workfolio.config.handler.WorkfolioOAuth2LoginFailureHandler
@@ -11,16 +12,16 @@ import com.spectrum.workfolio.config.repository.OAuth2AuthorizationRequestBasedO
 import com.spectrum.workfolio.config.resolver.CustomAuthorizationRequestResolver
 import com.spectrum.workfolio.config.service.WorkerDetailService
 import com.spectrum.workfolio.config.service.WorkfolioOAuth2UserService
+import com.spectrum.workfolio.redis.service.RedisBlackAccessTokenService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
@@ -32,6 +33,7 @@ class SecurityConfig(
     private val jwtTokenProvider: JwtTokenProvider,
     private val workerDetailsService: WorkerDetailService,
     private val clientRegistrationRepository: ClientRegistrationRepository,
+    private val redisBlackAccessTokenService: RedisBlackAccessTokenService,
     private val workfolioAuthenticationEntryPoint: WorkfolioAuthenticationEntryPoint,
     private val workfolioAccessDeniedHandler: WorkfolioAccessDeniedHandler,
     private val workfolioOAuth2UserService: WorkfolioOAuth2UserService,
@@ -85,9 +87,10 @@ class SecurityConfig(
         }
         .cors { it.configurationSource(corsConfigurationSource()) }
         .addFilterBefore(
-            JwtAuthFilter(jwtTokenProvider, workerDetailsService),
-            BasicAuthenticationFilter::class.java
+            JwtAuthenticationFilter(jwtTokenProvider, redisBlackAccessTokenService),
+            UsernamePasswordAuthenticationFilter::class.java,
         )
+        .addFilterBefore(JwtExceptionFilter(), JwtAuthenticationFilter::class.java)
         .build()!!
 
     @Bean

@@ -91,21 +91,4 @@ class WorkerService(
             throw WorkfolioException("회원 탈퇴 중 오류가 발생했습니다: ${e.message}")
         }
     }
-    
-    /**
-     * 카카오 로그아웃
-     * @param accessToken 카카오 액세스 토큰
-     * @return 로그아웃 성공 여부
-     */
-    fun logoutFromKakao(accessToken: String): Boolean {
-        return try {
-            logger.info("카카오 로그아웃 시작")
-            val success = kakaoApiProvider.logout(accessToken)
-            logger.info("카카오 로그아웃 결과: {}", success)
-            success
-        } catch (e: Exception) {
-            logger.error("카카오 로그아웃 실패", e)
-            false
-        }
-    }
 }

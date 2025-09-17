@@ -7,8 +7,9 @@ option java_package = "com.spectrum.workfolio.proto.error";
 option java_outer_classname = "ErrorProto";
 
 message ErrorResponse {
-  int32 status = 1;         // HttpStatus를 int32로 변환
-  string message = 2;       // 메시지
-  string type = 3;          // 타입
-  int64 timestamp = 4;      // 타임스탬프 (밀리초 단위)
+  uint64 timestamp = 1;
+  string status = 2;
+  uint32 code = 3;
+  string message = 4;
+  string path = 5;
 }

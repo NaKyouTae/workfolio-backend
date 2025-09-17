@@ -1,4 +1,4 @@
-package com.spectrum.workfolio.config.exception
+package com.spectrum.workfolio.config.handler
 
 import com.spectrum.workfolio.proto.error.ErrorResponse
 import com.spectrum.workfolio.utils.TimeUtil
@@ -36,13 +36,13 @@ class GlobalExceptionHandler {
 
     private fun createErrorResponse(message: String?, type: String, status: HttpStatus): ResponseEntity<ErrorResponse> {
         val errorResponse = ErrorResponse.newBuilder()
-            .setStatus(status.value())
+            .setTimestamp(TimeUtil.nowToLong())
+            .setStatus(status.name)
+            .setCode(status.value())
             .setMessage(message ?: "")
-            .setType(type)
-            .setTimestamp(TimeUtil.toEpochMilli(LocalDateTime.now()))
+            .setPath("GLOBAL ERROR")
             .build()
 
         return ResponseEntity(errorResponse, status)
     }
 }
-
