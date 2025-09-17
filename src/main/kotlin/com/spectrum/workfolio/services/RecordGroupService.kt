@@ -24,6 +24,11 @@ class RecordGroupService(
     }
 
     @Transactional(readOnly = true)
+    fun getPublicRecordGroup(publicId: String): RecordGroup {
+        return recordGroupRepository.findByPublicId(publicId).orElseThrow { WorkfolioException(MsgKOR.NOT_FOUND_RECORD_GROUP.message) }
+    }
+
+    @Transactional(readOnly = true)
     fun listOwnedRecordGroups(workerId: String): List<com.spectrum.workfolio.proto.common.RecordGroup> {
         val recordGroups = recordGroupRepository.findByWorkerIdOrderByPriorityDesc(workerId)
         return recordGroups.map { it.toRecordGroupProto() }
@@ -84,7 +89,7 @@ class RecordGroupService(
 
     @Transactional
     fun joinRecordGroup(workerId: String, request: JoinRecordGroupRequest): RecordGroup {
-        val recordGroup = this.getRecordGroup(request.recordGroupId)
+        val recordGroup = this.getPublicRecordGroup(request.publicId)
 
         // 소유주만 멤버를 추가할수 있다.
         // TODO 권한이 생긴다면 권한에 맞게 멤버 추가 권한을 체크하는 로직 필요

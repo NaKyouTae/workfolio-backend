@@ -30,12 +30,8 @@ message ListRecordGroupResponse {
 }
 
 message JoinRecordGroupRequest {
-  string record_group_id = 1;
+  string public_id = 1;
   string target_worker_id = 2;
-}
-
-message JoinRecordGroupResponse {
-  bool is_success = 1;
 }
 
 message UpdateRecordGroupRequest {

@@ -6,7 +6,6 @@ import com.spectrum.workfolio.proto.common.SuccessResponse
 import com.spectrum.workfolio.proto.record_group.CreateRecordGroupRequest
 import com.spectrum.workfolio.proto.record_group.CreateRecordGroupResponse
 import com.spectrum.workfolio.proto.record_group.JoinRecordGroupRequest
-import com.spectrum.workfolio.proto.record_group.JoinRecordGroupResponse
 import com.spectrum.workfolio.proto.record_group.ListRecordGroupResponse
 import com.spectrum.workfolio.proto.record_group.UpdateRecordGroupRequest
 import com.spectrum.workfolio.services.RecordGroupService
@@ -57,9 +56,9 @@ class RecordGroupController(
     fun joinRecordGroup(
         @AuthenticatedUser workerId: String,
         @RequestBody request: JoinRecordGroupRequest
-    ): JoinRecordGroupResponse {
+    ): SuccessResponse {
         recordGroupService.joinRecordGroup(workerId, request)
-        return JoinRecordGroupResponse.newBuilder().setIsSuccess(true).build()
+        return SuccessResponse.newBuilder().setIsSuccess(true).build()
     }
 
     @PutMapping("/{recordGroupId}")
