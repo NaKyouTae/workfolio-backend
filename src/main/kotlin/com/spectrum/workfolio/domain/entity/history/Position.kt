@@ -33,7 +33,7 @@ class Position(
     var endedAt: LocalDate? = endedAt
         protected set
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id", nullable = false)
     var company: Company = company
 }

@@ -1,12 +1,10 @@
 package com.spectrum.workfolio.services
 
 import com.spectrum.workfolio.domain.entity.record.RecordGroup
-import com.spectrum.workfolio.domain.extensions.toProtoResponse
 import com.spectrum.workfolio.domain.extensions.toRecordGroupProto
 import com.spectrum.workfolio.domain.model.MsgKOR
 import com.spectrum.workfolio.domain.repository.RecordGroupRepository
 import com.spectrum.workfolio.proto.record_group.CreateRecordGroupRequest
-import com.spectrum.workfolio.proto.record_group.CreateRecordGroupResponse
 import com.spectrum.workfolio.proto.record_group.JoinRecordGroupRequest
 import com.spectrum.workfolio.proto.record_group.UpdateRecordGroupRequest
 import com.spectrum.workfolio.utils.WorkfolioException
@@ -33,7 +31,7 @@ class RecordGroupService(
 
     @Transactional(readOnly = true)
     fun listSharedRecordGroups(workerId: String): List<com.spectrum.workfolio.proto.common.RecordGroup> {
-        val workerRecordGroups = workerRecordGroupService.listWorkerRecordGroup(workerId)
+        val workerRecordGroups = workerRecordGroupService.listWorkerRecordGroupByWorkerId(workerId)
         val recordGroups = workerRecordGroups.map { it -> it.recordGroup }.sortedBy { it.priority }
         return recordGroups.map { it.toRecordGroupProto() }
     }
@@ -102,5 +100,29 @@ class RecordGroupService(
         workerRecordGroupService.createWorkerRecordGroup(request.targetWorkerId, recordGroup)
 
         return recordGroup
+    }
+
+    @Transactional
+    fun deleteRecordGroup(
+        workerId: String,
+        recordGroupId: String,
+    ) {
+        val recordGroup = this.getRecordGroup(recordGroupId)
+        val workerRecordGroup = workerRecordGroupService.getWorkerRecordGroup(workerId, recordGroupId)
+
+        if(recordGroup.worker.id != workerId) {
+            throw WorkfolioException(MsgKOR.NOT_OWNER_RECORD_GROUP.message)
+        }
+
+        if(workerRecordGroup != null) {
+            throw WorkfolioException(MsgKOR.NOT_MATCH_RECORD_GROUP_EDITOR.message)
+        }
+
+        // record 삭제
+        // worker record group 삭제
+        // record group 삭제
+
+//        workerRecordGroupService.deleteWorkerRecordGroupAll(recordGroup.id)
+        recordGroupRepository.delete(recordGroup)
     }
 }

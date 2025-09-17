@@ -32,7 +32,7 @@ class Account(
     var email: String? = email
         protected set
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "worker_id", nullable = false)
     var worker: Worker = worker
         protected set

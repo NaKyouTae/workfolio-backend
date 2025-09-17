@@ -4,7 +4,6 @@ import com.spectrum.workfolio.domain.entity.record.RecordGroup
 import com.spectrum.workfolio.domain.entity.record.WorkerRecordGroup
 import com.spectrum.workfolio.domain.model.MsgKOR
 import com.spectrum.workfolio.domain.repository.WorkerRecordGroupRepository
-import com.spectrum.workfolio.proto.record_group.JoinRecordGroupRequest
 import com.spectrum.workfolio.utils.StringUtil
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.stereotype.Service
@@ -21,7 +20,12 @@ class WorkerRecordGroupService(
     }
 
     @Transactional(readOnly = true)
-    fun listWorkerRecordGroup(workerId: String): List<WorkerRecordGroup> {
+    fun listWorkerRecordGroupByGroupId(recordGroupId: String): List<WorkerRecordGroup> {
+        return workerRecordGroupRepository.findByRecordGroupId(recordGroupId)
+    }
+
+    @Transactional(readOnly = true)
+    fun listWorkerRecordGroupByWorkerId(workerId: String): List<WorkerRecordGroup> {
         return workerRecordGroupRepository.findByWorkerId(workerId)
     }
 
@@ -46,5 +50,12 @@ class WorkerRecordGroupService(
         )
 
         return workerRecordGroupRepository.save(workerRecordGroup)
+    }
+
+    @Transactional
+    fun deleteWorkerRecordGroupAll(recordGroupId: String) {
+        val workerRecordGroups = this.listWorkerRecordGroupByGroupId(recordGroupId)
+        val ids = workerRecordGroups.map { it.id }
+        workerRecordGroupRepository.deleteAllById(ids)
     }
 }

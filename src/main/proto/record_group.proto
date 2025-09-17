@@ -45,6 +45,6 @@ message UpdateRecordGroupRequest {
   uint64 priority = 4;
 }
 
-message UpdateRecordGroupResponse {
+message SuccessRecordGroupResponse {
   bool is_success = 1;
 }

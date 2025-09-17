@@ -27,12 +27,12 @@ class WorkerRecordGroup(
     var publicId: String = publicId
         protected set
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "worker_id", nullable = false)
     var worker: Worker = worker
         protected set
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "record_group_id", nullable = false)
     var recordGroup: RecordGroup = recordGroup
         protected set

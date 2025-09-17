@@ -7,9 +7,10 @@ import com.spectrum.workfolio.proto.record_group.CreateRecordGroupResponse
 import com.spectrum.workfolio.proto.record_group.JoinRecordGroupRequest
 import com.spectrum.workfolio.proto.record_group.JoinRecordGroupResponse
 import com.spectrum.workfolio.proto.record_group.ListRecordGroupResponse
+import com.spectrum.workfolio.proto.record_group.SuccessRecordGroupResponse
 import com.spectrum.workfolio.proto.record_group.UpdateRecordGroupRequest
-import com.spectrum.workfolio.proto.record_group.UpdateRecordGroupResponse
 import com.spectrum.workfolio.services.RecordGroupService
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -66,9 +67,19 @@ class RecordGroupController(
         @AuthenticatedUser workerId: String,
         @PathVariable recordGroupId: String,
         @RequestBody request: UpdateRecordGroupRequest
-    ): UpdateRecordGroupResponse {
+    ): SuccessRecordGroupResponse {
         recordGroupService.updateRecordGroup(workerId, recordGroupId, request)
 
-        return UpdateRecordGroupResponse.newBuilder().setIsSuccess(true).build()
+        return SuccessRecordGroupResponse.newBuilder().setIsSuccess(true).build()
+    }
+
+    @DeleteMapping("/{recordGroupId}")
+    fun deleteRecordGroup(
+        @AuthenticatedUser workerId: String,
+        @PathVariable recordGroupId: String,
+    ): SuccessRecordGroupResponse {
+        recordGroupService.deleteRecordGroup(workerId, recordGroupId)
+
+        return SuccessRecordGroupResponse.newBuilder().setIsSuccess(true).build()
     }
 }

@@ -45,10 +45,14 @@ class RecordGroup(
     var priority: Long = priority
         protected set
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "worker_id", nullable = false)
     var worker: Worker = worker
         protected set
+
+    @OneToMany(mappedBy = "recordGroup", cascade = [CascadeType.ALL])
+    private var mutableRecords: MutableList<Record> = mutableListOf()
+    val records: List<Record> get() = mutableRecords.toList()
 
     fun changeRecordGroup(
         title: String,
