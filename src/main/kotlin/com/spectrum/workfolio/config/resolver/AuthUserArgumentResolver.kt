@@ -29,6 +29,6 @@ class AuthUserArgumentResolver(
         val request: HttpServletRequest = webRequest.getNativeRequest(HttpServletRequest::class.java)!!
         val token = request.getHeader("Authorization")?.removePrefix("Bearer ") ?: throw IllegalArgumentException("토큰이 없습니다.")
 
-        return jwtTokenProvider.getWorkerId(token)
+        return jwtTokenProvider.getDataFromToken(token, "id") as String
     }
 }
