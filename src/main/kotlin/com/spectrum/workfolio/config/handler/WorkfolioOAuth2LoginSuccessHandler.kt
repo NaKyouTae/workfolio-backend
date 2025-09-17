@@ -1,7 +1,7 @@
 package com.spectrum.workfolio.config.handler
 
 import com.spectrum.workfolio.config.provider.JwtTokenProvider
-import com.spectrum.workfolio.domain.model.ExceptionMessageKor
+import com.spectrum.workfolio.domain.model.MsgKOR
 import com.spectrum.workfolio.domain.model.SNSType
 import com.spectrum.workfolio.domain.model.WorkfolioToken
 import com.spectrum.workfolio.services.AccountService
@@ -36,8 +36,8 @@ class WorkfolioOAuth2LoginSuccessHandler(
             val registrationId = authentication.authorizedClientRegistrationId
             val providerId = handleProviderLogin(registrationId, authentication.principal)
             val account = accountService.getAccountByProviderId(providerId)
-                .orElseThrow { WorkfolioException(ExceptionMessageKor.USER_NOT_FOUND.message) }
-            val token = jwtTokenProvider.generateToken(authentication)
+                .orElseThrow { WorkfolioException(MsgKOR.NOT_FOUND_WORKER.message) }
+            val token = jwtTokenProvider.generateToken(account)
 
             val redirectUrl = buildRedirectUrl(token) // URL 리디렉션 (쿼리 파라미터 전달 유지)
             response.sendRedirect(redirectUrl)

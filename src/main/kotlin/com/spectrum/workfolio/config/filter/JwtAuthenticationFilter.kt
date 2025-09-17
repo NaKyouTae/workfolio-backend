@@ -18,7 +18,8 @@ class JwtAuthenticationFilter(
 ) : OncePerRequestFilter() {
 
     override fun shouldNotFilter(request: HttpServletRequest): Boolean {
-        val excludePath = arrayOf("/api/users", "/actuator", "/tag-here")
+        val excludePath = listOf("/api/oauth2", "/login", "/logout", "/error", "/favicon.ico", "/actuator", "/.well-known/appspecific/com.chrome.devtools.json")
+
         val path = request.requestURI
         return excludePath.any { path.startsWith(it) }
     }

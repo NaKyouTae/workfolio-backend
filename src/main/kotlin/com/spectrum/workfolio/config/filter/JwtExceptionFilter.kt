@@ -37,10 +37,10 @@ class JwtExceptionFilter : OncePerRequestFilter() {
         status: HttpStatus,
         ex: Throwable,
     ) {
-        val errorResponse = ErrorResponse.newBuilder().setTimestamp(TimeUtil.nowToLong()).setStatus(status.name)
-            .setCode(status.value()).setMessage(ex.message).setPath(path).build()
+//        val errorResponse = ErrorResponse.newBuilder().setTimestamp(TimeUtil.nowToLong()).setStatus(status.name)
+//            .setCode(status.value()).setMessage(ex.message).setPath(path).build()
         val objectMapper = jacksonObjectMapper()
-        val jsonResponse = objectMapper.writeValueAsString(errorResponse)
+        val jsonResponse = objectMapper.writeValueAsString(ex.message)
 
         response.status = status.value()
         response.contentType = "application/json;charset=UTF-8"

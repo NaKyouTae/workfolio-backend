@@ -3,6 +3,7 @@ package com.spectrum.workfolio.config.provider
 import com.spectrum.workfolio.config.exception.JwtAuthenticationException
 import com.spectrum.workfolio.config.service.WorkerDetailService
 import com.spectrum.workfolio.domain.dto.CustomUserDetails
+import com.spectrum.workfolio.domain.entity.primary.Account
 import com.spectrum.workfolio.domain.model.WorkfolioToken
 import com.spectrum.workfolio.domain.model.MsgKOR
 import com.spectrum.workfolio.utils.WorkfolioException
@@ -27,22 +28,23 @@ class JwtTokenProvider(
     private val workerUserDetailService: WorkerDetailService,
 ) {
 
-    fun generateToken(auth: Authentication): WorkfolioToken {
-        val claims = setClaims(auth)
+    fun generateToken(account: Account): WorkfolioToken {
+        val workerId = account.worker.id
+        val claims = setClaims(workerId, emptyList())
         val issuedAt = Instant.now().truncatedTo(ChronoUnit.SECONDS)
         val accessTokenExpiration = issuedAt.plus(accessTokenExpirationHours, ChronoUnit.DAYS)
         val refreshTokenExpiration = issuedAt.plus(refreshTokenExpirationDays, ChronoUnit.DAYS)
 
         val accessToken = createJwtToken(
             claims = claims,
-            subject = auth.name,
+            subject = workerId,
             issuedAt = issuedAt,
             expiration = accessTokenExpiration,
         )
 
         val refreshToken = createJwtToken(
             claims = claims,
-            subject = auth.name,
+            subject = workerId,
             expiration = refreshTokenExpiration,
         )
 
@@ -53,16 +55,16 @@ class JwtTokenProvider(
     }
 
     fun reissueToken(
-        auth: Authentication,
+        workerId: String,
         originalRefreshToken: String,
     ): WorkfolioToken {
-        val claims = setClaims(auth)
+        val claims = setClaims(workerId, emptyList())
         val issuedAt = Instant.now().truncatedTo(ChronoUnit.SECONDS)
         val accessTokenExpiration = issuedAt.plus(accessTokenExpirationHours, ChronoUnit.DAYS)
 
         val accessToken = createJwtToken(
             claims = claims,
-            subject = auth.name,
+            subject = workerId,
             issuedAt = issuedAt,
             expiration = accessTokenExpiration,
         )
@@ -72,7 +74,7 @@ class JwtTokenProvider(
 
         val refreshToken = createJwtToken(
             claims = claims,
-            subject = auth.name,
+            subject = workerId,
             expiration = refreshTokenExpirationDate,
         )
 
@@ -151,11 +153,8 @@ class JwtTokenProvider(
         return Keys.hmacShaKeyFor(keyBytes)
     }
 
-    private fun setClaims(auth: Authentication): Map<String, Any> {
+    private fun setClaims(id: String, roles: List<String>): Map<String, Any> {
         val claims = mutableMapOf<String, Any>()
-        val user = (auth.principal as CustomUserDetails)
-        val id = user.username
-        val roles = user.authorities
 
         claims["id"] = id
         claims["roles"] = roles

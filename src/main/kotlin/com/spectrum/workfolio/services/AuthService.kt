@@ -37,8 +37,7 @@ class AuthService(
         val redisBlackAccessToken = RedisBlackAccessToken(rawAccessToken)
         redisBlackAccessTokenService.saveBlackAccessToken(redisBlackAccessToken)
 
-        val authentication = jwtTokenProvider.getAuthentication(rawRefreshToken)
-        val jwtToken = jwtTokenProvider.reissueToken(authentication, rawRefreshToken)
+        val jwtToken = jwtTokenProvider.reissueToken(key, rawRefreshToken)
 
         // 신규 Refresh Token 화이트 리스트 추가
         val claims = jwtTokenProvider.parseClaims(jwtToken.refreshToken)

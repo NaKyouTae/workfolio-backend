@@ -52,7 +52,7 @@ class SecurityConfig(
         .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
         .authorizeHttpRequests {
             it
-                .requestMatchers("/api/**").permitAll()
+                .requestMatchers("/api/oauth2/**").permitAll()
                 .requestMatchers("/login/**", "/error", "/favicon.ico").permitAll()
                 .anyRequest().authenticated()
         }
