@@ -50,7 +50,7 @@ class RecordGroup(
     var worker: Worker = worker
         protected set
 
-    @OneToMany(mappedBy = "recordGroup", cascade = [CascadeType.ALL])
+    @OneToMany(mappedBy = "recordGroup", cascade = [CascadeType.REMOVE])
     private var mutableRecords: MutableList<Record> = mutableListOf()
     val records: List<Record> get() = mutableRecords.toList()
 

@@ -44,7 +44,3 @@ message UpdateRecordGroupRequest {
   string color = 3;
   uint64 priority = 4;
 }
-
-message SuccessRecordGroupResponse {
-  bool is_success = 1;
-}

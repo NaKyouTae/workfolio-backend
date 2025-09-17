@@ -43,4 +43,12 @@ class Company(
     @JoinColumn(name = "worker_id", nullable = false)
     var worker: Worker = worker
         protected set
+
+    @OneToMany(mappedBy = "company", cascade = [CascadeType.REMOVE])
+    private var mutablePositions: MutableList<Position> = mutableListOf()
+    val positions: List<Position> get() = mutablePositions.toList()
+
+    @OneToMany(mappedBy = "company", cascade = [CascadeType.REMOVE])
+    private var mutableSalaries: MutableList<Salary> = mutableListOf()
+    val salaries: List<Salary> get() = mutableSalaries.toList()
 }

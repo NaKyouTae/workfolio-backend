@@ -139,3 +139,7 @@ message RecordGroup {
   uint64 created_at = 98;
   uint64 updated_at = 99;
 }
+
+message SuccessResponse {
+  bool is_success = 1;
+}
