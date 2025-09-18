@@ -25,7 +25,7 @@ fun RecordGroup.toRecordGroupProto(): com.spectrum.workfolio.proto.common.Record
         .setPublicId(this.publicId)
         .setColor(this.color)
         .setPriority(this.priority)
-        .setWorker(this.worker.toWorkerProto())
+        .setWorker(this.worker.toProto())
         .setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
         .setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
         .build()

@@ -8,12 +8,14 @@ import com.spectrum.workfolio.domain.entity.history.Salary
 import com.spectrum.workfolio.domain.entity.primary.Certifications
 import com.spectrum.workfolio.domain.entity.primary.Degrees
 import com.spectrum.workfolio.domain.entity.primary.Education
+import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.CertificationsRepository
 import com.spectrum.workfolio.domain.repository.CompanyRepository
 import com.spectrum.workfolio.domain.repository.DegreesRepository
 import com.spectrum.workfolio.domain.repository.EducationRepository
 import com.spectrum.workfolio.domain.repository.PositionRepository
 import com.spectrum.workfolio.domain.repository.SalaryRepository
+import com.spectrum.workfolio.proto.worker_career.WorkerCareerListResponse
 import com.spectrum.workfolio.proto.worker_career.WorkerCareerUpdateRequest
 import com.spectrum.workfolio.utils.TimeUtil
 import org.springframework.stereotype.Service
@@ -30,6 +32,18 @@ class WorkerCareerService(
     private val educationRepository: EducationRepository,
     private val certificationsRepository: CertificationsRepository,
 ) {
+
+    @Transactional(readOnly = true)
+    fun listCareers(workerId: String): WorkerCareerListResponse {
+        val worker = workerService.getWorker(workerId)
+        val data = this.loadExistingData(worker.id)
+        return WorkerCareerListResponse.newBuilder()
+            .addAllCompanies(data.companies.map { it.toProto() })
+            .addAllCertifications(data.certifications.map { it.toProto() })
+            .addAllDegrees(data.degrees.map { it.toProto() })
+            .addAllEducations(data.educations.map { it.toProto() })
+            .build()
+    }
 
     @Transactional
     fun updateCareer(workerId: String, request: WorkerCareerUpdateRequest) {

@@ -1,7 +1,7 @@
 package com.spectrum.workfolio.controllers
 
 import com.spectrum.workfolio.config.annotation.AuthenticatedUser
-import com.spectrum.workfolio.domain.extensions.toWorkerProto
+import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.proto.common.SuccessResponse
 import com.spectrum.workfolio.proto.worker.WorkerGetResponse
 import com.spectrum.workfolio.proto.worker.WorkerListResponse
@@ -10,7 +10,6 @@ import com.spectrum.workfolio.services.WorkerService
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -26,7 +25,7 @@ class WorkerController(
         @AuthenticatedUser workerId: String,
     ): WorkerGetResponse {
         val worker = workerService.getWorker(workerId)
-        return WorkerGetResponse.newBuilder().setWorker(worker.toWorkerProto()).build()
+        return WorkerGetResponse.newBuilder().setWorker(worker.toProto()).build()
     }
 
     @GetMapping("/{nickname}")
@@ -34,7 +33,7 @@ class WorkerController(
         @PathVariable nickname: String
     ): WorkerListResponse {
         val workers = workerService.getWorkersByNickName(nickname)
-        return WorkerListResponse.newBuilder().addAllWorkers(workers.map { it.toWorkerProto() }).build()
+        return WorkerListResponse.newBuilder().addAllWorkers(workers.map { it.toProto() }).build()
     }
 
     @PutMapping("/{nickname}")

@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+import "common.proto";
+
 package com.spectrum.workfolio.proto;
 
 option java_multiple_files = true;
@@ -54,4 +56,11 @@ message WorkerCareerUpdateRequest {
   repeated WorkerCertifications certifications = 2;
   repeated WorkerDegrees degrees = 3;
   repeated WorkerEducation educations = 4;
+}
+
+message WorkerCareerListResponse {
+  repeated Company companies = 1;
+  repeated Certifications certifications = 2;
+  repeated Degrees degrees = 3;
+  repeated Education educations = 4;
 }

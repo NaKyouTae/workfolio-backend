@@ -1,12 +1,17 @@
 package com.spectrum.workfolio.utils
 
 import java.time.Instant
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
 object TimeUtil {
     fun toEpochMilli(at: LocalDateTime): Long {
         return at.toInstant(ZoneOffset.UTC).toEpochMilli()
+    }
+
+    fun toEpochMilli(at: LocalDate): Long {
+        return at.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
     }
 
     fun ofEpochMilli(epochMilli: Long): LocalDateTime {

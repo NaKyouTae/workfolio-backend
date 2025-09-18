@@ -21,7 +21,7 @@ fun Record.toProtoResponse(): CreateRecordResponse {
 fun Record.toRecordProto(): com.spectrum.workfolio.proto.common.Record {
     val type = com.spectrum.workfolio.proto.common.Record.RecordType.valueOf(this.type.name)
     val recordGroup = this.recordGroup.toRecordGroupProto()
-    val worker = this.worker.toWorkerProto()
+    val worker = this.worker.toProto()
     return com.spectrum.workfolio.proto.common.Record.newBuilder()
         .setId(this.id)
         .setTitle(this.title)
