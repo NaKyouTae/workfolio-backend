@@ -6,4 +6,3 @@ object ProtobufJsonConverter {
     val parser = JsonFormat.parser().ignoringUnknownFields()!!
     val printer = JsonFormat.printer().omittingInsignificantWhitespace().includingDefaultValueFields()!!
 }
-

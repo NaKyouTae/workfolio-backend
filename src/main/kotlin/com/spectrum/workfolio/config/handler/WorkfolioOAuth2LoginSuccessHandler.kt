@@ -25,13 +25,14 @@ class WorkfolioOAuth2LoginSuccessHandler(
 
     @Value("\${token.httpOnly}")
     private lateinit var httpOnly: String
+
     @Value("\${token.secure}")
     private lateinit var secure: String
 
     override fun onAuthenticationSuccess(
         request: HttpServletRequest,
         response: HttpServletResponse,
-        authentication: Authentication
+        authentication: Authentication,
     ) {
         if (authentication is OAuth2AuthenticationToken) {
             val registrationId = authentication.authorizedClientRegistrationId
@@ -84,5 +85,3 @@ class WorkfolioOAuth2LoginSuccessHandler(
         response.addHeader("Set-Cookie", refreshTokenCookie.toString())
     }
 }
-
-

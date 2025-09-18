@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface EducationRepository: JpaRepository<Education, String> {
+interface EducationRepository : JpaRepository<Education, String> {
     fun findByNameAndWorkerId(name: String, workerId: String): Education?
     fun findByWorkerId(workerId: String): List<Education>
 }

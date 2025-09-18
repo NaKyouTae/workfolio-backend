@@ -2,8 +2,13 @@ package com.spectrum.workfolio.domain.entity.primary
 
 import com.spectrum.workfolio.domain.entity.BaseEntity
 import com.spectrum.workfolio.domain.entity.Worker
-import com.spectrum.workfolio.utils.TimeUtil
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
+import jakarta.persistence.Index
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.Table
 import java.time.LocalDate
 
 /**
@@ -14,8 +19,8 @@ import java.time.LocalDate
     name = "certifications",
     indexes = [
         Index(name = "idx_certifications_name", columnList = "name"),
-        Index(name = "idx_certifications_worker_id", columnList = "worker_id")
-    ]
+        Index(name = "idx_certifications_worker_id", columnList = "worker_id"),
+    ],
 )
 class Certifications(
     name: String,

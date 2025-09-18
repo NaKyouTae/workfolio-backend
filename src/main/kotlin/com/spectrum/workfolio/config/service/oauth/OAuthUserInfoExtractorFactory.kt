@@ -12,7 +12,7 @@ class OAuthUserInfoExtractorFactory(
     private val googleUserInfoExtractor: GoogleUserInfoExtractor,
     private val naverUserInfoExtractor: NaverUserInfoExtractor,
 ) {
-    
+
     /**
      * 제공자 타입에 따라 적절한 추출기를 반환합니다.
      */
@@ -23,7 +23,7 @@ class OAuthUserInfoExtractorFactory(
             SNSType.NAVER -> naverUserInfoExtractor
         }
     }
-    
+
     /**
      * 제공자 이름으로 추출기를 반환합니다.
      */
@@ -33,7 +33,7 @@ class OAuthUserInfoExtractorFactory(
         } catch (e: IllegalArgumentException) {
             throw OAuthProviderNotSupportedException(providerName)
         }
-        
+
         return getExtractor(snsType)
     }
 }

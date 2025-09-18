@@ -2,8 +2,6 @@ package com.spectrum.workfolio.config.filter
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.spectrum.workfolio.config.exception.JwtAuthenticationException
-import com.spectrum.workfolio.proto.error.ErrorResponse
-import com.spectrum.workfolio.utils.TimeUtil
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest

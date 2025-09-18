@@ -1,7 +1,6 @@
 package com.spectrum.workfolio.controllers
 
 import com.spectrum.workfolio.config.annotation.AuthenticatedUser
-import com.spectrum.workfolio.proto.common.Company
 import com.spectrum.workfolio.proto.common.SuccessResponse
 import com.spectrum.workfolio.proto.worker_career.WorkerCareerListResponse
 import com.spectrum.workfolio.proto.worker_career.WorkerCareerUpdateRequest
@@ -28,7 +27,7 @@ class WorkerCareerController(
     @PutMapping
     fun updateCareers(
         @AuthenticatedUser workerId: String,
-        @RequestBody request: WorkerCareerUpdateRequest
+        @RequestBody request: WorkerCareerUpdateRequest,
     ): SuccessResponse {
         workerCareerService.updateCareer(workerId, request)
         return SuccessResponse.newBuilder().setIsSuccess(true).build()

@@ -45,7 +45,7 @@ class RecordGroupController(
     @PostMapping
     fun createRecordGroup(
         @AuthenticatedUser workerId: String,
-        @RequestBody request: CreateRecordGroupRequest
+        @RequestBody request: CreateRecordGroupRequest,
     ): CreateRecordGroupResponse {
         val recordGroup = recordGroupService.createRecordGroup(workerId, request)
 
@@ -55,7 +55,7 @@ class RecordGroupController(
     @PostMapping("/join")
     fun joinRecordGroup(
         @AuthenticatedUser workerId: String,
-        @RequestBody request: JoinRecordGroupRequest
+        @RequestBody request: JoinRecordGroupRequest,
     ): SuccessResponse {
         recordGroupService.joinRecordGroup(workerId, request)
         return SuccessResponse.newBuilder().setIsSuccess(true).build()
@@ -65,7 +65,7 @@ class RecordGroupController(
     fun updateRecordGroup(
         @AuthenticatedUser workerId: String,
         @PathVariable recordGroupId: String,
-        @RequestBody request: UpdateRecordGroupRequest
+        @RequestBody request: UpdateRecordGroupRequest,
     ): SuccessResponse {
         recordGroupService.updateRecordGroup(workerId, recordGroupId, request)
 

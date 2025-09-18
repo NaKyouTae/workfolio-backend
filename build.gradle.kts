@@ -1,18 +1,88 @@
 import com.google.protobuf.gradle.id
+import io.gitlab.arturbosch.detekt.Detekt
+import io.gitlab.arturbosch.detekt.DetektCreateBaselineTask
+import io.gitlab.arturbosch.detekt.report.ReportMergeTask
 import java.util.*
 
+val detektVersion: String by project
+val ktlintVersion: String by project
+
 plugins {
-    kotlin("jvm") version "1.9.25"
-    kotlin("plugin.spring") version "1.9.25"
-    kotlin("plugin.jpa") version "1.9.25"
+    val kotlinVersion = "2.0.10"
+    val springBootVersion = "3.4.5"
+    val detektVersion = "1.23.7"
+
+    kotlin("jvm") version kotlinVersion
+    kotlin("plugin.spring") version kotlinVersion
+    kotlin("plugin.jpa") version kotlinVersion
     id("com.google.protobuf") version "0.9.4"
     id("org.liquibase.gradle") version "2.0.4"
-    id("org.springframework.boot") version "3.4.3"
+    id("org.springframework.boot") version springBootVersion
     id("io.spring.dependency-management") version "1.1.7"
+    id("io.gitlab.arturbosch.detekt") version detektVersion
+}
+
+val ktlint by configurations.creating
+
+dependencies {
+    ktlint("com.pinterest:ktlint:$ktlintVersion") {
+        attributes {
+            attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling.EXTERNAL))
+        }
+    }
+}
+val ktlintCheck by tasks.registering(JavaExec::class) {
+    inputs.files(rootProject.file(".editorconfig"), fileTree("src") { include("**/*.kt") })
+    outputs.dir("${project.layout.buildDirectory.dir("reports/ktlint")}")
+    group = LifecycleBasePlugin.VERIFICATION_GROUP
+    description = "Check Kotlin code style"
+    classpath = ktlint
+    mainClass.set("com.pinterest.ktlint.Main")
+    args(
+        "**/src/**/*.kt",
+        "**.kts",
+        "!**/build/**",
+    )
+}
+
+tasks.check {
+    dependsOn(ktlintCheck)
+}
+tasks.register<JavaExec>("ktlintFormat") {
+    group = LifecycleBasePlugin.VERIFICATION_GROUP
+    description = "Check Kotlin code style and format"
+    classpath = ktlint
+    mainClass.set("com.pinterest.ktlint.Main")
+    jvmArgs("--add-opens=java.base/java.lang=ALL-UNNAMED")
+    args(
+        "-F",
+        "**/src/**/*.kt",
+        "**.kts",
+        "!**/build/**",
+    )
+}
+
+// detekt
+val detektReportMergeSarif by tasks.registering(ReportMergeTask::class) {
+    output.set(layout.buildDirectory.file("reports/detekt/merge.sarif"))
 }
 
 group = "com.spectrum"
 version = "0.0.1-SNAPSHOT"
+
+detekt {
+    buildUponDefaultConfig = true
+    allRules = false
+    config.setFrom("$rootDir/config/detekt/detekt.yml")
+}
+
+tasks.withType<DetektCreateBaselineTask>().configureEach {
+    jvmTarget = "21"
+}
+
+detektReportMergeSarif {
+    input.from(tasks.withType<Detekt>().map { it.sarifReportFile })
+}
 
 java {
     toolchain {
@@ -25,8 +95,12 @@ repositories {
 }
 
 dependencies {
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:$detektVersion")
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-rules-libraries:$detektVersion")
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-rules-ruleauthors:$detektVersion")
+
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation ("org.springframework.boot:spring-boot-starter-batch")
+    implementation("org.springframework.boot:spring-boot-starter-batch")
     implementation("org.springframework.boot:spring-boot-starter-quartz")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-security")
@@ -44,7 +118,7 @@ dependencies {
     implementation("com.google.protobuf:protobuf-java:4.29.2") // protobuf 라이브러리
     implementation("com.google.protobuf:protobuf-java-util:4.29.2") // protobuf JSON 변환 유틸리티
 
-    testImplementation ("org.springframework.batch:spring-batch-test")
+    testImplementation("org.springframework.batch:spring-batch-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(module = "mockito-core")
@@ -99,12 +173,12 @@ protobuf {
     }
 }
 
-sourceSets{
-    getByName("main"){
+sourceSets {
+    getByName("main") {
         java {
             srcDirs(
                 "build/generated/source/proto/main/java",
-                "build/generated/source/proto/main/kotlin"
+                "build/generated/source/proto/main/kotlin",
             )
         }
     }
@@ -118,7 +192,7 @@ liquibase {
             "driver" to localConfig["spring.datasource.driver-class-name"],
             "username" to localConfig["spring.datasource.username"],
             "password" to localConfig["spring.datasource.password"],
-            "classpath" to "${projectDir}/src/main/resources",
+            "classpath" to "$projectDir/src/main/resources",
         )
     }
 }
@@ -129,5 +203,4 @@ try {
     val f = File("$rootDir/application.properties")
     localConfig.load(f.inputStream())
 } catch (ignored: java.io.IOException) {
-
 }

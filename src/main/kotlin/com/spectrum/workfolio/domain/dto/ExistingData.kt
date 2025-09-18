@@ -9,5 +9,5 @@ data class ExistingData(
     val companies: List<Company>,
     val certifications: List<Certifications>,
     val degrees: List<Degrees>,
-    val educations: List<Education>
+    val educations: List<Education>,
 )

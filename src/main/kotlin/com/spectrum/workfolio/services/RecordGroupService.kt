@@ -20,12 +20,14 @@ class RecordGroupService(
 
     @Transactional(readOnly = true)
     fun getRecordGroup(id: String): RecordGroup {
-        return recordGroupRepository.findById(id).orElseThrow { WorkfolioException(MsgKOR.NOT_FOUND_RECORD_GROUP.message) }
+        return recordGroupRepository.findById(id)
+            .orElseThrow { WorkfolioException(MsgKOR.NOT_FOUND_RECORD_GROUP.message) }
     }
 
     @Transactional(readOnly = true)
     fun getPublicRecordGroup(publicId: String): RecordGroup {
-        return recordGroupRepository.findByPublicId(publicId).orElseThrow { WorkfolioException(MsgKOR.NOT_FOUND_RECORD_GROUP.message) }
+        return recordGroupRepository.findByPublicId(publicId)
+            .orElseThrow { WorkfolioException(MsgKOR.NOT_FOUND_RECORD_GROUP.message) }
     }
 
     @Transactional(readOnly = true)
@@ -53,7 +55,7 @@ class RecordGroupService(
     @Transactional
     fun createRecordGroup(
         workerId: String,
-        params: CreateRecordGroupRequest
+        params: CreateRecordGroupRequest,
     ): RecordGroup {
         val worker = workerService.getWorker(workerId)
 
@@ -65,7 +67,7 @@ class RecordGroupService(
                 publicId = RecordGroup.generateShortPublicId(),
                 priority = params.priority,
                 worker = worker,
-            )
+            ),
         )
     }
 
@@ -73,12 +75,12 @@ class RecordGroupService(
     fun updateRecordGroup(
         workerId: String,
         recordGroupId: String,
-        request: UpdateRecordGroupRequest
+        request: UpdateRecordGroupRequest,
     ): RecordGroup {
         val recordGroup = this.getRecordGroup(recordGroupId)
         val workerRecordGroup = workerRecordGroupService.getWorkerRecordGroup(workerId, recordGroupId)
 
-        if(workerRecordGroup != null) {
+        if (workerRecordGroup != null) {
             throw WorkfolioException(MsgKOR.NOT_MATCH_RECORD_GROUP_EDITOR.message)
         }
 
@@ -93,12 +95,12 @@ class RecordGroupService(
 
         // 소유주만 멤버를 추가할수 있다.
         // TODO 권한이 생긴다면 권한에 맞게 멤버 추가 권한을 체크하는 로직 필요
-        if(recordGroup.worker.id != workerId) {
+        if (recordGroup.worker.id != workerId) {
             throw WorkfolioException(MsgKOR.NOT_MATCH_RECORD_GROUP_OWNER.message)
         }
 
         // 소유주가 가지고 있는 레코드 그룹에 멤버로 소유주가 들어가는 경우 방지
-        if(recordGroup.worker.id == request.targetWorkerId) {
+        if (recordGroup.worker.id == request.targetWorkerId) {
             throw WorkfolioException(MsgKOR.ALREADY_EXIST_WORKER_RECORD_GROUP.message)
         }
 
@@ -115,11 +117,11 @@ class RecordGroupService(
         val recordGroup = this.getRecordGroup(recordGroupId)
         val workerRecordGroup = workerRecordGroupService.getWorkerRecordGroup(workerId, recordGroupId)
 
-        if(recordGroup.worker.id != workerId) {
+        if (recordGroup.worker.id != workerId) {
             throw WorkfolioException(MsgKOR.NOT_OWNER_RECORD_GROUP.message)
         }
 
-        if(workerRecordGroup != null) {
+        if (workerRecordGroup != null) {
             throw WorkfolioException(MsgKOR.NOT_MATCH_RECORD_GROUP_EDITOR.message)
         }
 

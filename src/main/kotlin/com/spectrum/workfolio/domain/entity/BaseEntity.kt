@@ -1,7 +1,12 @@
 package com.spectrum.workfolio.domain.entity
 
 import com.spectrum.workfolio.utils.StringUtil
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.EntityListeners
+import jakarta.persistence.Id
+import jakarta.persistence.MappedSuperclass
+import jakarta.persistence.PostLoad
+import jakarta.persistence.PostPersist
 import org.hibernate.proxy.HibernateProxy
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
@@ -9,7 +14,7 @@ import org.springframework.data.domain.Persistable
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.io.Serializable
 import java.time.LocalDateTime
-import java.util.*
+import java.util.Objects
 import kotlin.jvm.Transient
 
 @MappedSuperclass
@@ -18,7 +23,7 @@ abstract class BaseEntity(
     prefix: String = "",
     createdAt: LocalDateTime = LocalDateTime.now(),
     updatedAt: LocalDateTime = LocalDateTime.now(),
-): Persistable<String> {
+) : Persistable<String> {
     @Id
     @Column(length = 16, nullable = false, updatable = false)
     private val id: String = StringUtil.generateUUID(prefix)

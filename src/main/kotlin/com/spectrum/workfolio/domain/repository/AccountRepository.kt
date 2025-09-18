@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository
 import java.util.Optional
 
 @Repository
-interface AccountRepository: JpaRepository<Account, String> {
+interface AccountRepository : JpaRepository<Account, String> {
     fun findByProviderId(providerId: String): Optional<Account>
     fun findByWorkerId(workerId: String): List<Account>
     fun findByWorkerIdAndType(workerId: String, type: AccountType): Optional<Account>

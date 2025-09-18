@@ -6,7 +6,10 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestHeader
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api")
@@ -15,6 +18,7 @@ class KakaoAuthController(
 ) {
     @Value("\${token.httpOnly}")
     private lateinit var tokenHttpOnly: String
+
     @Value("\${token.secure}")
     private lateinit var tokenSecure: String
 
@@ -27,7 +31,7 @@ class KakaoAuthController(
     fun kakaoLogout(
         @RequestHeader("Authorization") token: String,
         request: HttpServletRequest,
-        response: HttpServletResponse
+        response: HttpServletResponse,
     ): ResponseEntity<String> {
         val bearerToken = token.removePrefix("Bearer ")
 
@@ -41,13 +45,13 @@ class KakaoAuthController(
                 Cookie("JSESSIONID", null),
                 Cookie("accessToken", null),
                 Cookie("refreshToken", null),
-                Cookie("oauth2_auth_request", null)
+                Cookie("oauth2_auth_request", null),
             )
 
             expiredCookies.forEach { cookie ->
                 cookie.apply {
                     maxAge = 0 // 쿠키 만료
-                    path = "/"  // 모든 경로에서 유효
+                    path = "/" // 모든 경로에서 유효
                     domain = "localhost" // 도메인 설정 (프론트엔드와 서버가 같은 도메인에 있어야 함)
                     isHttpOnly = tokenHttpOnly.toBoolean() // 클라이언트 측 스크립트에서 접근할 수 없도록
                     secure = tokenSecure.toBoolean() // HTTPS가 아니라면 false 설정

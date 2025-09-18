@@ -9,7 +9,6 @@ import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.web.HttpMediaTypeNotSupportedException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
-import java.time.LocalDateTime
 
 @ControllerAdvice
 class GlobalExceptionHandler {

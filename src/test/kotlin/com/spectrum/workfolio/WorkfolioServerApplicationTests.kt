@@ -9,5 +9,4 @@ class WorkfolioServerApplicationTests {
     @Test
     fun contextLoads() {
     }
-
 }

@@ -1,6 +1,5 @@
 package com.spectrum.workfolio.config.handler
 
-import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.beans.factory.annotation.Value
@@ -12,10 +11,11 @@ import org.springframework.web.util.UriComponentsBuilder
 import java.io.IOException
 
 @Component
-class WorkfolioOAuth2LogoutSuccessHandler: LogoutSuccessHandler {
+class WorkfolioOAuth2LogoutSuccessHandler : LogoutSuccessHandler {
 
     @Value("\${token.httpOnly}")
     private lateinit var httpOnly: String
+
     @Value("\${token.secure}")
     private lateinit var tokenSecure: String
 
@@ -23,7 +23,7 @@ class WorkfolioOAuth2LogoutSuccessHandler: LogoutSuccessHandler {
     override fun onLogoutSuccess(
         request: HttpServletRequest,
         response: HttpServletResponse,
-        authentication: Authentication?
+        authentication: Authentication?,
     ) {
         println("Logout success === 1")
         removeTokenCookies(response)

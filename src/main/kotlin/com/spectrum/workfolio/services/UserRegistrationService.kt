@@ -24,9 +24,9 @@ class UserRegistrationService(
     private val accountService: AccountService,
     private val recordGroupService: RecordGroupService,
 ) {
-    
+
     private val logger = LoggerFactory.getLogger(UserRegistrationService::class.java)
-    
+
     /**
      * OAuth 사용자 정보를 기반으로 새 사용자를 등록합니다.
      * Worker, Account, 기본 RecordGroup, 기본 Record를 생성합니다.
@@ -34,47 +34,46 @@ class UserRegistrationService(
     @Transactional
     fun registerNewUser(
         oauthUserInfo: OAuthUserInfo,
-        accountType: AccountType
+        accountType: AccountType,
     ): Account {
         logger.info("새 사용자 등록 시작: providerId={}, name={}", oauthUserInfo.providerId, oauthUserInfo.name)
-        
+
         try {
             // 1. Worker 생성
             val worker = createWorker(oauthUserInfo)
-            
+
             // 2. 기본 RecordGroup 생성
             val recordGroup = createDefaultRecordGroup(worker.id)
 
             // 3. 기본 Record 생성
             createDefaultRecord(worker.id, recordGroup.id)
-            
+
             // 4. Account 생성
             val account = createAccount(oauthUserInfo, accountType, worker)
-            
+
             logger.info("새 사용자 등록 완료: workerId={}, accountId={}", worker.id, account.id)
             return account
-            
         } catch (e: Exception) {
             logger.error("사용자 등록 중 오류 발생: providerId={}", oauthUserInfo.providerId, e)
             throw UserRegistrationException(oauthUserInfo.providerId, e)
         }
     }
-    
+
     private fun createWorker(oauthUserInfo: OAuthUserInfo): Worker {
         val worker = Worker(name = oauthUserInfo.name, nickName = StringUtil.generateRandomString(8))
         return workerService.createWorker(worker)
     }
-    
+
     private fun createDefaultRecordGroup(workerId: String): RecordGroup {
         val recordGroupRequest = CreateRecordGroupRequest.newBuilder()
             .setColor("red")
             .setTitle("기본 그룹")
             .setPriority(0)
             .build()
-        
+
         return recordGroupService.createRecordGroup(workerId, recordGroupRequest)
     }
-    
+
     private fun createDefaultRecord(workerId: String, recordGroupId: String) {
         val now = TimeUtil.nowToLong()
         val recordRequest = CreateRecordRequest.newBuilder()
@@ -84,22 +83,22 @@ class UserRegistrationService(
             .setEndedAt(now)
             .setRecordGroupId(recordGroupId)
             .build()
-        
+
         recordService.create(workerId, recordRequest)
     }
-    
+
     private fun createAccount(
         oauthUserInfo: OAuthUserInfo,
         accountType: AccountType,
-        worker: Worker
+        worker: Worker,
     ): Account {
         val account = Account(
             type = accountType,
             email = oauthUserInfo.email,
             providerId = oauthUserInfo.providerId,
-            worker = worker
+            worker = worker,
         )
-        
+
         accountService.createAccount(account)
         return account
     }

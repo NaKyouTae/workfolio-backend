@@ -9,25 +9,25 @@ import org.springframework.stereotype.Component
  */
 @Component
 class NaverUserInfoExtractor : OAuthUserInfoExtractor {
-    
+
     private val logger = LoggerFactory.getLogger(NaverUserInfoExtractor::class.java)
-    
+
     override fun extractUserInfo(oauth2User: OAuth2User): OAuthUserInfo {
         return try {
             val response = oauth2User.attributes["response"] as? Map<*, *>
                 ?: throw OAuthUserInfoExtractionException("NAVER", IllegalArgumentException("response 정보가 없습니다"))
-            
+
             val providerId = response["id"]?.toString()
                 ?: throw OAuthUserInfoExtractionException("NAVER", IllegalArgumentException("id 정보가 없습니다"))
-            
+
             val name = response["name"]?.toString()
                 ?: throw OAuthUserInfoExtractionException("NAVER", IllegalArgumentException("name 정보가 없습니다"))
-            
+
             OAuthUserInfo(
                 providerId = providerId,
                 name = name,
                 email = response["email"]?.toString(),
-                profileImageUrl = response["profile_image"]?.toString()
+                profileImageUrl = response["profile_image"]?.toString(),
             )
         } catch (e: Exception) {
             logger.error("네이버 사용자 정보 추출 중 오류 발생", e)

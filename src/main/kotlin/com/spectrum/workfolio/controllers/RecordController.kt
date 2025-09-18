@@ -6,7 +6,12 @@ import com.spectrum.workfolio.proto.record.CreateRecordRequest
 import com.spectrum.workfolio.proto.record.CreateRecordResponse
 import com.spectrum.workfolio.proto.record.ListRecordResponse
 import com.spectrum.workfolio.services.RecordService
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/records")
@@ -36,7 +41,7 @@ class RecordController(
     @PostMapping
     fun createRecord(
         @AuthenticatedUser workerId: String,
-        @RequestBody params: CreateRecordRequest
+        @RequestBody params: CreateRecordRequest,
     ): CreateRecordResponse {
         val record = recordService.create(workerId, params)
         return record.toProtoResponse()

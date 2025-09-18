@@ -8,7 +8,7 @@ import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequ
 
 class CustomAuthorizationRequestResolver(
     clientRegistrationRepository: ClientRegistrationRepository,
-    private val authorizationRequestBaseUri: String
+    private val authorizationRequestBaseUri: String,
 ) : OAuth2AuthorizationRequestResolver {
 
     private val defaultResolver =

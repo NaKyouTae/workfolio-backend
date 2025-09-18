@@ -20,6 +20,5 @@ fun Company.toProto(): com.spectrum.workfolio.proto.common.Company {
         builder.setEndedAt(TimeUtil.toEpochMilli(this.endedAt!!))
     }
 
-
     return builder.build()
 }

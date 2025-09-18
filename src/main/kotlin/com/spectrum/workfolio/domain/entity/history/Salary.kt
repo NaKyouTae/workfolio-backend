@@ -1,7 +1,13 @@
 package com.spectrum.workfolio.domain.entity.history
 
 import com.spectrum.workfolio.domain.entity.BaseEntity
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
+import jakarta.persistence.Index
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.Table
 import java.time.LocalDate
 
 /**
@@ -12,8 +18,8 @@ import java.time.LocalDate
     name = "salary",
     indexes = [
         Index(name = "idx_salary_amount", columnList = "amount"),
-        Index(name = "idx_salary_company_id", columnList = "company_id")
-    ]
+        Index(name = "idx_salary_company_id", columnList = "company_id"),
+    ],
 )
 class Salary(
     amount: Long = 0,

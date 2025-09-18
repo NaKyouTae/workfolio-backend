@@ -2,10 +2,16 @@ package com.spectrum.workfolio.domain.entity.record
 
 import com.spectrum.workfolio.domain.entity.BaseEntity
 import com.spectrum.workfolio.domain.entity.Worker
-import jakarta.persistence.*
-import java.math.BigInteger
-import java.time.LocalDateTime
-import java.util.*
+import com.spectrum.workfolio.utils.StringUtil
+import jakarta.persistence.CascadeType
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
+import jakarta.persistence.Index
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToMany
+import jakarta.persistence.Table
 
 /**
  * 기록 그룹
@@ -15,7 +21,7 @@ import java.util.*
     name = "record_group",
     indexes = [
         Index(name = "idx_record_group_public_id", columnList = "public_id"),
-    ]
+    ],
 )
 class RecordGroup(
     title: String,
@@ -68,9 +74,8 @@ class RecordGroup(
 
     companion object {
         fun generateShortPublicId(): String {
-            val uuid = UUID.randomUUID().toString()
-            val number = uuid.replace("-", "").substring(0, 16).uppercase()
-            return "WORKFOLIO:$number"
+            val uuid = StringUtil.generateRandomString(16)
+            return "WORKFOLIO:$uuid"
         }
     }
 }

@@ -90,7 +90,10 @@ class WorkerCareerService(
         updateSalaries(existingCompany, companyReq.salariesList)
     }
 
-    private fun updatePositions(company: Company, newPositions: List<WorkerCareerUpdateRequest.WorkerCompany.WorkerCompanyPosition>) {
+    private fun updatePositions(
+        company: Company,
+        newPositions: List<WorkerCareerUpdateRequest.WorkerCompany.WorkerCompanyPosition>,
+    ) {
         val existingPositions = company.positions.associateBy { it.name }
         val newPositionNames = newPositions.map { it.name }.toSet()
 
@@ -122,9 +125,14 @@ class WorkerCareerService(
         }
     }
 
-    private fun updateSalaries(company: Company, newSalaries: List<WorkerCareerUpdateRequest.WorkerCompany.WorkerCompanySalary>) {
+    private fun updateSalaries(
+        company: Company,
+        newSalaries: List<WorkerCareerUpdateRequest.WorkerCompany.WorkerCompanySalary>,
+    ) {
         val existingSalaries = company.salaries.associateBy { it.amount.toString() + "_" + it.startedAt.toString() }
-        val newSalaryKeys = newSalaries.map { it.amount.toString() + "_" + TimeUtil.ofEpochMilli(it.startedAt).toLocalDate().toString() }.toSet()
+        val newSalaryKeys = newSalaries.map {
+            it.amount.toString() + "_" + TimeUtil.ofEpochMilli(it.startedAt).toLocalDate().toString()
+        }.toSet()
 
         // 삭제할 Salary 찾기
         val toDelete = existingSalaries.keys - newSalaryKeys
@@ -134,7 +142,8 @@ class WorkerCareerService(
 
         // 새로 추가하거나 업데이트할 Salary 처리
         newSalaries.forEach { salaryReq ->
-            val key = salaryReq.amount.toString() + "_" + TimeUtil.ofEpochMilli(salaryReq.startedAt).toLocalDate().toString()
+            val key =
+                salaryReq.amount.toString() + "_" + TimeUtil.ofEpochMilli(salaryReq.startedAt).toLocalDate().toString()
             val existing = existingSalaries[key]
             if (existing != null) {
                 // 업데이트
@@ -156,7 +165,11 @@ class WorkerCareerService(
         }
     }
 
-    private fun createOrUpdateCompany(worker: Worker, companiesList: List<WorkerCareerUpdateRequest.WorkerCompany>, existingCompanies: List<Company>) {
+    private fun createOrUpdateCompany(
+        worker: Worker,
+        companiesList: List<WorkerCareerUpdateRequest.WorkerCompany>,
+        existingCompanies: List<Company>,
+    ) {
         val existingCompanyMap = existingCompanies.associateBy { it.name }
 
         companiesList.forEach { companyReq ->
@@ -170,7 +183,11 @@ class WorkerCareerService(
         }
     }
 
-    private fun createOrUpdateCertifications(worker: Worker, certificationsList: List<WorkerCareerUpdateRequest.WorkerCertifications>, existingCertifications: List<Certifications>) {
+    private fun createOrUpdateCertifications(
+        worker: Worker,
+        certificationsList: List<WorkerCareerUpdateRequest.WorkerCertifications>,
+        existingCertifications: List<Certifications>,
+    ) {
         val existingMap = existingCertifications.associateBy { it.name }
 
         certificationsList.forEach { req ->
@@ -184,7 +201,11 @@ class WorkerCareerService(
         }
     }
 
-    private fun createOrUpdateDegrees(worker: Worker, degreesList: List<WorkerCareerUpdateRequest.WorkerDegrees>, existingDegrees: List<Degrees>) {
+    private fun createOrUpdateDegrees(
+        worker: Worker,
+        degreesList: List<WorkerCareerUpdateRequest.WorkerDegrees>,
+        existingDegrees: List<Degrees>,
+    ) {
         val existingMap = existingDegrees.associateBy { it.name }
 
         degreesList.forEach { req ->
@@ -198,7 +219,11 @@ class WorkerCareerService(
         }
     }
 
-    private fun createOrUpdateEducations(worker: Worker, educationsList: List<WorkerCareerUpdateRequest.WorkerEducation>, existingEducations: List<Education>) {
+    private fun createOrUpdateEducations(
+        worker: Worker,
+        educationsList: List<WorkerCareerUpdateRequest.WorkerEducation>,
+        existingEducations: List<Education>,
+    ) {
         val existingMap = existingEducations.associateBy { it.name }
 
         educationsList.forEach { req ->
@@ -308,6 +333,8 @@ class WorkerCareerService(
     private fun calEndedAt(endedAt: Long): LocalDateTime? {
         return if (endedAt != 0L) {
             TimeUtil.ofEpochMilli(endedAt)
-        } else null
+        } else {
+            null
+        }
     }
 }

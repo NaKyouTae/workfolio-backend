@@ -44,9 +44,14 @@ class RecordService(
         return getRecordByDateRange(weekStart, weekEnd, recordGroupIds)
     }
 
-    private fun getRecordByDateRange(startDate: LocalDateTime, endDate: LocalDateTime, recordGroupIds: List<String>): ListRecordResponse {
+    private fun getRecordByDateRange(
+        startDate: LocalDateTime,
+        endDate: LocalDateTime,
+        recordGroupIds: List<String>,
+    ): ListRecordResponse {
         val list = recordRepository.findByDateRange(recordGroupIds, startDate, endDate)
-        val sortedList = list.sortedWith(compareBy<Record> { it.startedAt.toLocalDate() }.thenByDescending { it.getDuration() })
+        val sortedList =
+            list.sortedWith(compareBy<Record> { it.startedAt.toLocalDate() }.thenByDescending { it.getDuration() })
         val listResponse = sortedList.map { it.toRecordProto() }
 
         return ListRecordResponse.newBuilder().addAllRecords(listResponse).build()
@@ -86,7 +91,7 @@ class RecordService(
 
         return Pair(
             weekStart.atStartOfDay(),
-            weekEnd.atTime(23, 59, 59)
+            weekEnd.atTime(23, 59, 59),
         )
     }
 }

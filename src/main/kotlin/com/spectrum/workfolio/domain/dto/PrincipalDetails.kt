@@ -6,7 +6,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User
 
 class PrincipalDetails(
     private val name: String,
-    private val oAuth2User: OAuth2User
+    private val oAuth2User: OAuth2User,
 ) : OAuth2User {
 
     override fun getAuthorities(): Collection<GrantedAuthority> {
@@ -21,4 +21,3 @@ class PrincipalDetails(
         return oAuth2User.attributes
     }
 }
-

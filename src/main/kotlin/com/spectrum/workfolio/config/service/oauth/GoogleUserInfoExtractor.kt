@@ -9,24 +9,24 @@ import org.springframework.stereotype.Component
  */
 @Component
 class GoogleUserInfoExtractor : OAuthUserInfoExtractor {
-    
+
     private val logger = LoggerFactory.getLogger(GoogleUserInfoExtractor::class.java)
-    
+
     override fun extractUserInfo(oauth2User: OAuth2User): OAuthUserInfo {
         return try {
             val attributes = oauth2User.attributes
-            
+
             val providerId = attributes["sub"]?.toString()
                 ?: throw OAuthUserInfoExtractionException("GOOGLE", IllegalArgumentException("sub 정보가 없습니다"))
-            
+
             val name = attributes["name"]?.toString()
                 ?: throw OAuthUserInfoExtractionException("GOOGLE", IllegalArgumentException("name 정보가 없습니다"))
-            
+
             OAuthUserInfo(
                 providerId = providerId,
                 name = name,
                 email = attributes["email"]?.toString(),
-                profileImageUrl = attributes["picture"]?.toString()
+                profileImageUrl = attributes["picture"]?.toString(),
             )
         } catch (e: Exception) {
             logger.error("구글 사용자 정보 추출 중 오류 발생", e)

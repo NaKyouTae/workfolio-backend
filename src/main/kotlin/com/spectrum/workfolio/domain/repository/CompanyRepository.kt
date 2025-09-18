@@ -6,8 +6,9 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
 
 @Repository
-interface CompanyRepository: JpaRepository<Company, String> {
+interface CompanyRepository : JpaRepository<Company, String> {
     fun findByNameAndWorkerId(name: String, workerId: String): Company?
+
     @Query("SELECT c FROM Company c WHERE c.worker.id = :workerId")
     fun findByWorkerId(workerId: String): List<Company>
 }

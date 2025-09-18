@@ -14,7 +14,6 @@ import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter
 import org.springframework.http.converter.protobuf.ProtobufJsonFormatHttpMessageConverter
 import java.io.IOException
 
-
 @Configuration
 @EnableJpaAuditing
 class CommonConfig {

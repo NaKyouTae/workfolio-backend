@@ -18,14 +18,19 @@ class OAuth2AuthorizationRequestBasedOnCookieRepository : AuthorizationRequestRe
     override fun saveAuthorizationRequest(
         authorizationRequest: OAuth2AuthorizationRequest?,
         request: HttpServletRequest,
-        response: HttpServletResponse
+        response: HttpServletResponse,
     ) {
         if (authorizationRequest == null) {
             removeAuthorizationRequestCookies(request, response)
             return
         }
 
-        CookieUtils.addCookie(response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME, CookieUtils.serialize(authorizationRequest), COOKIE_EXPIRE_SECONDS)
+        CookieUtils.addCookie(
+            response,
+            OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME,
+            CookieUtils.serialize(authorizationRequest),
+            COOKIE_EXPIRE_SECONDS,
+        )
     }
 
     override fun loadAuthorizationRequest(request: HttpServletRequest): OAuth2AuthorizationRequest? {
@@ -51,5 +56,3 @@ class OAuth2AuthorizationRequestBasedOnCookieRepository : AuthorizationRequestRe
         CookieUtils.deleteCookie(request, response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME)
     }
 }
-
-

@@ -1,8 +1,6 @@
 package com.spectrum.workfolio.domain.entity
 
 import com.spectrum.workfolio.domain.entity.history.Company
-import com.spectrum.workfolio.domain.entity.history.Position
-import com.spectrum.workfolio.domain.entity.history.Salary
 import com.spectrum.workfolio.domain.entity.primary.Account
 import com.spectrum.workfolio.domain.entity.primary.Certifications
 import com.spectrum.workfolio.domain.entity.primary.Degrees
@@ -10,7 +8,12 @@ import com.spectrum.workfolio.domain.entity.primary.Education
 import com.spectrum.workfolio.domain.entity.record.Record
 import com.spectrum.workfolio.domain.entity.record.RecordGroup
 import com.spectrum.workfolio.domain.entity.record.WorkerRecordGroup
-import jakarta.persistence.*
+import jakarta.persistence.CascadeType
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.Index
+import jakarta.persistence.OneToMany
+import jakarta.persistence.Table
 
 /**
  * 직장인
@@ -21,12 +24,12 @@ import jakarta.persistence.*
     indexes = [
         Index(name = "idx_worker_name", columnList = "name"),
         Index(name = "idx_worker_nick_name", columnList = "nick_name"),
-    ]
+    ],
 )
 class Worker(
     name: String,
     nickName: String? = null,
-): BaseEntity("WK") {
+) : BaseEntity("WK") {
     @Column(name = "name", length = 256, nullable = false)
     var name: String = name
         protected set

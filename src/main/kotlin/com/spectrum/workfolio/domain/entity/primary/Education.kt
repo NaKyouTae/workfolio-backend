@@ -2,7 +2,13 @@ package com.spectrum.workfolio.domain.entity.primary
 
 import com.spectrum.workfolio.domain.entity.BaseEntity
 import com.spectrum.workfolio.domain.entity.Worker
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
+import jakarta.persistence.Index
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.Table
 import java.time.LocalDate
 
 /**
@@ -13,8 +19,8 @@ import java.time.LocalDate
     name = "educations",
     indexes = [
         Index(name = "idx_educations_name", columnList = "name"),
-        Index(name = "idx_educations_worker_id", columnList = "worker_id")
-    ]
+        Index(name = "idx_educations_worker_id", columnList = "worker_id"),
+    ],
 )
 class Education(
     name: String,
@@ -22,22 +28,22 @@ class Education(
     endedAt: LocalDate? = null,
     agency: String,
     worker: Worker,
-): BaseEntity("ED") {
+) : BaseEntity("ED") {
     @Column(name = "name", nullable = false)
     var name: String = name
         protected set
 
     @Column(name = "started_at", nullable = false)
     var startedAt: LocalDate = startedAt
-    protected set
+        protected set
 
     @Column(name = "ended_at", nullable = true)
     var endedAt: LocalDate? = endedAt
-    protected set
+        protected set
 
     @Column(name = "agency", nullable = false)
     var agency: String = agency
-    protected set
+        protected set
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "worker_id", nullable = false)

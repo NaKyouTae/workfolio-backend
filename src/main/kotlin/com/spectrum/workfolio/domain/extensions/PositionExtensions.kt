@@ -16,6 +16,5 @@ fun Position.toProto(): com.spectrum.workfolio.proto.common.Position {
         builder.setEndedAt(TimeUtil.toEpochMilli(this.endedAt!!))
     }
 
-
     return builder.build()
 }

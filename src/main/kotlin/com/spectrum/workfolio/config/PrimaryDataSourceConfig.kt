@@ -22,7 +22,7 @@ import javax.sql.DataSource
 @EnableJpaRepositories(
     basePackages = ["com.spectrum.workfolio"],
     entityManagerFactoryRef = "primaryEntityManager",
-    transactionManagerRef = "primaryTransactionManager"
+    transactionManagerRef = "primaryTransactionManager",
 )
 class PrimaryDataSourceConfig {
     @Value("\${spring.jpa.database-platform}")
@@ -96,13 +96,13 @@ class PrimaryDataSourceConfig {
                     "hibernate.order_inserts" to orderInserts,
                     "hibernate.order_deletes" to orderDeletes,
                     "hibernate.order_updates" to orderUpdates,
-                )
+                ),
             )
             jpaPropertyMap.putAll(
                 HibernateProperties().determineHibernateProperties(
                     JpaProperties().properties,
                     HibernateSettings(),
-                )
+                ),
             )
         }
 
@@ -126,4 +126,3 @@ class PrimaryDataSourceConfig {
         return liquibase
     }
 }
-

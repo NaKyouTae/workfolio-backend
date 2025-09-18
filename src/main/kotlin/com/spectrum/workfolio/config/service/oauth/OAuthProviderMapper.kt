@@ -7,7 +7,7 @@ import com.spectrum.workfolio.domain.model.SNSType
  * OAuth 제공자 이름과 AccountType, SNSType 간의 매핑을 담당하는 유틸리티
  */
 object OAuthProviderMapper {
-    
+
     /**
      * 제공자 이름을 SNSType으로 변환합니다.
      */
@@ -18,7 +18,7 @@ object OAuthProviderMapper {
             throw OAuthProviderNotSupportedException(providerName)
         }
     }
-    
+
     /**
      * 제공자 이름을 AccountType으로 변환합니다.
      */
@@ -29,7 +29,7 @@ object OAuthProviderMapper {
             throw OAuthProviderNotSupportedException(providerName)
         }
     }
-    
+
     /**
      * SNSType을 AccountType으로 변환합니다.
      */

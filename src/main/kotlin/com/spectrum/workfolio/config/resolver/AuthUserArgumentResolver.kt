@@ -17,17 +17,18 @@ class AuthUserArgumentResolver(
 
     override fun supportsParameter(parameter: MethodParameter): Boolean {
         return parameter.hasParameterAnnotation(AuthenticatedUser::class.java) &&
-                parameter.parameterType == String::class.java
+            parameter.parameterType == String::class.java
     }
 
     override fun resolveArgument(
         parameter: MethodParameter,
         mavContainer: ModelAndViewContainer?,
         webRequest: NativeWebRequest,
-        binderFactory: WebDataBinderFactory?
+        binderFactory: WebDataBinderFactory?,
     ): Any? {
         val request: HttpServletRequest = webRequest.getNativeRequest(HttpServletRequest::class.java)!!
-        val token = request.getHeader("Authorization")?.removePrefix("Bearer ") ?: throw IllegalArgumentException("토큰이 없습니다.")
+        val token = request.getHeader("Authorization")?.removePrefix("Bearer ")
+            ?: throw IllegalArgumentException("토큰이 없습니다.")
 
         return jwtTokenProvider.getDataFromToken(token, "id") as String
     }

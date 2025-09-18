@@ -18,6 +18,5 @@ fun Degrees.toProto(): com.spectrum.workfolio.proto.common.Degrees {
         builder.setEndedAt(TimeUtil.toEpochMilli(this.endedAt!!))
     }
 
-
     return builder.build()
 }

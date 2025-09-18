@@ -16,6 +16,5 @@ fun Salary.toProto(): com.spectrum.workfolio.proto.common.Salary {
         builder.setEndedAt(TimeUtil.toEpochMilli(this.endedAt!!))
     }
 
-
     return builder.build()
 }

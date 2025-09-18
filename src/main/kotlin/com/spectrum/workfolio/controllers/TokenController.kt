@@ -2,7 +2,6 @@ package com.spectrum.workfolio.controllers
 
 import com.spectrum.workfolio.proto.token.TokenResponse
 import com.spectrum.workfolio.services.AuthService
-import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping

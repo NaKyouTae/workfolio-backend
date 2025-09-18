@@ -47,10 +47,10 @@ class WorkfolioOAuth2UserService(
         // 1. 제공자별 사용자 정보 추출
         val extractor = oauthUserInfoExtractorFactory.getExtractorByProviderName(providerName)
         val oauthUserInfo = extractor.extractUserInfo(oauth2User)
-        
+
         // 2. 기존 계정 확인
         val existingAccount = accountService.getAccountByProviderId(oauthUserInfo.providerId)
-        
+
         if (existingAccount.isEmpty) {
             // 3. 새 사용자 등록
             val accountType = OAuthProviderMapper.toAccountType(providerName)

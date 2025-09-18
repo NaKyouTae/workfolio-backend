@@ -4,7 +4,12 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.spectrum.workfolio.domain.model.KakaoDTO
 import com.spectrum.workfolio.domain.model.KakaoTokenResponse
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.http.*
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpMethod
+import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
@@ -13,7 +18,7 @@ import org.springframework.web.client.RestTemplate
 
 @Component
 class KakaoUtil(
-    private val restTemplate: RestTemplate
+    private val restTemplate: RestTemplate,
 ) {
     @Value("\${spring.security.oauth2.client.registration.kakao.client-id}")
     private lateinit var clientId: String
@@ -23,7 +28,7 @@ class KakaoUtil(
 
     @Value("\${spring.security.oauth2.client.registration.kakao.redirect-uri}")
     private lateinit var redirectUri: String
-    
+
     @Value("\${kakao.api.admin-key}")
     private lateinit var adminKey: String
 
@@ -47,7 +52,7 @@ class KakaoUtil(
             "https://kauth.kakao.com/oauth/token",
             HttpMethod.POST,
             requestEntity,
-            KakaoTokenResponse::class.java
+            KakaoTokenResponse::class.java,
         )
 
         return responseEntity.body
@@ -65,7 +70,7 @@ class KakaoUtil(
             "https://kapi.kakao.com/v2/user/me",
             HttpMethod.GET,
             kakaoProfileRequest,
-            String::class.java
+            String::class.java,
         )
 
         return objectMapper.readValue(response.body, KakaoDTO::class.java)
@@ -86,9 +91,9 @@ class KakaoUtil(
         try {
             val responseEntity = restTemplate.exchange(
                 "https://kauth.kakao.com/oauth/logout",
-                HttpMethod.GET,  // 로그아웃 API는 GET 요청 사용
+                HttpMethod.GET, // 로그아웃 API는 GET 요청 사용
                 requestEntity,
-                String::class.java
+                String::class.java,
             )
 
             println("Response: ${responseEntity.body}")

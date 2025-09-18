@@ -1,16 +1,15 @@
 package com.spectrum.workfolio.config
 
 import com.spectrum.workfolio.config.entry.WorkfolioAuthenticationEntryPoint
-import com.spectrum.workfolio.config.filter.JwtExceptionFilter
 import com.spectrum.workfolio.config.filter.JwtAuthenticationFilter
+import com.spectrum.workfolio.config.filter.JwtExceptionFilter
 import com.spectrum.workfolio.config.handler.WorkfolioAccessDeniedHandler
-import com.spectrum.workfolio.config.handler.WorkfolioOAuth2LogoutSuccessHandler
 import com.spectrum.workfolio.config.handler.WorkfolioOAuth2LoginFailureHandler
 import com.spectrum.workfolio.config.handler.WorkfolioOAuth2LoginSuccessHandler
+import com.spectrum.workfolio.config.handler.WorkfolioOAuth2LogoutSuccessHandler
 import com.spectrum.workfolio.config.provider.JwtTokenProvider
 import com.spectrum.workfolio.config.repository.OAuth2AuthorizationRequestBasedOnCookieRepository
 import com.spectrum.workfolio.config.resolver.CustomAuthorizationRequestResolver
-import com.spectrum.workfolio.config.service.WorkerDetailService
 import com.spectrum.workfolio.config.service.WorkfolioOAuth2UserService
 import com.spectrum.workfolio.redis.service.RedisBlackAccessTokenService
 import org.springframework.context.annotation.Bean
@@ -31,7 +30,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @EnableMethodSecurity(securedEnabled = true, prePostEnabled = true)
 class SecurityConfig(
     private val jwtTokenProvider: JwtTokenProvider,
-    private val workerDetailsService: WorkerDetailService,
     private val clientRegistrationRepository: ClientRegistrationRepository,
     private val redisBlackAccessTokenService: RedisBlackAccessTokenService,
     private val workfolioAuthenticationEntryPoint: WorkfolioAuthenticationEntryPoint,
@@ -45,11 +43,21 @@ class SecurityConfig(
 
     @Bean
     fun filterChain(http: HttpSecurity) = http
-        .csrf { it.disable() } // csrf 비활성화 -> cookie를 사용하지 않으면 꺼도 된다. (cookie를 사용할 경우 httpOnly(XSS 방어), sameSite(CSRF 방어)로 방어해야 한다.)
-        .httpBasic { it.disable() } // csrf 비활성화 -> cookie를 사용하지 않으면 꺼도 된다. (cookie를 사용할 경우 httpOnly(XSS 방어), sameSite(CSRF 방어)로 방어해야 한다.)
-        .formLogin { it.disable() } // csrf 비활성화 -> cookie를 사용하지 않으면 꺼도 된다. (cookie를 사용할 경우 httpOnly(XSS 방어), sameSite(CSRF 방어)로 방어해야 한다.)
-        .headers { it.frameOptions { frameOptions -> frameOptions.disable() } }
-        .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
+        .csrf {
+            it.disable()
+        } // csrf 비활성화 -> cookie를 사용하지 않으면 꺼도 된다. (cookie를 사용할 경우 httpOnly(XSS 방어), sameSite(CSRF 방어)로 방어해야 한다.)
+        .httpBasic {
+            it.disable()
+        } // csrf 비활성화 -> cookie를 사용하지 않으면 꺼도 된다. (cookie를 사용할 경우 httpOnly(XSS 방어), sameSite(CSRF 방어)로 방어해야 한다.)
+        .formLogin {
+            it.disable()
+        } // csrf 비활성화 -> cookie를 사용하지 않으면 꺼도 된다. (cookie를 사용할 경우 httpOnly(XSS 방어), sameSite(CSRF 방어)로 방어해야 한다.)
+        .headers {
+            it.frameOptions { frameOptions -> frameOptions.disable() }
+        }
+        .sessionManagement {
+            it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        }
         .authorizeHttpRequests {
             it
                 .requestMatchers("/api/oauth2/**").permitAll()
@@ -70,8 +78,8 @@ class SecurityConfig(
                         .authorizationRequestResolver(
                             CustomAuthorizationRequestResolver(
                                 clientRegistrationRepository,
-                                "/oauth2/authorization"
-                            )
+                                "/oauth2/authorization",
+                            ),
                         )
                 }
         }

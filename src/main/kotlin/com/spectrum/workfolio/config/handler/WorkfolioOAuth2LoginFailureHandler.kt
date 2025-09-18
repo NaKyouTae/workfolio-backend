@@ -9,7 +9,11 @@ import org.springframework.web.util.UriComponentsBuilder
 
 @Component
 class WorkfolioOAuth2LoginFailureHandler : AuthenticationFailureHandler {
-    override fun onAuthenticationFailure(request: HttpServletRequest, response: HttpServletResponse, exception: AuthenticationException) {
+    override fun onAuthenticationFailure(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        exception: AuthenticationException,
+    ) {
         println("Authentication failure: ${exception.message}")
         val code = request.getParameter("code")
         println("Received authorization code: $code")
@@ -22,5 +26,3 @@ class WorkfolioOAuth2LoginFailureHandler : AuthenticationFailureHandler {
         return UriComponentsBuilder.fromUriString("http://localhost:3000/error").toUriString()
     }
 }
-
-

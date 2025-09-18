@@ -1,11 +1,9 @@
 package com.spectrum.workfolio.utils
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.util.SerializationUtils
-import org.springframework.web.util.WebUtils
 import java.util.*
 
 // 예시로 CookieUtil에 대한 직렬화 및 역직렬화 구현
@@ -43,4 +41,3 @@ object CookieUtils {
         return cls.cast(SerializationUtils.deserialize(Base64.getUrlDecoder().decode(cookie.value)))
     }
 }
-

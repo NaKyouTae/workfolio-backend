@@ -1,9 +1,7 @@
 package com.spectrum.workfolio.services
 
-import com.spectrum.workfolio.config.service.oauth.KakaoApiProvider
 import com.spectrum.workfolio.domain.entity.Worker
 import com.spectrum.workfolio.domain.entity.primary.Account
-import com.spectrum.workfolio.domain.entity.record.RecordGroup
 import com.spectrum.workfolio.domain.model.AccountType
 import com.spectrum.workfolio.domain.repository.AccountRepository
 import com.spectrum.workfolio.domain.repository.WorkerRepository
@@ -39,7 +37,7 @@ class WorkerServiceCascadeTest {
         val account = Account(
             type = AccountType.KAKAO,
             providerId = "test123",
-            worker = savedWorker
+            worker = savedWorker,
         )
         accountRepository.save(account)
 
@@ -49,7 +47,7 @@ class WorkerServiceCascadeTest {
         // Then
         // Worker가 삭제되었는지 확인
         assert(!workerRepository.existsById(savedWorker.id))
-        
+
         // 관련 Account도 삭제되었는지 확인
         assert(accountRepository.findByWorkerId(savedWorker.id).isEmpty())
     }
