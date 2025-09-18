@@ -11,8 +11,8 @@ message Worker {
   string name = 2;
   string nick_name = 3;
 
-  uint64 created_at = 100;
-  uint64 updated_at = 101;
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
 }
 
 message Company {
@@ -24,32 +24,32 @@ message Company {
   bool is_working = 6;
   Worker worker = 7;
 
-  uint64 created_at = 100;
-  uint64 updated_at = 101;
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
 }
 
 message Position {
   string id = 1;
-  string public_id = 2;
-  string name = 3;
-  uint64 started_at = 4;
-  uint64 ended_at = 5;
-  Company company = 6;
+  string name = 2;
+  uint64 started_at = 3;
+  uint64 ended_at = 4;
 
-  uint64 created_at = 100;
-  uint64 updated_at = 101;
+  Company company = 50;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
 }
 
 message Salary {
   string id = 1;
-  string public_id = 2;
-  uint64 amount = 3;
+  uint64 amount = 2;
   uint64 started_at = 4;
   uint64 ended_at = 5;
-  Company company = 6;
 
-  uint64 created_at = 100;
-  uint64 updated_at = 101;
+  Company company = 50;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
 }
 
 message Account {
@@ -63,10 +63,11 @@ message Account {
   AccountType type = 2;
   string provider_id = 3;
   string email = 4;
-  Worker worker = 5;
 
-  uint64 created_at = 100;
-  uint64 updated_at = 101;
+  Worker worker = 50;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
 }
 
 message Certifications {
@@ -76,10 +77,11 @@ message Certifications {
   string issuer = 4;
   uint64 issued_at = 5;
   uint64 expiration_period = 6;
-  Worker worker = 7;
 
-  uint64 created_at = 100;
-  uint64 updated_at = 101;
+  Worker worker = 50;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
 }
 
 message Degrees {
@@ -88,10 +90,11 @@ message Degrees {
   string major = 3;
   uint64 started_at = 4;
   uint64 ended_at = 5;
-  Worker worker = 6;
 
-  uint64 created_at = 100;
-  uint64 updated_at = 101;
+  Worker worker = 50;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
 }
 
 message Education {
@@ -100,10 +103,11 @@ message Education {
   uint64 started_at = 3;
   uint64 ended_at = 4;
   string agency = 5;
-  Worker worker = 6;
 
-  uint64 created_at = 100;
-  uint64 updated_at = 101;
+  Worker worker = 50;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
 }
 
 message Record {
@@ -121,10 +125,11 @@ message Record {
   uint64 started_at = 5;
   uint64 ended_at = 6;
   RecordGroup record_group = 7;
-  Worker worker = 8;
 
-  uint64 created_at = 100;
-  uint64 updated_at = 101;
+  Worker worker = 50;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
 }
 
 message RecordGroup {
@@ -134,8 +139,21 @@ message RecordGroup {
   string public_id = 4;
   string color = 5;
 
-  uint64 priority = 96;
-  Worker worker = 97;
+  uint64 priority = 30;
+
+  Worker worker = 50;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
+}
+
+message WorkerRecordGroup {
+  string id = 1;
+  string public_id = 2;
+
+  Worker worker = 50;
+  RecordGroup record_group = 51;
+
   uint64 created_at = 98;
   uint64 updated_at = 99;
 }

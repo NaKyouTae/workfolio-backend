@@ -36,4 +36,10 @@ class Salary(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id", nullable = false)
     var company: Company = company
+
+    fun changeInfo(amount: Long, startedAt: LocalDate, endedAt: LocalDate?) {
+        this.amount = amount
+        this.startedAt = startedAt
+        this.endedAt = endedAt
+    }
 }

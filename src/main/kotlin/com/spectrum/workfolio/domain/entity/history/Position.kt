@@ -21,7 +21,7 @@ class Position(
     endedAt: LocalDate? = null,
     company: Company,
 ): BaseEntity("PO") {
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     var name: String = name
         protected set
 
@@ -36,4 +36,9 @@ class Position(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id", nullable = false)
     var company: Company = company
+
+    fun changeInfo(startedAt: LocalDate, endedAt: LocalDate?) {
+        this.startedAt = startedAt
+        this.endedAt = endedAt
+    }
 }

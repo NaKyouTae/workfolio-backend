@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface CertificationsRepository: JpaRepository<Certifications, String> {
+    fun findByNameAndWorkerId(name: String, workerId: String): Certifications?
+    fun findByWorkerId(workerId: String): List<Certifications>
 }

@@ -50,6 +50,65 @@ databaseChangeLog:
             unique: true
 
         - createTable:
+            tableName: record_group
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: VARCHAR(256)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: color
+                  type: VARCHAR(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_public
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: public_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: priority
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: worker_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+        - createIndex:
+            columns:
+              - column:
+                  name: public_id
+            indexName: idx_record_group_public_id
+            tableName: record_group
+
+        - createTable:
             tableName: record
             columns:
               - column:
@@ -125,6 +184,131 @@ databaseChangeLog:
                   name: started_at
             indexName: idx_record_record_group_id_started_at
             tableName: record
+
+        - createTable:
+            tableName: worker_record_group
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: public_id
+                  type: VARCHAR(256)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: worker_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: record_group_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+        - createIndex:
+            columns:
+              - column:
+                  name: public_id
+            indexName: idx_record_group_public_id
+            tableName: worker_record_group
+        - createIndex:
+            columns:
+              - column:
+                  name: worker_id
+            indexName: idx_record_group_worker_id
+            tableName: worker_record_group
+        - createIndex:
+            columns:
+              - column:
+                  name: record_group_id
+            indexName: idx_record_group_record_group_id
+            tableName: worker_record_group
+        - createIndex:
+            columns:
+              - column:
+                  name: worker_id
+              - column:
+                  name: record_group_id
+            indexName: idx_record_group_worker_id_record_group_id
+            tableName: worker_record_group
+
+        - createTable:
+            tableName: company
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(256)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: started_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: ended_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: true
+              - column:
+                  name: is_working
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: worker_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+        - createIndex:
+            columns:
+              - column:
+                  name: name
+            indexName: idx_company_name
+            tableName: company
+            unique: true
+        - createIndex:
+            columns:
+              - column:
+                  name: worker_id
+            indexName: idx_company_worker_id
+            tableName: company
 
         - createTable:
             tableName: salary
@@ -227,6 +411,7 @@ databaseChangeLog:
                   name: name
             indexName: idx_position_name
             tableName: position
+            unique: true
         - createIndex:
             columns:
               - column:
@@ -286,6 +471,7 @@ databaseChangeLog:
                   name: name
             indexName: idx_educations_name
             tableName: educations
+            unique: true
         - createIndex:
             columns:
               - column:
@@ -345,71 +531,13 @@ databaseChangeLog:
                   name: name
             indexName: idx_degrees_name
             tableName: degrees
+            unique: true
         - createIndex:
             columns:
               - column:
                   name: worker_id
             indexName: idx_degrees_worker_id
             tableName: degrees
-
-        - createTable:
-            tableName: company
-            columns:
-              - column:
-                  name: id
-                  type: VARCHAR(16)
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: name
-                  type: VARCHAR(256)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: started_at
-                  type: TIMESTAMP
-                  constraints:
-                    nullable: false
-              - column:
-                  name: ended_at
-                  type: TIMESTAMP
-                  constraints:
-                    nullable: true
-              - column:
-                  name: is_working
-                  type: BOOLEAN
-                  constraints:
-                    nullable: false
-              - column:
-                  name: worker_id
-                  type: VARCHAR(16)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: created_at
-                  type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
-                  constraints:
-                    nullable: false
-              - column:
-                  name: updated_at
-                  type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
-                  constraints:
-                    nullable: false
-        - createIndex:
-            columns:
-              - column:
-                  name: name
-            indexName: idx_company_name
-            tableName: company
-        - createIndex:
-            columns:
-              - column:
-                  name: worker_id
-            indexName: idx_company_worker_id
-            tableName: company
 
         - createTable:
             tableName: certifications
@@ -444,7 +572,7 @@ databaseChangeLog:
                   name: expiration_period
                   type: TIMESTAMP
                   constraints:
-                    nullable: false
+                    nullable: true
               - column:
                   name: worker_id
                   type: VARCHAR(16)
@@ -468,6 +596,7 @@ databaseChangeLog:
                   name: name
             indexName: idx_certifications_name
             tableName: certifications
+            unique: true
         - createIndex:
             columns:
               - column:
@@ -529,128 +658,3 @@ databaseChangeLog:
                   name: provider_id
             indexName: idx_account_provider_id
             tableName: account
-
-        - createTable:
-            tableName: record_group
-            columns:
-              - column:
-                  name: id
-                  type: VARCHAR(16)
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: title
-                  type: VARCHAR(256)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: color
-                  type: VARCHAR(128)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: is_public
-                  type: BOOLEAN
-                  constraints:
-                    nullable: false
-              - column:
-                  name: public_id
-                  type: VARCHAR(16)
-                  constraints:
-                    nullable: false
-                    unique: true
-              - column:
-                  name: priority
-                  type: BIGINT
-                  constraints:
-                    nullable: false
-              - column:
-                  name: worker_id
-                  type: VARCHAR(16)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: created_at
-                  type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
-                  constraints:
-                    nullable: false
-              - column:
-                  name: updated_at
-                  type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
-                  constraints:
-                    nullable: false
-        - createIndex:
-            columns:
-              - column:
-                  name: public_id
-            indexName: idx_record_group_public_id
-            tableName: record_group
-
-
-        - createTable:
-            tableName: worker_record_group
-            columns:
-              - column:
-                  name: id
-                  type: BIGINT
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: public_id
-                  type: VARCHAR(256)
-                  constraints:
-                    nullable: false
-                    unique: true
-              - column:
-                  name: worker_id
-                  type: VARCHAR(16)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: record_group_id
-                  type: VARCHAR(16)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: created_at
-                  type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
-                  constraints:
-                    nullable: false
-              - column:
-                  name: updated_at
-                  type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
-                  constraints:
-                    nullable: false
-        - createIndex:
-            columns:
-              - column:
-                  name: public_id
-            indexName: idx_record_group_public_id
-            tableName: worker_record_group
-        - createIndex:
-            columns:
-              - column:
-                  name: worker_id
-            indexName: idx_record_group_worker_id
-            tableName: worker_record_group
-        - createIndex:
-            columns:
-              - column:
-                  name: record_group_id
-            indexName: idx_record_group_record_group_id
-            tableName: worker_record_group
-        - createIndex:
-            columns:
-              - column:
-                  name: worker_id
-              - column:
-                  name: record_group_id
-            indexName: idx_record_group_worker_id_record_group_id
-            tableName: worker_record_group

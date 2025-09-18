@@ -44,4 +44,10 @@ class Degrees(
     @JoinColumn(name = "worker_id", nullable = false)
     var worker: Worker = worker
         protected set
+
+    fun changeInfo(major: String, startedAt: LocalDate, endedAt: LocalDate?) {
+        this.major = major
+        this.startedAt = startedAt
+        this.endedAt = endedAt
+    }
 }

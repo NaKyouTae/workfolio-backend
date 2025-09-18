@@ -3,7 +3,7 @@ package com.spectrum.workfolio.domain.entity.history
 import com.spectrum.workfolio.domain.entity.BaseEntity
 import com.spectrum.workfolio.domain.entity.Worker
 import jakarta.persistence.*
-import java.time.LocalDateTime
+import java.time.LocalDate
 
 /**
  * 회사
@@ -18,21 +18,21 @@ import java.time.LocalDateTime
 )
 class Company(
     name: String,
-    startedAt: LocalDateTime,
-    endedAt: LocalDateTime? = null,
+    startedAt: LocalDate,
+    endedAt: LocalDate? = null,
     isWorking: Boolean = false,
     worker: Worker,
 ) : BaseEntity("CO") {
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     var name: String = name
         protected set
 
     @Column(name = "started_at", nullable = false)
-    var startedAt: LocalDateTime = startedAt
+    var startedAt: LocalDate = startedAt
         protected set
 
     @Column(name = "ended_at", nullable = true)
-    var endedAt: LocalDateTime? = endedAt
+    var endedAt: LocalDate? = endedAt
         protected set
 
     @Column(name = "is_working", nullable = false)
@@ -44,11 +44,25 @@ class Company(
     var worker: Worker = worker
         protected set
 
-    @OneToMany(mappedBy = "company", cascade = [CascadeType.REMOVE])
+    @OneToMany(mappedBy = "company", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     private var mutablePositions: MutableList<Position> = mutableListOf()
     val positions: List<Position> get() = mutablePositions.toList()
 
-    @OneToMany(mappedBy = "company", cascade = [CascadeType.REMOVE])
+    @OneToMany(mappedBy = "company", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     private var mutableSalaries: MutableList<Salary> = mutableListOf()
     val salaries: List<Salary> get() = mutableSalaries.toList()
+
+    fun addPosition(position: Position) {
+        mutablePositions.add(position)
+    }
+
+    fun addSalary(salary: Salary) {
+        mutableSalaries.add(salary)
+    }
+
+    fun changeInfo(startedAt: LocalDate, endedAt: LocalDate?, isWorking: Boolean) {
+        this.startedAt = startedAt
+        this.endedAt = endedAt
+        this.isWorking = isWorking
+    }
 }

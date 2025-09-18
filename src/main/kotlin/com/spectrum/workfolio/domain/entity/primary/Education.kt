@@ -43,4 +43,10 @@ class Education(
     @JoinColumn(name = "worker_id", nullable = false)
     var worker: Worker = worker
         protected set
+
+    fun changeInfo(startedAt: LocalDate, endedAt: LocalDate?, agency: String) {
+        this.startedAt = startedAt
+        this.endedAt = endedAt
+        this.agency = agency
+    }
 }

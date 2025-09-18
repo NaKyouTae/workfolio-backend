@@ -5,8 +5,6 @@ import com.spectrum.workfolio.domain.entity.Worker
 import com.spectrum.workfolio.domain.model.AccountType
 import com.spectrum.workfolio.domain.model.MsgKOR
 import com.spectrum.workfolio.domain.repository.AccountRepository
-import com.spectrum.workfolio.domain.repository.RecordRepository
-import com.spectrum.workfolio.domain.repository.RecordGroupRepository
 import com.spectrum.workfolio.domain.repository.WorkerRepository
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.slf4j.LoggerFactory
@@ -17,8 +15,6 @@ import org.springframework.transaction.annotation.Transactional
 class WorkerService(
     private val workerRepository: WorkerRepository,
     private val accountRepository: AccountRepository,
-    private val recordRepository: RecordRepository,
-    private val recordGroupRepository: RecordGroupRepository,
     private val kakaoApiProvider: KakaoApiProvider,
 ) {
     
