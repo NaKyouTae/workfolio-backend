@@ -660,7 +660,7 @@ databaseChangeLog:
             tableName: account
 
         - createTable:
-            tableName: interview
+            tableName: job_search
             columns:
               - column:
                   name: id
@@ -723,5 +723,5 @@ databaseChangeLog:
                   name: started_at
               - column:
                   name: ended_at
-            indexName: idx_interview_worker_id_started_at_ended_at
-            tableName: interview
+            indexName: idx_job_search_worker_id_started_at_ended_at
+            tableName: job_search

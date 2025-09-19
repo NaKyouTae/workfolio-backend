@@ -5,10 +5,10 @@ import "common.proto";
 package com.spectrum.workfolio.proto;
 
 option java_multiple_files = true;
-option java_package = "com.spectrum.workfolio.proto.interview";
-option java_outer_classname = "InterviewProto";
+option java_package = "com.spectrum.workfolio.proto.job_search";
+option java_outer_classname = "JobSearchProto";
 
-message InterviewCreateRequest {
+message JobSearchCreateRequest {
   string title = 1;
   uint64 started_at = 2;
   optional uint64 ended_at = 3;
@@ -17,7 +17,7 @@ message InterviewCreateRequest {
   optional string memo = 6;
 }
 
-message InterviewUpdateRequest {
+message JobSearchUpdateRequest {
   string id = 1;
   string title = 2;
   uint64 started_at = 3;
@@ -27,10 +27,10 @@ message InterviewUpdateRequest {
   optional string memo = 7;
 }
 
-message InterviewListResponse {
-  repeated Interview interviews = 1;
+message JobSearchListResponse {
+  repeated JobSearch job_searches = 1;
 }
 
-message InterviewResponse {
-  Interview interview = 1;
+message JobSearchResponse {
+  JobSearch job_search = 1;
 }

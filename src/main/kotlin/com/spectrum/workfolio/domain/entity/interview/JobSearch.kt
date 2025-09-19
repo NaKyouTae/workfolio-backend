@@ -14,12 +14,12 @@ import java.time.LocalDate
 
 @Entity
 @Table(
-    name = "interview",
+    name = "job_search",
     indexes = [
-        Index(name = "idx_interview_worker_id_started_at_ended_at", columnList = "worker_id, started_at, ended_at"),
+        Index(name = "idx_job_search_worker_id_started_at_ended_at", columnList = "worker_id, started_at, ended_at"),
     ],
 )
-class Interview(
+class JobSearch(
     title: String? = null,
     startedAt: LocalDate,
     endedAt: LocalDate? = null,

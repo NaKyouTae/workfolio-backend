@@ -1,10 +1,10 @@
 package com.spectrum.workfolio.domain.extensions
 
-import com.spectrum.workfolio.domain.entity.interview.Interview
+import com.spectrum.workfolio.domain.entity.interview.JobSearch
 import com.spectrum.workfolio.utils.TimeUtil
 
-fun Interview.toProto(): com.spectrum.workfolio.proto.common.Interview {
-    val builder = com.spectrum.workfolio.proto.common.Interview.newBuilder()
+fun JobSearch.toProto(): com.spectrum.workfolio.proto.common.JobSearch {
+    val builder = com.spectrum.workfolio.proto.common.JobSearch.newBuilder()
 
     builder.setId(this.id)
     builder.setTitle(this.title)

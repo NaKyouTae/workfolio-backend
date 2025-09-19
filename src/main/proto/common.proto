@@ -162,7 +162,7 @@ message SuccessResponse {
   bool is_success = 1;
 }
 
-message Interview {
+message JobSearch {
   string id = 1;
   optional string title = 2;
   uint64 started_at = 3;
