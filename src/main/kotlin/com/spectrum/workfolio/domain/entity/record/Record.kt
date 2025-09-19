@@ -2,7 +2,7 @@ package com.spectrum.workfolio.domain.entity.record
 
 import com.spectrum.workfolio.domain.entity.BaseEntity
 import com.spectrum.workfolio.domain.entity.Worker
-import com.spectrum.workfolio.domain.model.RecordType
+import com.spectrum.workfolio.domain.enums.RecordType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType

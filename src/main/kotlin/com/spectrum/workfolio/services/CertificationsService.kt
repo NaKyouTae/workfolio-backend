@@ -1,8 +1,8 @@
 package com.spectrum.workfolio.services
 
 import com.spectrum.workfolio.domain.entity.primary.Certifications
+import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.extensions.toProto
-import com.spectrum.workfolio.domain.model.MsgKOR
 import com.spectrum.workfolio.domain.repository.CertificationsRepository
 import com.spectrum.workfolio.proto.certifications.CertificationsCreateRequest
 import com.spectrum.workfolio.proto.certifications.CertificationsListResponse

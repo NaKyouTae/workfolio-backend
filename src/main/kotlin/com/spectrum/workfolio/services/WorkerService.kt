@@ -2,8 +2,8 @@ package com.spectrum.workfolio.services
 
 import com.spectrum.workfolio.config.service.oauth.KakaoApiProvider
 import com.spectrum.workfolio.domain.entity.Worker
-import com.spectrum.workfolio.domain.model.AccountType
-import com.spectrum.workfolio.domain.model.MsgKOR
+import com.spectrum.workfolio.domain.enums.AccountType
+import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.repository.AccountRepository
 import com.spectrum.workfolio.domain.repository.WorkerRepository
 import com.spectrum.workfolio.utils.WorkfolioException

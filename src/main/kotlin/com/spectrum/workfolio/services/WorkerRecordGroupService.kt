@@ -2,7 +2,7 @@ package com.spectrum.workfolio.services
 
 import com.spectrum.workfolio.domain.entity.record.RecordGroup
 import com.spectrum.workfolio.domain.entity.record.WorkerRecordGroup
-import com.spectrum.workfolio.domain.model.MsgKOR
+import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.repository.WorkerRecordGroupRepository
 import com.spectrum.workfolio.utils.StringUtil
 import com.spectrum.workfolio.utils.WorkfolioException

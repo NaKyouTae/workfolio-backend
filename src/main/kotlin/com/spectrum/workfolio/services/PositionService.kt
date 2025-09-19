@@ -1,8 +1,8 @@
 package com.spectrum.workfolio.services
 
 import com.spectrum.workfolio.domain.entity.history.Position
+import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.extensions.toProto
-import com.spectrum.workfolio.domain.model.MsgKOR
 import com.spectrum.workfolio.domain.repository.PositionRepository
 import com.spectrum.workfolio.proto.position.PositionCreateRequest
 import com.spectrum.workfolio.proto.position.PositionListResponse

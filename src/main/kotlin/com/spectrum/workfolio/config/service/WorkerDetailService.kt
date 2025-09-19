@@ -1,8 +1,8 @@
 package com.spectrum.workfolio.config.service
 
 import com.spectrum.workfolio.domain.dto.CustomUserDetails
-import com.spectrum.workfolio.domain.model.ErrorCode
-import com.spectrum.workfolio.domain.model.MsgKOR
+import com.spectrum.workfolio.domain.enums.ErrorCode
+import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.repository.WorkerRepository
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.security.core.userdetails.UserDetails

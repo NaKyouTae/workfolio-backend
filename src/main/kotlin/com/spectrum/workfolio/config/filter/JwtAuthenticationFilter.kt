@@ -2,7 +2,7 @@ package com.spectrum.workfolio.config.filter
 
 import com.spectrum.workfolio.config.exception.JwtAuthenticationException
 import com.spectrum.workfolio.config.provider.JwtTokenProvider
-import com.spectrum.workfolio.domain.model.MsgKOR
+import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.redis.service.RedisBlackAccessTokenService
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException

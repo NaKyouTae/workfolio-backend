@@ -3,8 +3,8 @@ package com.spectrum.workfolio.config.provider
 import com.spectrum.workfolio.config.exception.JwtAuthenticationException
 import com.spectrum.workfolio.config.service.WorkerDetailService
 import com.spectrum.workfolio.domain.entity.primary.Account
-import com.spectrum.workfolio.domain.model.MsgKOR
-import com.spectrum.workfolio.domain.model.WorkfolioToken
+import com.spectrum.workfolio.domain.enums.MsgKOR
+import com.spectrum.workfolio.domain.enums.WorkfolioToken
 import com.spectrum.workfolio.utils.WorkfolioException
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.ExpiredJwtException

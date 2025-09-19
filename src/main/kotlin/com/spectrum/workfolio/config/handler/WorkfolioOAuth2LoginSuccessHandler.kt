@@ -1,9 +1,9 @@
 package com.spectrum.workfolio.config.handler
 
 import com.spectrum.workfolio.config.provider.JwtTokenProvider
-import com.spectrum.workfolio.domain.model.MsgKOR
-import com.spectrum.workfolio.domain.model.SNSType
-import com.spectrum.workfolio.domain.model.WorkfolioToken
+import com.spectrum.workfolio.domain.enums.MsgKOR
+import com.spectrum.workfolio.domain.enums.SNSType
+import com.spectrum.workfolio.domain.enums.WorkfolioToken
 import com.spectrum.workfolio.services.AccountService
 import com.spectrum.workfolio.utils.WorkfolioException
 import jakarta.servlet.http.HttpServletRequest

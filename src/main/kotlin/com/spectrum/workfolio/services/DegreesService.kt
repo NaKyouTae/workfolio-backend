@@ -1,8 +1,8 @@
 package com.spectrum.workfolio.services
 
 import com.spectrum.workfolio.domain.entity.primary.Degrees
+import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.extensions.toProto
-import com.spectrum.workfolio.domain.model.MsgKOR
 import com.spectrum.workfolio.domain.repository.DegreesRepository
 import com.spectrum.workfolio.proto.degrees.DegreesCreateRequest
 import com.spectrum.workfolio.proto.degrees.DegreesListResponse

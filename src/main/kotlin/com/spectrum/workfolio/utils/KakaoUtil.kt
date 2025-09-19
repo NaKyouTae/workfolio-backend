@@ -1,8 +1,8 @@
 package com.spectrum.workfolio.utils
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.spectrum.workfolio.domain.model.KakaoDTO
-import com.spectrum.workfolio.domain.model.KakaoTokenResponse
+import com.spectrum.workfolio.domain.enums.KakaoDTO
+import com.spectrum.workfolio.domain.enums.KakaoTokenResponse
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders

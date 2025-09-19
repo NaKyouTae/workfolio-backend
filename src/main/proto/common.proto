@@ -176,3 +176,26 @@ message JobSearch {
   uint64 created_at = 98;
   uint64 updated_at = 99;
 }
+
+message JobSearchCompany {
+  enum Status {
+    UNKNOWN = 0;
+    IN_PROGRESS = 1;
+    APPLIED = 2;
+    IN_INTERVIEW = 3;
+    CLOSED = 4;
+  }
+
+  string id = 1;
+  optional string name = 2;
+  Status status = 3;
+  uint64 applied_at = 4;
+  uint64 closed_at = 5;
+  optional uint64 ended_at = 6;
+  optional string link = 7;
+
+  JobSearch job_search = 50;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
+}

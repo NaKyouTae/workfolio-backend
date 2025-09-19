@@ -1,4 +1,4 @@
-package com.spectrum.workfolio.domain.model
+package com.spectrum.workfolio.domain.enums
 
 enum class SNSType {
     KAKAO,

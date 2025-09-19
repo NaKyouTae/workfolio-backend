@@ -2,7 +2,7 @@ package com.spectrum.workfolio.services
 
 import com.spectrum.workfolio.domain.entity.Worker
 import com.spectrum.workfolio.domain.entity.primary.Account
-import com.spectrum.workfolio.domain.model.AccountType
+import com.spectrum.workfolio.domain.enums.AccountType
 import com.spectrum.workfolio.domain.repository.AccountRepository
 import com.spectrum.workfolio.domain.repository.WorkerRepository
 import org.junit.jupiter.api.Test

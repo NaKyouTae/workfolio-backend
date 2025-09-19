@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package com.spectrum.workfolio.proto;
+
+option java_multiple_files = true;
+option java_package = "com.spectrum.workfolio.proto.job_search_company";
+option java_outer_classname = "JobSearchCompanyProto";
+
+message JobSearchCompanyCreateRequest {
+  string name = 1;
+  string status = 2;
+  uint64 applied_at = 3;
+  uint64 closed_at = 4;
+  optional uint64 ended_at = 5;
+  optional string link = 6;
+
+  string job_search_id = 99;
+}
+
+message JobSearchCompanyUpdateRequest {
+  string id = 1;
+  string name = 2;
+  string status = 3;
+  uint64 applied_at = 4;
+  uint64 closed_at = 5;
+  optional uint64 ended_at = 6;
+  optional string link = 7;
+
+  string job_search_id = 99;
+}
+
+message JobSearchCompanyListResponse {
+  repeated JobSearchCompany job_search_companies = 1;
+}
+
+message JobSearchCompanyResponse {
+  JobSearchCompany job_search_company = 1;
+}

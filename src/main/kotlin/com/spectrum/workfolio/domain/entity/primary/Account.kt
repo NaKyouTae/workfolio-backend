@@ -2,7 +2,7 @@ package com.spectrum.workfolio.domain.entity.primary
 
 import com.spectrum.workfolio.domain.entity.BaseEntity
 import com.spectrum.workfolio.domain.entity.Worker
-import com.spectrum.workfolio.domain.model.AccountType
+import com.spectrum.workfolio.domain.enums.AccountType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType

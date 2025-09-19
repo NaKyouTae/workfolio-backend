@@ -1,7 +1,7 @@
 package com.spectrum.workfolio.config.service.oauth
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.spectrum.workfolio.domain.model.KakaoAccount
+import com.spectrum.workfolio.domain.enums.KakaoAccount
 import org.slf4j.LoggerFactory
 import org.springframework.security.oauth2.core.user.OAuth2User
 import org.springframework.stereotype.Component

@@ -1,7 +1,7 @@
 package com.spectrum.workfolio.config.service.oauth
 
-import com.spectrum.workfolio.domain.model.AccountType
-import com.spectrum.workfolio.domain.model.SNSType
+import com.spectrum.workfolio.domain.enums.AccountType
+import com.spectrum.workfolio.domain.enums.SNSType
 
 /**
  * OAuth 제공자 이름과 AccountType, SNSType 간의 매핑을 담당하는 유틸리티

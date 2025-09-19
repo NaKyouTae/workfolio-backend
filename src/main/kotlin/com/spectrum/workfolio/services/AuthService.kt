@@ -1,8 +1,8 @@
 package com.spectrum.workfolio.services
 
 import com.spectrum.workfolio.config.provider.JwtTokenProvider
-import com.spectrum.workfolio.domain.model.MsgKOR
-import com.spectrum.workfolio.domain.model.WorkfolioToken
+import com.spectrum.workfolio.domain.enums.MsgKOR
+import com.spectrum.workfolio.domain.enums.WorkfolioToken
 import com.spectrum.workfolio.redis.model.RedisBlackAccessToken
 import com.spectrum.workfolio.redis.model.RedisRefreshToken
 import com.spectrum.workfolio.redis.service.RedisBlackAccessTokenService

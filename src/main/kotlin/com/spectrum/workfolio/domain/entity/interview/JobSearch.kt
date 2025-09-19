@@ -27,7 +27,7 @@ class JobSearch(
     nextCompany: Company? = null,
     memo: String? = null,
     worker: Worker,
-) : BaseEntity("IV") {
+) : BaseEntity("JS") {
     @Column(name = "title", length = 1024, nullable = true)
     var title: String? = title
         protected set

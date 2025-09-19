@@ -1,6 +1,6 @@
 package com.spectrum.workfolio.config.service.oauth
 
-import com.spectrum.workfolio.domain.model.SNSType
+import com.spectrum.workfolio.domain.enums.SNSType
 import org.springframework.stereotype.Component
 
 /**

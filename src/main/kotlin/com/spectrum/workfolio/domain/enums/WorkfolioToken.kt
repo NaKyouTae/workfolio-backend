@@ -1,4 +1,4 @@
-package com.spectrum.workfolio.domain.model
+package com.spectrum.workfolio.domain.enums
 
 data class WorkfolioToken(
     val accessToken: String,

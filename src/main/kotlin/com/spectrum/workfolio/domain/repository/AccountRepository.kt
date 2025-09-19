@@ -1,7 +1,7 @@
 package com.spectrum.workfolio.domain.repository
 
 import com.spectrum.workfolio.domain.entity.primary.Account
-import com.spectrum.workfolio.domain.model.AccountType
+import com.spectrum.workfolio.domain.enums.AccountType
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 import java.util.Optional

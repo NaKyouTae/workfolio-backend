@@ -1,8 +1,8 @@
 package com.spectrum.workfolio.services
 
 import com.spectrum.workfolio.domain.entity.history.Company
+import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.extensions.toProto
-import com.spectrum.workfolio.domain.model.MsgKOR
 import com.spectrum.workfolio.domain.repository.CompanyRepository
 import com.spectrum.workfolio.proto.company.CompanyCreateRequest
 import com.spectrum.workfolio.proto.company.CompanyListResponse

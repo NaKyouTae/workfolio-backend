@@ -725,3 +725,66 @@ databaseChangeLog:
                   name: ended_at
             indexName: idx_job_search_worker_id_started_at_ended_at
             tableName: job_search
+
+        - createTable:
+            tableName: job_search_company
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: VARCHAR(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: applied_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: closed_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: ended_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: true
+              - column:
+                  name: link
+                  type: TEXT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: job_search_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+        - createIndex:
+            columns:
+              - column:
+                  name: job_search_id
+            indexName: idx_job_search_company_job_search_id
+            tableName: job_search_company
