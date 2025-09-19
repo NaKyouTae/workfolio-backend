@@ -20,21 +20,21 @@ class PositionController(
 ) {
 
     @GetMapping
-    fun listCompanies(
+    fun listPositions(
         @RequestParam companiesIds: List<String>,
     ): PositionListResponse {
         return positionService.listPositions(companiesIds)
     }
 
     @PostMapping
-    fun createCompany(
+    fun createPosition(
         @RequestBody request: PositionCreateRequest,
     ): PositionResponse {
         return positionService.createPosition(request)
     }
 
     @PutMapping
-    fun updateCompany(
+    fun updatePosition(
         @RequestBody request: PositionUpdateRequest,
     ): PositionResponse {
         return positionService.updatePosition(request)

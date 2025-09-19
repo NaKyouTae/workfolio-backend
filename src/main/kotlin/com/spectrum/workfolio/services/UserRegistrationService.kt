@@ -4,7 +4,6 @@ import com.spectrum.workfolio.config.service.oauth.OAuthUserInfo
 import com.spectrum.workfolio.config.service.oauth.UserRegistrationException
 import com.spectrum.workfolio.domain.entity.Worker
 import com.spectrum.workfolio.domain.entity.primary.Account
-import com.spectrum.workfolio.domain.entity.record.RecordGroup
 import com.spectrum.workfolio.domain.model.AccountType
 import com.spectrum.workfolio.proto.record.CreateRecordRequest
 import com.spectrum.workfolio.proto.record_group.CreateRecordGroupRequest

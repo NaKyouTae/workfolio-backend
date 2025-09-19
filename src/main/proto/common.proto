@@ -161,3 +161,18 @@ message WorkerRecordGroup {
 message SuccessResponse {
   bool is_success = 1;
 }
+
+message Interview {
+  string id = 1;
+  optional string title = 2;
+  uint64 started_at = 3;
+  optional uint64 ended_at = 4;
+  optional string memo = 5;
+
+  Worker worker = 50;
+  Company prev_company = 51;
+  Company next_company = 52;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
+}

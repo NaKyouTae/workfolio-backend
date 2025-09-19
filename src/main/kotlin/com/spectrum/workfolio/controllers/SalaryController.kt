@@ -1,6 +1,5 @@
 package com.spectrum.workfolio.controllers
 
-import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.proto.salary.SalaryCreateRequest
 import com.spectrum.workfolio.proto.salary.SalaryListResponse
 import com.spectrum.workfolio.proto.salary.SalaryResponse

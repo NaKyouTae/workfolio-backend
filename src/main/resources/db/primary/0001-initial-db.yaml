@@ -658,3 +658,70 @@ databaseChangeLog:
                   name: provider_id
             indexName: idx_account_provider_id
             tableName: account
+
+        - createTable:
+            tableName: interview
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: VARCHAR(1024)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: started_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: ended_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: true
+              - column:
+                  name: memo
+                  type: TEXT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: prev_company_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: next_company_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: worker_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+        - createIndex:
+            columns:
+              - column:
+                  name: worker_id
+              - column:
+                  name: started_at
+              - column:
+                  name: ended_at
+            indexName: idx_interview_worker_id_started_at_ended_at
+            tableName: interview

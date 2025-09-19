@@ -22,7 +22,7 @@ class CertificationsService(
     @Transactional(readOnly = true)
     fun getCertifications(id: String): Certifications {
         return certificationsRepository.findById(id)
-            .orElseThrow { WorkfolioException(MsgKOR.NOT_FOUND_EDUCATION.message) }
+            .orElseThrow { WorkfolioException(MsgKOR.NOT_FOUND_CERTIFICATIONS.message) }
     }
 
     @Transactional(readOnly = true)
