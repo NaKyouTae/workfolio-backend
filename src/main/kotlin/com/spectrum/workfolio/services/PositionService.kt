@@ -6,6 +6,7 @@ import com.spectrum.workfolio.domain.model.MsgKOR
 import com.spectrum.workfolio.domain.repository.PositionRepository
 import com.spectrum.workfolio.proto.position.PositionCreateRequest
 import com.spectrum.workfolio.proto.position.PositionListResponse
+import com.spectrum.workfolio.proto.position.PositionResponse
 import com.spectrum.workfolio.proto.position.PositionUpdateRequest
 import com.spectrum.workfolio.utils.TimeUtil
 import com.spectrum.workfolio.utils.WorkfolioException
@@ -24,15 +25,16 @@ class PositionService(
     }
 
     @Transactional(readOnly = true)
-    fun listPositions(companyId: String): PositionListResponse {
-        val positions = positionRepository.findByCompanyId(companyId)
+    fun listPositions(companyIds: List<String>): PositionListResponse {
+        val positions = positionRepository.findByCompanyIdInOrderByStartedAtDescEndedAtDesc(companyIds)
+
         return PositionListResponse.newBuilder()
             .addAllPositions(positions.map { it.toProto() })
             .build()
     }
 
     @Transactional
-    fun createPosition(request: PositionCreateRequest): Position {
+    fun createPosition(request: PositionCreateRequest): PositionResponse {
         val company = companyService.getCompany(request.companyId)
         val position = Position(
             name = request.name,
@@ -41,11 +43,13 @@ class PositionService(
             company = company,
         )
 
-        return positionRepository.save(position)
+        val createdPosition = positionRepository.save(position)
+
+        return PositionResponse.newBuilder().setPosition(createdPosition.toProto()).build()
     }
 
     @Transactional
-    fun updatePosition(request: PositionUpdateRequest): Position {
+    fun updatePosition(request: PositionUpdateRequest): PositionResponse {
         val position = this.getPosition(request.id)
 
         position.changeInfo(
@@ -54,6 +58,8 @@ class PositionService(
             endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
         )
 
-        return positionRepository.save(position)
+        val updatedPosition = positionRepository.save(position)
+
+        return PositionResponse.newBuilder().setPosition(updatedPosition.toProto()).build()
     }
 }

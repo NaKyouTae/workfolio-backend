@@ -1,12 +1,12 @@
 package com.spectrum.workfolio.controllers
 
 import com.spectrum.workfolio.config.annotation.AuthenticatedUser
-import com.spectrum.workfolio.domain.extensions.toProtoResponse
+import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.proto.common.SuccessResponse
 import com.spectrum.workfolio.proto.record_group.CreateRecordGroupRequest
-import com.spectrum.workfolio.proto.record_group.CreateRecordGroupResponse
 import com.spectrum.workfolio.proto.record_group.JoinRecordGroupRequest
 import com.spectrum.workfolio.proto.record_group.ListRecordGroupResponse
+import com.spectrum.workfolio.proto.record_group.RecordGroupResponse
 import com.spectrum.workfolio.proto.record_group.UpdateRecordGroupRequest
 import com.spectrum.workfolio.services.RecordGroupService
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -46,19 +46,17 @@ class RecordGroupController(
     fun createRecordGroup(
         @AuthenticatedUser workerId: String,
         @RequestBody request: CreateRecordGroupRequest,
-    ): CreateRecordGroupResponse {
-        val recordGroup = recordGroupService.createRecordGroup(workerId, request)
-
-        return recordGroup.toProtoResponse()
+    ): RecordGroupResponse {
+        return recordGroupService.createRecordGroup(workerId, request)
     }
 
     @PostMapping("/join")
     fun joinRecordGroup(
         @AuthenticatedUser workerId: String,
         @RequestBody request: JoinRecordGroupRequest,
-    ): SuccessResponse {
-        recordGroupService.joinRecordGroup(workerId, request)
-        return SuccessResponse.newBuilder().setIsSuccess(true).build()
+    ): RecordGroupResponse {
+        val recordGroup = recordGroupService.joinRecordGroup(workerId, request)
+        return RecordGroupResponse.newBuilder().setRecordGroup(recordGroup.toProto()).build()
     }
 
     @PutMapping("/{recordGroupId}")
@@ -66,10 +64,8 @@ class RecordGroupController(
         @AuthenticatedUser workerId: String,
         @PathVariable recordGroupId: String,
         @RequestBody request: UpdateRecordGroupRequest,
-    ): SuccessResponse {
-        recordGroupService.updateRecordGroup(workerId, recordGroupId, request)
-
-        return SuccessResponse.newBuilder().setIsSuccess(true).build()
+    ): RecordGroupResponse {
+        return recordGroupService.updateRecordGroup(workerId, recordGroupId, request)
     }
 
     @DeleteMapping("/{recordGroupId}")

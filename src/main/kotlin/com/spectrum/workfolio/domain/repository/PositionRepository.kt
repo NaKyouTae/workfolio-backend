@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface PositionRepository : JpaRepository<Position, String> {
-    fun findByCompanyId(companyId: String): List<Position>
+    fun findByCompanyIdInOrderByStartedAtDescEndedAtDesc(companyIds: List<String>): List<Position>
 }

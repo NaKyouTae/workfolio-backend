@@ -6,6 +6,7 @@ import com.spectrum.workfolio.domain.model.MsgKOR
 import com.spectrum.workfolio.domain.repository.CertificationsRepository
 import com.spectrum.workfolio.proto.certifications.CertificationsCreateRequest
 import com.spectrum.workfolio.proto.certifications.CertificationsListResponse
+import com.spectrum.workfolio.proto.certifications.CertificationsResponse
 import com.spectrum.workfolio.proto.certifications.CertificationsUpdateRequest
 import com.spectrum.workfolio.utils.TimeUtil
 import com.spectrum.workfolio.utils.WorkfolioException
@@ -27,17 +28,17 @@ class CertificationsService(
     @Transactional(readOnly = true)
     fun listCertifications(workerId: String): CertificationsListResponse {
         val worker = workerService.getWorker(workerId)
-        val educations = certificationsRepository.findByWorkerId(worker.id)
+        val educations = certificationsRepository.findByWorkerIdOrderByIssuedAtDesc(worker.id)
         return CertificationsListResponse.newBuilder()
             .addAllCertifications(educations.map { it.toProto() })
             .build()
     }
 
     @Transactional
-    fun createCertifications(workerId: String, request: CertificationsCreateRequest): Certifications {
+    fun createCertifications(workerId: String, request: CertificationsCreateRequest): CertificationsResponse {
         val worker = workerService.getWorker(workerId)
-        val education = Certifications(
-            name = worker.name,
+        val certifications = Certifications(
+            name = request.name,
             number = request.number,
             issuer = request.issuer,
             issuedAt = TimeUtil.ofEpochMilli(request.issuedAt).toLocalDate(),
@@ -45,11 +46,13 @@ class CertificationsService(
             worker = worker,
         )
 
-        return certificationsRepository.save(education)
+        val createdCertifications = certificationsRepository.save(certifications)
+
+        return CertificationsResponse.newBuilder().setCertifications(createdCertifications.toProto()).build()
     }
 
     @Transactional
-    fun updateCertifications(request: CertificationsUpdateRequest): Certifications {
+    fun updateCertifications(request: CertificationsUpdateRequest): CertificationsResponse {
         val certifications = this.getCertifications(request.id)
 
         certifications.changeInfo(
@@ -60,6 +63,8 @@ class CertificationsService(
             expirationPeriod = TimeUtil.ofEpochMilliNullable(request.expirationPeriod)?.toLocalDate(),
         )
 
-        return certificationsRepository.save(certifications)
+        val updatedCertifications = certificationsRepository.save(certifications)
+
+        return CertificationsResponse.newBuilder().setCertifications(updatedCertifications.toProto()).build()
     }
 }

@@ -8,6 +8,7 @@ import com.spectrum.workfolio.domain.entity.record.RecordGroup
 import com.spectrum.workfolio.domain.model.AccountType
 import com.spectrum.workfolio.proto.record.CreateRecordRequest
 import com.spectrum.workfolio.proto.record_group.CreateRecordGroupRequest
+import com.spectrum.workfolio.proto.record_group.RecordGroupResponse
 import com.spectrum.workfolio.utils.StringUtil
 import com.spectrum.workfolio.utils.TimeUtil
 import org.slf4j.LoggerFactory
@@ -46,7 +47,7 @@ class UserRegistrationService(
             val recordGroup = createDefaultRecordGroup(worker.id)
 
             // 3. 기본 Record 생성
-            createDefaultRecord(worker.id, recordGroup.id)
+            createDefaultRecord(worker.id, recordGroup.recordGroup.id)
 
             // 4. Account 생성
             val account = createAccount(oauthUserInfo, accountType, worker)
@@ -64,7 +65,7 @@ class UserRegistrationService(
         return workerService.createWorker(worker)
     }
 
-    private fun createDefaultRecordGroup(workerId: String): RecordGroup {
+    private fun createDefaultRecordGroup(workerId: String): RecordGroupResponse {
         val recordGroupRequest = CreateRecordGroupRequest.newBuilder()
             .setColor("red")
             .setTitle("기본 그룹")

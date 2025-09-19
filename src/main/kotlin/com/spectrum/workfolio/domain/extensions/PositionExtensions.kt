@@ -8,6 +8,7 @@ fun Position.toProto(): com.spectrum.workfolio.proto.common.Position {
 
     builder.setId(this.id)
     builder.setName(this.name)
+    builder.setCompany(this.company.toProto())
     builder.setStartedAt(TimeUtil.toEpochMilli(this.startedAt))
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))

@@ -25,3 +25,7 @@ message PositionUpdateRequest {
 message PositionListResponse {
   repeated Position positions = 1;
 }
+
+message PositionResponse {
+  Position position = 1;
+}

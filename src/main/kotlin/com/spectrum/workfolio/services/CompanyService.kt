@@ -6,6 +6,7 @@ import com.spectrum.workfolio.domain.model.MsgKOR
 import com.spectrum.workfolio.domain.repository.CompanyRepository
 import com.spectrum.workfolio.proto.company.CompanyCreateRequest
 import com.spectrum.workfolio.proto.company.CompanyListResponse
+import com.spectrum.workfolio.proto.company.CompanyResponse
 import com.spectrum.workfolio.proto.company.CompanyUpdateRequest
 import com.spectrum.workfolio.utils.TimeUtil
 import com.spectrum.workfolio.utils.WorkfolioException
@@ -25,14 +26,14 @@ class CompanyService(
 
     @Transactional(readOnly = true)
     fun listCompanies(workerId: String): CompanyListResponse {
-        val companies = companyRepository.findByWorkerId(workerId)
+        val companies = companyRepository.findByWorkerIdOrderByStartedAtDescEndedAtDesc(workerId)
         return CompanyListResponse.newBuilder()
             .addAllCompanies(companies.map { it.toProto() })
             .build()
     }
 
     @Transactional
-    fun createCompany(workerId: String, request: CompanyCreateRequest): Company {
+    fun createCompany(workerId: String, request: CompanyCreateRequest): CompanyResponse {
         val worker = workerService.getWorker(workerId)
         val company = Company(
             name = request.name,
@@ -42,11 +43,13 @@ class CompanyService(
             worker = worker,
         )
 
-        return companyRepository.save(company)
+        val createdCompany = companyRepository.save(company)
+
+        return CompanyResponse.newBuilder().setCompany(createdCompany.toProto()).build()
     }
 
     @Transactional
-    fun updateCompany(request: CompanyUpdateRequest): Company {
+    fun updateCompany(request: CompanyUpdateRequest): CompanyResponse {
         val company = this.getCompany(request.id)
 
         company.changeInfo(
@@ -56,6 +59,8 @@ class CompanyService(
             isWorking = request.isWorking,
         )
 
-        return companyRepository.save(company)
+        val createdCompany = companyRepository.save(company)
+
+        return CompanyResponse.newBuilder().setCompany(createdCompany.toProto()).build()
     }
 }

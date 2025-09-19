@@ -16,17 +16,6 @@ message CreateRecordRequest {
   string record_group_id = 5;
 }
 
-message CreateRecordResponse {
-  string id = 1;
-  string title = 2;
-  string description = 3;
-  int64 started_at = 4;
-  int64 ended_at = 5;
-
-  int64 created_at = 100;
-  int64 updated_at = 101;
-}
-
 message ListRecordRequest {
   uint64 year = 1;
   uint64 month = 2;
@@ -35,4 +24,8 @@ message ListRecordRequest {
 
 message ListRecordResponse {
   repeated Record records = 1;
+}
+
+message RecordResponse {
+  Record record = 1;
 }

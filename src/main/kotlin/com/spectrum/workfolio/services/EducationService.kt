@@ -6,6 +6,7 @@ import com.spectrum.workfolio.domain.model.MsgKOR
 import com.spectrum.workfolio.domain.repository.EducationRepository
 import com.spectrum.workfolio.proto.education.EducationCreateRequest
 import com.spectrum.workfolio.proto.education.EducationListResponse
+import com.spectrum.workfolio.proto.education.EducationResponse
 import com.spectrum.workfolio.proto.education.EducationUpdateRequest
 import com.spectrum.workfolio.utils.TimeUtil
 import com.spectrum.workfolio.utils.WorkfolioException
@@ -26,14 +27,14 @@ class EducationService(
     @Transactional(readOnly = true)
     fun listEducations(workerId: String): EducationListResponse {
         val worker = workerService.getWorker(workerId)
-        val educations = educationRepository.findByWorkerId(worker.id)
+        val educations = educationRepository.findByWorkerIdOrderByStartedAtDescEndedAtDesc(worker.id)
         return EducationListResponse.newBuilder()
             .addAllEducations(educations.map { it.toProto() })
             .build()
     }
 
     @Transactional
-    fun createEducation(workerId: String, request: EducationCreateRequest): Education {
+    fun createEducation(workerId: String, request: EducationCreateRequest): EducationResponse {
         val worker = workerService.getWorker(workerId)
         val education = Education(
             name = request.name,
@@ -43,11 +44,13 @@ class EducationService(
             worker = worker,
         )
 
-        return educationRepository.save(education)
+        val createdEducation = educationRepository.save(education)
+
+        return EducationResponse.newBuilder().setEducation(createdEducation.toProto()).build()
     }
 
     @Transactional
-    fun updateEducation(request: EducationUpdateRequest): Education {
+    fun updateEducation(request: EducationUpdateRequest): EducationResponse {
         val education = this.getEducation(request.id)
 
         education.changeInfo(
@@ -57,6 +60,8 @@ class EducationService(
             agency = request.agency,
         )
 
-        return educationRepository.save(education)
+        val updatedEducation = educationRepository.save(education)
+
+        return EducationResponse.newBuilder().setEducation(updatedEducation.toProto()).build()
     }
 }

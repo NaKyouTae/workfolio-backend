@@ -8,6 +8,7 @@ fun Salary.toProto(): com.spectrum.workfolio.proto.common.Salary {
 
     builder.setId(this.id)
     builder.setAmount(this.amount)
+    builder.setCompany(this.company.toProto())
     builder.setStartedAt(TimeUtil.toEpochMilli(this.startedAt))
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))

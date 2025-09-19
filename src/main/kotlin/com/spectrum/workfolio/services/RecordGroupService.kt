@@ -1,11 +1,12 @@
 package com.spectrum.workfolio.services
 
 import com.spectrum.workfolio.domain.entity.record.RecordGroup
-import com.spectrum.workfolio.domain.extensions.toRecordGroupProto
+import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.model.MsgKOR
 import com.spectrum.workfolio.domain.repository.RecordGroupRepository
 import com.spectrum.workfolio.proto.record_group.CreateRecordGroupRequest
 import com.spectrum.workfolio.proto.record_group.JoinRecordGroupRequest
+import com.spectrum.workfolio.proto.record_group.RecordGroupResponse
 import com.spectrum.workfolio.proto.record_group.UpdateRecordGroupRequest
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.stereotype.Service
@@ -33,21 +34,21 @@ class RecordGroupService(
     @Transactional(readOnly = true)
     fun listOwnedRecordGroups(workerId: String): List<com.spectrum.workfolio.proto.common.RecordGroup> {
         val recordGroups = recordGroupRepository.findByWorkerIdOrderByPriorityDesc(workerId)
-        return recordGroups.map { it.toRecordGroupProto() }
+        return recordGroups.map { it.toProto() }
     }
 
     @Transactional(readOnly = true)
     fun listSharedRecordGroups(workerId: String): List<com.spectrum.workfolio.proto.common.RecordGroup> {
         val workerRecordGroups = workerRecordGroupService.listWorkerRecordGroupByWorkerId(workerId)
         val recordGroups = workerRecordGroups.map { it -> it.recordGroup }.sortedBy { it.priority }
-        return recordGroups.map { it.toRecordGroupProto() }
+        return recordGroups.map { it.toProto() }
     }
 
     @Transactional(readOnly = true)
     fun listEditableRecordGroups(workerId: String): List<com.spectrum.workfolio.proto.common.RecordGroup> {
         val ownedRecordGroup = this.listOwnedRecordGroups(workerId)
         val editableWorkerRecordGroup = workerRecordGroupService.listWorkerRecordGroupForEditable(workerId)
-        val editableRecordGroups = editableWorkerRecordGroup.map { it -> it.recordGroup.toRecordGroupProto() }
+        val editableRecordGroups = editableWorkerRecordGroup.map { it -> it.recordGroup.toProto() }
 
         return ownedRecordGroup + editableRecordGroups
     }
@@ -56,19 +57,20 @@ class RecordGroupService(
     fun createRecordGroup(
         workerId: String,
         params: CreateRecordGroupRequest,
-    ): RecordGroup {
+    ): RecordGroupResponse {
         val worker = workerService.getWorker(workerId)
-
-        return recordGroupRepository.save(
-            RecordGroup(
-                title = params.title,
-                color = params.color,
-                isPublic = false,
-                publicId = RecordGroup.generateShortPublicId(),
-                priority = params.priority,
-                worker = worker,
-            ),
+        val recordGroup = RecordGroup(
+            title = params.title,
+            color = params.color,
+            isPublic = false,
+            publicId = RecordGroup.generateShortPublicId(),
+            priority = params.priority,
+            worker = worker,
         )
+
+        val createdRecordGroup = recordGroupRepository.save(recordGroup)
+
+        return RecordGroupResponse.newBuilder().setRecordGroup(createdRecordGroup.toProto()).build()
     }
 
     @Transactional
@@ -76,7 +78,7 @@ class RecordGroupService(
         workerId: String,
         recordGroupId: String,
         request: UpdateRecordGroupRequest,
-    ): RecordGroup {
+    ): RecordGroupResponse {
         val recordGroup = this.getRecordGroup(recordGroupId)
         val workerRecordGroup = workerRecordGroupService.getWorkerRecordGroup(workerId, recordGroupId)
 
@@ -86,7 +88,9 @@ class RecordGroupService(
 
         recordGroup.changeRecordGroup(request.title, request.color, request.isPublic, request.priority)
 
-        return recordGroupRepository.save(recordGroup)
+        val updatedRecordGroup = recordGroupRepository.save(recordGroup)
+
+        return RecordGroupResponse.newBuilder().setRecordGroup(updatedRecordGroup.toProto()).build()
     }
 
     @Transactional

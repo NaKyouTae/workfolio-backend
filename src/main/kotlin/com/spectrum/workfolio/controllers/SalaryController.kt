@@ -1,16 +1,17 @@
 package com.spectrum.workfolio.controllers
 
-import com.spectrum.workfolio.proto.common.SuccessResponse
+import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.proto.salary.SalaryCreateRequest
 import com.spectrum.workfolio.proto.salary.SalaryListResponse
+import com.spectrum.workfolio.proto.salary.SalaryResponse
 import com.spectrum.workfolio.proto.salary.SalaryUpdateRequest
 import com.spectrum.workfolio.services.SalaryService
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -19,26 +20,24 @@ class SalaryController(
     private val salaryService: SalaryService,
 ) {
 
-    @GetMapping("/{companyId}")
+    @GetMapping
     fun listCompanies(
-        @PathVariable companyId: String,
+        @RequestParam companiesIds: List<String>,
     ): SalaryListResponse {
-        return salaryService.listSalaries(companyId)
+        return salaryService.listSalaries(companiesIds)
     }
 
     @PostMapping
     fun createCompany(
         @RequestBody request: SalaryCreateRequest,
-    ): SuccessResponse {
-        salaryService.createSalary(request)
-        return SuccessResponse.newBuilder().setIsSuccess(true).build()
+    ): SalaryResponse {
+        return salaryService.createSalary(request)
     }
 
     @PutMapping
     fun updateCompany(
         @RequestBody request: SalaryUpdateRequest,
-    ): SuccessResponse {
-        salaryService.updateSalary(request)
-        return SuccessResponse.newBuilder().setIsSuccess(true).build()
+    ): SalaryResponse {
+        return salaryService.updateSalary(request)
     }
 }

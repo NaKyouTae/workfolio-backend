@@ -23,5 +23,9 @@ message SalaryUpdateRequest {
 }
 
 message SalaryListResponse {
-  repeated Salary Salaries = 1;
+  repeated Salary salaries = 1;
+}
+
+message SalaryResponse {
+  Salary salary = 1;
 }

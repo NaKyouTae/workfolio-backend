@@ -1,9 +1,9 @@
 package com.spectrum.workfolio.controllers
 
 import com.spectrum.workfolio.config.annotation.AuthenticatedUser
-import com.spectrum.workfolio.proto.common.SuccessResponse
 import com.spectrum.workfolio.proto.company.CompanyCreateRequest
 import com.spectrum.workfolio.proto.company.CompanyListResponse
+import com.spectrum.workfolio.proto.company.CompanyResponse
 import com.spectrum.workfolio.proto.company.CompanyUpdateRequest
 import com.spectrum.workfolio.services.CompanyService
 import org.springframework.web.bind.annotation.GetMapping
@@ -30,17 +30,15 @@ class CompanyController(
     fun createCompany(
         @AuthenticatedUser workerId: String,
         @RequestBody request: CompanyCreateRequest,
-    ): SuccessResponse {
-        companyService.createCompany(workerId, request)
-        return SuccessResponse.newBuilder().setIsSuccess(true).build()
+    ): CompanyResponse {
+        return companyService.createCompany(workerId, request)
     }
 
     @PutMapping
     fun updateCompany(
         @AuthenticatedUser workerId: String,
         @RequestBody request: CompanyUpdateRequest,
-    ): SuccessResponse {
-        companyService.updateCompany(request)
-        return SuccessResponse.newBuilder().setIsSuccess(true).build()
+    ): CompanyResponse {
+        return companyService.updateCompany(request)
     }
 }

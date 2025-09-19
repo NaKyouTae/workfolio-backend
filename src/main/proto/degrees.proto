@@ -26,3 +26,7 @@ message DegreesUpdateRequest {
   uint64 started_at = 4;
   optional uint64 ended_at = 5;
 }
+
+message DegreesResponse {
+  Degrees degrees = 1;
+}

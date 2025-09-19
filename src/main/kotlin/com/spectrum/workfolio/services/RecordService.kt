@@ -2,10 +2,11 @@ package com.spectrum.workfolio.services
 
 import com.spectrum.workfolio.domain.entity.record.Record
 import com.spectrum.workfolio.domain.entity.record.Record.Companion.generateRecordType
-import com.spectrum.workfolio.domain.extensions.toRecordProto
+import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.RecordRepository
 import com.spectrum.workfolio.proto.record.CreateRecordRequest
 import com.spectrum.workfolio.proto.record.ListRecordResponse
+import com.spectrum.workfolio.proto.record.RecordResponse
 import com.spectrum.workfolio.utils.TimeUtil
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -52,13 +53,13 @@ class RecordService(
         val list = recordRepository.findByDateRange(recordGroupIds, startDate, endDate)
         val sortedList =
             list.sortedWith(compareBy<Record> { it.startedAt.toLocalDate() }.thenByDescending { it.getDuration() })
-        val listResponse = sortedList.map { it.toRecordProto() }
+        val listResponse = sortedList.map { it.toProto() }
 
         return ListRecordResponse.newBuilder().addAllRecords(listResponse).build()
     }
 
     @Transactional
-    fun create(workerId: String, params: CreateRecordRequest): Record {
+    fun create(workerId: String, params: CreateRecordRequest): RecordResponse {
         val worker = workerService.getWorker(workerId)
         val recordGroup = recordGroupService.getRecordGroup(params.recordGroupId)
         val startedAt = TimeUtil.ofEpochMilli(params.startedAt)
@@ -76,7 +77,9 @@ class RecordService(
             worker,
         )
 
-        return recordRepository.save(record)
+        val createdRecord = recordRepository.save(record)
+
+        return RecordResponse.newBuilder().setRecord(createdRecord.toProto()).build()
     }
 
     private fun calculateWeekRange(year: Int, month: Int, week: Int): Pair<LocalDateTime, LocalDateTime> {

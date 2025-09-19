@@ -28,3 +28,7 @@ message CertificationsUpdateRequest {
   uint64 issued_at = 5;
   optional uint64 expiration_period = 6;
 }
+
+message CertificationsResponse {
+  Certifications certifications = 1;
+}

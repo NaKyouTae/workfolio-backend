@@ -14,17 +14,6 @@ message CreateRecordGroupRequest {
   uint64 priority = 100;
 }
 
-message CreateRecordGroupResponse {
-  string id = 1;
-  bool is_public = 2;
-  string public_id = 3;
-  string title = 4;
-  string color = 5;
-  uint64 priority = 99;
-  uint64 created_at = 100;
-  uint64 updated_at = 101;
-}
-
 message ListRecordGroupResponse {
   repeated RecordGroup groups = 1;
 }
@@ -39,4 +28,8 @@ message UpdateRecordGroupRequest {
   bool is_public = 2;
   string color = 3;
   uint64 priority = 4;
+}
+
+message RecordGroupResponse {
+  RecordGroup record_group = 1;
 }

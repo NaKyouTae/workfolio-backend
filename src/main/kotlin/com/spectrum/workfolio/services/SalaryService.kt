@@ -6,6 +6,7 @@ import com.spectrum.workfolio.domain.model.MsgKOR
 import com.spectrum.workfolio.domain.repository.SalaryRepository
 import com.spectrum.workfolio.proto.salary.SalaryCreateRequest
 import com.spectrum.workfolio.proto.salary.SalaryListResponse
+import com.spectrum.workfolio.proto.salary.SalaryResponse
 import com.spectrum.workfolio.proto.salary.SalaryUpdateRequest
 import com.spectrum.workfolio.utils.TimeUtil
 import com.spectrum.workfolio.utils.WorkfolioException
@@ -24,15 +25,15 @@ class SalaryService(
     }
 
     @Transactional(readOnly = true)
-    fun listSalaries(companyId: String): SalaryListResponse {
-        val salaries = salaryRepository.findByCompanyId(companyId)
+    fun listSalaries(companyIds: List<String>): SalaryListResponse {
+        val salaries = salaryRepository.findByCompanyIdInOrderByStartedAtDescEndedAtDesc(companyIds)
         return SalaryListResponse.newBuilder()
             .addAllSalaries(salaries.map { it.toProto() })
             .build()
     }
 
     @Transactional
-    fun createSalary(request: SalaryCreateRequest): Salary {
+    fun createSalary(request: SalaryCreateRequest): SalaryResponse {
         val company = companyService.getCompany(request.companyId)
         val position = Salary(
             amount = request.amount,
@@ -41,11 +42,13 @@ class SalaryService(
             company = company,
         )
 
-        return salaryRepository.save(position)
+        val createdSalary = salaryRepository.save(position)
+
+        return SalaryResponse.newBuilder().setSalary(createdSalary.toProto()).build()
     }
 
     @Transactional
-    fun updateSalary(request: SalaryUpdateRequest): Salary {
+    fun updateSalary(request: SalaryUpdateRequest): SalaryResponse {
         val salary = this.getSalary(request.id)
 
         salary.changeInfo(
@@ -54,6 +57,8 @@ class SalaryService(
             endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
         )
 
-        return salaryRepository.save(salary)
+        val updatedSalary = salaryRepository.save(salary)
+
+        return SalaryResponse.newBuilder().setSalary(updatedSalary.toProto()).build()
     }
 }

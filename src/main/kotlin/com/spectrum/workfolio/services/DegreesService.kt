@@ -6,6 +6,7 @@ import com.spectrum.workfolio.domain.model.MsgKOR
 import com.spectrum.workfolio.domain.repository.DegreesRepository
 import com.spectrum.workfolio.proto.degrees.DegreesCreateRequest
 import com.spectrum.workfolio.proto.degrees.DegreesListResponse
+import com.spectrum.workfolio.proto.degrees.DegreesResponse
 import com.spectrum.workfolio.proto.degrees.DegreesUpdateRequest
 import com.spectrum.workfolio.utils.TimeUtil
 import com.spectrum.workfolio.utils.WorkfolioException
@@ -26,14 +27,14 @@ class DegreesService(
     @Transactional(readOnly = true)
     fun listDegrees(workerId: String): DegreesListResponse {
         val worker = workerService.getWorker(workerId)
-        val degrees = degreesRepository.findByWorkerId(worker.id)
+        val degrees = degreesRepository.findByWorkerIdOrderByStartedAtDescEndedAtDesc(worker.id)
         return DegreesListResponse.newBuilder()
             .addAllDegrees(degrees.map { it.toProto() })
             .build()
     }
 
     @Transactional
-    fun createDegrees(workerId: String, request: DegreesCreateRequest): Degrees {
+    fun createDegrees(workerId: String, request: DegreesCreateRequest): DegreesResponse {
         val worker = workerService.getWorker(workerId)
         val degrees = Degrees(
             name = request.name,
@@ -43,11 +44,13 @@ class DegreesService(
             worker = worker,
         )
 
-        return degreesRepository.save(degrees)
+        val createdDegrees = degreesRepository.save(degrees)
+
+        return DegreesResponse.newBuilder().setDegrees(createdDegrees.toProto()).build()
     }
 
     @Transactional
-    fun updateDegrees(request: DegreesUpdateRequest): Degrees {
+    fun updateDegrees(request: DegreesUpdateRequest): DegreesResponse {
         val degrees = this.getDegrees(request.id)
 
         degrees.changeInfo(
@@ -57,6 +60,8 @@ class DegreesService(
             endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
         )
 
-        return degreesRepository.save(degrees)
+        val updatedDegrees = degreesRepository.save(degrees)
+
+        return DegreesResponse.newBuilder().setDegrees(updatedDegrees.toProto()).build()
     }
 }

@@ -11,8 +11,6 @@ fun Company.toProto(): com.spectrum.workfolio.proto.common.Company {
     builder.setStartedAt(TimeUtil.toEpochMilli(this.startedAt))
     builder.setIsWorking(this.isWorking)
     builder.setWorker(this.worker.toProto())
-    builder.addAllPositions(this.positions.map { it.toProto() })
-    builder.addAllSalaries(this.salaries.map { it.toProto() })
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
 
