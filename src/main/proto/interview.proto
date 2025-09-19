@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package com.spectrum.workfolio.proto;
+
+option java_multiple_files = true;
+option java_package = "com.spectrum.workfolio.proto.interview";
+option java_outer_classname = "InterviewProto";
+
+message InterviewCreateRequest {
+  optional string title = 1;
+  Interview.Type type = 2;
+  optional uint64 started_at = 3;
+  optional uint64 ended_at = 4;
+  optional string memo = 5;
+
+  string job_search_id = 99;
+}
+
+message InterviewUpdateRequest {
+  string id = 1;
+  optional string title = 2;
+  Interview.Type type = 3;
+  optional uint64 started_at = 4;
+  optional uint64 ended_at = 5;
+  optional string memo = 6;
+
+  string job_search_id = 99;
+}
+
+message InterviewListResponse {
+  repeated Interview job_search_companies = 1;
+}
+
+message InterviewResponse {
+  Interview job_search_company = 1;
+}

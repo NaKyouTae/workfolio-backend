@@ -40,10 +40,15 @@ class JobSearchCompanyService(
         val jobSearchCompany = JobSearchCompany(
             name = request.name,
             status = JobSearchCompanyStatus.valueOf(request.status),
-            link = request.link,
             appliedAt = TimeUtil.ofEpochMilli(request.appliedAt),
             closedAt = TimeUtil.ofEpochMilli(request.closedAt),
             endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
+            industry = request.industry,
+            location = request.location,
+            businessSize = request.businessSize,
+            description = request.description,
+            memo = request.memo,
+            link = request.link,
             jobSearch = jobSearch,
         )
 
@@ -62,6 +67,11 @@ class JobSearchCompanyService(
             appliedAt = TimeUtil.ofEpochMilli(request.appliedAt),
             closedAt = TimeUtil.ofEpochMilli(request.closedAt),
             endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
+            industry = request.industry,
+            location = request.location,
+            businessSize = request.businessSize,
+            description = request.description,
+            memo = request.memo,
             link = request.link,
         )
 

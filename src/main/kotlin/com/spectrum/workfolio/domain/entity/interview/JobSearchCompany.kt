@@ -25,6 +25,11 @@ class JobSearchCompany(
     appliedAt: LocalDateTime,
     closedAt: LocalDateTime,
     endedAt: LocalDate? = null,
+    industry: String? = null,
+    location: String? = null,
+    businessSize: String? = null,
+    description: String? = null,
+    memo: String? = null,
     link: String? = null,
     jobSearch: JobSearch,
 ) : BaseEntity("JC") {
@@ -45,8 +50,28 @@ class JobSearchCompany(
     var closedAt: LocalDateTime = closedAt
         protected set
 
-    @Column(name = "ended_at", nullable = false)
+    @Column(name = "ended_at", nullable = true)
     var endedAt: LocalDate? = endedAt
+        protected set
+
+    @Column(name = "location", length = 2048, nullable = true)
+    var location: String? = location
+        protected set
+
+    @Column(name = "industry", length = 512, nullable = true)
+    var industry: String? = industry
+        protected set
+
+    @Column(name = "business_size", length = 512, nullable = true)
+    var businessSize: String? = businessSize
+        protected set
+
+    @Column(name = "memo", columnDefinition = "TEXT", nullable = true)
+    var memo: String? = memo
+        protected set
+
+    @Column(name = "description", columnDefinition = "TEXT", nullable = true)
+    var description: String? = description
         protected set
 
     @Column(name = "link", columnDefinition = "TEXT", nullable = true)
@@ -64,6 +89,11 @@ class JobSearchCompany(
         appliedAt: LocalDateTime,
         closedAt: LocalDateTime,
         endedAt: LocalDate? = null,
+        industry: String,
+        location: String,
+        businessSize: String,
+        description: String? = null,
+        memo: String? = null,
         link: String? = null,
     ) {
         this.name = name
@@ -71,6 +101,11 @@ class JobSearchCompany(
         this.appliedAt = appliedAt
         this.closedAt = closedAt
         this.endedAt = endedAt
+        this.industry = industry
+        this.location = location
+        this.businessSize = businessSize
+        this.description = description
+        this.memo = memo
         this.link = link
     }
 }

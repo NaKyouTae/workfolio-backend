@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/workers/job-search")
+@RequestMapping("/api/workers/job-searches")
 class JobSearchController(
     private val jobSearchService: JobSearchService,
 ) {

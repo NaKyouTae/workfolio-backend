@@ -761,6 +761,31 @@ databaseChangeLog:
                   constraints:
                     nullable: true
               - column:
+                  name: industry
+                  type: VARCHAR(512)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: business_size
+                  type: VARCHAR(512)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: location
+                  type: VARCHAR(512)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: description
+                  type: TEXT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: memo
+                  type: TEXT
+                  constraints:
+                    nullable: true
+              - column:
                   name: link
                   type: TEXT
                   constraints:
