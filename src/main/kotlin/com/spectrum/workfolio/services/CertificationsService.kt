@@ -1,0 +1,65 @@
+package com.spectrum.workfolio.services
+
+import com.spectrum.workfolio.domain.entity.primary.Certifications
+import com.spectrum.workfolio.domain.extensions.toProto
+import com.spectrum.workfolio.domain.model.MsgKOR
+import com.spectrum.workfolio.domain.repository.CertificationsRepository
+import com.spectrum.workfolio.proto.certifications.CertificationsCreateRequest
+import com.spectrum.workfolio.proto.certifications.CertificationsListResponse
+import com.spectrum.workfolio.proto.certifications.CertificationsUpdateRequest
+import com.spectrum.workfolio.utils.TimeUtil
+import com.spectrum.workfolio.utils.WorkfolioException
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+
+@Service
+class CertificationsService(
+    private val workerService: WorkerService,
+    private val certificationsRepository: CertificationsRepository,
+) {
+
+    @Transactional(readOnly = true)
+    fun getCertifications(id: String): Certifications {
+        return certificationsRepository.findById(id)
+            .orElseThrow { WorkfolioException(MsgKOR.NOT_FOUND_EDUCATION.message) }
+    }
+
+    @Transactional(readOnly = true)
+    fun listCertifications(workerId: String): CertificationsListResponse {
+        val worker = workerService.getWorker(workerId)
+        val educations = certificationsRepository.findByWorkerId(worker.id)
+        return CertificationsListResponse.newBuilder()
+            .addAllCertifications(educations.map { it.toProto() })
+            .build()
+    }
+
+    @Transactional
+    fun createCertifications(workerId: String, request: CertificationsCreateRequest): Certifications {
+        val worker = workerService.getWorker(workerId)
+        val education = Certifications(
+            name = worker.name,
+            number = request.number,
+            issuer = request.issuer,
+            issuedAt = TimeUtil.ofEpochMilli(request.issuedAt).toLocalDate(),
+            expirationPeriod = TimeUtil.ofEpochMilliNullable(request.expirationPeriod)?.toLocalDate(),
+            worker = worker,
+        )
+
+        return certificationsRepository.save(education)
+    }
+
+    @Transactional
+    fun updateCertifications(request: CertificationsUpdateRequest): Certifications {
+        val certifications = this.getCertifications(request.id)
+
+        certifications.changeInfo(
+            name = request.name,
+            number = request.number,
+            issuer = request.issuer,
+            issuedAt = TimeUtil.ofEpochMilli(request.issuedAt).toLocalDate(),
+            expirationPeriod = TimeUtil.ofEpochMilliNullable(request.expirationPeriod)?.toLocalDate(),
+        )
+
+        return certificationsRepository.save(certifications)
+    }
+}

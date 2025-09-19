@@ -51,7 +51,8 @@ class Degrees(
     var worker: Worker = worker
         protected set
 
-    fun changeInfo(major: String, startedAt: LocalDate, endedAt: LocalDate?) {
+    fun changeInfo(name: String, major: String, startedAt: LocalDate, endedAt: LocalDate?) {
+        this.name = name
         this.major = major
         this.startedAt = startedAt
         this.endedAt = endedAt

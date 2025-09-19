@@ -50,7 +50,8 @@ class Education(
     var worker: Worker = worker
         protected set
 
-    fun changeInfo(startedAt: LocalDate, endedAt: LocalDate?, agency: String) {
+    fun changeInfo(name: String, startedAt: LocalDate, endedAt: LocalDate?, agency: String) {
+        this.name = name
         this.startedAt = startedAt
         this.endedAt = endedAt
         this.agency = agency

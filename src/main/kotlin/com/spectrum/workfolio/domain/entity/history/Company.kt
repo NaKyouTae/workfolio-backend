@@ -68,7 +68,8 @@ class Company(
         mutableSalaries.add(salary)
     }
 
-    fun changeInfo(startedAt: LocalDate, endedAt: LocalDate?, isWorking: Boolean) {
+    fun changeInfo(name: String, startedAt: LocalDate, endedAt: LocalDate?, isWorking: Boolean) {
+        this.name = name
         this.startedAt = startedAt
         this.endedAt = endedAt
         this.isWorking = isWorking

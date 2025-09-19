@@ -25,4 +25,12 @@ object TimeUtil {
     fun nowToString(): String {
         return LocalDateTime.now().toString()
     }
+
+    fun ofEpochMilliNullable(endedAt: Long): LocalDateTime? {
+        return if (endedAt != 0L) {
+            this.ofEpochMilli(endedAt)
+        } else {
+            null
+        }
+    }
 }

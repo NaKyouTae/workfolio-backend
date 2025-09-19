@@ -43,7 +43,8 @@ class Position(
     @JoinColumn(name = "company_id", nullable = false)
     var company: Company = company
 
-    fun changeInfo(startedAt: LocalDate, endedAt: LocalDate?) {
+    fun changeInfo(name: String, startedAt: LocalDate, endedAt: LocalDate?) {
+        this.name = name
         this.startedAt = startedAt
         this.endedAt = endedAt
     }

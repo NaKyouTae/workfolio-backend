@@ -55,7 +55,8 @@ class Certifications(
     var worker: Worker = worker
         protected set
 
-    fun changeInfo(number: String, issuer: String, issuedAt: LocalDate, expirationPeriod: LocalDate?) {
+    fun changeInfo(name: String, number: String, issuer: String, issuedAt: LocalDate, expirationPeriod: LocalDate?) {
+        this.name = name
         this.number = number
         this.issuer = issuer
         this.issuedAt = issuedAt
