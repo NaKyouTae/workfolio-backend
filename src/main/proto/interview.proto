@@ -15,24 +15,24 @@ message InterviewCreateRequest {
   optional uint64 ended_at = 4;
   optional string memo = 5;
 
-  string job_search_id = 99;
+  string job_search_company_id = 99;
 }
 
 message InterviewUpdateRequest {
-  string id = 1;
-  optional string title = 2;
-  Interview.Type type = 3;
-  optional uint64 started_at = 4;
-  optional uint64 ended_at = 5;
-  optional string memo = 6;
+  optional string title = 1;
+  Interview.Type type = 2;
+  optional uint64 started_at = 3;
+  optional uint64 ended_at = 4;
+  optional string memo = 5;
 
-  string job_search_id = 99;
+  string id = 98;
+  string job_search_company_id = 99;
 }
 
 message InterviewListResponse {
-  repeated Interview job_search_companies = 1;
+  repeated Interview interviews = 1;
 }
 
 message InterviewResponse {
-  Interview job_search_company = 1;
+  Interview interview = 1;
 }

@@ -5,9 +5,10 @@ import com.spectrum.workfolio.domain.enums.JobSearchCompanyStatus
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.JobSearchCompanyRepository
+import com.spectrum.workfolio.proto.job_search_company.JobSearchCompanyCreateRequest
 import com.spectrum.workfolio.proto.job_search_company.JobSearchCompanyListResponse
 import com.spectrum.workfolio.proto.job_search_company.JobSearchCompanyResponse
-import com.spectrum.workfolio.proto.job_search_company.JobSearchCompanyUpsertRequest
+import com.spectrum.workfolio.proto.job_search_company.JobSearchCompanyUpdateRequest
 import com.spectrum.workfolio.utils.TimeUtil
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.stereotype.Service
@@ -33,8 +34,8 @@ class JobSearchCompanyService(
     }
 
     @Transactional
-    fun createJobSearchCompany(jobSearchId: String, request: JobSearchCompanyUpsertRequest): JobSearchCompanyResponse {
-        val jobSearch = jobSearchService.getJobSearch(jobSearchId)
+    fun createJobSearchCompany(request: JobSearchCompanyCreateRequest): JobSearchCompanyResponse {
+        val jobSearch = jobSearchService.getJobSearch(request.jobSearchId)
 
         val jobSearchCompany = JobSearchCompany(
             name = request.name,
@@ -57,9 +58,8 @@ class JobSearchCompanyService(
     }
 
     @Transactional
-    fun updateJobSearchCompany(jobSearchCompanyId: String, request: JobSearchCompanyUpsertRequest): JobSearchCompanyResponse {
-
-        val jobSearchCompany = this.getJobSearchCompany(jobSearchCompanyId)
+    fun updateJobSearchCompany(request: JobSearchCompanyUpdateRequest): JobSearchCompanyResponse {
+        val jobSearchCompany = this.getJobSearchCompany(request.id)
 
         jobSearchCompany.changeInfo(
             name = request.name,

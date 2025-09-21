@@ -813,3 +813,61 @@ databaseChangeLog:
                   name: job_search_id
             indexName: idx_job_search_company_job_search_id
             tableName: job_search_company
+
+        - createTable:
+            tableName: interview
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: VARCHAR(1024)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: type
+                  type: VARCHAR(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: started_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: true
+              - column:
+                  name: ended_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: true
+              - column:
+                  name: memo
+                  type: TEXT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: job_search_company_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+        - createIndex:
+            columns:
+              - column:
+                  name: job_search_company_id
+            indexName: idx_interview_job_search_company_id
+            tableName: interview

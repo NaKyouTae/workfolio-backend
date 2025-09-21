@@ -8,7 +8,7 @@ option java_multiple_files = true;
 option java_package = "com.spectrum.workfolio.proto.job_search_company";
 option java_outer_classname = "JobSearchCompanyProto";
 
-message JobSearchCompanyUpsertRequest {
+message JobSearchCompanyCreateRequest {
   string name = 1;
   JobSearchCompany.Status status = 2;
   optional uint64 closed_at = 3;
@@ -20,6 +20,25 @@ message JobSearchCompanyUpsertRequest {
   optional string businessSize = 9;
   optional string description = 10;
   optional string memo = 11;
+
+  string job_search_id = 99;
+}
+
+message JobSearchCompanyUpdateRequest {
+  string name = 1;
+  JobSearchCompany.Status status = 2;
+  optional uint64 closed_at = 3;
+  optional uint64 applied_at = 4;
+  optional uint64 ended_at = 5;
+  optional string link = 6;
+  optional string industry = 7;
+  optional string location = 8;
+  optional string businessSize = 9;
+  optional string description = 10;
+  optional string memo = 11;
+
+  string id = 98;
+  string job_search_id = 99;
 }
 
 message JobSearchCompanyListResponse {

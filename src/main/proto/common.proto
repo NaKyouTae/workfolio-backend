@@ -211,10 +211,9 @@ message JobSearchCompany {
 message Interview {
   enum Type {
     UNKNOWN = 0;
-    IN_PROGRESS = 1;
-    APPLIED = 2;
-    IN_INTERVIEW = 3;
-    CLOSED = 4;
+    PAPER = 1;
+    OFFLINE = 2;
+    ONLINE = 3;
   }
 
   string id = 1;

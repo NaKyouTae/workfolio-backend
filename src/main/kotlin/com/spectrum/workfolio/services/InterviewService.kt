@@ -29,18 +29,18 @@ class InterviewService(
     fun listInterviews(jobSearchCompanyId: String): InterviewListResponse {
         val interviews = interviewRepository.findByJobSearchCompanyIdOrderByStartedAtDescEndedAtDesc(jobSearchCompanyId)
         return InterviewListResponse.newBuilder()
-            .addAllJobSearchCompanies(interviews.map { it.toProto() })
+            .addAllInterviews(interviews.map { it.toProto() })
             .build()
     }
 
     @Transactional
     fun createInterview(request: InterviewCreateRequest): InterviewResponse {
-        val jobSearchCompany = jobSearchCompanyService.getJobSearchCompany(request.jobSearchId)
+        val jobSearchCompany = jobSearchCompanyService.getJobSearchCompany(request.jobSearchCompanyId)
 
         val interview = Interview(
             title = request.title,
             type = InterviewType.valueOf(request.type.name),
-            startedAt = TimeUtil.ofEpochMilli(request.startedAt),
+            startedAt = TimeUtil.ofEpochMilliNullable(request.startedAt),
             endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt),
             memo = request.memo,
             jobSearchCompany = jobSearchCompany,
@@ -48,7 +48,7 @@ class InterviewService(
 
         val createdInterview = interviewRepository.save(interview)
 
-        return InterviewResponse.newBuilder().setJobSearchCompany(createdInterview.toProto()).build()
+        return InterviewResponse.newBuilder().setInterview(createdInterview.toProto()).build()
     }
 
     @Transactional
@@ -58,13 +58,13 @@ class InterviewService(
         interview.changeInfo(
             title = request.title,
             type = InterviewType.valueOf(request.type.name),
-            startedAt = TimeUtil.ofEpochMilli(request.startedAt),
+            startedAt = TimeUtil.ofEpochMilliNullable(request.startedAt),
             endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt),
             memo = request.memo,
         )
 
         val updatedJobSearchCompany = interviewRepository.save(interview)
 
-        return InterviewResponse.newBuilder().setJobSearchCompany(updatedJobSearchCompany.toProto()).build()
+        return InterviewResponse.newBuilder().setInterview(updatedJobSearchCompany.toProto()).build()
     }
 }

@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface InterviewRepository : JpaRepository<Interview, String> {
-    fun findByJobSearchCompanyIdOrderByStartedAtDescEndedAtDesc(workerId: String): List<Interview>
+    fun findByJobSearchCompanyIdOrderByStartedAtDescEndedAtDesc(jobSearchCompanyId: String): List<Interview>
 }

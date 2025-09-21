@@ -15,19 +15,19 @@ import java.time.LocalDateTime
 @Table(
     name = "interview",
     indexes = [
-        Index(name = "idx_job_search_company_job_search_id", columnList = "job_search_id"),
+        Index(name = "idx_interview_job_search_company_id", columnList = "job_search_company_id"),
     ],
 )
 class Interview(
     title: String? = null,
     type: InterviewType,
-    startedAt: LocalDateTime,
+    startedAt: LocalDateTime? = null,
     endedAt: LocalDateTime? = null,
     memo: String? = null,
     jobSearchCompany: JobSearchCompany,
 ) : BaseEntity("IV") {
 
-    @Column(name = "name", length = 1024, nullable = false)
+    @Column(name = "title", length = 1024, nullable = true)
     var title: String? = title
         protected set
 
@@ -35,8 +35,8 @@ class Interview(
     var type: InterviewType = type
         protected set
 
-    @Column(name = "started_at", nullable = false)
-    var startedAt: LocalDateTime = startedAt
+    @Column(name = "started_at", nullable = true)
+    var startedAt: LocalDateTime? = startedAt
         protected set
 
     @Column(name = "ended_at", nullable = true)
@@ -55,7 +55,7 @@ class Interview(
     fun changeInfo(
         title: String? = null,
         type: InterviewType,
-        startedAt: LocalDateTime,
+        startedAt: LocalDateTime? = null,
         endedAt: LocalDateTime? = null,
         memo: String? = null,
     ) {
