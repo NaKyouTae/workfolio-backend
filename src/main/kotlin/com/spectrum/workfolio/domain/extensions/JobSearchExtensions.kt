@@ -9,7 +9,6 @@ fun JobSearch.toProto(): com.spectrum.workfolio.proto.common.JobSearch {
     builder.setId(this.id)
     builder.setTitle(this.title)
     builder.setMemo(this.memo)
-    builder.setPrevCompany(this.prevCompany.toProto())
     builder.setWorker(this.worker.toProto())
     builder.setStartedAt(TimeUtil.toEpochMilli(this.startedAt))
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
@@ -17,6 +16,9 @@ fun JobSearch.toProto(): com.spectrum.workfolio.proto.common.JobSearch {
 
     if (this.endedAt != null) {
         builder.setEndedAt(TimeUtil.toEpochMilli(this.endedAt!!))
+    }
+    if (this.prevCompany != null) {
+        builder.setPrevCompany(this.prevCompany!!.toProto())
     }
     if (this.nextCompany != null) {
         builder.setNextCompany(this.nextCompany!!.toProto())

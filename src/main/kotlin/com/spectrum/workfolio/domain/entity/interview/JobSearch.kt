@@ -23,7 +23,7 @@ class JobSearch(
     title: String? = null,
     startedAt: LocalDate,
     endedAt: LocalDate? = null,
-    prevCompany: Company,
+    prevCompany: Company? = null,
     nextCompany: Company? = null,
     memo: String? = null,
     worker: Worker,
@@ -45,8 +45,8 @@ class JobSearch(
         protected set
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "prev_company_id", nullable = false)
-    var prevCompany: Company = prevCompany
+    @JoinColumn(name = "prev_company_id", nullable = true)
+    var prevCompany: Company? = prevCompany
         protected set
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -1,12 +1,12 @@
 package com.spectrum.workfolio.controllers
 
 import com.spectrum.workfolio.config.annotation.AuthenticatedUser
-import com.spectrum.workfolio.proto.job_search.JobSearchCreateRequest
 import com.spectrum.workfolio.proto.job_search.JobSearchListResponse
 import com.spectrum.workfolio.proto.job_search.JobSearchResponse
-import com.spectrum.workfolio.proto.job_search.JobSearchUpdateRequest
+import com.spectrum.workfolio.proto.job_search.JobSearchUpsertRequest
 import com.spectrum.workfolio.services.JobSearchService
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -29,15 +29,16 @@ class JobSearchController(
     @PostMapping
     fun createJobSearch(
         @AuthenticatedUser workerId: String,
-        @RequestBody request: JobSearchCreateRequest,
+        @RequestBody request: JobSearchUpsertRequest,
     ): JobSearchResponse {
         return jobSearchService.createJobSearch(workerId, request)
     }
 
-    @PutMapping
+    @PutMapping("/{jobSearchId}")
     fun updateJobSearch(
-        @RequestBody request: JobSearchUpdateRequest,
+        @PathVariable jobSearchId: String,
+        @RequestBody request: JobSearchUpsertRequest,
     ): JobSearchResponse {
-        return jobSearchService.updateJobSearch(request)
+        return jobSearchService.updateJobSearch(jobSearchId, request)
     }
 }

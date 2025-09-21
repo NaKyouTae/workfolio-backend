@@ -170,8 +170,8 @@ message JobSearch {
   optional string memo = 5;
 
   Worker worker = 50;
-  Company prev_company = 51;
-  Company next_company = 52;
+  optional Company prev_company = 51;
+  optional Company next_company = 52;
 
   uint64 created_at = 98;
   uint64 updated_at = 99;
@@ -180,19 +180,27 @@ message JobSearch {
 message JobSearchCompany {
   enum Status {
     UNKNOWN = 0;
-    IN_PROGRESS = 1;
+    INTERESTED = 1;
     APPLIED = 2;
-    IN_INTERVIEW = 3;
-    CLOSED = 4;
+    INTERVIEWING = 3;
+    PASSED = 4;
+    REJECTED = 5;
+    ABANDONED = 6;
   }
 
   string id = 1;
-  optional string name = 2;
+  string name = 2;
   Status status = 3;
   uint64 applied_at = 4;
   uint64 closed_at = 5;
   optional uint64 ended_at = 6;
-  optional string link = 7;
+  optional string industry = 7;
+  optional string location = 8;
+  optional string businessSize = 9;
+  optional string description = 10;
+  optional string memo = 11;
+  optional string link = 12;
+
 
   JobSearch job_search = 50;
 

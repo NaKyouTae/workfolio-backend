@@ -4,6 +4,8 @@ import com.spectrum.workfolio.domain.entity.BaseEntity
 import com.spectrum.workfolio.domain.enums.JobSearchCompanyStatus
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.FetchType
 import jakarta.persistence.Index
 import jakarta.persistence.JoinColumn
@@ -22,8 +24,8 @@ import java.time.LocalDateTime
 class JobSearchCompany(
     name: String,
     status: JobSearchCompanyStatus,
-    appliedAt: LocalDateTime,
-    closedAt: LocalDateTime,
+    appliedAt: LocalDateTime? = null,
+    closedAt: LocalDateTime? = null,
     endedAt: LocalDate? = null,
     industry: String? = null,
     location: String? = null,
@@ -38,16 +40,17 @@ class JobSearchCompany(
     var name: String = name
         protected set
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 128, nullable = false)
     var status: JobSearchCompanyStatus = status
         protected set
 
-    @Column(name = "applied_at", nullable = false)
-    var appliedAt: LocalDateTime = appliedAt
+    @Column(name = "applied_at", nullable = true)
+    var appliedAt: LocalDateTime? = appliedAt
         protected set
 
-    @Column(name = "closed_at", nullable = false)
-    var closedAt: LocalDateTime = closedAt
+    @Column(name = "closed_at", nullable = true)
+    var closedAt: LocalDateTime? = closedAt
         protected set
 
     @Column(name = "ended_at", nullable = true)

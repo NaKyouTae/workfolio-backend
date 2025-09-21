@@ -4,10 +4,9 @@ import com.spectrum.workfolio.domain.entity.interview.JobSearch
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.JobSearchRepository
-import com.spectrum.workfolio.proto.job_search.JobSearchCreateRequest
 import com.spectrum.workfolio.proto.job_search.JobSearchListResponse
 import com.spectrum.workfolio.proto.job_search.JobSearchResponse
-import com.spectrum.workfolio.proto.job_search.JobSearchUpdateRequest
+import com.spectrum.workfolio.proto.job_search.JobSearchUpsertRequest
 import com.spectrum.workfolio.utils.TimeUtil
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.stereotype.Service
@@ -34,9 +33,13 @@ class JobSearchService(
     }
 
     @Transactional
-    fun createJobSearch(workerId: String, request: JobSearchCreateRequest): JobSearchResponse {
+    fun createJobSearch(workerId: String, request: JobSearchUpsertRequest): JobSearchResponse {
         val worker = workerService.getWorker(workerId)
-        val prevCompany = companyService.getCompany(request.prevCompanyId)
+        val prevCompany = if (request.hasNextCompanyId()) {
+            companyService.getCompany(request.prevCompanyId)
+        } else {
+            null
+        }
         val nextCompany = if (request.hasNextCompanyId()) {
             companyService.getCompany(request.nextCompanyId)
         } else {
@@ -59,8 +62,8 @@ class JobSearchService(
     }
 
     @Transactional
-    fun updateJobSearch(request: JobSearchUpdateRequest): JobSearchResponse {
-        val jobSearch = this.getJobSearch(request.id)
+    fun updateJobSearch(jobSearchId: String, request: JobSearchUpsertRequest): JobSearchResponse {
+        val jobSearch = this.getJobSearch(jobSearchId)
 
         val prevCompany = companyService.getCompany(request.prevCompanyId)
         val nextCompany = if (request.hasNextCompanyId()) {
