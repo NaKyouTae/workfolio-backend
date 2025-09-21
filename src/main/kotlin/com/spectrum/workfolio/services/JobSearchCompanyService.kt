@@ -64,8 +64,8 @@ class JobSearchCompanyService(
         jobSearchCompany.changeInfo(
             name = request.name,
             status = JobSearchCompanyStatus.valueOf(request.status.name),
-            appliedAt = TimeUtil.ofEpochMilli(request.appliedAt),
-            closedAt = TimeUtil.ofEpochMilli(request.closedAt),
+            appliedAt = TimeUtil.ofEpochMilliNullable(request.appliedAt),
+            closedAt = TimeUtil.ofEpochMilliNullable(request.closedAt),
             endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
             industry = request.industry,
             location = request.location,

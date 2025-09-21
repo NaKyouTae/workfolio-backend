@@ -64,8 +64,8 @@ class JobSearch(
         memo: String?,
         startedAt: LocalDate,
         endedAt: LocalDate?,
-        prevCompany: Company,
-        nextCompany: Company?,
+        prevCompany: Company? = null,
+        nextCompany: Company? = null,
     ) {
         this.title = title
         this.memo = memo

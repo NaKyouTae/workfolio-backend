@@ -89,8 +89,8 @@ class JobSearchCompany(
     fun changeInfo(
         name: String,
         status: JobSearchCompanyStatus,
-        appliedAt: LocalDateTime,
-        closedAt: LocalDateTime,
+        appliedAt: LocalDateTime? = null,
+        closedAt: LocalDateTime? = null,
         endedAt: LocalDate? = null,
         industry: String,
         location: String,

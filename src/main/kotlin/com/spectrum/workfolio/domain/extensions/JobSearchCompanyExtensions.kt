@@ -17,11 +17,11 @@ fun JobSearchCompany.toProto(): com.spectrum.workfolio.proto.common.JobSearchCom
     if (this.closedAt != null) { builder.setClosedAt(TimeUtil.toEpochMilli(this.closedAt!!)) }
     if (this.endedAt != null) { builder.setEndedAt(TimeUtil.toEpochMilli(this.endedAt!!)) }
     if (this.industry != null) { builder.setIndustry(this.industry) }
-    if (this.location != null) { builder.setIndustry(this.location) }
-    if (this.businessSize != null) { builder.setIndustry(this.businessSize) }
-    if (this.description != null) { builder.setIndustry(this.description) }
-    if (this.memo != null) { builder.setIndustry(this.memo) }
-    if (this.link != null) { builder.setIndustry(this.link) }
+    if (this.location != null) { builder.setLocation(this.location) }
+    if (this.businessSize != null) { builder.setBusinessSize(this.businessSize) }
+    if (this.description != null) { builder.setDescription(this.description) }
+    if (this.memo != null) { builder.setMemo(this.memo) }
+    if (this.link != null) { builder.setLink(this.link) }
 
 
     return builder.build()

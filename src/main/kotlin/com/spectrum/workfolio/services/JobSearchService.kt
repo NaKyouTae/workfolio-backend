@@ -36,7 +36,7 @@ class JobSearchService(
     @Transactional
     fun createJobSearch(workerId: String, request: JobSearchCreateRequest): JobSearchResponse {
         val worker = workerService.getWorker(workerId)
-        val prevCompany = if (request.hasNextCompanyId()) {
+        val prevCompany = if (request.hasPrevCompanyId()) {
             companyService.getCompany(request.prevCompanyId)
         } else {
             null
@@ -66,7 +66,11 @@ class JobSearchService(
     fun updateJobSearch(request: JobSearchUpdateRequest): JobSearchResponse {
         val jobSearch = this.getJobSearch(request.id)
 
-        val prevCompany = companyService.getCompany(request.prevCompanyId)
+        val prevCompany = if (request.hasPrevCompanyId()) {
+            companyService.getCompany(request.prevCompanyId)
+        } else {
+            null
+        }
         val nextCompany = if (request.hasNextCompanyId()) {
             companyService.getCompany(request.nextCompanyId)
         } else {
