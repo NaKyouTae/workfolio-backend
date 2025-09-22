@@ -2,6 +2,7 @@ package com.spectrum.workfolio.domain.entity.record
 
 import com.spectrum.workfolio.domain.entity.BaseEntity
 import com.spectrum.workfolio.domain.entity.Worker
+import com.spectrum.workfolio.domain.entity.history.Company
 import com.spectrum.workfolio.domain.enums.RecordType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -34,6 +35,7 @@ class Record(
     startedAt: LocalDateTime,
     endedAt: LocalDateTime? = null,
     recordGroup: RecordGroup,
+    company: Company? = null,
     worker: Worker,
 ) : BaseEntity("RE") {
     @Column(name = "title", nullable = false)
@@ -67,6 +69,11 @@ class Record(
     var recordGroup: RecordGroup = recordGroup
         protected set
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_id", nullable = true)
+    var company: Company? = company
+        protected set
+
     fun getDuration(): Int {
         return Duration.between(startedAt, endedAt).toDays().toInt()
     }
@@ -75,6 +82,22 @@ class Record(
         Duration.between(startedAt, endedAt).toDays().toInt()
 
         return 0
+    }
+
+    fun changeInfo(
+        title: String,
+        description: String,
+        type: RecordType,
+        startedAt: LocalDateTime,
+        endedAt: LocalDateTime? = null,
+        company: Company? = null,
+    ) {
+        this.title = title
+        this.description = description
+        this.type = type
+        this.startedAt = startedAt
+        this.endedAt = endedAt
+        this.company = company
     }
 
     companion object {

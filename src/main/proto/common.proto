@@ -124,9 +124,10 @@ message Record {
   string description = 4;
   uint64 started_at = 5;
   uint64 ended_at = 6;
-  RecordGroup record_group = 7;
 
   Worker worker = 50;
+  Company company = 51;
+  RecordGroup record_group = 52;
 
   uint64 created_at = 98;
   uint64 updated_at = 99;

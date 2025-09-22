@@ -80,11 +80,6 @@ class RecordGroupService(
         request: UpdateRecordGroupRequest,
     ): RecordGroupResponse {
         val recordGroup = this.getRecordGroup(recordGroupId)
-        val workerRecordGroup = workerRecordGroupService.getWorkerRecordGroup(workerId, recordGroupId)
-
-        if (workerRecordGroup != null) {
-            throw WorkfolioException(MsgKOR.NOT_MATCH_RECORD_GROUP_EDITOR.message)
-        }
 
         recordGroup.changeRecordGroup(request.title, request.color, request.isPublic, request.priority)
 
@@ -119,21 +114,11 @@ class RecordGroupService(
         recordGroupId: String,
     ) {
         val recordGroup = this.getRecordGroup(recordGroupId)
-        val workerRecordGroup = workerRecordGroupService.getWorkerRecordGroup(workerId, recordGroupId)
 
         if (recordGroup.worker.id != workerId) {
             throw WorkfolioException(MsgKOR.NOT_OWNER_RECORD_GROUP.message)
         }
 
-        if (workerRecordGroup != null) {
-            throw WorkfolioException(MsgKOR.NOT_MATCH_RECORD_GROUP_EDITOR.message)
-        }
-
-        // record 삭제
-        // worker record group 삭제
-        // record group 삭제
-
-//        workerRecordGroupService.deleteWorkerRecordGroupAll(recordGroup.id)
         recordGroupRepository.delete(recordGroup)
     }
 }

@@ -153,6 +153,11 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: company_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: true
+              - column:
                   name: created_at
                   type: TIMESTAMP
                   defaultValueComputed: CURRENT_TIMESTAMP
