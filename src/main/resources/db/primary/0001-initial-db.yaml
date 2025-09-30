@@ -1,7 +1,7 @@
 databaseChangeLog:
   - changeSet:
       id: 1
-      author: na_kyutae
+      author: kyutae
       changes:
         - createTable:
             tableName: worker
@@ -25,14 +25,12 @@ databaseChangeLog:
                     unique: true
               - column:
                   name: created_at
-                  type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: false
               - column:
                   name: updated_at
-                  type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: false
         - createIndex:
@@ -91,14 +89,12 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: created_at
-                  type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: false
               - column:
                   name: updated_at
-                  type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: false
         - createIndex:
@@ -134,12 +130,12 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: started_at
-                  type: TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: false
               - column:
                   name: ended_at
-                  type: TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: true
               - column:
@@ -159,14 +155,12 @@ databaseChangeLog:
                     nullable: true
               - column:
                   name: created_at
-                  type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: false
               - column:
                   name: updated_at
-                  type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: false
         - createIndex:
@@ -218,14 +212,12 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: created_at
-                  type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: false
               - column:
                   name: updated_at
-                  type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: false
         - createIndex:
@@ -271,12 +263,12 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: started_at
-                  type: TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: false
               - column:
                   name: ended_at
-                  type: TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: true
               - column:
@@ -291,14 +283,12 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: created_at
-                  type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: false
               - column:
                   name: updated_at
-                  type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: false
         - createIndex:
@@ -331,12 +321,12 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: started_at
-                  type: TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: false
               - column:
                   name: ended_at
-                  type: TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: true
               - column:
@@ -346,14 +336,12 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: created_at
-                  type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: false
               - column:
                   name: updated_at
-                  type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: false
         - createIndex:
@@ -385,12 +373,12 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: started_at
-                  type: TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: false
               - column:
                   name: ended_at
-                  type: TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: true
               - column:
@@ -400,14 +388,12 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: created_at
-                  type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: false
               - column:
                   name: updated_at
-                  type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: false
         - createIndex:
@@ -440,12 +426,12 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: started_at
-                  type: TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: false
               - column:
                   name: ended_at
-                  type: TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: true
               - column:
@@ -460,14 +446,12 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: created_at
-                  type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: false
               - column:
                   name: updated_at
-                  type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: false
         - createIndex:
@@ -505,12 +489,12 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: started_at
-                  type: TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: false
               - column:
                   name: ended_at
-                  type: TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: true
               - column:
@@ -520,14 +504,12 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: created_at
-                  type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: false
               - column:
                   name: updated_at
-                  type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: false
         - createIndex:
@@ -570,12 +552,12 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: issued_at
-                  type: TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: false
               - column:
                   name: expiration_period
-                  type: TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: true
               - column:
@@ -585,14 +567,12 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: created_at
-                  type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: false
               - column:
                   name: updated_at
-                  type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: false
         - createIndex:
@@ -641,14 +621,12 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: created_at
-                  type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: false
               - column:
                   name: updated_at
-                  type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: false
         - createIndex:
@@ -680,12 +658,12 @@ databaseChangeLog:
                     nullable: true
               - column:
                   name: started_at
-                  type: TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: false
               - column:
                   name: ended_at
-                  type: TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: true
               - column:
@@ -710,14 +688,12 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: created_at
-                  type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: false
               - column:
                   name: updated_at
-                  type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: false
         - createIndex:
@@ -752,17 +728,17 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: applied_at
-                  type: TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: true
               - column:
                   name: closed_at
-                  type: TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: true
               - column:
                   name: ended_at
-                  type: TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: true
               - column:
@@ -802,14 +778,12 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: created_at
-                  type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: false
               - column:
                   name: updated_at
-                  type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: false
         - createIndex:
@@ -840,12 +814,12 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: started_at
-                  type: TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: true
               - column:
                   name: ended_at
-                  type: TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: true
               - column:
@@ -860,14 +834,12 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: created_at
-                  type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: false
               - column:
                   name: updated_at
-                  type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
+                  type: TIMESTAMP(6)
                   constraints:
                     nullable: false
         - createIndex:

@@ -34,4 +34,12 @@ object TimeUtil {
             null
         }
     }
+
+    fun dateStart(date: LocalDateTime): LocalDateTime {
+        return date.toLocalDate().atStartOfDay()
+    }
+
+    fun dateEnd(date: LocalDateTime): LocalDateTime {
+        return date.toLocalDate().atTime(23, 59, 59, 999_999_999)
+    }
 }

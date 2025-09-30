@@ -13,6 +13,8 @@ import com.spectrum.workfolio.utils.TimeUtil
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 /**
  * 사용자 등록 관련 비즈니스 로직을 담당하는 서비스
@@ -75,12 +77,14 @@ class UserRegistrationService(
     }
 
     private fun createDefaultRecord(workerId: String, recordGroupId: String) {
-        val now = TimeUtil.nowToLong()
+        val now = LocalDateTime.now()
+        val startedAt = TimeUtil.toEpochMilli(TimeUtil.dateStart(now))
+        val endedAt = TimeUtil.toEpochMilli(TimeUtil.dateEnd(now))
         val recordRequest = RecordCreateRequest.newBuilder()
             .setTitle("워크폴리오 회원 가입")
             .setDescription("회원가입을 축하드립니다.")
-            .setStartedAt(now)
-            .setEndedAt(now)
+            .setStartedAt(startedAt)
+            .setEndedAt(endedAt)
             .setRecordGroupId(recordGroupId)
             .build()
 
