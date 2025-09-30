@@ -3,19 +3,20 @@ package com.spectrum.workfolio.utils
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.ZoneOffset
 
 object TimeUtil {
     fun toEpochMilli(at: LocalDateTime): Long {
-        return at.toInstant(ZoneOffset.UTC).toEpochMilli()
+        return at.toInstant(ZoneId.systemDefault().rules.getOffset(at)).toEpochMilli()
     }
 
     fun toEpochMilli(at: LocalDate): Long {
-        return at.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
+        return at.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
     }
 
     fun ofEpochMilli(epochMilli: Long): LocalDateTime {
-        return LocalDateTime.ofInstant(Instant.ofEpochMilli(epochMilli), ZoneOffset.UTC)
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(epochMilli), ZoneId.systemDefault())
     }
 
     fun nowToLong(): Long {

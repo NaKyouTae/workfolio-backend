@@ -5,7 +5,6 @@ import com.spectrum.workfolio.config.service.oauth.UserRegistrationException
 import com.spectrum.workfolio.domain.entity.Worker
 import com.spectrum.workfolio.domain.entity.primary.Account
 import com.spectrum.workfolio.domain.enums.AccountType
-import com.spectrum.workfolio.proto.common.Record
 import com.spectrum.workfolio.proto.record.RecordCreateRequest
 import com.spectrum.workfolio.proto.record_group.CreateRecordGroupRequest
 import com.spectrum.workfolio.proto.record_group.RecordGroupResponse
@@ -80,7 +79,6 @@ class UserRegistrationService(
         val recordRequest = RecordCreateRequest.newBuilder()
             .setTitle("워크폴리오 회원 가입")
             .setDescription("회원가입을 축하드립니다.")
-            .setType(Record.RecordType.DAY)
             .setStartedAt(now)
             .setEndedAt(now)
             .setRecordGroupId(recordGroupId)
