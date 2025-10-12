@@ -3,6 +3,7 @@ package com.spectrum.workfolio.utils
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 
@@ -41,5 +42,26 @@ object TimeUtil {
 
     fun dateEnd(date: LocalDateTime): LocalDateTime {
         return date.toLocalDate().atTime(23, 59, 59, 999_999_999)
+    }
+
+    fun dateStart(date: String): LocalDateTime {
+        return LocalDate.parse(date).atStartOfDay()
+    }
+
+    fun dateEnd(date: String): LocalDateTime {
+        return LocalDate.parse(date).atTime(23, 59, 59, 999_000_000)
+    }
+
+    fun isFullDay(startedAt: LocalDateTime, endedAt: LocalDateTime): Boolean {
+        val startDate = startedAt.toLocalDate()
+        val endDate = endedAt.toLocalDate()
+
+        return startDate == endDate &&
+                startedAt.toLocalTime() == LocalTime.MIDNIGHT &&
+                endedAt.toLocalTime() == LocalTime.of(23, 59, 59, 999_000_000)
+    }
+
+    fun isSameDay(startedAt: LocalDateTime, endedAt: LocalDateTime): Boolean {
+        return startedAt.toLocalDate() == endedAt.toLocalDate()
     }
 }

@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.time.temporal.TemporalAdjusters
 
 @Service
@@ -46,18 +48,10 @@ class RecordService(
     }
 
     @Transactional(readOnly = true)
-    fun listWeeklyRecord(year: Int, month: Int, week: Int, recordGroupIds: List<String>): ListRecordResponse {
-        val (weekStart, weekEnd) = calculateWeekRange(year, month, week)
-
-        // 주가 해당 월 범위를 벗어나는지 확인
-        val monthStart = LocalDate.of(year, month, 1)
-        val monthEnd = monthStart.with(TemporalAdjusters.lastDayOfMonth())
-
-        if (weekStart.toLocalDate().isAfter(monthEnd) || weekEnd.toLocalDate().isBefore(monthStart)) {
-            return ListRecordResponse.newBuilder().build()
-        }
-
-        return getRecordByDateRange(weekStart, weekEnd, recordGroupIds)
+    fun listWeeklyRecord(weekStartDate: String, weekEndDate: String, recordGroupIds: List<String>): ListRecordResponse {
+        val startDate = TimeUtil.dateStart(weekStartDate)
+        val endDate = TimeUtil.dateEnd(weekEndDate)
+        return getRecordByDateRange(startDate, endDate, recordGroupIds)
     }
 
     private fun getRecordByDateRange(
@@ -132,21 +126,5 @@ class RecordService(
 //        }
 
         recordRepository.delete(record)
-    }
-
-    private fun calculateWeekRange(year: Int, month: Int, week: Int): Pair<LocalDateTime, LocalDateTime> {
-        val monthStart = LocalDate.of(year, month, 1)
-
-        // 해당 월의 첫 번째 월요일 찾기
-        val firstMonday = monthStart.with(TemporalAdjusters.firstInMonth(DayOfWeek.MONDAY))
-
-        // 요청된 주차의 시작일 계산
-        val weekStart = firstMonday.plusWeeks((week - 1).toLong())
-        val weekEnd = weekStart.plusDays(6)
-
-        return Pair(
-            weekStart.atStartOfDay(),
-            weekEnd.atTime(23, 59, 59),
-        )
     }
 }

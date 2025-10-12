@@ -4,6 +4,7 @@ import com.spectrum.workfolio.domain.entity.BaseEntity
 import com.spectrum.workfolio.domain.entity.Worker
 import com.spectrum.workfolio.domain.entity.history.Company
 import com.spectrum.workfolio.domain.enums.RecordType
+import com.spectrum.workfolio.utils.TimeUtil
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -106,7 +107,8 @@ class Record(
 
             return when {
                 duration.toDays() >= 1 -> RecordType.MULTI_DAY
-                duration.toHours() < 24 -> RecordType.TIME
+                TimeUtil.isFullDay(startedAt, endedAt) -> RecordType.DAY
+                TimeUtil.isSameDay(startedAt, endedAt) && duration.toHours() < 24 -> RecordType.TIME
                 else -> RecordType.DAY
             }
         }

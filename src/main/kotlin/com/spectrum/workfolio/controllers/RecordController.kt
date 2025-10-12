@@ -42,12 +42,11 @@ class RecordController(
 
     @GetMapping("/weekly")
     fun listWeeklyRecord(
-        @RequestParam year: Int,
-        @RequestParam month: Int,
-        @RequestParam week: Int,
+        @RequestParam startDate: String,
+        @RequestParam endDate: String,
         @RequestParam recordGroupIds: List<String>,
     ): ListRecordResponse {
-        return recordService.listWeeklyRecord(year, month, week, recordGroupIds)
+        return recordService.listWeeklyRecord(startDate, endDate, recordGroupIds)
     }
 
     @PostMapping
