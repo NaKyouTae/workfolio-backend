@@ -3,12 +3,14 @@ package com.spectrum.workfolio.domain.entity.interview
 import com.spectrum.workfolio.domain.entity.BaseEntity
 import com.spectrum.workfolio.domain.entity.Worker
 import com.spectrum.workfolio.domain.entity.history.Company
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
 import jakarta.persistence.Index
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import java.time.LocalDate
 
@@ -58,6 +60,10 @@ class JobSearch(
     @JoinColumn(name = "worker_id", nullable = false)
     var worker: Worker = worker
         protected set
+
+    @OneToMany(mappedBy = "jobSearch", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    private var mutableJobSearchCompanies: MutableList<JobSearchCompany> = mutableListOf()
+    val jobSearchCompanies: List<JobSearchCompany> get() = mutableJobSearchCompanies.toList()
 
     fun changeInfo(
         title: String?,

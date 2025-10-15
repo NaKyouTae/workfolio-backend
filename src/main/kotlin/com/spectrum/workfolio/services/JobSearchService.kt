@@ -90,4 +90,10 @@ class JobSearchService(
 
         return JobSearchResponse.newBuilder().setJobSearch(updatedJobSearch.toProto()).build()
     }
+
+    @Transactional
+    fun deleteJobSearch(id: String) {
+        val jobSearch = this.getJobSearch(id)
+        jobSearchRepository.delete(jobSearch)
+    }
 }

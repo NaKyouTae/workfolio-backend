@@ -67,4 +67,10 @@ class InterviewService(
 
         return InterviewResponse.newBuilder().setInterview(updatedJobSearchCompany.toProto()).build()
     }
+
+    @Transactional
+    fun deleteInterview(id: String) {
+        val interview = this.getInterview(id)
+        interviewRepository.delete(interview)
+    }
 }

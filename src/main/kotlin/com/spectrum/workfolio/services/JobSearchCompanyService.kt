@@ -79,4 +79,10 @@ class JobSearchCompanyService(
 
         return JobSearchCompanyResponse.newBuilder().setJobSearchCompany(updatedJobSearchCompany.toProto()).build()
     }
+
+    @Transactional
+    fun deleteJobSearchCompany(id: String) {
+        val jobSearchCompany = this.getJobSearchCompany(id)
+        jobSearchCompanyRepository.delete(jobSearchCompany)
+    }
 }

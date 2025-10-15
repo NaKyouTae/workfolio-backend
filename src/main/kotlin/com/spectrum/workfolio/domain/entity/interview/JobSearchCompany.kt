@@ -2,6 +2,7 @@ package com.spectrum.workfolio.domain.entity.interview
 
 import com.spectrum.workfolio.domain.entity.BaseEntity
 import com.spectrum.workfolio.domain.enums.JobSearchCompanyStatus
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -10,6 +11,7 @@ import jakarta.persistence.FetchType
 import jakarta.persistence.Index
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -85,6 +87,10 @@ class JobSearchCompany(
     @JoinColumn(name = "job_search_id", nullable = false)
     var jobSearch: JobSearch = jobSearch
         protected set
+
+    @OneToMany(mappedBy = "jobSearchCompany", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    private var mutableInterviews: MutableList<Interview> = mutableListOf()
+    val interviews: List<Interview> get() = mutableInterviews.toList()
 
     fun changeInfo(
         name: String,
