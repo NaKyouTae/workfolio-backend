@@ -97,7 +97,7 @@ class RecordService(
     @Transactional
     fun updateRecord(request: RecordUpdateRequest): RecordResponse {
         val record = this.getRecordEntity(request.id)
-        val company = companyService.getCompany(request.companyId)
+        val company = if(request.hasCompanyId()) companyService.getCompany(request.companyId) else null
         val startedAt = TimeUtil.ofEpochMilli(request.startedAt)
         val endedAt = TimeUtil.ofEpochMilli(request.endedAt)
 
