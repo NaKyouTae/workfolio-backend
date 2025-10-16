@@ -5,7 +5,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
-import java.time.ZoneOffset
 
 object TimeUtil {
     fun toEpochMilli(at: LocalDateTime): Long {
@@ -57,8 +56,8 @@ object TimeUtil {
         val endDate = endedAt.toLocalDate()
 
         return startDate == endDate &&
-                startedAt.toLocalTime() == LocalTime.MIDNIGHT &&
-                endedAt.toLocalTime() == LocalTime.of(23, 59, 59, 999_000_000)
+            startedAt.toLocalTime() == LocalTime.MIDNIGHT &&
+            endedAt.toLocalTime() == LocalTime.of(23, 59, 59, 999_000_000)
     }
 
     fun isSameDay(startedAt: LocalDateTime, endedAt: LocalDateTime): Boolean {

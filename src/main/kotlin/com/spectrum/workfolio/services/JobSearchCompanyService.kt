@@ -22,12 +22,14 @@ class JobSearchCompanyService(
 
     @Transactional(readOnly = true)
     fun getJobSearchCompany(id: String): JobSearchCompany {
-        return jobSearchCompanyRepository.findById(id).orElseThrow { WorkfolioException(MsgKOR.NOT_FOUND_JOB_SEARCH.message) }
+        return jobSearchCompanyRepository.findById(id)
+            .orElseThrow { WorkfolioException(MsgKOR.NOT_FOUND_JOB_SEARCH.message) }
     }
 
     @Transactional(readOnly = true)
     fun listJobSearchCompanies(jobSearchId: String): JobSearchCompanyListResponse {
-        val jobSearchCompanies = jobSearchCompanyRepository.findByJobSearchIdOrderByAppliedAtDescClosedAtDesc(jobSearchId)
+        val jobSearchCompanies =
+            jobSearchCompanyRepository.findByJobSearchIdOrderByAppliedAtDescClosedAtDesc(jobSearchId)
         return JobSearchCompanyListResponse.newBuilder()
             .addAllJobSearchCompanies(jobSearchCompanies.map { it.toProto() })
             .build()

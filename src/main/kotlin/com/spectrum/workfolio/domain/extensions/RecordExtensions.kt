@@ -16,8 +16,8 @@ fun Record.toProto(): com.spectrum.workfolio.proto.common.Record {
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
 
-    if(this.endedAt != null) { builder.setEndedAt(TimeUtil.toEpochMilli(this.endedAt!!)) }
-    if(this.company != null) { builder.setCompany(this.company!!.toProto()) }
+    if (this.endedAt != null) { builder.setEndedAt(TimeUtil.toEpochMilli(this.endedAt!!)) }
+    if (this.company != null) { builder.setCompany(this.company!!.toProto()) }
 
     return builder.build()
 }

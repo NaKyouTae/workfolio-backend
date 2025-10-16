@@ -20,7 +20,7 @@ class WorkerRecordGroupService(
     }
 
     @Transactional(readOnly = true)
-    fun listWorkerRecordGroupByGroupId(recordGroupId: String): List<WorkerRecordGroup> {
+    fun listWorkerRecordGroupByRecordGroupId(recordGroupId: String): List<WorkerRecordGroup> {
         return workerRecordGroupRepository.findByRecordGroupId(recordGroupId)
     }
 
@@ -54,7 +54,7 @@ class WorkerRecordGroupService(
 
     @Transactional
     fun deleteWorkerRecordGroupAll(recordGroupId: String) {
-        val workerRecordGroups = this.listWorkerRecordGroupByGroupId(recordGroupId)
+        val workerRecordGroups = this.listWorkerRecordGroupByRecordGroupId(recordGroupId)
         val ids = workerRecordGroups.map { it.id }
         workerRecordGroupRepository.deleteAllById(ids)
     }

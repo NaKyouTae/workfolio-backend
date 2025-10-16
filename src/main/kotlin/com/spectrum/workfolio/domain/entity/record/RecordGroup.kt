@@ -2,10 +2,13 @@ package com.spectrum.workfolio.domain.entity.record
 
 import com.spectrum.workfolio.domain.entity.BaseEntity
 import com.spectrum.workfolio.domain.entity.Worker
+import com.spectrum.workfolio.domain.enums.RecordGroupType
 import com.spectrum.workfolio.utils.StringUtil
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.FetchType
 import jakarta.persistence.Index
 import jakarta.persistence.JoinColumn
@@ -28,6 +31,7 @@ class RecordGroup(
     color: String,
     isPublic: Boolean,
     publicId: String,
+    type: RecordGroupType,
     priority: Long,
     worker: Worker,
 ) : BaseEntity("RG") {
@@ -45,6 +49,11 @@ class RecordGroup(
 
     @Column(name = "public_id", nullable = false)
     var publicId: String = publicId
+        protected set
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false)
+    var type: RecordGroupType = type
         protected set
 
     @Column(name = "priority", nullable = false)

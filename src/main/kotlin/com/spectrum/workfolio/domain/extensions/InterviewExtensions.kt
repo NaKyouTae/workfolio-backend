@@ -17,6 +17,5 @@ fun Interview.toProto(): com.spectrum.workfolio.proto.common.Interview {
     if (this.endedAt != null) { builder.setEndedAt(TimeUtil.toEpochMilli(this.endedAt!!)) }
     if (this.title != null) { builder.setTitle(this.title!!) }
 
-
     return builder.build()
 }

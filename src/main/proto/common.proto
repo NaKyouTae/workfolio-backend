@@ -134,11 +134,19 @@ message Record {
 }
 
 message RecordGroup {
+  enum RecordGroupType {
+    UNKNOWN = 0;
+    PUBLIC = 1;
+    PRIVATE = 2;
+    SHARED = 3;
+  }
+
   string id = 1;
-  string title = 2;
-  bool is_public = 3;
-  string public_id = 4;
-  string color = 5;
+  RecordGroupType type = 2;
+  string title = 3;
+  bool is_public = 4;
+  string public_id = 5;
+  string color = 6;
 
   uint64 priority = 30;
 

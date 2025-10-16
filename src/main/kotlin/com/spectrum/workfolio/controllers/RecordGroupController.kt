@@ -6,6 +6,7 @@ import com.spectrum.workfolio.proto.common.SuccessResponse
 import com.spectrum.workfolio.proto.record_group.CreateRecordGroupRequest
 import com.spectrum.workfolio.proto.record_group.JoinRecordGroupRequest
 import com.spectrum.workfolio.proto.record_group.ListRecordGroupResponse
+import com.spectrum.workfolio.proto.record_group.RecordGroupDetailResponse
 import com.spectrum.workfolio.proto.record_group.RecordGroupResponse
 import com.spectrum.workfolio.proto.record_group.UpdateRecordGroupRequest
 import com.spectrum.workfolio.services.RecordGroupService
@@ -40,6 +41,14 @@ class RecordGroupController(
     fun listEditableRecordGroup(@AuthenticatedUser workerId: String): ListRecordGroupResponse {
         val recordGroups = recordGroupService.listEditableRecordGroups(workerId)
         return ListRecordGroupResponse.newBuilder().addAllGroups(recordGroups).build()
+    }
+
+    @GetMapping("/details/{id}")
+    fun listWorkerRecordGroupDetail(
+        @AuthenticatedUser workerId: String,
+        @PathVariable id: String,
+    ): RecordGroupDetailResponse {
+        return recordGroupService.listRecordGroupDetailResult(id)
     }
 
     @PostMapping

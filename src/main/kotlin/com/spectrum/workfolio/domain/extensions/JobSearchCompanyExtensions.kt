@@ -23,6 +23,5 @@ fun JobSearchCompany.toProto(): com.spectrum.workfolio.proto.common.JobSearchCom
     if (this.memo != null) { builder.setMemo(this.memo) }
     if (this.link != null) { builder.setLink(this.link) }
 
-
     return builder.build()
 }

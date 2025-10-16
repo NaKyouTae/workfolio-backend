@@ -78,6 +78,11 @@ databaseChangeLog:
                     nullable: false
                     unique: true
               - column:
+                  name: type
+                  type: VARCHAR(32)
+                  constraints:
+                    nullable: false
+              - column:
                   name: priority
                   type: BIGINT
                   constraints:
@@ -102,6 +107,12 @@ databaseChangeLog:
               - column:
                   name: public_id
             indexName: idx_record_group_public_id
+            tableName: record_group
+        - createIndex:
+            columns:
+              - column:
+                  name: worker_id
+            indexName: idx_record_group_worker_id
             tableName: record_group
 
         - createTable:

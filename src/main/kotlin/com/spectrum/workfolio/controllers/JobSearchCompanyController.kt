@@ -50,5 +50,4 @@ class JobSearchCompanyController(
         jobSearchCompanyService.deleteJobSearchCompany(jobSearchCompanyId)
         return SuccessResponse.newBuilder().setIsSuccess(true).build()
     }
-
 }

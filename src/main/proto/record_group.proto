@@ -11,6 +11,7 @@ option java_outer_classname = "RecordGroupProto";
 message CreateRecordGroupRequest {
   string title = 1;
   string color = 2;
+  RecordGroup.RecordGroupType type = 3;
   uint64 priority = 100;
 }
 
@@ -18,9 +19,14 @@ message ListRecordGroupResponse {
   repeated RecordGroup groups = 1;
 }
 
+message RecordGroupDetailResponse {
+  RecordGroup groups = 1;
+  repeated Worker workers = 2;
+}
+
 message JoinRecordGroupRequest {
-  string public_id = 1;
-  string target_worker_id = 2;
+  string record_group_id = 1;
+  string worker_id = 2;
 }
 
 message UpdateRecordGroupRequest {

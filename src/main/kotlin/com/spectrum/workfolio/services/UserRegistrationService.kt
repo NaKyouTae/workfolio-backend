@@ -5,6 +5,7 @@ import com.spectrum.workfolio.config.service.oauth.UserRegistrationException
 import com.spectrum.workfolio.domain.entity.Worker
 import com.spectrum.workfolio.domain.entity.primary.Account
 import com.spectrum.workfolio.domain.enums.AccountType
+import com.spectrum.workfolio.proto.common.RecordGroup
 import com.spectrum.workfolio.proto.record.RecordCreateRequest
 import com.spectrum.workfolio.proto.record_group.CreateRecordGroupRequest
 import com.spectrum.workfolio.proto.record_group.RecordGroupResponse
@@ -13,7 +14,6 @@ import com.spectrum.workfolio.utils.TimeUtil
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 /**
@@ -70,6 +70,7 @@ class UserRegistrationService(
         val recordGroupRequest = CreateRecordGroupRequest.newBuilder()
             .setColor("red")
             .setTitle("기본 그룹")
+            .setType(RecordGroup.RecordGroupType.PRIVATE)
             .setPriority(0)
             .build()
 

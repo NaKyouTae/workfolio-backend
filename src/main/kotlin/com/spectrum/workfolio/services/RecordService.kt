@@ -3,7 +3,6 @@ package com.spectrum.workfolio.services
 import com.spectrum.workfolio.domain.entity.record.Record
 import com.spectrum.workfolio.domain.entity.record.Record.Companion.generateRecordType
 import com.spectrum.workfolio.domain.enums.MsgKOR
-import com.spectrum.workfolio.domain.enums.RecordType
 import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.RecordRepository
 import com.spectrum.workfolio.proto.record.ListRecordResponse
@@ -14,12 +13,7 @@ import com.spectrum.workfolio.utils.TimeUtil
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.DayOfWeek
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
-import java.time.temporal.TemporalAdjusters
 
 @Service
 class RecordService(
@@ -74,7 +68,7 @@ class RecordService(
         val startedAt = TimeUtil.ofEpochMilli(request.startedAt)
         val endedAt = TimeUtil.ofEpochMilli(request.endedAt)
 
-        val company = if(request.hasCompanyId()) companyService.getCompany(request.companyId) else null
+        val company = if (request.hasCompanyId()) companyService.getCompany(request.companyId) else null
 
         // TODO TIME을 제외한 나머지 일자의 시간 조정 필요
 
@@ -97,7 +91,7 @@ class RecordService(
     @Transactional
     fun updateRecord(request: RecordUpdateRequest): RecordResponse {
         val record = this.getRecordEntity(request.id)
-        val company = if(request.hasCompanyId()) companyService.getCompany(request.companyId) else null
+        val company = if (request.hasCompanyId()) companyService.getCompany(request.companyId) else null
         val startedAt = TimeUtil.ofEpochMilli(request.startedAt)
         val endedAt = TimeUtil.ofEpochMilli(request.endedAt)
 

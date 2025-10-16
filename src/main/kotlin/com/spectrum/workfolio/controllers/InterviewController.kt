@@ -45,7 +45,7 @@ class InterviewController(
 
     @DeleteMapping("/{interviewId}")
     fun deleteInterview(
-        @PathVariable interviewId: String
+        @PathVariable interviewId: String,
     ): SuccessResponse {
         interviewService.deleteInterview(interviewId)
 
