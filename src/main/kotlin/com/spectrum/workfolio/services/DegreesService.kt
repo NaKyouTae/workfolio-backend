@@ -1,6 +1,6 @@
 package com.spectrum.workfolio.services
 
-import com.spectrum.workfolio.domain.entity.primary.Degrees
+import com.spectrum.workfolio.domain.entity.resume.Degrees
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.DegreesRepository
@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class DegreesService(
-    private val workerService: WorkerService,
+    private val resumeService: ResumeService,
     private val degreesRepository: DegreesRepository,
 ) {
 
@@ -25,23 +25,23 @@ class DegreesService(
     }
 
     @Transactional(readOnly = true)
-    fun listDegrees(workerId: String): DegreesListResponse {
-        val worker = workerService.getWorker(workerId)
-        val degrees = degreesRepository.findByWorkerIdOrderByStartedAtDescEndedAtDesc(worker.id)
+    fun listDegrees(resumeId: String): DegreesListResponse {
+        val resume = resumeService.getResume(resumeId)
+        val degrees = degreesRepository.findByResumeIdOrderByStartedAtDescEndedAtDesc(resume.id)
         return DegreesListResponse.newBuilder()
             .addAllDegrees(degrees.map { it.toProto() })
             .build()
     }
 
     @Transactional
-    fun createDegrees(workerId: String, request: DegreesCreateRequest): DegreesResponse {
-        val worker = workerService.getWorker(workerId)
+    fun createDegrees(request: DegreesCreateRequest): DegreesResponse {
+        val resume = resumeService.getResume(request.resumeId)
         val degrees = Degrees(
             name = request.name,
             major = request.major,
             startedAt = TimeUtil.ofEpochMilli(request.startedAt).toLocalDate(),
             endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
-            worker = worker,
+            resume = resume,
         )
 
         val createdDegrees = degreesRepository.save(degrees)

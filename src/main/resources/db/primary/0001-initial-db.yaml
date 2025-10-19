@@ -4,7 +4,7 @@ databaseChangeLog:
       author: kyutae
       changes:
         - createTable:
-            tableName: worker
+            tableName: workers
             columns:
               - column:
                   name: id
@@ -37,18 +37,18 @@ databaseChangeLog:
             columns:
               - column:
                   name: name
-            indexName: idx_worker_name
-            tableName: worker
+            indexName: idx_workers_name
+            tableName: workers
         - createIndex:
             columns:
               - column:
                   name: nick_name
-            indexName: idx_worker_nick_name
-            tableName: worker
+            indexName: idx_workers_nick_name
+            tableName: workers
             unique: true
 
         - createTable:
-            tableName: record_group
+            tableName: record_groups
             columns:
               - column:
                   name: id
@@ -106,17 +106,17 @@ databaseChangeLog:
             columns:
               - column:
                   name: public_id
-            indexName: idx_record_group_public_id
-            tableName: record_group
+            indexName: idx_record_groups_public_id
+            tableName: record_groups
         - createIndex:
             columns:
               - column:
                   name: worker_id
-            indexName: idx_record_group_worker_id
-            tableName: record_group
+            indexName: idx_record_groups_worker_id
+            tableName: record_groups
 
         - createTable:
-            tableName: record
+            tableName: records
             columns:
               - column:
                   name: id
@@ -178,25 +178,25 @@ databaseChangeLog:
             columns:
               - column:
                   name: title
-            indexName: idx_record_title
-            tableName: record
+            indexName: idx_records_title
+            tableName: records
         - createIndex:
             columns:
               - column:
                   name: record_group_id
-            indexName: idx_record_record_group_id
-            tableName: record
+            indexName: idx_records_record_group_id
+            tableName: records
         - createIndex:
             columns:
               - column:
                   name: record_group_id
               - column:
                   name: started_at
-            indexName: idx_record_record_group_id_started_at
-            tableName: record
+            indexName: idx_records_record_group_id_started_at
+            tableName: records
 
         - createTable:
-            tableName: worker_record_group
+            tableName: worker_record_groups
             columns:
               - column:
                   name: id
@@ -235,31 +235,97 @@ databaseChangeLog:
             columns:
               - column:
                   name: public_id
-            indexName: idx_record_group_public_id
-            tableName: worker_record_group
+            indexName: idx_worker_record_groups_public_id
+            tableName: worker_record_groups
         - createIndex:
             columns:
               - column:
                   name: worker_id
-            indexName: idx_record_group_worker_id
-            tableName: worker_record_group
+            indexName: idx_worker_record_groups_worker_id
+            tableName: worker_record_groups
         - createIndex:
             columns:
               - column:
                   name: record_group_id
-            indexName: idx_record_group_record_group_id
-            tableName: worker_record_group
+            indexName: idx_worker_record_groups_record_group_id
+            tableName: worker_record_groups
         - createIndex:
             columns:
               - column:
                   name: worker_id
               - column:
                   name: record_group_id
-            indexName: idx_record_group_worker_id_record_group_id
-            tableName: worker_record_group
+            indexName: idx_worker_record_groups_worker_id_record_group_id
+            tableName: worker_record_groups
 
         - createTable:
-            tableName: company
+            tableName: resumes
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: VARCHAR(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: phone
+                  type: VARCHAR(32)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: VARCHAR(516)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_public
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_default
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: public_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: worker_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+        - createIndex:
+            columns:
+              - column:
+                  name: worker_id
+            indexName: idx_resumes_type_worker_id
+            tableName: resumes
+
+        - createTable:
+            tableName: companies
             columns:
               - column:
                   name: id
@@ -288,7 +354,12 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: worker_id
+                  name: is_visible
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: resume_id
                   type: VARCHAR(16)
                   constraints:
                     nullable: false
@@ -306,18 +377,74 @@ databaseChangeLog:
             columns:
               - column:
                   name: name
-            indexName: idx_company_name
-            tableName: company
+            indexName: idx_companies_name
+            tableName: companies
             unique: true
         - createIndex:
             columns:
               - column:
-                  name: worker_id
-            indexName: idx_company_worker_id
-            tableName: company
+                  name: resume_id
+            indexName: idx_companies_resume_id
+            tableName: companies
 
         - createTable:
-            tableName: salary
+            tableName: projects
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: VARCHAR(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: started_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: ended_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: is_visible
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: company_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+        - createIndex:
+            columns:
+              - column:
+                  name: company_id
+            indexName: idx_projects_company_id
+            tableName: projects
+
+        - createTable:
+            tableName: salaries
             columns:
               - column:
                   name: id
@@ -341,6 +468,11 @@ databaseChangeLog:
                   constraints:
                     nullable: true
               - column:
+                  name: is_visible
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
                   name: company_id
                   type: VARCHAR(16)
                   constraints:
@@ -359,17 +491,17 @@ databaseChangeLog:
             columns:
               - column:
                   name: amount
-            indexName: idx_salary_amount
-            tableName: salary
+            indexName: idx_salaries_amount
+            tableName: salaries
         - createIndex:
             columns:
               - column:
                   name: company_id
-            indexName: idx_salary_company_id
-            tableName: salary
+            indexName: idx_salaries_company_id
+            tableName: salaries
 
         - createTable:
-            tableName: position
+            tableName: positions
             columns:
               - column:
                   name: id
@@ -393,6 +525,11 @@ databaseChangeLog:
                   constraints:
                     nullable: true
               - column:
+                  name: is_visible
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
                   name: company_id
                   type: VARCHAR(16)
                   constraints:
@@ -411,15 +548,15 @@ databaseChangeLog:
             columns:
               - column:
                   name: name
-            indexName: idx_position_name
-            tableName: position
+            indexName: idx_positions_name
+            tableName: positions
             unique: true
         - createIndex:
             columns:
               - column:
                   name: company_id
-            indexName: idx_position_company_id
-            tableName: position
+            indexName: idx_positions_company_id
+            tableName: positions
 
         - createTable:
             tableName: educations
@@ -451,7 +588,12 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: worker_id
+                  name: is_visible
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: resume_id
                   type: VARCHAR(16)
                   constraints:
                     nullable: false
@@ -475,8 +617,8 @@ databaseChangeLog:
         - createIndex:
             columns:
               - column:
-                  name: worker_id
-            indexName: idx_educations_worker_id
+                  name: resume_id
+            indexName: idx_educations_resume_id
             tableName: educations
 
         - createTable:
@@ -509,7 +651,12 @@ databaseChangeLog:
                   constraints:
                     nullable: true
               - column:
-                  name: worker_id
+                  name: is_visible
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: resume_id
                   type: VARCHAR(16)
                   constraints:
                     nullable: false
@@ -533,8 +680,8 @@ databaseChangeLog:
         - createIndex:
             columns:
               - column:
-                  name: worker_id
-            indexName: idx_degrees_worker_id
+                  name: resume_id
+            indexName: idx_degrees_resume_id
             tableName: degrees
 
         - createTable:
@@ -572,7 +719,12 @@ databaseChangeLog:
                   constraints:
                     nullable: true
               - column:
-                  name: worker_id
+                  name: is_visible
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: resume_id
                   type: VARCHAR(16)
                   constraints:
                     nullable: false
@@ -596,12 +748,12 @@ databaseChangeLog:
         - createIndex:
             columns:
               - column:
-                  name: worker_id
-            indexName: idx_certifications_worker_id
+                  name: resume_id
+            indexName: idx_certifications_resume_id
             tableName: certifications
 
         - createTable:
-            tableName: account
+            tableName: accounts
             columns:
               - column:
                   name: id
@@ -644,17 +796,17 @@ databaseChangeLog:
             columns:
               - column:
                   name: type
-            indexName: idx_account_type
-            tableName: account
+            indexName: idx_accounts_type
+            tableName: accounts
         - createIndex:
             columns:
               - column:
                   name: provider_id
-            indexName: idx_account_provider_id
-            tableName: account
+            indexName: idx_accounts_provider_id
+            tableName: accounts
 
         - createTable:
-            tableName: job_search
+            tableName: job_searches
             columns:
               - column:
                   name: id
@@ -715,11 +867,11 @@ databaseChangeLog:
                   name: started_at
               - column:
                   name: ended_at
-            indexName: idx_job_search_worker_id_started_at_ended_at
-            tableName: job_search
+            indexName: idx_job_searches_worker_id_started_at_ended_at
+            tableName: job_searches
 
         - createTable:
-            tableName: job_search_company
+            tableName: job_search_companies
             columns:
               - column:
                   name: id
@@ -801,11 +953,11 @@ databaseChangeLog:
             columns:
               - column:
                   name: job_search_id
-            indexName: idx_job_search_company_job_search_id
-            tableName: job_search_company
+            indexName: idx_job_search_companies_job_search_id
+            tableName: job_search_companies
 
         - createTable:
-            tableName: interview
+            tableName: interviews
             columns:
               - column:
                   name: id
@@ -857,11 +1009,11 @@ databaseChangeLog:
             columns:
               - column:
                   name: job_search_company_id
-            indexName: idx_interview_job_search_company_id
-            tableName: interview
+            indexName: idx_interviews_job_search_company_id
+            tableName: interviews
 
         - createTable:
-            tableName: system_config
+            tableName: system_configs
             columns:
               - column:
                   name: id
@@ -900,5 +1052,5 @@ databaseChangeLog:
                   name: type
               - column:
                   name: worker_id
-            indexName: idx_system_config_type_worker_id
-            tableName: system_config
+            indexName: idx_system_configs_type_worker_id
+            tableName: system_configs

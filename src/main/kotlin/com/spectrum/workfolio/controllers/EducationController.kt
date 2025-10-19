@@ -28,10 +28,9 @@ class EducationController(
 
     @PostMapping
     fun createEducation(
-        @AuthenticatedUser workerId: String,
         @RequestBody request: EducationCreateRequest,
     ): EducationResponse {
-        return educationService.createEducation(workerId, request)
+        return educationService.createEducation(request)
     }
 
     @PutMapping

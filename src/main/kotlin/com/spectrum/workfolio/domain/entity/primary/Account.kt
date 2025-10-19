@@ -15,10 +15,10 @@ import jakarta.persistence.Table
 
 @Entity
 @Table(
-    name = "account",
+    name = "accounts",
     indexes = [
-        Index(name = "idx_account_type", columnList = "type"),
-        Index(name = "idx_account_provider_id", columnList = "provider_id"),
+        Index(name = "idx_accounts_type", columnList = "type"),
+        Index(name = "idx_accounts_provider_id", columnList = "provider_id"),
     ],
 )
 class Account(

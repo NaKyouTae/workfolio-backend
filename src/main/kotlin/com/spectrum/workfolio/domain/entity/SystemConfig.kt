@@ -13,9 +13,9 @@ import jakarta.persistence.Table
 
 @Entity
 @Table(
-    name = "system_config",
+    name = "system_configs",
     indexes = [
-        Index(name = "idx_system_config_type_worker_id", columnList = "type, workerId"),
+        Index(name = "idx_system_configs_type_worker_id", columnList = "type, worker_id"),
     ],
 )
 class SystemConfig(

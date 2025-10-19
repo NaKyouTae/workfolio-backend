@@ -15,6 +15,8 @@ enum class MsgKOR(val message: String) {
     NOT_FOUND_JOB_SEARCH("존재하지 않는 구직입니다."),
     NOT_FOUND_JOB_SEARCH_COMPANY("존재하지 않는 구직 회사입니다."),
     NOT_FOUND_WORKER_RECORD_GROUP("존재하지 않는 레코드 참여 이력입니다."),
+    NOT_FOUND_RESUME("존재하지 않는 이력서입니다."),
+    NOT_FOUND_PROJECT("존재하지 않는 주요 성과입니다."),
     NOT_FOUND_SYSTEM_CONFIG("존재하지 않는 설정입니다."),
     NOT_OWNER_RECORD_GROUP("레코드 그룹의 소유주가 아닙니다."),
     ALREADY_EXIST_WORKER_NICK_NAME("현재 닉네임과 동일합니다."),

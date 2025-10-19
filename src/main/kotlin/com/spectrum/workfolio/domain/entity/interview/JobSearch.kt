@@ -2,7 +2,7 @@ package com.spectrum.workfolio.domain.entity.interview
 
 import com.spectrum.workfolio.domain.entity.BaseEntity
 import com.spectrum.workfolio.domain.entity.Worker
-import com.spectrum.workfolio.domain.entity.history.Company
+import com.spectrum.workfolio.domain.entity.resume.Company
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -16,9 +16,9 @@ import java.time.LocalDate
 
 @Entity
 @Table(
-    name = "job_search",
+    name = "job_searches",
     indexes = [
-        Index(name = "idx_job_search_worker_id_started_at_ended_at", columnList = "worker_id, started_at, ended_at"),
+        Index(name = "idx_job_searches_worker_id_started_at_ended_at", columnList = "worker_id, started_at, ended_at"),
     ],
 )
 class JobSearch(

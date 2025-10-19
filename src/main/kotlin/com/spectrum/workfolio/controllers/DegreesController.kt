@@ -28,10 +28,9 @@ class DegreesController(
 
     @PostMapping
     fun createDegrees(
-        @AuthenticatedUser workerId: String,
         @RequestBody request: DegreesCreateRequest,
     ): DegreesResponse {
-        return degreesService.createDegrees(workerId, request)
+        return degreesService.createDegrees(request)
     }
 
     @PutMapping

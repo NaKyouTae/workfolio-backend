@@ -1,4 +1,4 @@
-package com.spectrum.workfolio.domain.entity.primary
+package com.spectrum.workfolio.domain.entity.resume
 
 import com.spectrum.workfolio.domain.entity.BaseEntity
 import com.spectrum.workfolio.domain.entity.Worker
@@ -12,30 +12,30 @@ import jakarta.persistence.Table
 import java.time.LocalDate
 
 /**
- * 학위
+ * 교육
  */
 @Entity
 @Table(
-    name = "degrees",
+    name = "educations",
     indexes = [
-        Index(name = "idx_degrees_name", columnList = "name"),
-        Index(name = "idx_degrees_worker_id", columnList = "worker_id"),
+        Index(name = "idx_educations_name", columnList = "name"),
+        Index(name = "idx_educations_resume_id", columnList = "resume_id"),
     ],
 )
-class Degrees(
+class Education(
     name: String,
-    major: String,
+    isVisible: Boolean = false,
     startedAt: LocalDate,
     endedAt: LocalDate? = null,
-    worker: Worker,
-) : BaseEntity("DE") {
-
+    agency: String,
+    resume: Resume,
+) : BaseEntity("ED") {
     @Column(name = "name", nullable = false)
     var name: String = name
         protected set
 
-    @Column(name = "major", nullable = false)
-    var major: String = major
+    @Column(name = "is_visible", nullable = false)
+    var isVisible: Boolean = isVisible
         protected set
 
     @Column(name = "started_at", nullable = false)
@@ -46,15 +46,19 @@ class Degrees(
     var endedAt: LocalDate? = endedAt
         protected set
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "worker_id", nullable = false)
-    var worker: Worker = worker
+    @Column(name = "agency", nullable = false)
+    var agency: String = agency
         protected set
 
-    fun changeInfo(name: String, major: String, startedAt: LocalDate, endedAt: LocalDate?) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "resume_id", nullable = false)
+    var resume: Resume = resume
+        protected set
+
+    fun changeInfo(name: String, startedAt: LocalDate, endedAt: LocalDate?, agency: String) {
         this.name = name
-        this.major = major
         this.startedAt = startedAt
         this.endedAt = endedAt
+        this.agency = agency
     }
 }

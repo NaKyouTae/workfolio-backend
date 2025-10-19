@@ -1,6 +1,6 @@
 package com.spectrum.workfolio.domain.extensions
 
-import com.spectrum.workfolio.domain.entity.history.Company
+import com.spectrum.workfolio.domain.entity.resume.Company
 import com.spectrum.workfolio.utils.TimeUtil
 
 fun Company.toProto(): com.spectrum.workfolio.proto.common.Company {
@@ -10,7 +10,7 @@ fun Company.toProto(): com.spectrum.workfolio.proto.common.Company {
     builder.setName(this.name)
     builder.setStartedAt(TimeUtil.toEpochMilli(this.startedAt))
     builder.setIsWorking(this.isWorking)
-    builder.setWorker(this.worker.toProto())
+    builder.setResume(this.resume.toProto())
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
 

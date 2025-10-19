@@ -1,15 +1,19 @@
 package com.spectrum.workfolio.domain.extensions
 
+import com.spectrum.workfolio.domain.entity.resume.Project
+import com.spectrum.workfolio.domain.entity.resume.Resume
 import com.spectrum.workfolio.domain.entity.resume.Salary
 import com.spectrum.workfolio.utils.TimeUtil
 
-fun Salary.toProto(): com.spectrum.workfolio.proto.common.Salary {
-    val builder = com.spectrum.workfolio.proto.common.Salary.newBuilder()
+fun Project.toProto(): com.spectrum.workfolio.proto.common.Project {
+    val builder = com.spectrum.workfolio.proto.common.Project.newBuilder()
 
     builder.setId(this.id)
-    builder.setAmount(this.amount)
-    builder.setCompany(this.company.toProto())
+    builder.setTitle(this.title)
+    builder.setDescription(this.description)
+    builder.setIsVisible(this.isVisible)
     builder.setStartedAt(TimeUtil.toEpochMilli(this.startedAt))
+    builder.setCompany(this.company.toProto())
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
 

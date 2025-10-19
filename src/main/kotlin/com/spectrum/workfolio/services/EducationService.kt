@@ -1,6 +1,6 @@
 package com.spectrum.workfolio.services
 
-import com.spectrum.workfolio.domain.entity.primary.Education
+import com.spectrum.workfolio.domain.entity.resume.Education
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.EducationRepository
@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class EducationService(
-    private val workerService: WorkerService,
+    private val resumeService: ResumeService,
     private val educationRepository: EducationRepository,
 ) {
 
@@ -25,23 +25,23 @@ class EducationService(
     }
 
     @Transactional(readOnly = true)
-    fun listEducations(workerId: String): EducationListResponse {
-        val worker = workerService.getWorker(workerId)
-        val educations = educationRepository.findByWorkerIdOrderByStartedAtDescEndedAtDesc(worker.id)
+    fun listEducations(resumeId: String): EducationListResponse {
+        val resume = resumeService.getResume(resumeId)
+        val educations = educationRepository.findByResumeIdOrderByStartedAtDescEndedAtDesc(resume.id)
         return EducationListResponse.newBuilder()
             .addAllEducations(educations.map { it.toProto() })
             .build()
     }
 
     @Transactional
-    fun createEducation(workerId: String, request: EducationCreateRequest): EducationResponse {
-        val worker = workerService.getWorker(workerId)
+    fun createEducation(request: EducationCreateRequest): EducationResponse {
+        val resume = resumeService.getResume(request.resumeId)
         val education = Education(
             name = request.name,
             startedAt = TimeUtil.ofEpochMilli(request.startedAt).toLocalDate(),
             endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
             agency = request.agency,
-            worker = worker,
+            resume = resume,
         )
 
         val createdEducation = educationRepository.save(education)

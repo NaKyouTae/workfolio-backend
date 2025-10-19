@@ -1,13 +1,14 @@
 package com.spectrum.workfolio.domain.entity
 
-import com.spectrum.workfolio.domain.entity.history.Company
+import com.spectrum.workfolio.domain.entity.resume.Company
 import com.spectrum.workfolio.domain.entity.primary.Account
-import com.spectrum.workfolio.domain.entity.primary.Certifications
-import com.spectrum.workfolio.domain.entity.primary.Degrees
-import com.spectrum.workfolio.domain.entity.primary.Education
+import com.spectrum.workfolio.domain.entity.resume.Certifications
+import com.spectrum.workfolio.domain.entity.resume.Degrees
+import com.spectrum.workfolio.domain.entity.resume.Education
 import com.spectrum.workfolio.domain.entity.record.Record
 import com.spectrum.workfolio.domain.entity.record.RecordGroup
 import com.spectrum.workfolio.domain.entity.record.WorkerRecordGroup
+import com.spectrum.workfolio.domain.entity.resume.Resume
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -20,10 +21,10 @@ import jakarta.persistence.Table
  */
 @Entity
 @Table(
-    name = "worker",
+    name = "workers",
     indexes = [
-        Index(name = "idx_worker_name", columnList = "name"),
-        Index(name = "idx_worker_nick_name", columnList = "nick_name"),
+        Index(name = "idx_workers_name", columnList = "name"),
+        Index(name = "idx_workers_nick_name", columnList = "nick_name"),
     ],
 )
 class Worker(
@@ -39,20 +40,8 @@ class Worker(
         protected set
 
     @OneToMany(mappedBy = "worker", cascade = [CascadeType.REMOVE])
-    private var mutableCompanies: MutableList<Company> = mutableListOf()
-    val companies: List<Company> get() = mutableCompanies.toList()
-
-    @OneToMany(mappedBy = "worker", cascade = [CascadeType.REMOVE])
-    private var mutableCertifications: MutableList<Certifications> = mutableListOf()
-    val certifications: List<Certifications> get() = mutableCertifications.toList()
-
-    @OneToMany(mappedBy = "worker", cascade = [CascadeType.REMOVE])
-    private var mutableDegrees: MutableList<Degrees> = mutableListOf()
-    val degrees: List<Degrees> get() = mutableDegrees.toList()
-
-    @OneToMany(mappedBy = "worker", cascade = [CascadeType.REMOVE])
-    private var mutableEducations: MutableList<Education> = mutableListOf()
-    val educations: List<Education> get() = mutableEducations.toList()
+    private var mutableResumes: MutableList<Resume> = mutableListOf()
+    val resumes: List<Resume> get() = mutableResumes.toList()
 
     @OneToMany(mappedBy = "worker", cascade = [CascadeType.REMOVE])
     private var mutableRecords: MutableList<Record> = mutableListOf()

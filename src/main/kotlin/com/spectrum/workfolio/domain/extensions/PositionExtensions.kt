@@ -1,6 +1,6 @@
 package com.spectrum.workfolio.domain.extensions
 
-import com.spectrum.workfolio.domain.entity.history.Position
+import com.spectrum.workfolio.domain.entity.resume.Position
 import com.spectrum.workfolio.utils.TimeUtil
 
 fun Position.toProto(): com.spectrum.workfolio.proto.common.Position {

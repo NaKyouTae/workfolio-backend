@@ -1,6 +1,6 @@
 package com.spectrum.workfolio.services
 
-import com.spectrum.workfolio.domain.entity.history.Company
+import com.spectrum.workfolio.domain.entity.resume.Company
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.CompanyRepository
@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class CompanyService(
-    private val workerService: WorkerService,
+    private val resumeService: ResumeService,
     private val companyRepository: CompanyRepository,
 ) {
 
@@ -26,21 +26,21 @@ class CompanyService(
 
     @Transactional(readOnly = true)
     fun listCompanies(workerId: String): CompanyListResponse {
-        val companies = companyRepository.findByWorkerIdOrderByStartedAtDescEndedAtDesc(workerId)
+        val companies = companyRepository.findByResumeIdOrderByStartedAtDescEndedAtDesc(workerId)
         return CompanyListResponse.newBuilder()
             .addAllCompanies(companies.map { it.toProto() })
             .build()
     }
 
     @Transactional
-    fun createCompany(workerId: String, request: CompanyCreateRequest): CompanyResponse {
-        val worker = workerService.getWorker(workerId)
+    fun createCompany(request: CompanyCreateRequest): CompanyResponse {
+        val resume = resumeService.getResume(request.resumeId)
         val company = Company(
             name = request.name,
             startedAt = TimeUtil.ofEpochMilli(request.startedAt).toLocalDate(),
             endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
             isWorking = request.isWorking,
-            worker = worker,
+            resume = resume,
         )
 
         val createdCompany = companyRepository.save(company)

@@ -28,15 +28,13 @@ class CompanyController(
 
     @PostMapping
     fun createCompany(
-        @AuthenticatedUser workerId: String,
         @RequestBody request: CompanyCreateRequest,
     ): CompanyResponse {
-        return companyService.createCompany(workerId, request)
+        return companyService.createCompany(request)
     }
 
     @PutMapping
     fun updateCompany(
-        @AuthenticatedUser workerId: String,
         @RequestBody request: CompanyUpdateRequest,
     ): CompanyResponse {
         return companyService.updateCompany(request)

@@ -16,12 +16,12 @@ import jakarta.persistence.Table
  */
 @Entity
 @Table(
-    name = "worker_record_group",
+    name = "worker_record_groups",
     indexes = [
-        Index(name = "idx_record_group_public_id", columnList = "public_id"),
-        Index(name = "idx_record_group_worker_id", columnList = "worker_id"),
-        Index(name = "idx_record_group_record_group_id", columnList = "record_group_id"),
-        Index(name = "idx_record_group_worker_id_record_group_id", columnList = "worker_id, record_group_id"),
+        Index(name = "idx_worker_record_groups_public_id", columnList = "public_id"),
+        Index(name = "idx_worker_record_groups_worker_id", columnList = "worker_id"),
+        Index(name = "idx_worker_record_groups_record_group_id", columnList = "record_group_id"),
+        Index(name = "idx_worker_record_groups_worker_id_record_group_id", columnList = "worker_id, record_group_id"),
     ],
 )
 class WorkerRecordGroup(

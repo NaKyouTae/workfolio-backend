@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package com.spectrum.workfolio.proto;
+
+option java_multiple_files = true;
+option java_package = "com.spectrum.workfolio.proto.project";
+option java_outer_classname = "ProjectProto";
+
+message ProjectCreateRequest {
+  string title = 1;
+  string description = 2;
+  bool is_visible = 3;
+  string email = 4;
+  uint64 started_at = 5;
+  optional uint64 ended_at = 6;
+
+  string company_id = 99;
+}
+
+message ProjectUpdateRequest {
+  string title = 1;
+  string description = 2;
+  bool is_visible = 3;
+  string email = 4;
+  uint64 started_at = 5;
+  optional uint64 ended_at = 6;
+
+  string id = 99;
+}
+
+message ProjectListResponse {
+  repeated Project projects = 1;
+}
+
+message ProjectResponse {
+  Project project = 1;
+}

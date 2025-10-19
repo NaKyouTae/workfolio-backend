@@ -21,9 +21,10 @@ import jakarta.persistence.Table
  */
 @Entity
 @Table(
-    name = "record_group",
+    name = "record_groups",
     indexes = [
-        Index(name = "idx_record_group_public_id", columnList = "public_id"),
+        Index(name = "idx_record_groups_public_id", columnList = "public_id"),
+        Index(name = "idx_record_groups_worker_id", columnList = "worker_id"),
     ],
 )
 class RecordGroup(

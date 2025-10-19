@@ -13,9 +13,9 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(
-    name = "interview",
+    name = "interviews",
     indexes = [
-        Index(name = "idx_interview_job_search_company_id", columnList = "job_search_company_id"),
+        Index(name = "idx_interviews_job_search_company_id", columnList = "job_search_company_id"),
     ],
 )
 class Interview(

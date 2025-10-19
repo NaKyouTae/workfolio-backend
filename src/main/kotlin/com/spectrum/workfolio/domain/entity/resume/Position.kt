@@ -1,4 +1,4 @@
-package com.spectrum.workfolio.domain.entity.history
+package com.spectrum.workfolio.domain.entity.resume
 
 import com.spectrum.workfolio.domain.entity.BaseEntity
 import jakarta.persistence.Column
@@ -15,20 +15,25 @@ import java.time.LocalDate
  */
 @Entity
 @Table(
-    name = "position",
+    name = "positions",
     indexes = [
-        Index(name = "idx_position_name", columnList = "name"),
-        Index(name = "idx_position_company_id", columnList = "company_id"),
+        Index(name = "idx_positions_name", columnList = "name"),
+        Index(name = "idx_positions_company_id", columnList = "company_id"),
     ],
 )
 class Position(
     name: String,
+    isVisible: Boolean = false,
     startedAt: LocalDate,
     endedAt: LocalDate? = null,
     company: Company,
 ) : BaseEntity("PO") {
     @Column(name = "name", nullable = false, unique = true)
     var name: String = name
+        protected set
+
+    @Column(name = "is_visible", nullable = false)
+    var isVisible: Boolean = isVisible
         protected set
 
     @Column(name = "started_at", nullable = false)

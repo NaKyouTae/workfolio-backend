@@ -1,7 +1,6 @@
-package com.spectrum.workfolio.domain.entity.history
+package com.spectrum.workfolio.domain.entity.resume
 
 import com.spectrum.workfolio.domain.entity.BaseEntity
-import com.spectrum.workfolio.domain.entity.Worker
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -18,21 +17,26 @@ import java.time.LocalDate
  */
 @Entity
 @Table(
-    name = "company",
+    name = "companies",
     indexes = [
-        Index(name = "idx_company_name", columnList = "name"),
-        Index(name = "idx_company_worker_id", columnList = "worker_id"),
+        Index(name = "idx_companies_name", columnList = "name"),
+        Index(name = "idx_companies_resume_id", columnList = "resume_id"),
     ],
 )
 class Company(
     name: String,
+    isVisible: Boolean = false,
     startedAt: LocalDate,
     endedAt: LocalDate? = null,
     isWorking: Boolean = false,
-    worker: Worker,
+    resume: Resume,
 ) : BaseEntity("CO") {
     @Column(name = "name", nullable = false, unique = true)
     var name: String = name
+        protected set
+
+    @Column(name = "is_visible", nullable = false)
+    var isVisible: Boolean = isVisible
         protected set
 
     @Column(name = "started_at", nullable = false)
@@ -48,8 +52,8 @@ class Company(
         protected set
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "worker_id", nullable = false)
-    var worker: Worker = worker
+    @JoinColumn(name = "resume_id", nullable = false)
+    var resume: Resume = resume
         protected set
 
     @OneToMany(mappedBy = "company", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)

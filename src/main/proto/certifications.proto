@@ -18,6 +18,8 @@ message CertificationsCreateRequest {
   string issuer = 3;
   uint64 issued_at = 4;
   optional uint64 expiration_period = 5;
+
+  string resume_id = 99;
 }
 
 message CertificationsUpdateRequest {

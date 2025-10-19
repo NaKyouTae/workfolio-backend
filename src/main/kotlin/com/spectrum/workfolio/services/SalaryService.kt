@@ -1,6 +1,6 @@
 package com.spectrum.workfolio.services
 
-import com.spectrum.workfolio.domain.entity.history.Salary
+import com.spectrum.workfolio.domain.entity.resume.Salary
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.SalaryRepository

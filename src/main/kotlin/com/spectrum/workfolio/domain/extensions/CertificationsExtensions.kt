@@ -1,6 +1,6 @@
 package com.spectrum.workfolio.domain.extensions
 
-import com.spectrum.workfolio.domain.entity.primary.Certifications
+import com.spectrum.workfolio.domain.entity.resume.Certifications
 import com.spectrum.workfolio.utils.TimeUtil
 
 fun Certifications.toProto(): com.spectrum.workfolio.proto.common.Certifications {
@@ -11,8 +11,7 @@ fun Certifications.toProto(): com.spectrum.workfolio.proto.common.Certifications
     builder.setNumber(this.number)
     builder.setIssuer(this.issuer)
     builder.setIssuedAt(TimeUtil.toEpochMilli(this.issuedAt))
-
-    builder.setWorker(this.worker.toProto())
+    builder.setResume(this.resume.toProto())
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
 

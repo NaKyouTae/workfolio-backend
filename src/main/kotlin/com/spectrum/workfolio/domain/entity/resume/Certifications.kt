@@ -1,4 +1,4 @@
-package com.spectrum.workfolio.domain.entity.primary
+package com.spectrum.workfolio.domain.entity.resume
 
 import com.spectrum.workfolio.domain.entity.BaseEntity
 import com.spectrum.workfolio.domain.entity.Worker
@@ -19,7 +19,7 @@ import java.time.LocalDate
     name = "certifications",
     indexes = [
         Index(name = "idx_certifications_name", columnList = "name"),
-        Index(name = "idx_certifications_worker_id", columnList = "worker_id"),
+        Index(name = "idx_certifications_resume_id", columnList = "resume_id"),
     ],
 )
 class Certifications(
@@ -28,7 +28,8 @@ class Certifications(
     issuer: String,
     issuedAt: LocalDate,
     expirationPeriod: LocalDate? = null,
-    worker: Worker,
+    isVisible: Boolean = false,
+    resume: Resume,
 ) : BaseEntity("CE") {
     @Column(name = "name", nullable = false, unique = true)
     var name: String = name
@@ -50,9 +51,13 @@ class Certifications(
     var expirationPeriod: LocalDate? = expirationPeriod
         protected set
 
+    @Column(name = "is_visible", nullable = false)
+    var isVisible: Boolean = isVisible
+        protected set
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "worker_id", nullable = false)
-    var worker: Worker = worker
+    @JoinColumn(name = "resume_id", nullable = false)
+    var resume: Resume = resume
         protected set
 
     fun changeInfo(name: String, number: String, issuer: String, issuedAt: LocalDate, expirationPeriod: LocalDate?) {

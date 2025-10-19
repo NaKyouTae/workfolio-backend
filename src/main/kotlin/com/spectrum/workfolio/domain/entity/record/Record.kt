@@ -2,7 +2,7 @@ package com.spectrum.workfolio.domain.entity.record
 
 import com.spectrum.workfolio.domain.entity.BaseEntity
 import com.spectrum.workfolio.domain.entity.Worker
-import com.spectrum.workfolio.domain.entity.history.Company
+import com.spectrum.workfolio.domain.entity.resume.Company
 import com.spectrum.workfolio.domain.enums.RecordType
 import com.spectrum.workfolio.utils.TimeUtil
 import jakarta.persistence.Column
@@ -22,11 +22,11 @@ import java.time.LocalDateTime
  */
 @Entity
 @Table(
-    name = "record",
+    name = "records",
     indexes = [
-        Index(name = "idx_record_title", columnList = "title"),
-        Index(name = "idx_record_worker_id", columnList = "worker_id"),
-        Index(name = "idx_record_record_group_id_started_at", columnList = "record_group_id, started_at"),
+        Index(name = "idx_records_title", columnList = "title"),
+        Index(name = "idx_records_worker_id", columnList = "worker_id"),
+        Index(name = "idx_records_record_group_id_started_at", columnList = "record_group_id, started_at"),
     ],
 )
 class Record(

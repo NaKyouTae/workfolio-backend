@@ -28,10 +28,9 @@ class CertificationsController(
 
     @PostMapping
     fun createCertifications(
-        @AuthenticatedUser workerId: String,
         @RequestBody request: CertificationsCreateRequest,
     ): CertificationsResponse {
-        return certificationsService.createCertifications(workerId, request)
+        return certificationsService.createCertifications(request)
     }
 
     @PutMapping

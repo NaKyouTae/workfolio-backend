@@ -13,6 +13,8 @@ message CompanyCreateRequest {
   uint64 started_at = 2;
   uint64 ended_at = 3;
   bool is_working = 4;
+
+  string resume_id = 99;
 }
 
 message CompanyUpdateRequest {
