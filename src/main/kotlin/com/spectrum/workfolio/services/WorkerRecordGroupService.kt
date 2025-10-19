@@ -15,8 +15,9 @@ class WorkerRecordGroupService(
     private val workerRecordGroupRepository: WorkerRecordGroupRepository,
 ) {
     @Transactional(readOnly = true)
-    fun getWorkerRecordGroup(workerId: String, recordGroupId: String): WorkerRecordGroup? {
+    fun getWorkerRecordGroup(workerId: String, recordGroupId: String): WorkerRecordGroup {
         return workerRecordGroupRepository.findByWorkerIdAndRecordGroupId(workerId, recordGroupId)
+            .orElseThrow { WorkfolioException(MsgKOR.NOT_FOUND_WORKER_RECORD_GROUP.message) }
     }
 
     @Transactional(readOnly = true)
@@ -53,9 +54,8 @@ class WorkerRecordGroupService(
     }
 
     @Transactional
-    fun deleteWorkerRecordGroupAll(recordGroupId: String) {
-        val workerRecordGroups = this.listWorkerRecordGroupByRecordGroupId(recordGroupId)
-        val ids = workerRecordGroups.map { it.id }
-        workerRecordGroupRepository.deleteAllById(ids)
+    fun deleteWorkerRecordGroup(targetWorkerId: String, recordGroupId: String) {
+        val workerRecordGroup = this.getWorkerRecordGroup(targetWorkerId, recordGroupId)
+        workerRecordGroupRepository.delete(workerRecordGroup)
     }
 }

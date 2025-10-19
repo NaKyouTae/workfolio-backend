@@ -30,9 +30,10 @@ class WorkerController(
 
     @GetMapping("/{nickname}")
     fun getWorkerByNickName(
+        @AuthenticatedUser workerId: String,
         @PathVariable nickname: String,
     ): WorkerListResponse {
-        val workers = workerService.getWorkersByNickName(nickname)
+        val workers = workerService.getWorkersByNickName(workerId, nickname)
         return WorkerListResponse.newBuilder().addAllWorkers(workers.map { it.toProto() }).build()
     }
 

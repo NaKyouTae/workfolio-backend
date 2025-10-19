@@ -6,8 +6,9 @@ import com.spectrum.workfolio.utils.TimeUtil
 fun RecordGroup.toProto(): com.spectrum.workfolio.proto.common.RecordGroup {
     return com.spectrum.workfolio.proto.common.RecordGroup.newBuilder()
         .setId(this.id)
+        .setType(com.spectrum.workfolio.proto.common.RecordGroup.RecordGroupType.valueOf(this.type.name))
         .setTitle(this.title)
-        .setIsPublic(this.isPublic)
+        .setIsDefault(this.isDefault)
         .setPublicId(this.publicId)
         .setColor(this.color)
         .setPriority(this.priority)

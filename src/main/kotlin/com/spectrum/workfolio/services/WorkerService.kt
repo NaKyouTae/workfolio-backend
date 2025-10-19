@@ -26,8 +26,8 @@ class WorkerService(
     }
 
     @Transactional(readOnly = true)
-    fun getWorkersByNickName(nickName: String): List<Worker> {
-        return workerRepository.findByNickNameStartingWith(nickName)
+    fun getWorkersByNickName(workerId: String, nickName: String): List<Worker> {
+        return workerRepository.findWorkersExcludingIdByNickNameStartingWith(workerId, nickName)
     }
 
     @Transactional

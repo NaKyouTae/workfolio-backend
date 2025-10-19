@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package com.spectrum.workfolio.proto;
+
+option java_multiple_files = true;
+option java_package = "com.spectrum.workfolio.proto.worker";
+option java_outer_classname = "SystemConfigProto";
+
+message SystemConfigGetResponse {
+  SystemConfig system_config = 1;
+}
+
+message SystemConfigCreateRequest {
+  SystemConfig.SystemConfigType type = 1;
+  string value = 2;
+
+  string worker_id = 99;
+}
+
+message SystemConfigUpdateRequest {
+  string id = 1;
+  SystemConfig.SystemConfigType type = 2;
+  string value = 3;
+}

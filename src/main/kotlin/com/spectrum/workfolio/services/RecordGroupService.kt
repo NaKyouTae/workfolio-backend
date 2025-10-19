@@ -6,10 +6,10 @@ import com.spectrum.workfolio.domain.enums.RecordGroupType
 import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.RecordGroupRepository
 import com.spectrum.workfolio.proto.record_group.CreateRecordGroupRequest
-import com.spectrum.workfolio.proto.record_group.JoinRecordGroupRequest
 import com.spectrum.workfolio.proto.record_group.RecordGroupDetailResponse
+import com.spectrum.workfolio.proto.record_group.RecordGroupJoinRequest
 import com.spectrum.workfolio.proto.record_group.RecordGroupResponse
-import com.spectrum.workfolio.proto.record_group.UpdateRecordGroupRequest
+import com.spectrum.workfolio.proto.record_group.RecordGroupUpdateRequest
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -35,7 +35,8 @@ class RecordGroupService(
 
     @Transactional(readOnly = true)
     fun listOwnedRecordGroups(workerId: String): List<com.spectrum.workfolio.proto.common.RecordGroup> {
-        val recordGroups = recordGroupRepository.findByWorkerIdAndTypeOrderByPriorityDesc(workerId, RecordGroupType.PRIVATE)
+        val recordGroups =
+            recordGroupRepository.findByWorkerIdAndTypeOrderByPriorityDesc(workerId, RecordGroupType.PRIVATE)
         return recordGroups.map { it.toProto() }
     }
 
@@ -70,6 +71,7 @@ class RecordGroupService(
     @Transactional
     fun createRecordGroup(
         workerId: String,
+        isDefault: Boolean = false,
         request: CreateRecordGroupRequest,
     ): RecordGroupResponse {
         val worker = workerService.getWorker(workerId)
@@ -77,7 +79,7 @@ class RecordGroupService(
             type = RecordGroupType.valueOf(request.type.name),
             title = request.title,
             color = request.color,
-            isPublic = false,
+            isDefault = isDefault,
             publicId = RecordGroup.generateShortPublicId(),
             priority = request.priority,
             worker = worker,
@@ -85,7 +87,7 @@ class RecordGroupService(
 
         val createdRecordGroup = recordGroupRepository.save(recordGroup)
 
-        if(createdRecordGroup.type == RecordGroupType.SHARED) {
+        if (createdRecordGroup.type == RecordGroupType.SHARED) {
             workerRecordGroupService.createWorkerRecordGroup(workerId, recordGroup)
         }
 
@@ -94,13 +96,12 @@ class RecordGroupService(
 
     @Transactional
     fun updateRecordGroup(
-        workerId: String,
         recordGroupId: String,
-        request: UpdateRecordGroupRequest,
+        request: RecordGroupUpdateRequest,
     ): RecordGroupResponse {
         val recordGroup = this.getRecordGroup(recordGroupId)
 
-        recordGroup.changeRecordGroup(request.title, request.color, request.isPublic, request.priority)
+        recordGroup.changeRecordGroup(request.title, request.color, request.priority)
 
         val updatedRecordGroup = recordGroupRepository.save(recordGroup)
 
@@ -108,7 +109,7 @@ class RecordGroupService(
     }
 
     @Transactional
-    fun joinRecordGroup(workerId: String, request: JoinRecordGroupRequest): RecordGroup {
+    fun joinRecordGroup(workerId: String, request: RecordGroupJoinRequest): RecordGroup {
         val recordGroup = this.getRecordGroup(request.recordGroupId)
 
         // 소유주만 멤버를 추가할수 있다.
@@ -121,6 +122,8 @@ class RecordGroupService(
         if (recordGroup.worker.id == request.workerId) {
             throw WorkfolioException(MsgKOR.ALREADY_EXIST_WORKER_RECORD_GROUP.message)
         }
+
+        recordGroup.changeType(RecordGroupType.SHARED)
 
         workerRecordGroupService.createWorkerRecordGroup(request.workerId, recordGroup)
 
@@ -136,6 +139,10 @@ class RecordGroupService(
 
         if (recordGroup.worker.id != workerId) {
             throw WorkfolioException(MsgKOR.NOT_OWNER_RECORD_GROUP.message)
+        }
+
+        if (recordGroup.isDefault) {
+            throw WorkfolioException(MsgKOR.CANNOT_DELETED_DEFAULT_RECORD_GROUP.message)
         }
 
         recordGroupRepository.delete(recordGroup)

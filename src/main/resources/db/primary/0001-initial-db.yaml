@@ -67,7 +67,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: is_public
+                  name: is_default
                   type: BOOLEAN
                   constraints:
                     nullable: false
@@ -859,3 +859,46 @@ databaseChangeLog:
                   name: job_search_company_id
             indexName: idx_interview_job_search_company_id
             tableName: interview
+
+        - createTable:
+            tableName: system_config
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: type
+                  type: VARCHAR(512)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: value
+                  type: VARCHAR(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: worker_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+        - createIndex:
+            columns:
+              - column:
+                  name: type
+              - column:
+                  name: worker_id
+            indexName: idx_system_config_type_worker_id
+            tableName: system_config

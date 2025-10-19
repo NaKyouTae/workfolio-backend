@@ -6,9 +6,11 @@ import com.spectrum.workfolio.domain.entity.Worker
 import com.spectrum.workfolio.domain.entity.primary.Account
 import com.spectrum.workfolio.domain.enums.AccountType
 import com.spectrum.workfolio.proto.common.RecordGroup
+import com.spectrum.workfolio.proto.common.SystemConfig
 import com.spectrum.workfolio.proto.record.RecordCreateRequest
 import com.spectrum.workfolio.proto.record_group.CreateRecordGroupRequest
 import com.spectrum.workfolio.proto.record_group.RecordGroupResponse
+import com.spectrum.workfolio.proto.worker.SystemConfigCreateRequest
 import com.spectrum.workfolio.utils.StringUtil
 import com.spectrum.workfolio.utils.TimeUtil
 import org.slf4j.LoggerFactory
@@ -25,6 +27,7 @@ class UserRegistrationService(
     private val workerService: WorkerService,
     private val accountService: AccountService,
     private val recordGroupService: RecordGroupService,
+    private val systemConfigService: SystemConfigService,
 ) {
 
     private val logger = LoggerFactory.getLogger(UserRegistrationService::class.java)
@@ -53,6 +56,9 @@ class UserRegistrationService(
             // 4. Account 생성
             val account = createAccount(oauthUserInfo, accountType, worker)
 
+            // 5. 설정 생성
+            createSystemConfig(worker)
+
             logger.info("새 사용자 등록 완료: workerId={}, accountId={}", worker.id, account.id)
             return account
         } catch (e: Exception) {
@@ -69,12 +75,12 @@ class UserRegistrationService(
     private fun createDefaultRecordGroup(workerId: String): RecordGroupResponse {
         val recordGroupRequest = CreateRecordGroupRequest.newBuilder()
             .setColor("red")
-            .setTitle("기본 그룹")
+            .setTitle("개인 기록장")
             .setType(RecordGroup.RecordGroupType.PRIVATE)
             .setPriority(0)
             .build()
 
-        return recordGroupService.createRecordGroup(workerId, recordGroupRequest)
+        return recordGroupService.createRecordGroup(workerId, true, recordGroupRequest)
     }
 
     private fun createDefaultRecord(workerId: String, recordGroupId: String) {
@@ -106,5 +112,16 @@ class UserRegistrationService(
 
         accountService.createAccount(account)
         return account
+    }
+
+    private fun createSystemConfig(worker: Worker) {
+        // 기본 레코드 타입 설정 생성
+        val request = SystemConfigCreateRequest.newBuilder()
+            .setType(SystemConfig.SystemConfigType.DEFAULT_RECORD_TYPE)
+            .setValue("MONTHLY")
+            .setWorkerId(worker.id)
+            .build()
+
+        systemConfigService.createSystemConfig(request)
     }
 }

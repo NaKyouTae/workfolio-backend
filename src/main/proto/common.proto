@@ -144,7 +144,7 @@ message RecordGroup {
   string id = 1;
   RecordGroupType type = 2;
   string title = 3;
-  bool is_public = 4;
+  bool is_default = 4;
   string public_id = 5;
   string color = 6;
 
@@ -233,6 +233,22 @@ message Interview {
   optional string memo = 6;
 
   JobSearchCompany job_search_company = 50;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
+}
+
+message SystemConfig {
+  enum SystemConfigType {
+    UNKNOWN = 0;
+    DEFAULT_RECORD_TYPE = 1;
+  }
+
+  string id = 1;
+  SystemConfigType type = 2;
+  string value = 3;
+
+  Worker worker = 50;
 
   uint64 created_at = 98;
   uint64 updated_at = 99;

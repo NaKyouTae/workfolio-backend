@@ -15,7 +15,7 @@ message CreateRecordGroupRequest {
   uint64 priority = 100;
 }
 
-message ListRecordGroupResponse {
+message RecordGroupListResponse {
   repeated RecordGroup groups = 1;
 }
 
@@ -24,16 +24,15 @@ message RecordGroupDetailResponse {
   repeated Worker workers = 2;
 }
 
-message JoinRecordGroupRequest {
+message RecordGroupJoinRequest {
   string record_group_id = 1;
   string worker_id = 2;
 }
 
-message UpdateRecordGroupRequest {
+message RecordGroupUpdateRequest {
   string title = 1;
-  bool is_public = 2;
-  string color = 3;
-  uint64 priority = 4;
+  string color = 2;
+  uint64 priority = 3;
 }
 
 message RecordGroupResponse {

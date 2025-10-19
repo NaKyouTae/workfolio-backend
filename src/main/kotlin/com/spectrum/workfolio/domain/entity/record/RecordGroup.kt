@@ -29,7 +29,7 @@ import jakarta.persistence.Table
 class RecordGroup(
     title: String,
     color: String,
-    isPublic: Boolean,
+    isDefault: Boolean,
     publicId: String,
     type: RecordGroupType,
     priority: Long,
@@ -43,8 +43,8 @@ class RecordGroup(
     var color: String = color // hex code
         protected set
 
-    @Column(name = "is_public", nullable = false)
-    var isPublic: Boolean = isPublic
+    @Column(name = "is_default", nullable = false)
+    var isDefault: Boolean = isDefault
         protected set
 
     @Column(name = "public_id", nullable = false)
@@ -76,13 +76,15 @@ class RecordGroup(
     fun changeRecordGroup(
         title: String,
         color: String,
-        isPublic: Boolean,
         priority: Long,
     ) {
         this.title = title
         this.color = color
-        this.isPublic = isPublic
         this.priority = priority
+    }
+
+    fun changeType(type: RecordGroupType) {
+        this.type = type
     }
 
     companion object {
