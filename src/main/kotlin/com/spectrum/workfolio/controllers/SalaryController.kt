@@ -20,21 +20,21 @@ class SalaryController(
 ) {
 
     @GetMapping
-    fun listCompanies(
+    fun listSalaries(
         @RequestParam companiesIds: List<String>,
     ): SalaryListResponse {
         return salaryService.listSalaries(companiesIds)
     }
 
     @PostMapping
-    fun createCompany(
+    fun createSalary(
         @RequestBody request: SalaryCreateRequest,
     ): SalaryResponse {
         return salaryService.createSalary(request)
     }
 
     @PutMapping
-    fun updateCompany(
+    fun updateSalary(
         @RequestBody request: SalaryUpdateRequest,
     ): SalaryResponse {
         return salaryService.updateSalary(request)

@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class SalaryService(
-    private val companyService: CompanyService,
+    private val careerService: CareerService,
     private val salaryRepository: SalaryRepository,
 ) {
 
@@ -25,8 +25,8 @@ class SalaryService(
     }
 
     @Transactional(readOnly = true)
-    fun listSalaries(companyIds: List<String>): SalaryListResponse {
-        val salaries = salaryRepository.findByCompanyIdInOrderByStartedAtDescEndedAtDesc(companyIds)
+    fun listSalaries(careerIds: List<String>): SalaryListResponse {
+        val salaries = salaryRepository.findByCareerIdInOrderByStartedAtDescEndedAtDesc(careerIds)
         return SalaryListResponse.newBuilder()
             .addAllSalaries(salaries.map { it.toProto() })
             .build()
@@ -34,12 +34,12 @@ class SalaryService(
 
     @Transactional
     fun createSalary(request: SalaryCreateRequest): SalaryResponse {
-        val company = companyService.getCompany(request.companyId)
+        val company = careerService.getCareer(request.careerId)
         val position = Salary(
             amount = request.amount,
             startedAt = TimeUtil.ofEpochMilli(request.startedAt).toLocalDate(),
             endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
-            company = company,
+            career = company,
         )
 
         val createdSalary = salaryRepository.save(position)

@@ -160,7 +160,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: company_id
+                  name: career_id
                   type: VARCHAR(16)
                   constraints:
                     nullable: true
@@ -325,7 +325,7 @@ databaseChangeLog:
             tableName: resumes
 
         - createTable:
-            tableName: companies
+            tableName: careers
             columns:
               - column:
                   name: id
@@ -377,15 +377,15 @@ databaseChangeLog:
             columns:
               - column:
                   name: name
-            indexName: idx_companies_name
-            tableName: companies
+            indexName: idx_careers_name
+            tableName: careers
             unique: true
         - createIndex:
             columns:
               - column:
                   name: resume_id
-            indexName: idx_companies_resume_id
-            tableName: companies
+            indexName: idx_careers_resume_id
+            tableName: careers
 
         - createTable:
             tableName: projects
@@ -422,7 +422,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: company_id
+                  name: career_id
                   type: VARCHAR(16)
                   constraints:
                     nullable: false
@@ -439,8 +439,8 @@ databaseChangeLog:
         - createIndex:
             columns:
               - column:
-                  name: company_id
-            indexName: idx_projects_company_id
+                  name: career_id
+            indexName: idx_projects_career_id
             tableName: projects
 
         - createTable:
@@ -473,7 +473,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: company_id
+                  name: career_id
                   type: VARCHAR(16)
                   constraints:
                     nullable: false
@@ -496,8 +496,8 @@ databaseChangeLog:
         - createIndex:
             columns:
               - column:
-                  name: company_id
-            indexName: idx_salaries_company_id
+                  name: career_id
+            indexName: idx_salaries_career_id
             tableName: salaries
 
         - createTable:
@@ -530,7 +530,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: company_id
+                  name: career_id
                   type: VARCHAR(16)
                   constraints:
                     nullable: false
@@ -554,8 +554,8 @@ databaseChangeLog:
         - createIndex:
             columns:
               - column:
-                  name: company_id
-            indexName: idx_positions_company_id
+                  name: career_id
+            indexName: idx_positions_career_id
             tableName: positions
 
         - createTable:
@@ -835,12 +835,12 @@ databaseChangeLog:
                   constraints:
                     nullable: true
               - column:
-                  name: prev_company_id
+                  name: prev_career_id
                   type: VARCHAR(16)
                   constraints:
                     nullable: true
               - column:
-                  name: next_company_id
+                  name: next_career_id
                   type: VARCHAR(16)
                   constraints:
                     nullable: true

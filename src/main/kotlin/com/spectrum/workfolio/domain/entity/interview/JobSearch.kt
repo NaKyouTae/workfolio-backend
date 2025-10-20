@@ -2,7 +2,7 @@ package com.spectrum.workfolio.domain.entity.interview
 
 import com.spectrum.workfolio.domain.entity.BaseEntity
 import com.spectrum.workfolio.domain.entity.Worker
-import com.spectrum.workfolio.domain.entity.resume.Company
+import com.spectrum.workfolio.domain.entity.resume.Career
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -25,8 +25,8 @@ class JobSearch(
     title: String? = null,
     startedAt: LocalDate,
     endedAt: LocalDate? = null,
-    prevCompany: Company? = null,
-    nextCompany: Company? = null,
+    prevCareer: Career? = null,
+    nextCareer: Career? = null,
     memo: String? = null,
     worker: Worker,
 ) : BaseEntity("JS") {
@@ -47,13 +47,13 @@ class JobSearch(
         protected set
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "prev_company_id", nullable = true)
-    var prevCompany: Company? = prevCompany
+    @JoinColumn(name = "prev_career_id", nullable = true)
+    var prevCareer: Career? = prevCareer
         protected set
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "next_company_id", nullable = true)
-    var nextCompany: Company? = nextCompany
+    @JoinColumn(name = "next_career_id", nullable = true)
+    var nextCareer: Career? = nextCareer
         protected set
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -70,14 +70,14 @@ class JobSearch(
         memo: String?,
         startedAt: LocalDate,
         endedAt: LocalDate?,
-        prevCompany: Company? = null,
-        nextCompany: Company? = null,
+        prevCareer: Career? = null,
+        nextCareer: Career? = null,
     ) {
         this.title = title
         this.memo = memo
         this.startedAt = startedAt
         this.endedAt = endedAt
-        this.prevCompany = prevCompany
-        this.nextCompany = nextCompany
+        this.prevCareer = prevCareer
+        this.nextCareer = nextCareer
     }
 }

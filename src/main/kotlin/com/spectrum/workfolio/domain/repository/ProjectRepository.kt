@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface ProjectRepository : JpaRepository<Project, String> {
-    fun findByCompanyId(companyId: String): List<Project>
+    fun findByCareerId(careerId: String): List<Project>
 }

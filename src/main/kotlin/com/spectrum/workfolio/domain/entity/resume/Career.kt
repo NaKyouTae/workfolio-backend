@@ -17,13 +17,13 @@ import java.time.LocalDate
  */
 @Entity
 @Table(
-    name = "companies",
+    name = "careers",
     indexes = [
-        Index(name = "idx_companies_name", columnList = "name"),
-        Index(name = "idx_companies_resume_id", columnList = "resume_id"),
+        Index(name = "idx_careers_name", columnList = "name"),
+        Index(name = "idx_careers_resume_id", columnList = "resume_id"),
     ],
 )
-class Company(
+class Career(
     name: String,
     isVisible: Boolean = false,
     startedAt: LocalDate,
@@ -56,11 +56,11 @@ class Company(
     var resume: Resume = resume
         protected set
 
-    @OneToMany(mappedBy = "company", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "career", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     private var mutablePositions: MutableList<Position> = mutableListOf()
     val positions: List<Position> get() = mutablePositions.toList()
 
-    @OneToMany(mappedBy = "company", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "career", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     private var mutableSalaries: MutableList<Salary> = mutableListOf()
     val salaries: List<Salary> get() = mutableSalaries.toList()
 

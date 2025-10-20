@@ -20,7 +20,7 @@ class RecordService(
     private val workerService: WorkerService,
     private val recordRepository: RecordRepository,
     private val recordGroupService: RecordGroupService,
-    private val companyService: CompanyService,
+    private val careerService: CareerService,
 ) {
 
     private fun getRecordEntity(id: String): Record {
@@ -68,8 +68,6 @@ class RecordService(
         val startedAt = TimeUtil.ofEpochMilli(request.startedAt)
         val endedAt = TimeUtil.ofEpochMilli(request.endedAt)
 
-        val company = if (request.hasCompanyId()) companyService.getCompany(request.companyId) else null
-
         // TODO TIME을 제외한 나머지 일자의 시간 조정 필요
 
         val record = Record(
@@ -79,7 +77,6 @@ class RecordService(
             startedAt = startedAt,
             endedAt = endedAt,
             recordGroup = recordGroup,
-            company = company,
             worker = worker,
         )
 
@@ -91,7 +88,6 @@ class RecordService(
     @Transactional
     fun updateRecord(request: RecordUpdateRequest): RecordResponse {
         val record = this.getRecordEntity(request.id)
-        val company = if (request.hasCompanyId()) companyService.getCompany(request.companyId) else null
         val startedAt = TimeUtil.ofEpochMilli(request.startedAt)
         val endedAt = TimeUtil.ofEpochMilli(request.endedAt)
 
@@ -101,7 +97,6 @@ class RecordService(
             type = generateRecordType(startedAt, endedAt),
             startedAt = startedAt,
             endedAt = endedAt,
-            company = company,
         )
 
         val updatedRecord = recordRepository.save(record)

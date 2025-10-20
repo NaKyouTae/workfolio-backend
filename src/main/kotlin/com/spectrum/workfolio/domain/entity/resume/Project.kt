@@ -17,7 +17,7 @@ import java.time.LocalDate
 @Table(
     name = "projects",
     indexes = [
-        Index(name = "idx_projects_company_id", columnList = "company_id"),
+        Index(name = "idx_projects_career_id", columnList = "career_id"),
     ],
 )
 class Project(
@@ -26,7 +26,7 @@ class Project(
     isVisible: Boolean,
     startedAt: LocalDate,
     endedAt: LocalDate? = null,
-    company: Company,
+    career: Career,
 ) : BaseEntity("RS") {
     @Column(name = "title", length = 1024, nullable = false)
     var title: String = title
@@ -49,8 +49,8 @@ class Project(
         protected set
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "company_id", nullable = false)
-    var company: Company = company
+    @JoinColumn(name = "career_id", nullable = false)
+    var career: Career = career
 
     fun changeInfo(
         title: String,

@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class PositionService(
-    private val companyService: CompanyService,
+    private val careerService: CareerService,
     private val positionRepository: PositionRepository,
 ) {
 
@@ -25,8 +25,8 @@ class PositionService(
     }
 
     @Transactional(readOnly = true)
-    fun listPositions(companyIds: List<String>): PositionListResponse {
-        val positions = positionRepository.findByCompanyIdInOrderByStartedAtDescEndedAtDesc(companyIds)
+    fun listPositions(careerIds: List<String>): PositionListResponse {
+        val positions = positionRepository.findByCareerIdInOrderByStartedAtDescEndedAtDesc(careerIds)
 
         return PositionListResponse.newBuilder()
             .addAllPositions(positions.map { it.toProto() })
@@ -35,12 +35,12 @@ class PositionService(
 
     @Transactional
     fun createPosition(request: PositionCreateRequest): PositionResponse {
-        val company = companyService.getCompany(request.companyId)
+        val company = careerService.getCareer(request.careerId)
         val position = Position(
             name = request.name,
             startedAt = TimeUtil.ofEpochMilli(request.startedAt).toLocalDate(),
             endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
-            company = company,
+            career = company,
         )
 
         val createdPosition = positionRepository.save(position)

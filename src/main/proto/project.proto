@@ -16,7 +16,7 @@ message ProjectCreateRequest {
   uint64 started_at = 5;
   optional uint64 ended_at = 6;
 
-  string company_id = 99;
+  string career_id = 99;
 }
 
 message ProjectUpdateRequest {

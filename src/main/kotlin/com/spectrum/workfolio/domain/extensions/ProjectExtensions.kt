@@ -11,7 +11,7 @@ fun Project.toProto(): com.spectrum.workfolio.proto.common.Project {
     builder.setDescription(this.description)
     builder.setIsVisible(this.isVisible)
     builder.setStartedAt(TimeUtil.toEpochMilli(this.startedAt))
-    builder.setCompany(this.company.toProto())
+    builder.setCareer(this.career.toProto())
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
 

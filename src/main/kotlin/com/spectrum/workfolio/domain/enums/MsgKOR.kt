@@ -6,7 +6,7 @@ enum class MsgKOR(val message: String) {
     NOT_FOUND_WORKER("존재하지 않는 유저입니다."),
     NOT_FOUND_RECORD("존재하지 않는 레코드입니다."),
     NOT_FOUND_RECORD_GROUP("존재하지 않는 레코드 그룹입니다."),
-    NOT_FOUND_COMPANY("존재하지 않는 회사입니다."),
+    NOT_FOUND_CAREER("존재하지 않는 회사입니다."),
     NOT_FOUND_POSITION("존재하지 않는 직책입니다."),
     NOT_FOUND_SALARY("존재하지 않는 급여입니다."),
     NOT_FOUND_EDUCATION("존재하지 않는 교육입니다."),

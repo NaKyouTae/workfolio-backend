@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class ProjectService(
-    private val companyService: CompanyService,
+    private val careerService: CareerService,
     private val projectRepository: ProjectRepository,
 ) {
 
@@ -24,8 +24,8 @@ class ProjectService(
     }
 
     @Transactional(readOnly = true)
-    fun listProjects(companyId: String): ProjectListResponse {
-        val projects = projectRepository.findByCompanyId(companyId)
+    fun listProjects(careerId: String): ProjectListResponse {
+        val projects = projectRepository.findByCareerId(careerId)
         return ProjectListResponse.newBuilder()
             .addAllProjects(projects.map { it.toProto() })
             .build()
@@ -33,14 +33,14 @@ class ProjectService(
 
     @Transactional
     fun createProject(request: ProjectCreateRequest): Project {
-        val company = companyService.getCompany(request.companyId)
+        val company = careerService.getCareer(request.careerId)
         val project = Project(
             title = request.title,
             description = request.description,
             isVisible = request.isVisible,
             startedAt = TimeUtil.ofEpochMilli(request.startedAt).toLocalDate(),
             endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
-            company = company,
+            career = company,
         )
 
         return projectRepository.save(project)

@@ -79,8 +79,8 @@ class Resume(
         protected set
 
     @OneToMany(mappedBy = "resume", cascade = [CascadeType.REMOVE])
-    private var mutableCompanies: MutableList<Company> = mutableListOf()
-    val companies: List<Company> get() = mutableCompanies.toList()
+    private var mutableCompanies: MutableList<Career> = mutableListOf()
+    val companies: List<Career> get() = mutableCompanies.toList()
 
     @OneToMany(mappedBy = "resume", cascade = [CascadeType.REMOVE])
     private var mutableCertifications: MutableList<Certifications> = mutableListOf()

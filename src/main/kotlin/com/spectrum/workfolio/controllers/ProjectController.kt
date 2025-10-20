@@ -5,11 +5,7 @@ import com.spectrum.workfolio.proto.common.SuccessResponse
 import com.spectrum.workfolio.proto.project.ProjectCreateRequest
 import com.spectrum.workfolio.proto.project.ProjectListResponse
 import com.spectrum.workfolio.proto.project.ProjectUpdateRequest
-import com.spectrum.workfolio.proto.resume.ResumeCreateRequest
-import com.spectrum.workfolio.proto.resume.ResumeListResponse
-import com.spectrum.workfolio.proto.resume.ResumeUpdateRequest
 import com.spectrum.workfolio.services.ProjectService
-import com.spectrum.workfolio.services.ResumeService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping

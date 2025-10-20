@@ -17,11 +17,11 @@ fun JobSearch.toProto(): com.spectrum.workfolio.proto.common.JobSearch {
     if (this.endedAt != null) {
         builder.setEndedAt(TimeUtil.toEpochMilli(this.endedAt!!))
     }
-    if (this.prevCompany != null) {
-        builder.setPrevCompany(this.prevCompany!!.toProto())
+    if (this.prevCareer != null) {
+        builder.setPrevCareer(this.prevCareer!!.toProto())
     }
-    if (this.nextCompany != null) {
-        builder.setNextCompany(this.nextCompany!!.toProto())
+    if (this.nextCareer != null) {
+        builder.setNextCareer(this.nextCareer!!.toProto())
     }
 
     return builder.build()

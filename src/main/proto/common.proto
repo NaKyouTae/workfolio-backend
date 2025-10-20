@@ -57,7 +57,7 @@ message Resume {
   uint64 updated_at = 99;
 }
 
-message Company {
+message Career {
   string id = 1;
   string name = 2;
   uint64 started_at = 3;
@@ -78,7 +78,7 @@ message Project {
   uint64 started_at = 5;
   optional uint64 ended_at = 6;
 
-  Company company = 50;
+  Career career = 50;
 
   uint64 created_at = 98;
   uint64 updated_at = 99;
@@ -90,7 +90,7 @@ message Position {
   uint64 started_at = 3;
   uint64 ended_at = 4;
 
-  Company company = 50;
+  Career career = 50;
 
   uint64 created_at = 98;
   uint64 updated_at = 99;
@@ -102,7 +102,7 @@ message Salary {
   uint64 started_at = 4;
   uint64 ended_at = 5;
 
-  Company company = 50;
+  Career career = 50;
 
   uint64 created_at = 98;
   uint64 updated_at = 99;
@@ -164,8 +164,7 @@ message Record {
   uint64 ended_at = 6;
 
   Worker worker = 50;
-  Company company = 51;
-  RecordGroup record_group = 52;
+  RecordGroup record_group = 51;
 
   uint64 created_at = 98;
   uint64 updated_at = 99;
@@ -217,8 +216,8 @@ message JobSearch {
   optional string memo = 5;
 
   Worker worker = 50;
-  optional Company prev_company = 51;
-  optional Company next_company = 52;
+  optional Career prev_career = 51;
+  optional Career next_career = 52;
 
   uint64 created_at = 98;
   uint64 updated_at = 99;

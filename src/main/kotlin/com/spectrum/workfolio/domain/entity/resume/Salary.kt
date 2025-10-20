@@ -18,7 +18,7 @@ import java.time.LocalDate
     name = "salaries",
     indexes = [
         Index(name = "idx_salaries_amount", columnList = "amount"),
-        Index(name = "idx_salaries_company_id", columnList = "company_id"),
+        Index(name = "idx_salaries_career_id", columnList = "career_id"),
     ],
 )
 class Salary(
@@ -26,7 +26,7 @@ class Salary(
     isVisible: Boolean = false,
     startedAt: LocalDate,
     endedAt: LocalDate? = null,
-    company: Company,
+    career: Career,
 ) : BaseEntity("SA") {
     @Column(name = "amount", nullable = false)
     var amount: Long = amount
@@ -45,8 +45,8 @@ class Salary(
         protected set
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "company_id", nullable = false)
-    var company: Company = company
+    @JoinColumn(name = "career_id", nullable = false)
+    var career: Career = career
 
     fun changeInfo(amount: Long, startedAt: LocalDate, endedAt: LocalDate?) {
         this.amount = amount

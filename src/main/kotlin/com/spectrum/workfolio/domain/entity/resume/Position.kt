@@ -18,7 +18,7 @@ import java.time.LocalDate
     name = "positions",
     indexes = [
         Index(name = "idx_positions_name", columnList = "name"),
-        Index(name = "idx_positions_company_id", columnList = "company_id"),
+        Index(name = "idx_positions_career_id", columnList = "career_id"),
     ],
 )
 class Position(
@@ -26,7 +26,7 @@ class Position(
     isVisible: Boolean = false,
     startedAt: LocalDate,
     endedAt: LocalDate? = null,
-    company: Company,
+    career: Career,
 ) : BaseEntity("PO") {
     @Column(name = "name", nullable = false, unique = true)
     var name: String = name
@@ -45,8 +45,8 @@ class Position(
         protected set
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "company_id", nullable = false)
-    var company: Company = company
+    @JoinColumn(name = "career_id", nullable = false)
+    var career: Career = career
 
     fun changeInfo(name: String, startedAt: LocalDate, endedAt: LocalDate?) {
         this.name = name
