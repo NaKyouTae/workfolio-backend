@@ -2,9 +2,13 @@ package com.spectrum.workfolio.controllers
 
 import com.spectrum.workfolio.config.annotation.AuthenticatedUser
 import com.spectrum.workfolio.proto.common.SuccessResponse
+import com.spectrum.workfolio.proto.project.ProjectCreateRequest
+import com.spectrum.workfolio.proto.project.ProjectListResponse
+import com.spectrum.workfolio.proto.project.ProjectUpdateRequest
 import com.spectrum.workfolio.proto.resume.ResumeCreateRequest
 import com.spectrum.workfolio.proto.resume.ResumeListResponse
 import com.spectrum.workfolio.proto.resume.ResumeUpdateRequest
+import com.spectrum.workfolio.services.ProjectService
 import com.spectrum.workfolio.services.ResumeService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -14,33 +18,31 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/resumes")
-class ResumeController(
-    private val resumeService: ResumeService,
+@RequestMapping("/api/projects")
+class ProjectController(
+    private val projectService: ProjectService,
 ) {
 
     @GetMapping
-    fun listResumes(
+    fun listProjects(
         @AuthenticatedUser workerId: String,
-    ): ResumeListResponse {
-        return resumeService.listResumes(workerId)
+    ): ProjectListResponse {
+        return projectService.listProjects(workerId)
     }
 
     @PostMapping
-    fun createResume(
-        @AuthenticatedUser workerId: String,
-        @RequestBody request: ResumeCreateRequest,
+    fun createProject(
+        @RequestBody request: ProjectCreateRequest,
     ): SuccessResponse {
-        resumeService.createResume(workerId, request)
+        projectService.createProject(request)
         return SuccessResponse.newBuilder().setIsSuccess(true).build()
     }
 
     @PutMapping
-    fun updateResume(
-        @AuthenticatedUser workerId: String,
-        @RequestBody request: ResumeUpdateRequest,
+    fun updateCompany(
+        @RequestBody request: ProjectUpdateRequest,
     ): SuccessResponse {
-        resumeService.updateResume(workerId, request)
+        projectService.updateProject(request)
         return SuccessResponse.newBuilder().setIsSuccess(true).build()
     }
 }
