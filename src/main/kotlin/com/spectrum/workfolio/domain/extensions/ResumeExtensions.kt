@@ -1,7 +1,6 @@
 package com.spectrum.workfolio.domain.extensions
 
 import com.spectrum.workfolio.domain.entity.resume.Resume
-import com.spectrum.workfolio.domain.entity.resume.Salary
 import com.spectrum.workfolio.utils.TimeUtil
 
 fun Resume.toProto(): com.spectrum.workfolio.proto.common.Resume {
@@ -12,6 +11,8 @@ fun Resume.toProto(): com.spectrum.workfolio.proto.common.Resume {
     builder.setDescription(this.description)
     builder.setPhone(this.phone)
     builder.setEmail(this.email)
+    builder.setBrithDate(TimeUtil.toEpochMilli(this.birthDate))
+    builder.setGender(com.spectrum.workfolio.proto.common.Resume.Gender.valueOf(this.gender.name))
     builder.setIsPublic(this.isPublic)
     builder.setIsDefault(this.isDefault)
     builder.setPublicId(this.publicId)

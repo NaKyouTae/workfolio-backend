@@ -34,14 +34,22 @@ message Account {
 }
 
 message Resume {
+  enum Gender {
+    UNKNOWN = 0;
+    MALE = 1;
+    FEMALE = 2;
+  }
+
   string id = 1;
   string title = 2;
   string description = 3;
   string phone = 4;
   string email = 5;
-  bool is_public = 6;
-  bool is_default = 7;
-  string public_id = 8;
+  uint64 brith_date = 6;
+  Gender gender = 7;
+  bool is_public = 8;
+  bool is_default = 9;
+  string public_id = 10;
 
   Worker worker = 50;
 

@@ -2,6 +2,8 @@ package com.spectrum.workfolio.domain.entity.resume
 
 import com.spectrum.workfolio.domain.entity.BaseEntity
 import com.spectrum.workfolio.domain.entity.Worker
+import com.spectrum.workfolio.domain.enums.Gender
+import com.spectrum.workfolio.utils.StringUtil
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -11,6 +13,7 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
+import java.time.LocalDate
 
 /**
  * 이력서
@@ -27,6 +30,8 @@ class Resume(
     description: String,
     phone: String,
     email: String,
+    birthDate: LocalDate,
+    gender: Gender,
     isPublic: Boolean,
     isDefault: Boolean,
     publicId: String,
@@ -46,6 +51,14 @@ class Resume(
 
     @Column(name = "email", length = 516, nullable = false)
     var email: String = email
+        protected set
+
+    @Column(name = "birth_date", nullable = false)
+    var birthDate: LocalDate = birthDate
+        protected set
+
+    @Column(name = "gender", nullable = false)
+    var gender: Gender = gender
         protected set
 
     @Column(name = "is_public", nullable = false)
@@ -86,16 +99,24 @@ class Resume(
         description: String,
         phone: String,
         email: String,
+        birthDate: LocalDate,
+        gender: Gender,
         isPublic: Boolean,
         isDefault: Boolean,
-        publicId: String,
     ) {
         this.title = title
         this.description = description
         this.phone = phone
         this.email = email
+        this.birthDate = birthDate
+        this.gender = gender
         this.isPublic = isPublic
         this.isDefault = isDefault
-        this.publicId = publicId
+    }
+
+    companion object {
+        fun generatePublicId(): String {
+            return StringUtil.generateRandomString(16)
+        }
     }
 }

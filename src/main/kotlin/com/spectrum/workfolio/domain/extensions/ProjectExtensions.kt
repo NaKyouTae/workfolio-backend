@@ -1,8 +1,6 @@
 package com.spectrum.workfolio.domain.extensions
 
 import com.spectrum.workfolio.domain.entity.resume.Project
-import com.spectrum.workfolio.domain.entity.resume.Resume
-import com.spectrum.workfolio.domain.entity.resume.Salary
 import com.spectrum.workfolio.utils.TimeUtil
 
 fun Project.toProto(): com.spectrum.workfolio.proto.common.Project {

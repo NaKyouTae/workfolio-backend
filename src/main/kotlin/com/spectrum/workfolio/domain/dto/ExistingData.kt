@@ -1,7 +1,7 @@
 package com.spectrum.workfolio.domain.dto
 
-import com.spectrum.workfolio.domain.entity.resume.Company
 import com.spectrum.workfolio.domain.entity.resume.Certifications
+import com.spectrum.workfolio.domain.entity.resume.Company
 import com.spectrum.workfolio.domain.entity.resume.Degrees
 import com.spectrum.workfolio.domain.entity.resume.Education
 

@@ -1,7 +1,6 @@
 package com.spectrum.workfolio.domain.entity.resume
 
 import com.spectrum.workfolio.domain.entity.BaseEntity
-import com.spectrum.workfolio.domain.entity.Worker
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -58,7 +57,7 @@ class Project(
         description: String,
         isVisible: Boolean,
         startedAt: LocalDate,
-        endedAt: LocalDate? = null
+        endedAt: LocalDate? = null,
     ) {
         this.title = title
         this.description = description

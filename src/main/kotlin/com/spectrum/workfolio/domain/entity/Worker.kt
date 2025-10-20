@@ -1,10 +1,6 @@
 package com.spectrum.workfolio.domain.entity
 
-import com.spectrum.workfolio.domain.entity.resume.Company
 import com.spectrum.workfolio.domain.entity.primary.Account
-import com.spectrum.workfolio.domain.entity.resume.Certifications
-import com.spectrum.workfolio.domain.entity.resume.Degrees
-import com.spectrum.workfolio.domain.entity.resume.Education
 import com.spectrum.workfolio.domain.entity.record.Record
 import com.spectrum.workfolio.domain.entity.record.RecordGroup
 import com.spectrum.workfolio.domain.entity.record.WorkerRecordGroup

@@ -13,9 +13,10 @@ message ResumeCreateRequest {
   string description = 2;
   string phone = 3;
   string email = 4;
-  bool is_public = 5;
-  bool is_default = 6;
-  string public_id = 7;
+  uint64 birth_date = 5;
+  Resume.Gender gender =6;
+  bool is_public = 7;
+  bool is_default = 8;
 }
 
 message ResumeUpdateRequest {
@@ -23,9 +24,10 @@ message ResumeUpdateRequest {
   string description = 2;
   string phone = 3;
   string email = 4;
-  bool is_public = 5;
-  bool is_default = 6;
-  string public_id = 7;
+  uint64 birth_date = 5;
+  Resume.Gender gender =6;
+  bool is_public = 7;
+  bool is_default = 8;
 
   string id = 99;
 }

@@ -1,12 +1,14 @@
 package com.spectrum.workfolio.services
 
 import com.spectrum.workfolio.domain.entity.resume.Resume
+import com.spectrum.workfolio.domain.enums.Gender
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.ResumeRepository
 import com.spectrum.workfolio.proto.resume.ResumeCreateRequest
 import com.spectrum.workfolio.proto.resume.ResumeListResponse
 import com.spectrum.workfolio.proto.resume.ResumeUpdateRequest
+import com.spectrum.workfolio.utils.TimeUtil
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -38,9 +40,11 @@ class ResumeService(
             description = request.description,
             phone = request.phone,
             email = request.email,
+            birthDate = TimeUtil.ofEpochMilli(request.birthDate).toLocalDate(),
+            gender = Gender.valueOf(request.gender.name),
             isPublic = request.isPublic,
             isDefault = request.isDefault,
-            publicId = request.publicId,
+            publicId = Resume.generatePublicId(),
             worker = worker,
         )
 
@@ -56,9 +60,10 @@ class ResumeService(
             description = request.description,
             phone = request.phone,
             email = request.email,
+            birthDate = TimeUtil.ofEpochMilli(request.birthDate).toLocalDate(),
+            gender = Gender.valueOf(request.gender.name),
             isPublic = request.isPublic,
             isDefault = request.isDefault,
-            publicId = request.publicId,
         )
 
         return resumeRepository.save(resume)
