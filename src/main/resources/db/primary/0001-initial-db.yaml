@@ -335,6 +335,21 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: name
+                  type: VARCHAR(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: position
+                  type: VARCHAR(256)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: employment_type
+                  type: VARCHAR(32)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: department
                   type: VARCHAR(256)
                   constraints:
                     nullable: false
@@ -637,7 +652,12 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: major
-                  type: VARCHAR(1028)
+                  type: VARCHAR(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: VARCHAR(32)
                   constraints:
                     nullable: false
               - column:
@@ -751,6 +771,47 @@ databaseChangeLog:
                   name: resume_id
             indexName: idx_certifications_resume_id
             tableName: certifications
+
+        - createTable:
+            tableName: links
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: url
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_visible
+                  type: BOOL
+                  constraints:
+                    nullable: false
+              - column:
+                  name: resume_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+        - createIndex:
+            columns:
+              - column:
+                  name: resume_id
+            indexName: idx_links_resume_id
+            tableName: links
 
         - createTable:
             tableName: accounts

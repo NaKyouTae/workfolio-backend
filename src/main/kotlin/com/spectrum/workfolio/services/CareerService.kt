@@ -1,6 +1,7 @@
 package com.spectrum.workfolio.services
 
 import com.spectrum.workfolio.domain.entity.resume.Career
+import com.spectrum.workfolio.domain.enums.EmploymentType
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.CareerRepository
@@ -12,6 +13,7 @@ import com.spectrum.workfolio.utils.TimeUtil
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.context.request.RequestAttributes
 
 @Service
 class CareerService(
@@ -37,6 +39,9 @@ class CareerService(
         val resume = resumeService.getResume(request.resumeId)
         val career = Career(
             name = request.name,
+            position = request.position,
+            employmentType = EmploymentType.valueOf(request.employmentType.name),
+            department = request.department,
             startedAt = TimeUtil.ofEpochMilli(request.startedAt).toLocalDate(),
             endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
             isWorking = request.isWorking,
@@ -54,6 +59,9 @@ class CareerService(
 
         career.changeInfo(
             name = request.name,
+            position = request.position,
+            employmentType = EmploymentType.valueOf(request.employmentType.name),
+            department = request.department,
             startedAt = TimeUtil.ofEpochMilli(request.startedAt).toLocalDate(),
             endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
             isWorking = request.isWorking,

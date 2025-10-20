@@ -17,6 +17,7 @@ message DegreesCreateRequest {
   string major = 2;
   uint64 started_at = 3;
   optional uint64 ended_at = 4;
+  Degrees.DegreesStatus status = 5;
 
   string resume_id = 99;
 }
@@ -27,6 +28,7 @@ message DegreesUpdateRequest {
   string major = 3;
   uint64 started_at = 4;
   optional uint64 ended_at = 5;
+  Degrees.DegreesStatus status = 6;
 }
 
 message DegreesResponse {

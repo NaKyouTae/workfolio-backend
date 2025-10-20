@@ -1,6 +1,7 @@
 package com.spectrum.workfolio.services
 
 import com.spectrum.workfolio.domain.entity.resume.Degrees
+import com.spectrum.workfolio.domain.enums.DegreesStatus
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.DegreesRepository
@@ -39,6 +40,7 @@ class DegreesService(
         val degrees = Degrees(
             name = request.name,
             major = request.major,
+            status = DegreesStatus.valueOf(request.status.name),
             startedAt = TimeUtil.ofEpochMilli(request.startedAt).toLocalDate(),
             endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
             resume = resume,
@@ -56,6 +58,7 @@ class DegreesService(
         degrees.changeInfo(
             name = request.name,
             major = request.major,
+            status = DegreesStatus.valueOf(request.status.name),
             startedAt = TimeUtil.ofEpochMilli(request.startedAt).toLocalDate(),
             endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
         )

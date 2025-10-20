@@ -1,8 +1,11 @@
 package com.spectrum.workfolio.domain.entity.resume
 
 import com.spectrum.workfolio.domain.entity.BaseEntity
+import com.spectrum.workfolio.domain.enums.DegreesStatus
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.FetchType
 import jakarta.persistence.Index
 import jakarta.persistence.JoinColumn
@@ -24,18 +27,24 @@ import java.time.LocalDate
 class Degrees(
     name: String,
     major: String,
+    status: DegreesStatus,
     isVisible: Boolean = false,
     startedAt: LocalDate,
     endedAt: LocalDate? = null,
     resume: Resume,
 ) : BaseEntity("DE") {
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", length = 256, nullable = false)
     var name: String = name
         protected set
 
-    @Column(name = "major", nullable = false)
+    @Column(name = "major", length = 1024, nullable = false)
     var major: String = major
+        protected set
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", length = 32, nullable = false)
+    var status: DegreesStatus = status
         protected set
 
     @Column(name = "is_visible", nullable = false)
@@ -55,9 +64,10 @@ class Degrees(
     var resume: Resume = resume
         protected set
 
-    fun changeInfo(name: String, major: String, startedAt: LocalDate, endedAt: LocalDate?) {
+    fun changeInfo(name: String, major: String, status: DegreesStatus, startedAt: LocalDate, endedAt: LocalDate?) {
         this.name = name
         this.major = major
+        this.status = status
         this.startedAt = startedAt
         this.endedAt = endedAt
     }

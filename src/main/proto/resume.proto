@@ -33,11 +33,22 @@ message ResumeUpdateRequest {
 
   message CareerRequest {
     message Career {
+      enum EmploymentType {
+        UNKNOWN = 0;
+        FULL_TIME = 1;
+        CONTRACT = 2;
+        INTERN = 3;
+        FREELANCER = 4;
+      }
+
       optional string id = 1;
       string name = 2;
       uint64 started_at = 3;
       uint64 ended_at = 4;
       bool is_working = 5;
+      string position = 6;
+      EmploymentType employmentType = 7;
+      string department = 8;
     }
 
     message Project {

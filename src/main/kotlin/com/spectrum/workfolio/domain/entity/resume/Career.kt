@@ -1,9 +1,12 @@
 package com.spectrum.workfolio.domain.entity.resume
 
 import com.spectrum.workfolio.domain.entity.BaseEntity
+import com.spectrum.workfolio.domain.enums.EmploymentType
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.FetchType
 import jakarta.persistence.Index
 import jakarta.persistence.JoinColumn
@@ -26,18 +29,31 @@ import java.time.LocalDate
 class Career(
     name: String,
     isVisible: Boolean = false,
+    position: String,
+    employmentType: EmploymentType,
+    department: String,
     startedAt: LocalDate,
     endedAt: LocalDate? = null,
     isWorking: Boolean = false,
     resume: Resume,
 ) : BaseEntity("CO") {
-    @Column(name = "name", nullable = false, unique = true)
+    @Column(name = "name", length = 1024, nullable = false, unique = true)
     var name: String = name
         protected set
 
     @Column(name = "is_visible", nullable = false)
     var isVisible: Boolean = isVisible
         protected set
+
+    @Column(name = "position", length = 256, nullable = false)
+    var position: String = position
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "employment_type", length = 32, nullable = false)
+    var employmentType: EmploymentType = employmentType
+
+    @Column(name = "department", length = 256, nullable = false)
+    var department: String = department
 
     @Column(name = "started_at", nullable = false)
     var startedAt: LocalDate = startedAt
@@ -72,8 +88,19 @@ class Career(
         mutableSalaries.add(salary)
     }
 
-    fun changeInfo(name: String, startedAt: LocalDate, endedAt: LocalDate?, isWorking: Boolean) {
+    fun changeInfo(
+        name: String,
+        position: String,
+        employmentType: EmploymentType,
+        department: String,
+        startedAt: LocalDate,
+        endedAt: LocalDate?,
+        isWorking: Boolean,
+    ) {
         this.name = name
+        this.position = position
+        this.employmentType = employmentType
+        this.department = department
         this.startedAt = startedAt
         this.endedAt = endedAt
         this.isWorking = isWorking
