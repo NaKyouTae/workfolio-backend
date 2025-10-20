@@ -12,8 +12,8 @@ message JobSearchCreateRequest {
   string title = 1;
   uint64 started_at = 2;
   optional uint64 ended_at = 3;
-  optional string prev_company_id = 4;
-  optional string next_company_id = 5;
+  optional string prev_career_id = 4;
+  optional string next_career_id = 5;
   optional string memo = 6;
 }
 
@@ -21,8 +21,8 @@ message JobSearchUpdateRequest {
   string title = 1;
   uint64 started_at = 2;
   optional uint64 ended_at = 3;
-  optional string prev_company_id = 4;
-  optional string next_company_id = 5;
+  optional string prev_career_id = 4;
+  optional string next_career_id = 5;
   optional string memo = 6;
 
   string id = 99;

@@ -17,7 +17,6 @@ fun Record.toProto(): com.spectrum.workfolio.proto.common.Record {
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
 
     if (this.endedAt != null) { builder.setEndedAt(TimeUtil.toEpochMilli(this.endedAt!!)) }
-    if (this.career != null) { builder.setCareer(this.career!!.toProto()) }
 
     return builder.build()
 }

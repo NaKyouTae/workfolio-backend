@@ -37,13 +37,13 @@ class ResumeService(
         val worker = workerService.getWorker(workerId)
         val resume = Resume(
             title = request.title,
-            description = request.description,
-            phone = request.phone,
-            email = request.email,
-            birthDate = TimeUtil.ofEpochMilli(request.birthDate).toLocalDate(),
-            gender = Gender.valueOf(request.gender.name),
-            isPublic = request.isPublic,
-            isDefault = request.isDefault,
+            description = "",
+            phone = "",
+            email = "",
+            birthDate = TimeUtil.now().toLocalDate(),
+            gender = Gender.MALE,
+            isPublic = false,
+            isDefault = false,
             publicId = Resume.generatePublicId(),
             worker = worker,
         )

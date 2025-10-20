@@ -36,13 +36,13 @@ class JobSearchService(
     @Transactional
     fun createJobSearch(workerId: String, request: JobSearchCreateRequest): JobSearchResponse {
         val worker = workerService.getWorker(workerId)
-        val prevCompany = if (request.hasPrevCompanyId()) {
-            careerService.getCareer(request.prevCompanyId)
+        val prevCareer = if (request.hasPrevCareerId()) {
+            careerService.getCareer(request.prevCareerId)
         } else {
             null
         }
-        val nextCompany = if (request.hasNextCompanyId()) {
-            careerService.getCareer(request.nextCompanyId)
+        val nextCareer = if (request.hasNextCareerId()) {
+            careerService.getCareer(request.nextCareerId)
         } else {
             null
         }
@@ -52,8 +52,8 @@ class JobSearchService(
             memo = request.memo,
             startedAt = TimeUtil.ofEpochMilli(request.startedAt).toLocalDate(),
             endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
-            prevCareer = prevCompany,
-            nextCareer = nextCompany,
+            prevCareer = prevCareer,
+            nextCareer = nextCareer,
             worker = worker,
         )
 
@@ -66,13 +66,13 @@ class JobSearchService(
     fun updateJobSearch(request: JobSearchUpdateRequest): JobSearchResponse {
         val jobSearch = this.getJobSearch(request.id)
 
-        val prevCompany = if (request.hasPrevCompanyId()) {
-            careerService.getCareer(request.prevCompanyId)
+        val prevCareer = if (request.hasPrevCareerId()) {
+            careerService.getCareer(request.prevCareerId)
         } else {
             null
         }
-        val nextCompany = if (request.hasNextCompanyId()) {
-            careerService.getCareer(request.nextCompanyId)
+        val nextCareer = if (request.hasNextCareerId()) {
+            careerService.getCareer(request.nextCareerId)
         } else {
             null
         }
@@ -82,8 +82,8 @@ class JobSearchService(
             memo = request.memo,
             startedAt = TimeUtil.ofEpochMilli(request.startedAt).toLocalDate(),
             endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
-            prevCareer = prevCompany,
-            nextCareer = nextCompany,
+            prevCareer = prevCareer,
+            nextCareer = nextCareer,
         )
 
         val updatedJobSearch = jobSearchRepository.save(jobSearch)

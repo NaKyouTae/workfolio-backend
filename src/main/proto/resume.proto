@@ -10,26 +10,70 @@ option java_outer_classname = "ResumeProto";
 
 message ResumeCreateRequest {
   string title = 1;
-  string description = 2;
-  string phone = 3;
-  string email = 4;
-  uint64 birth_date = 5;
-  Resume.Gender gender =6;
-  bool is_public = 7;
-  bool is_default = 8;
 }
 
 message ResumeUpdateRequest {
-  string title = 1;
-  string description = 2;
-  string phone = 3;
-  string email = 4;
-  uint64 birth_date = 5;
-  Resume.Gender gender =6;
-  bool is_public = 7;
-  bool is_default = 8;
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  string phone = 4;
+  string email = 5;
+  uint64 birth_date = 6;
+  Resume.Gender gender = 7;
+  bool is_public = 8;
+  bool is_default = 9;
 
-  string id = 99;
+  message DegreesRequest {
+    optional string id = 1;
+    string name = 2;
+    string major = 3;
+    uint64 started_at = 4;
+    uint64 ended_at = 5;
+  }
+
+  message CareerRequest {
+    message Career {
+      optional string id = 1;
+      string name = 2;
+      uint64 started_at = 3;
+      uint64 ended_at = 4;
+      bool is_working = 5;
+    }
+
+    message Project {
+      optional string id = 1;
+      string title = 2;
+      string description = 3;
+      bool is_visible = 4;
+      uint64 started_at = 5;
+      optional uint64 ended_at = 6;
+    }
+
+    CareerRequest.Career career = 1;
+    repeated CareerRequest.Project projects = 2;
+  }
+
+  message CertificationsRequest {
+    optional string id = 1;
+    string name = 2;
+    string number = 3;
+    string issuer = 4;
+    uint64 issued_at = 5;
+    uint64 expiration_period = 6;
+  }
+
+  message EducationRequest {
+    optional string id = 1;
+    string name = 2;
+    uint64 started_at = 3;
+    uint64 ended_at = 4;
+    string agency = 5;
+  }
+
+  repeated DegreesRequest degrees = 50;
+  repeated CareerRequest careers = 51;
+  repeated CertificationsRequest certifications = 52;
+  repeated EducationRequest eduction = 53;
 }
 
 message ResumeListResponse {

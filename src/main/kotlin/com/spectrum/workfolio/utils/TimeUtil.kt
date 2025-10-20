@@ -19,6 +19,10 @@ object TimeUtil {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(epochMilli), ZoneId.systemDefault())
     }
 
+    fun now(): LocalDateTime {
+        return LocalDateTime.now()
+    }
+
     fun nowToLong(): Long {
         return toEpochMilli(LocalDateTime.now())
     }
