@@ -66,11 +66,11 @@ class RecordGroup(
     var worker: Worker = worker
         protected set
 
-    @OneToMany(mappedBy = "recordGroup", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
+    @OneToMany(mappedBy = "recordGroup", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
     private var mutableRecords: MutableList<Record> = mutableListOf()
     val records: List<Record> get() = mutableRecords.toList()
 
-    @OneToMany(mappedBy = "recordGroup", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
+    @OneToMany(mappedBy = "recordGroup", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
     private var mutableWorkerRecordGroups: MutableList<WorkerRecordGroup> = mutableListOf()
     val workerRecordGroups: List<WorkerRecordGroup> get() = mutableWorkerRecordGroups.toList()
 

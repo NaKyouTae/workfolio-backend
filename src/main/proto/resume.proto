@@ -57,8 +57,17 @@ message ResumeUpdateRequest {
       optional uint64 ended_at = 6;
     }
 
+    message Salary {
+      optional string id = 1;
+      uint64 amount = 2;
+      optional uint64 negotiation_date = 3;
+      optional string memo = 4;
+      bool is_visible = 5;
+    }
+
     CareerRequest.Career career = 1;
     repeated CareerRequest.Project projects = 2;
+    repeated CareerRequest.Salary salaries = 3;
   }
 
   message CertificationsRequest {

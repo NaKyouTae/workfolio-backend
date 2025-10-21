@@ -1,6 +1,5 @@
 package com.spectrum.workfolio.domain.extensions
 
-import com.spectrum.workfolio.domain.entity.resume.Degrees
 import com.spectrum.workfolio.domain.entity.resume.Link
 import com.spectrum.workfolio.utils.TimeUtil
 

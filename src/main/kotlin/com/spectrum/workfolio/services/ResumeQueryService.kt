@@ -39,7 +39,6 @@ class ResumeQueryService(
         val resumes = resumeRepository.findByWorkerId(workerId)
         return ResumeDetailListResponse.newBuilder()
             .addAllResumes(resumes.map { it.toDetailProto() })
-
             .build()
     }
 }

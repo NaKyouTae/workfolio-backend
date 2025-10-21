@@ -8,6 +8,7 @@ import com.spectrum.workfolio.domain.entity.resume.Resume
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
 import jakarta.persistence.Index
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
@@ -35,23 +36,23 @@ class Worker(
     var nickName: String? = nickName
         protected set
 
-    @OneToMany(mappedBy = "worker", cascade = [CascadeType.REMOVE])
+    @OneToMany(mappedBy = "worker", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
     private var mutableResumes: MutableList<Resume> = mutableListOf()
     val resumes: List<Resume> get() = mutableResumes.toList()
 
-    @OneToMany(mappedBy = "worker", cascade = [CascadeType.REMOVE])
+    @OneToMany(mappedBy = "worker", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
     private var mutableRecords: MutableList<Record> = mutableListOf()
     val records: List<Record> get() = mutableRecords.toList()
 
-    @OneToMany(mappedBy = "worker", cascade = [CascadeType.REMOVE])
+    @OneToMany(mappedBy = "worker", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
     private var mutableWorkerRecordGroups: MutableList<WorkerRecordGroup> = mutableListOf()
     val workerRecordGroups: List<WorkerRecordGroup> get() = mutableWorkerRecordGroups.toList()
 
-    @OneToMany(mappedBy = "worker", cascade = [CascadeType.REMOVE])
+    @OneToMany(mappedBy = "worker", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
     private var mutableRecordGroup: MutableList<RecordGroup> = mutableListOf()
     val recordGroups: List<RecordGroup> get() = mutableRecordGroup.toList()
 
-    @OneToMany(mappedBy = "worker", cascade = [CascadeType.REMOVE])
+    @OneToMany(mappedBy = "worker", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
     private var mutableAccounts: MutableList<Account> = mutableListOf()
     val accounts: List<Account> get() = mutableAccounts.toList()
 

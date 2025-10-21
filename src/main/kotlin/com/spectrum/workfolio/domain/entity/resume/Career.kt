@@ -2,6 +2,7 @@ package com.spectrum.workfolio.domain.entity.resume
 
 import com.spectrum.workfolio.domain.entity.BaseEntity
 import com.spectrum.workfolio.domain.enums.EmploymentType
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -10,6 +11,7 @@ import jakarta.persistence.FetchType
 import jakarta.persistence.Index
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import java.time.LocalDate
 
@@ -82,6 +84,14 @@ class Career(
     var resume: Resume = resume
         protected set
 
+    @OneToMany(mappedBy = "career", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    private var mutableProjects: MutableList<Project> = mutableListOf()
+    val projects: List<Project> get() = mutableProjects.toList()
+
+    @OneToMany(mappedBy = "career", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    private var mutableSalaries: MutableList<Salary> = mutableListOf()
+    val salaries: List<Salary> get() = mutableSalaries.toList()
+
     fun changeInfo(
         name: String,
         position: String,
@@ -106,5 +116,13 @@ class Career(
         this.endedAt = endedAt
         this.isWorking = isWorking
         this.isVisible = isVisible
+    }
+
+    fun addProject(project: Project) {
+        mutableProjects.add(project)
+    }
+
+    fun addSalary(salary: Salary) {
+        mutableSalaries.add(salary)
     }
 }

@@ -28,6 +28,8 @@ fun Career.toProtoWithoutResume(): com.spectrum.workfolio.proto.common.Career {
     builder.setName(this.name)
     builder.setStartedAt(TimeUtil.toEpochMilli(this.startedAt))
     builder.setIsWorking(this.isWorking)
+    builder.addAllProjects(this.projects.map { it.toProtoWithoutCareer() })
+    builder.addAllSalaries(this.salaries.map { it.toProtoWithoutCareer() })
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
 

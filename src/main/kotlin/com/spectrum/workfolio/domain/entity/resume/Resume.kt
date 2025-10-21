@@ -78,23 +78,23 @@ class Resume(
     var worker: Worker = worker
         protected set
 
-    @OneToMany(mappedBy = "resume", cascade = [CascadeType.REMOVE])
+    @OneToMany(mappedBy = "resume", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
     private var mutableCareers: MutableList<Career> = mutableListOf()
     val careers: List<Career> get() = mutableCareers.toList()
 
-    @OneToMany(mappedBy = "resume", cascade = [CascadeType.REMOVE])
+    @OneToMany(mappedBy = "resume", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
     private var mutableCertifications: MutableList<Certifications> = mutableListOf()
     val certifications: List<Certifications> get() = mutableCertifications.toList()
 
-    @OneToMany(mappedBy = "resume", cascade = [CascadeType.REMOVE])
+    @OneToMany(mappedBy = "resume", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
     private var mutableDegrees: MutableList<Degrees> = mutableListOf()
     val degrees: List<Degrees> get() = mutableDegrees.toList()
 
-    @OneToMany(mappedBy = "resume", cascade = [CascadeType.REMOVE])
+    @OneToMany(mappedBy = "resume", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
     private var mutableEducations: MutableList<Education> = mutableListOf()
     val educations: List<Education> get() = mutableEducations.toList()
 
-    @OneToMany(mappedBy = "resume", cascade = [CascadeType.REMOVE])
+    @OneToMany(mappedBy = "resume", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
     private var mutableLinks: MutableList<Link> = mutableListOf()
     val links: List<Link> get() = mutableLinks.toList()
 

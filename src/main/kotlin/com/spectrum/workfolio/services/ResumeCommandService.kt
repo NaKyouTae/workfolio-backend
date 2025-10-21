@@ -2,10 +2,8 @@ package com.spectrum.workfolio.services
 
 import com.spectrum.workfolio.domain.entity.resume.Resume
 import com.spectrum.workfolio.domain.enums.Gender
-import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.ResumeRepository
 import com.spectrum.workfolio.proto.resume.ResumeCreateRequest
-import com.spectrum.workfolio.proto.resume.ResumeListResponse
 import com.spectrum.workfolio.proto.resume.ResumeUpdateRequest
 import com.spectrum.workfolio.utils.TimeUtil
 import org.springframework.stereotype.Service
@@ -17,14 +15,16 @@ import org.springframework.transaction.annotation.Transactional
  */
 @Service
 class ResumeCommandService(
+    private val linkService: LinkService,
     private val workerService: WorkerService,
+    private val salaryService: SalaryService,
+    private val careerService: CareerService,
+    private val degreesService: DegreesService,
+    private val projectService: ProjectService,
+    private val educationService: EducationService,
     private val resumeRepository: ResumeRepository,
     private val resumeQueryService: ResumeQueryService,
     private val certificationsService: CertificationsService,
-    private val degreesService: DegreesService,
-    private val educationService: EducationService,
-    private val careerService: CareerService,
-    private val linkService: LinkService,
 ) {
 
     @Transactional
@@ -225,9 +225,9 @@ class ResumeCommandService(
         // 생성 및 수정할 careers
         careerRequests.forEach { request ->
             val career = request.career
-            if (career.id.isNullOrEmpty()) {
+            val careerId = if (career.id.isNullOrEmpty()) {
                 // 생성
-                careerService.createCareer(
+                val createdCareer = careerService.createCareer(
                     com.spectrum.workfolio.proto.career.CareerCreateRequest.newBuilder()
                         .setResumeId(resumeId)
                         .setName(career.name)
@@ -247,6 +247,7 @@ class ResumeCommandService(
                         .setIsVisible(career.isVisible)
                         .build(),
                 )
+                createdCareer.career.id
             } else {
                 // 수정
                 careerService.updateCareer(
@@ -269,6 +270,61 @@ class ResumeCommandService(
                         .setIsVisible(career.isVisible)
                         .build(),
                 )
+                career.id
+            }
+
+            // Career 엔티티에 Project와 Salary를 직접 추가 (cascade로 자동 저장)
+            val careerEntity = if (career.id.isNullOrEmpty()) {
+                // 새로 생성된 career 엔티티 가져오기
+                val createdCareer = careerService.createCareer(
+                    com.spectrum.workfolio.proto.career.CareerCreateRequest.newBuilder()
+                        .setResumeId(resumeId)
+                        .setName(career.name)
+                        .setPosition(career.position)
+                        .setEmploymentType(
+                            com.spectrum.workfolio.proto.common.Career.EmploymentType.valueOf(
+                                career.employmentType.name,
+                            ),
+                        )
+                        .setDepartment(career.department)
+                        .setJobGrade(career.jobGrade)
+                        .setJob(career.job)
+                        .setSalary(career.salary)
+                        .setStartedAt(career.startedAt)
+                        .setEndedAt(career.endedAt)
+                        .setIsWorking(career.isWorking)
+                        .setIsVisible(career.isVisible)
+                        .build(),
+                )
+                careerService.getCareer(createdCareer.career.id)
+            } else {
+                // 기존 career 엔티티 가져오기
+                careerService.getCareer(career.id)
+            }
+
+            // Projects 추가
+            request.projectsList.forEach { projectRequest ->
+                val project = com.spectrum.workfolio.domain.entity.resume.Project(
+                    title = projectRequest.title,
+                    description = projectRequest.description,
+                    isVisible = projectRequest.isVisible,
+                    startedAt = TimeUtil.ofEpochMilli(projectRequest.startedAt).toLocalDate(),
+                    endedAt = if (projectRequest.endedAt > 0) TimeUtil.ofEpochMilli(projectRequest.endedAt).toLocalDate() else null,
+                    career = careerEntity,
+                )
+                careerEntity.addProject(project)
+            }
+
+            // Salaries 추가
+            request.salariesList.forEach { salaryRequest ->
+                val salary = com.spectrum.workfolio.domain.entity.resume.Salary(
+                    amount = salaryRequest.amount,
+                    memo = salaryRequest.memo,
+                    isVisible = salaryRequest.isVisible,
+                    negotiationDate = TimeUtil.ofEpochMilli(salaryRequest.negotiationDate).toLocalDate(),
+                    career = careerEntity,
+                )
+                careerEntity.addSalary(salary)
             }
         }
     }
