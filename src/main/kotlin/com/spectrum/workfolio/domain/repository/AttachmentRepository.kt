@@ -9,14 +9,14 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface AttachmentRepository : JpaRepository<Attachment, String> {
-    
+
     fun findByResumeId(resumeId: String): List<Attachment>
-    
+
     @Query("SELECT a FROM Attachment a WHERE a.resume.worker.id = :workerId")
     fun findByWorkerId(@Param("workerId") workerId: String): List<Attachment>
-    
+
     @Query("SELECT a FROM Attachment a WHERE a.resume.id = :resumeId AND a.isVisible = true")
     fun findVisibleByResumeId(@Param("resumeId") resumeId: String): List<Attachment>
-    
+
     fun findByResumeIdAndType(resumeId: String, type: AttachmentType): List<Attachment>
 }

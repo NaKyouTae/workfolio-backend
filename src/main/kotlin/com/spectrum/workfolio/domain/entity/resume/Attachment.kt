@@ -29,29 +29,29 @@ class Attachment(
     isVisible: Boolean? = null,
     resume: Resume,
 ) : BaseEntity("AH") {
-    
+
     @Enumerated(EnumType.STRING)
     @Column(name = "type", length = 512, nullable = true)
     var type: AttachmentType? = type
         protected set
-    
+
     @Column(name = "file_name", length = 1024, nullable = true)
     var fileName: String? = fileName
         protected set
-    
+
     @Column(name = "file_url", columnDefinition = "TEXT", nullable = true)
     var fileUrl: String? = fileUrl
         protected set
-    
+
     @Column(name = "is_visible", nullable = true)
     var isVisible: Boolean? = isVisible
         protected set
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resume_id", nullable = false)
     var resume: Resume = resume
         protected set
-    
+
     fun changeInfo(
         type: AttachmentType? = null,
         fileName: String? = null,

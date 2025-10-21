@@ -1,6 +1,5 @@
 package com.spectrum.workfolio.domain.extensions
 
-import com.spectrum.workfolio.domain.entity.resume.Achievement
 import com.spectrum.workfolio.domain.entity.resume.Attachment
 import com.spectrum.workfolio.utils.TimeUtil
 

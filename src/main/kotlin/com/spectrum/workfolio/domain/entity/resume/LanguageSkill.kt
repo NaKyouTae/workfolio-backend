@@ -30,30 +30,30 @@ class LanguageSkill(
     isVisible: Boolean? = null,
     resume: Resume,
 ) : BaseEntity("LS") {
-    
+
     @Enumerated(EnumType.STRING)
     @Column(name = "language", length = 64, nullable = true)
     var language: Language? = language
         protected set
-    
+
     @Enumerated(EnumType.STRING)
     @Column(name = "level", length = 256, nullable = true)
     var level: LanguageLevel? = level
         protected set
-    
+
     @Column(name = "is_visible", nullable = true)
     var isVisible: Boolean? = isVisible
         protected set
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resume_id", nullable = false)
     var resume: Resume = resume
         protected set
-    
+
     @OneToMany(mappedBy = "languageSkill", cascade = [jakarta.persistence.CascadeType.REMOVE], fetch = FetchType.LAZY)
     private var mutableLanguageTests: MutableList<LanguageTest> = mutableListOf()
     val languageTests: List<LanguageTest> get() = mutableLanguageTests.toList()
-    
+
     fun changeInfo(
         language: Language? = null,
         level: LanguageLevel? = null,

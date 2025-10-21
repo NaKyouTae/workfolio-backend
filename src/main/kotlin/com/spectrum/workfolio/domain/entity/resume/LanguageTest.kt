@@ -27,28 +27,28 @@ class LanguageTest(
     isVisible: Boolean? = null,
     languageSkill: LanguageSkill,
 ) : BaseEntity("LT") {
-    
+
     @Column(name = "name", length = 1024, nullable = true)
     var name: String? = name
         protected set
-    
+
     @Column(name = "score", length = 256, nullable = true)
     var score: String? = score
         protected set
-    
+
     @Column(name = "acquired_at", nullable = true)
     var acquiredAt: LocalDate? = acquiredAt
         protected set
-    
+
     @Column(name = "is_visible", nullable = true)
     var isVisible: Boolean? = isVisible
         protected set
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "language_skill_id", nullable = false)
     var languageSkill: LanguageSkill = languageSkill
         protected set
-    
+
     fun changeInfo(
         name: String? = null,
         score: String? = null,

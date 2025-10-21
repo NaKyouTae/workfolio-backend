@@ -22,7 +22,7 @@ fun Career.toProto(): com.spectrum.workfolio.proto.common.Career {
 
     if (this.employmentType != null) {
         builder.setEmploymentType(
-            com.spectrum.workfolio.proto.common.Career.EmploymentType.valueOf(this.employmentType!!.name)
+            com.spectrum.workfolio.proto.common.Career.EmploymentType.valueOf(this.employmentType!!.name),
         )
     }
     if (this.isWorking != null) {
@@ -53,12 +53,12 @@ fun Career.toProtoWithoutResume(): com.spectrum.workfolio.proto.common.Career {
     builder.setJob(job)
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
-    builder.addAllAchievements(achievements.map { it.toProto() })
-    builder.addAllSalaries(salaries.map { it.toProto() })
+    builder.addAllAchievements(achievements.map { it.toProtoWithoutCareer() })
+    builder.addAllSalaries(salaries.map { it.toProtoWithoutCareer() })
 
     if (this.employmentType != null) {
         builder.setEmploymentType(
-            com.spectrum.workfolio.proto.common.Career.EmploymentType.valueOf(this.employmentType!!.name)
+            com.spectrum.workfolio.proto.common.Career.EmploymentType.valueOf(this.employmentType!!.name),
         )
     }
     if (this.isWorking != null) {

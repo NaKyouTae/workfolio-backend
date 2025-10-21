@@ -29,36 +29,36 @@ class Achievement(
     isVisible: Boolean? = null,
     career: Career,
 ) : BaseEntity("AC") {
-    
+
     @Column(name = "title", length = 512, nullable = true)
     var title: String? = title
         protected set
-    
+
     @Column(name = "role", length = 256, nullable = true)
     var role: String? = role
         protected set
-    
+
     @Column(name = "description", columnDefinition = "TEXT", nullable = true)
     var description: String? = description
         protected set
-    
+
     @Column(name = "started_at", nullable = true)
     var startedAt: LocalDate? = startedAt
         protected set
-    
+
     @Column(name = "ended_at", nullable = true)
     var endedAt: LocalDate? = endedAt
         protected set
-    
+
     @Column(name = "is_visible", nullable = true)
     var isVisible: Boolean? = isVisible
         protected set
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "career_id", nullable = false)
     var career: Career = career
         protected set
-    
+
     fun changeInfo(
         title: String? = null,
         role: String? = null,

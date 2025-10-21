@@ -9,7 +9,7 @@ fun LanguageSkill.toProto(): com.spectrum.workfolio.proto.common.LanguageSkill {
     builder.setId(this.id)
 
     builder.setResume(this.resume.toProto())
-    builder.addAllLanguageTests(this.languageTests.map { it.toProto() })
+    builder.addAllLanguageTests(this.languageTests.map { it.toProtoWithoutSkill() })
 
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
@@ -19,12 +19,12 @@ fun LanguageSkill.toProto(): com.spectrum.workfolio.proto.common.LanguageSkill {
     }
     if (this.language != null) {
         builder.setLanguage(
-            com.spectrum.workfolio.proto.common.LanguageSkill.Language.valueOf(this.language!!.name)
+            com.spectrum.workfolio.proto.common.LanguageSkill.Language.valueOf(this.language!!.name),
         )
     }
     if (this.level != null) {
         builder.setLevel(
-            com.spectrum.workfolio.proto.common.LanguageSkill.LanguageLevel.valueOf(this.level!!.name)
+            com.spectrum.workfolio.proto.common.LanguageSkill.LanguageLevel.valueOf(this.level!!.name),
         )
     }
 
@@ -35,7 +35,7 @@ fun LanguageSkill.toProtoWithoutResume(): com.spectrum.workfolio.proto.common.La
     val builder = com.spectrum.workfolio.proto.common.LanguageSkill.newBuilder()
 
     builder.setId(this.id)
-    builder.addAllLanguageTests(this.languageTests.map { it.toProto() })
+    builder.addAllLanguageTests(this.languageTests.map { it.toProtoWithoutSkill() })
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
 
@@ -44,12 +44,12 @@ fun LanguageSkill.toProtoWithoutResume(): com.spectrum.workfolio.proto.common.La
     }
     if (this.language != null) {
         builder.setLanguage(
-            com.spectrum.workfolio.proto.common.LanguageSkill.Language.valueOf(this.language!!.name)
+            com.spectrum.workfolio.proto.common.LanguageSkill.Language.valueOf(this.language!!.name),
         )
     }
     if (this.level != null) {
         builder.setLevel(
-            com.spectrum.workfolio.proto.common.LanguageSkill.LanguageLevel.valueOf(this.level!!.name)
+            com.spectrum.workfolio.proto.common.LanguageSkill.LanguageLevel.valueOf(this.level!!.name),
         )
     }
 

@@ -34,20 +34,20 @@ class Activity(
     isVisible: Boolean? = null,
     resume: Resume,
 ) : BaseEntity("AT") {
-    
+
     @Enumerated(EnumType.STRING)
     @Column(name = "type", length = 32, nullable = true)
     var type: ActivityType? = type
         protected set
-    
+
     @Column(name = "name", length = 1024, nullable = true)
     var name: String? = name
         protected set
-    
+
     @Column(name = "organization", length = 1024, nullable = true)
     var organization: String? = organization
         protected set
-    
+
     @Column(name = "certificate_number", length = 512, nullable = true)
     var certificateNumber: String? = certificateNumber
         protected set
@@ -67,12 +67,12 @@ class Activity(
     @Column(name = "is_visible", nullable = true)
     var isVisible: Boolean? = isVisible
         protected set
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resume_id", nullable = false)
     var resume: Resume = resume
         protected set
-    
+
     fun changeInfo(
         type: ActivityType? = null,
         name: String? = null,

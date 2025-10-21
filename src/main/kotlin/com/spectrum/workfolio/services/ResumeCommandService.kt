@@ -16,11 +16,14 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class ResumeCommandService(
     private val workerService: WorkerService,
-    private val salaryService: SalaryService,
     private val careerService: CareerService,
-    private val educationService: EducationService,
+    private val activityService: ActivityService,
     private val resumeRepository: ResumeRepository,
+    private val educationService: EducationService,
+    private val attachmentService: AttachmentService,
     private val resumeQueryService: ResumeQueryService,
+    private val languageTestService: LanguageTestService,
+    private val languageSkillService: LanguageSkillService,
 ) {
 
     @Transactional
@@ -64,6 +67,15 @@ class ResumeCommandService(
         // 경력 처리
         updateCareers(resume.id, request.careersList)
 
+        // 활동 처리
+        updateActivities(resume.id, request.activitiesList)
+
+        // 첨부파일 처리
+        updateAttachments(resume.id, request.attachmentsList)
+
+        // 언어 능력 처리
+        updateLanguageSkills(resume.id, request.languagesList)
+
         return resumeRepository.save(resume)
     }
 
@@ -92,6 +104,7 @@ class ResumeCommandService(
                 educationService.createEducation(
                     com.spectrum.workfolio.proto.education.EducationCreateRequest.newBuilder()
                         .setResumeId(resumeId)
+                        .setStatus(request.status)
                         .setName(request.name)
                         .setMajor(request.major)
                         .setStartedAt(request.startedAt)
@@ -104,6 +117,7 @@ class ResumeCommandService(
                 educationService.updateEducation(
                     com.spectrum.workfolio.proto.education.EducationUpdateRequest.newBuilder()
                         .setId(request.id)
+                        .setStatus(request.status)
                         .setName(request.name)
                         .setMajor(request.major)
                         .setStartedAt(request.startedAt)
@@ -207,7 +221,7 @@ class ResumeCommandService(
                 careerService.getCareer(career.id)
             }
 
-            // Projects 추가
+            // Achievement 추가
             request.achievementsList.forEach { projectRequest ->
                 val project = com.spectrum.workfolio.domain.entity.resume.Achievement(
                     title = projectRequest.title,
@@ -230,6 +244,154 @@ class ResumeCommandService(
                     career = careerEntity,
                 )
                 careerEntity.addSalary(salary)
+            }
+        }
+    }
+
+    private fun updateActivities(
+        resumeId: String,
+        activityRequests: List<ResumeUpdateRequest.ActivityRequest>,
+    ) {
+        val existingActivities = activityService.listActivities(resumeId)
+        val existingIds = existingActivities.map { it.id }.toSet()
+        val requestIds = activityRequests.mapNotNull { it.id }.toSet()
+
+        // 삭제할 activities
+        val toDelete = existingActivities.filter { it.id !in requestIds }
+        toDelete.forEach { activityService.deleteActivity(it.id) }
+
+        // 생성 및 수정할 activities
+        activityRequests.forEach { request ->
+            if (request.id.isNullOrEmpty()) {
+                // 생성
+                activityService.createActivity(
+                    resumeId = resumeId,
+                    type = if (request.hasType()) com.spectrum.workfolio.domain.enums.ActivityType.valueOf(request.type.name) else null,
+                    name = request.name,
+                    organization = request.organization,
+                    certificateNumber = request.certificateNumber,
+                    startedAt = request.startedAt,
+                    endedAt = request.endedAt,
+                    description = request.description,
+                    isVisible = request.isVisible,
+                )
+            } else {
+                // 수정
+                activityService.updateActivity(
+                    id = request.id,
+                    type = if (request.hasType()) com.spectrum.workfolio.domain.enums.ActivityType.valueOf(request.type.name) else null,
+                    name = request.name,
+                    organization = request.organization,
+                    certificateNumber = request.certificateNumber,
+                    startedAt = request.startedAt,
+                    endedAt = request.endedAt,
+                    description = request.description,
+                    isVisible = request.isVisible,
+                )
+            }
+        }
+    }
+
+    private fun updateAttachments(
+        resumeId: String,
+        attachmentRequests: List<ResumeUpdateRequest.AttachmentRequest>,
+    ) {
+        val existingAttachments = attachmentService.listAttachments(resumeId)
+        val existingIds = existingAttachments.map { it.id }.toSet()
+        val requestIds = attachmentRequests.mapNotNull { it.id }.toSet()
+
+        // 삭제할 attachments
+        val toDelete = existingAttachments.filter { it.id !in requestIds }
+        toDelete.forEach { attachmentService.deleteAttachment(it.id) }
+
+        // 생성 및 수정할 attachments
+        attachmentRequests.forEach { request ->
+            if (request.id.isNullOrEmpty()) {
+                // 생성
+                attachmentService.createAttachment(
+                    resumeId = resumeId,
+                    type = if (request.hasType()) com.spectrum.workfolio.domain.enums.AttachmentType.valueOf(request.type.name) else null,
+                    fileName = request.fileName,
+                    fileUrl = request.fileUrl,
+                    isVisible = request.isVisible,
+                )
+            } else {
+                // 수정
+                attachmentService.updateAttachment(
+                    id = request.id,
+                    type = if (request.hasType()) com.spectrum.workfolio.domain.enums.AttachmentType.valueOf(request.type.name) else null,
+                    fileName = request.fileName,
+                    fileUrl = request.fileUrl,
+                    isVisible = request.isVisible,
+                )
+            }
+        }
+    }
+
+    private fun updateLanguageSkills(
+        resumeId: String,
+        languageSkillRequests: List<ResumeUpdateRequest.LanguageSkillRequest>,
+    ) {
+        val existingLanguageSkills = languageSkillService.listLanguageSkills(resumeId)
+        val existingIds = existingLanguageSkills.map { it.id }.toSet()
+        val requestIds = languageSkillRequests.mapNotNull { it.id }.toSet()
+
+        // 삭제할 language skills
+        val toDelete = existingLanguageSkills.filter { it.id !in requestIds }
+        toDelete.forEach { languageSkillService.deleteLanguageSkill(it.id) }
+
+        // 생성 및 수정할 language skills
+        languageSkillRequests.forEach { request ->
+            val languageSkillId = if (request.id.isNullOrEmpty()) {
+                // 생성
+                val createdLanguageSkill = languageSkillService.createLanguageSkill(
+                    resumeId = resumeId,
+                    language = if (request.hasLanguage()) com.spectrum.workfolio.domain.enums.Language.valueOf(request.language.name) else null,
+                    level = if (request.hasLevel()) com.spectrum.workfolio.domain.enums.LanguageLevel.valueOf(request.level.name) else null,
+                    isVisible = request.isVisible,
+                )
+                createdLanguageSkill.id
+            } else {
+                // 수정
+                languageSkillService.updateLanguageSkill(
+                    id = request.id,
+                    language = if (request.hasLanguage()) com.spectrum.workfolio.domain.enums.Language.valueOf(request.language.name) else null,
+                    level = if (request.hasLevel()) com.spectrum.workfolio.domain.enums.LanguageLevel.valueOf(request.level.name) else null,
+                    isVisible = request.isVisible,
+                )
+                request.id
+            }
+
+            // 기존 language tests 조회
+            val existingLanguageTests = languageSkillService.getLanguageSkill(languageSkillId).languageTests
+            val existingTestIds = existingLanguageTests.map { it.id }.toSet()
+            val requestTestIds = request.languageTestsList.mapNotNull { it.id }.toSet()
+
+            // 삭제할 language tests
+            val testsToDelete = existingLanguageTests.filter { it.id !in requestTestIds }
+            testsToDelete.forEach { languageTestService.deleteLanguageTest(it.id) }
+
+            // 생성 및 수정할 language tests
+            request.languageTestsList.forEach { testRequest ->
+                if (testRequest.id.isNullOrEmpty()) {
+                    // 생성
+                    languageTestService.createLanguageTest(
+                        languageSkillId = languageSkillId,
+                        testName = testRequest.testName,
+                        score = testRequest.score,
+                        acquiredAt = testRequest.acquiredAt,
+                        isVisible = testRequest.isVisible,
+                    )
+                } else {
+                    // 수정
+                    languageTestService.updateLanguageTest(
+                        id = testRequest.id,
+                        testName = testRequest.testName,
+                        score = testRequest.score,
+                        acquiredAt = testRequest.acquiredAt,
+                        isVisible = testRequest.isVisible,
+                    )
+                }
             }
         }
     }

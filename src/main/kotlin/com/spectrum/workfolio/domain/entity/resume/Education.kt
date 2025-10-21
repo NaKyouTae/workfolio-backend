@@ -32,37 +32,37 @@ class Education(
     isVisible: Boolean? = null,
     resume: Resume,
 ) : BaseEntity("ED") {
-    
+
     @Column(name = "name", length = 1024, nullable = true)
     var name: String? = name
         protected set
-    
+
     @Column(name = "major", length = 1024, nullable = true)
     var major: String? = major
         protected set
-    
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 32, nullable = true)
     var status: EducationStatus? = status
         protected set
-    
+
     @Column(name = "started_at", nullable = true)
     var startedAt: LocalDate? = startedAt
         protected set
-    
+
     @Column(name = "ended_at", nullable = true)
     var endedAt: LocalDate? = endedAt
         protected set
-    
+
     @Column(name = "is_visible", nullable = true)
     var isVisible: Boolean? = isVisible
         protected set
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resume_id", nullable = false)
     var resume: Resume = resume
         protected set
-    
+
     fun changeInfo(
         name: String? = null,
         major: String? = null,

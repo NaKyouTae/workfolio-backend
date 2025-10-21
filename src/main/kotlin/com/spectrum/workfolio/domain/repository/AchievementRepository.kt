@@ -8,12 +8,12 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface AchievementRepository : JpaRepository<Achievement, String> {
-    
+
     fun findByCareerId(careerId: String): List<Achievement>
-    
+
     @Query("SELECT a FROM Achievement a WHERE a.career.resume.worker.id = :workerId")
     fun findByWorkerId(@Param("workerId") workerId: String): List<Achievement>
-    
+
     @Query("SELECT a FROM Achievement a WHERE a.career.id = :careerId AND a.isVisible = true")
     fun findVisibleByCareerId(@Param("careerId") careerId: String): List<Achievement>
 }

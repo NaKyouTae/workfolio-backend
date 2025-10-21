@@ -14,7 +14,7 @@ fun Education.toProto(): com.spectrum.workfolio.proto.common.Education {
 
     if (this.status != null) {
         builder.setStatus(
-            com.spectrum.workfolio.proto.common.Education.EducationStatus.valueOf(this.status!!.name)
+            com.spectrum.workfolio.proto.common.Education.EducationStatus.valueOf(this.status!!.name),
         )
     }
     if (this.isVisible != null) {
@@ -40,7 +40,7 @@ fun Education.toProtoWithoutResume(): com.spectrum.workfolio.proto.common.Educat
 
     if (this.status != null) {
         builder.setStatus(
-            com.spectrum.workfolio.proto.common.Education.EducationStatus.valueOf(this.status!!.name)
+            com.spectrum.workfolio.proto.common.Education.EducationStatus.valueOf(this.status!!.name),
         )
     }
     if (this.isVisible != null) {
