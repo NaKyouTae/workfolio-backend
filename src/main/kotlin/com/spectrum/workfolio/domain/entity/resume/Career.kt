@@ -22,61 +22,66 @@ import java.time.LocalDate
 @Table(
     name = "careers",
     indexes = [
-        Index(name = "idx_careers_name", columnList = "name"),
         Index(name = "idx_careers_resume_id", columnList = "resume_id"),
     ],
 )
 class Career(
-    name: String, // 회사명
-    position: String, // 직책
-    employmentType: EmploymentType, // 재직 형태
-    department: String, // 부서
-    salary: Int, // 연봉
-    jobGrade: String, // 직급
-    job: String, // 직무
-    startedAt: LocalDate, // 입사년월
+    name: String? = null, // 회사명
+    salary: Int? = null, // 최종 연봉
+    startedAt: LocalDate? = null, // 입사년월
     endedAt: LocalDate? = null, // 퇴사년원
-    isWorking: Boolean = false, // 재직중
-    isVisible: Boolean = false,
+    employmentType: EmploymentType? = null, // 재직 형태
+    position: String? = null, // 직책
+    jobGrade: String? = null, // 직급
+    department: String? = null, // 부서
+    job: String? = null, // 직무
+    isWorking: Boolean? = null, // 재직중
+    isVisible: Boolean? = null,
     resume: Resume,
 ) : BaseEntity("CA") {
-    @Column(name = "name", length = 512, nullable = false, unique = true)
-    var name: String = name
+    @Column(name = "name", length = 1024, nullable = true)
+    var name: String? = name
         protected set
 
-    @Column(name = "is_visible", nullable = false)
-    var isVisible: Boolean = isVisible
+    @Column(name = "position", length = 512, nullable = true)
+    var position: String? = position
         protected set
-
-    @Column(name = "position", length = 256, nullable = false)
-    var position: String = position
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "employment_type", length = 32, nullable = false)
-    var employmentType: EmploymentType = employmentType
+    @Column(name = "employment_type", length = 32, nullable = true)
+    var employmentType: EmploymentType? = employmentType
+        protected set
 
-    @Column(name = "department", length = 256, nullable = false)
-    var department: String = department
+    @Column(name = "department", length = 512, nullable = true)
+    var department: String? = department
+        protected set
 
     @Column(name = "salary", nullable = false)
-    var salary: Int = salary
+    var salary: Int? = salary
+        protected set
 
-    @Column(name = "job_grade", length = 128, nullable = false)
-    var jobGrade: String = jobGrade
+    @Column(name = "job_grade", length = 512, nullable = true)
+    var jobGrade: String? = jobGrade
+        protected set
 
-    @Column(name = "job", length = 128, nullable = false)
-    var job: String = job
+    @Column(name = "job", length = 512, nullable = true)
+    var job: String? = job
+        protected set
 
-    @Column(name = "started_at", nullable = false)
-    var startedAt: LocalDate = startedAt
+    @Column(name = "started_at", nullable = true)
+    var startedAt: LocalDate? = startedAt
         protected set
 
     @Column(name = "ended_at", nullable = true)
     var endedAt: LocalDate? = endedAt
         protected set
 
-    @Column(name = "is_working", nullable = false)
-    var isWorking: Boolean = isWorking
+    @Column(name = "is_working", nullable = true)
+    var isWorking: Boolean? = isWorking
+        protected set
+
+    @Column(name = "is_visible", nullable = true)
+    var isVisible: Boolean? = isVisible
         protected set
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -85,25 +90,25 @@ class Career(
         protected set
 
     @OneToMany(mappedBy = "career", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
-    private var mutableProjects: MutableList<Project> = mutableListOf()
-    val projects: List<Project> get() = mutableProjects.toList()
-
-    @OneToMany(mappedBy = "career", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     private var mutableSalaries: MutableList<Salary> = mutableListOf()
     val salaries: List<Salary> get() = mutableSalaries.toList()
 
+    @OneToMany(mappedBy = "career", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
+    private var mutableAchievements: MutableList<Achievement> = mutableListOf()
+    val achievements: List<Achievement> get() = mutableAchievements.toList()
+
     fun changeInfo(
-        name: String,
-        position: String,
-        employmentType: EmploymentType,
-        department: String,
-        salary: Int,
-        jobGrade: String,
-        job: String,
-        startedAt: LocalDate,
-        endedAt: LocalDate?,
-        isWorking: Boolean,
-        isVisible: Boolean,
+        name: String? = null,
+        position: String? = null,
+        employmentType: EmploymentType? = null,
+        department: String? = null,
+        salary: Int? = null,
+        jobGrade: String? = null,
+        job: String? = null,
+        startedAt: LocalDate? = null,
+        endedAt: LocalDate?? = null,
+        isWorking: Boolean? = null,
+        isVisible: Boolean? = null,
     ) {
         this.name = name
         this.position = position
@@ -118,8 +123,8 @@ class Career(
         this.isVisible = isVisible
     }
 
-    fun addProject(project: Project) {
-        mutableProjects.add(project)
+    fun addAchievement(achievement: Achievement) {
+        mutableAchievements.add(achievement)
     }
 
     fun addSalary(salary: Salary) {

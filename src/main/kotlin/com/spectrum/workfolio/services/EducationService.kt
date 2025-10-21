@@ -1,6 +1,7 @@
 package com.spectrum.workfolio.services
 
 import com.spectrum.workfolio.domain.entity.resume.Education
+import com.spectrum.workfolio.domain.enums.EducationStatus
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.EducationRepository
@@ -38,9 +39,10 @@ class EducationService(
         val resume = resumeQueryService.getResume(request.resumeId)
         val education = Education(
             name = request.name,
+            major = request.major,
+            status = EducationStatus.valueOf(request.status.name),
             startedAt = TimeUtil.ofEpochMilli(request.startedAt).toLocalDate(),
             endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
-            agency = request.agency,
             resume = resume,
         )
 
@@ -55,9 +57,10 @@ class EducationService(
 
         education.changeInfo(
             name = request.name,
+            major = request.major,
+            status = EducationStatus.valueOf(request.status.name),
             startedAt = TimeUtil.ofEpochMilli(request.startedAt).toLocalDate(),
             endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
-            agency = request.agency,
         )
 
         val updatedEducation = educationRepository.save(education)

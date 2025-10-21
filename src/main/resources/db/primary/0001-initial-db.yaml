@@ -271,37 +271,47 @@ databaseChangeLog:
                   name: title
                   type: VARCHAR(1024)
                   constraints:
-                    nullable: false
+                    nullable: true
               - column:
-                  name: description
-                  type: TEXT
+                  name: name
+                  type: VARCHAR(1024)
                   constraints:
-                    nullable: false
+                    nullable: true
               - column:
                   name: phone
                   type: VARCHAR(32)
                   constraints:
-                    nullable: false
+                    nullable: true
               - column:
                   name: email
                   type: VARCHAR(516)
                   constraints:
-                    nullable: false
+                    nullable: true
               - column:
-                  name: is_public
-                  type: BOOLEAN
+                  name: birth_date
+                  type: TIMESTAMP(6)
                   constraints:
-                    nullable: false
+                    nullable: true
               - column:
-                  name: is_default
-                  type: BOOLEAN
+                  name: gender
+                  type: VARCHAR(24)
                   constraints:
-                    nullable: false
+                    nullable: true
               - column:
                   name: public_id
                   type: VARCHAR(16)
                   constraints:
-                    nullable: false
+                    nullable: true
+              - column:
+                  name: is_public
+                  type: BOOLEAN
+                  constraints:
+                    nullable: true
+              - column:
+                  name: is_default
+                  type: BOOLEAN
+                  constraints:
+                    nullable: true
               - column:
                   name: worker_id
                   type: VARCHAR(16)
@@ -335,24 +345,39 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: name
-                  type: VARCHAR(512)
+                  type: VARCHAR(1024)
                   constraints:
-                    nullable: false
+                    nullable: true
               - column:
                   name: position
-                  type: VARCHAR(256)
+                  type: VARCHAR(512)
                   constraints:
-                    nullable: false
+                    nullable: true
               - column:
                   name: employment_type
                   type: VARCHAR(32)
                   constraints:
-                    nullable: false
+                    nullable: true
               - column:
                   name: department
-                  type: VARCHAR(256)
+                  type: VARCHAR(512)
                   constraints:
-                    nullable: false
+                    nullable: true
+              - column:
+                  name: salary
+                  type: INT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: job_grade
+                  type: VARCHAR(512)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: job
+                  type: VARCHAR(512)
+                  constraints:
+                    nullable: true
               - column:
                   name: started_at
                   type: TIMESTAMP(6)
@@ -367,12 +392,12 @@ databaseChangeLog:
                   name: is_working
                   type: BOOLEAN
                   constraints:
-                    nullable: false
+                    nullable: true
               - column:
                   name: is_visible
                   type: BOOLEAN
                   constraints:
-                    nullable: false
+                    nullable: true
               - column:
                   name: resume_id
                   type: VARCHAR(16)
@@ -391,18 +416,12 @@ databaseChangeLog:
         - createIndex:
             columns:
               - column:
-                  name: name
-            indexName: idx_careers_name
-            tableName: careers
-        - createIndex:
-            columns:
-              - column:
                   name: resume_id
             indexName: idx_careers_resume_id
             tableName: careers
 
         - createTable:
-            tableName: projects
+            tableName: achievements
             columns:
               - column:
                   name: id
@@ -412,29 +431,34 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: title
-                  type: VARCHAR(1024)
+                  type: VARCHAR(512)
                   constraints:
-                    nullable: false
+                    nullable: true
+              - column:
+                  name: role
+                  type: VARCHAR(256)
+                  constraints:
+                    nullable: true
               - column:
                   name: description
                   type: TEXT
-                  constraints:
-                    nullable: false
-              - column:
-                  name: started_at
-                  type: TIMESTAMP(6)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: ended_at
-                  type: TIMESTAMP(6)
                   constraints:
                     nullable: true
               - column:
                   name: is_visible
                   type: BOOLEAN
                   constraints:
-                    nullable: false
+                    nullable: true
+              - column:
+                  name: started_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: ended_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: true
               - column:
                   name: career_id
                   type: VARCHAR(16)
@@ -454,8 +478,8 @@ databaseChangeLog:
             columns:
               - column:
                   name: career_id
-            indexName: idx_projects_career_id
-            tableName: projects
+            indexName: idx_achievements_career_id
+            tableName: achievements
 
         - createTable:
             tableName: salaries
@@ -470,20 +494,20 @@ databaseChangeLog:
                   name: amount
                   type: BIGINT
                   constraints:
-                    nullable: false
+                    nullable: true
               - column:
                   name: negotiation_date
                   type: TIMESTAMP(6)
                   constraints:
                     nullable: true
               - column:
-                  name: is_visible
-                  type: BOOLEAN
-                  constraints:
-                    nullable: false
-              - column:
                   name: memo
                   type: TEXT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: is_visible
+                  type: BOOLEAN
                   constraints:
                     nullable: true
               - column:
@@ -519,29 +543,34 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: name
-                  type: VARCHAR(256)
+                  type: VARCHAR(1024)
                   constraints:
-                    nullable: false
+                    nullable: true
+              - column:
+                  name: major
+                  type: VARCHAR(1024)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: status
+                  type: VARCHAR(32)
+                  constraints:
+                    nullable: true
               - column:
                   name: started_at
                   type: TIMESTAMP(6)
                   constraints:
-                    nullable: false
+                    nullable: true
               - column:
                   name: ended_at
                   type: TIMESTAMP(6)
                   constraints:
                     nullable: true
               - column:
-                  name: agency
-                  type: VARCHAR(256)
-                  constraints:
-                    nullable: false
-              - column:
                   name: is_visible
                   type: BOOLEAN
                   constraints:
-                    nullable: false
+                    nullable: true
               - column:
                   name: resume_id
                   type: VARCHAR(16)
@@ -557,12 +586,6 @@ databaseChangeLog:
                   type: TIMESTAMP(6)
                   constraints:
                     nullable: false
-        - createIndex:
-            columns:
-              - column:
-                  name: name
-            indexName: idx_educations_name
-            tableName: educations
         - createIndex:
             columns:
               - column:
@@ -571,7 +594,7 @@ databaseChangeLog:
             tableName: educations
 
         - createTable:
-            tableName: degrees
+            tableName: attachments
             columns:
               - column:
                   name: id
@@ -580,25 +603,86 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: name
-                  type: VARCHAR(256)
+                  name: type
+                  type: VARCHAR(512)
                   constraints:
-                    nullable: false
+                    nullable: true
               - column:
-                  name: major
+                  name: file_name
                   type: VARCHAR(1024)
                   constraints:
-                    nullable: false
+                    nullable: true
               - column:
-                  name: status
-                  type: VARCHAR(32)
+                  name: file_url
+                  type: TEXT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: is_visible
+                  type: BOOLEAN
+                  constraints:
+                    nullable: true
+              - column:
+                  name: resume_id
+                  type: VARCHAR(16)
                   constraints:
                     nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+        - createIndex:
+            columns:
+              - column:
+                  name: resume_id
+            indexName: idx_attachments_resume_id
+            tableName: attachments
+
+        - createTable:
+            tableName: activities
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: type
+                  type: VARCHAR(32)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: name
+                  type: VARCHAR(1024)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: organization
+                  type: VARCHAR(1024)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: certificate_number
+                  type: VARCHAR(512)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: description
+                  type: TEXT
+                  constraints:
+                    nullable: true
               - column:
                   name: started_at
                   type: TIMESTAMP(6)
                   constraints:
-                    nullable: false
+                    nullable: true
               - column:
                   name: ended_at
                   type: TIMESTAMP(6)
@@ -608,7 +692,7 @@ databaseChangeLog:
                   name: is_visible
                   type: BOOLEAN
                   constraints:
-                    nullable: false
+                    nullable: true
               - column:
                   name: resume_id
                   type: VARCHAR(16)
@@ -627,18 +711,58 @@ databaseChangeLog:
         - createIndex:
             columns:
               - column:
-                  name: name
-            indexName: idx_degrees_name
-            tableName: degrees
+                  name: resume_id
+            indexName: idx_activities_resume_id
+            tableName: activities
+
+        - createTable:
+            tableName: language_skills
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: language
+                  type: VARCHAR(64)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: level
+                  type: VARCHAR(256)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: is_visible
+                  type: BOOLEAN
+                  constraints:
+                    nullable: true
+              - column:
+                  name: resume_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
         - createIndex:
             columns:
               - column:
                   name: resume_id
-            indexName: idx_degrees_resume_id
-            tableName: degrees
+            indexName: idx_language_skills_resume_id
+            tableName: language_skills
 
         - createTable:
-            tableName: certifications
+            tableName: language_tests
             columns:
               - column:
                   name: id
@@ -648,26 +772,16 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: name
+                  type: VARCHAR(1024)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: score
                   type: VARCHAR(256)
                   constraints:
-                    nullable: false
+                    nullable: true
               - column:
-                  name: number
-                  type: VARCHAR(1028)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: issuer
-                  type: VARCHAR(1028)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: issued_at
-                  type: TIMESTAMP(6)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: expiration_period
+                  name: acquired_at
                   type: TIMESTAMP(6)
                   constraints:
                     nullable: true
@@ -675,9 +789,9 @@ databaseChangeLog:
                   name: is_visible
                   type: BOOLEAN
                   constraints:
-                    nullable: false
+                    nullable: true
               - column:
-                  name: resume_id
+                  name: language_skill_id
                   type: VARCHAR(16)
                   constraints:
                     nullable: false
@@ -694,56 +808,9 @@ databaseChangeLog:
         - createIndex:
             columns:
               - column:
-                  name: name
-            indexName: idx_certifications_name
-            tableName: certifications
-        - createIndex:
-            columns:
-              - column:
-                  name: resume_id
-            indexName: idx_certifications_resume_id
-            tableName: certifications
-
-        - createTable:
-            tableName: links
-            columns:
-              - column:
-                  name: id
-                  type: VARCHAR(16)
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: url
-                  type: TEXT
-                  constraints:
-                    nullable: false
-              - column:
-                  name: is_visible
-                  type: BOOL
-                  constraints:
-                    nullable: false
-              - column:
-                  name: resume_id
-                  type: VARCHAR(16)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: created_at
-                  type: TIMESTAMP(6)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: updated_at
-                  type: TIMESTAMP(6)
-                  constraints:
-                    nullable: false
-        - createIndex:
-            columns:
-              - column:
-                  name: resume_id
-            indexName: idx_links_resume_id
-            tableName: links
+                  name: language_skill_id
+            indexName: idx_language_tests_language_skill_id
+            tableName: language_tests
 
         - createTable:
             tableName: accounts

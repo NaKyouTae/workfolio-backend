@@ -1,11 +1,8 @@
 package com.spectrum.workfolio.domain.entity.resume
 
 import com.spectrum.workfolio.domain.entity.BaseEntity
-import com.spectrum.workfolio.domain.enums.EducationStatus
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
-import jakarta.persistence.EnumType
-import jakarta.persistence.Enumerated
 import jakarta.persistence.FetchType
 import jakarta.persistence.Index
 import jakarta.persistence.JoinColumn
@@ -14,36 +11,35 @@ import jakarta.persistence.Table
 import java.time.LocalDate
 
 /**
- * 학력
+ * 주요 성과
  */
 @Entity
 @Table(
-    name = "educations",
+    name = "achievements",
     indexes = [
-        Index(name = "idx_educations_resume_id", columnList = "resume_id"),
+        Index(name = "idx_achievements_career_id", columnList = "career_id"),
     ],
 )
-class Education(
-    name: String? = null,
-    major: String? = null,
-    status: EducationStatus? = null,
+class Achievement(
+    title: String? = null,
+    role: String? = null,
+    description: String? = null,
     startedAt: LocalDate? = null,
     endedAt: LocalDate? = null,
     isVisible: Boolean? = null,
-    resume: Resume,
-) : BaseEntity("ED") {
+    career: Career,
+) : BaseEntity("AC") {
     
-    @Column(name = "name", length = 1024, nullable = true)
-    var name: String? = name
+    @Column(name = "title", length = 512, nullable = true)
+    var title: String? = title
         protected set
     
-    @Column(name = "major", length = 1024, nullable = true)
-    var major: String? = major
+    @Column(name = "role", length = 256, nullable = true)
+    var role: String? = role
         protected set
     
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", length = 32, nullable = true)
-    var status: EducationStatus? = status
+    @Column(name = "description", columnDefinition = "TEXT", nullable = true)
+    var description: String? = description
         protected set
     
     @Column(name = "started_at", nullable = true)
@@ -59,21 +55,21 @@ class Education(
         protected set
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "resume_id", nullable = false)
-    var resume: Resume = resume
+    @JoinColumn(name = "career_id", nullable = false)
+    var career: Career = career
         protected set
     
     fun changeInfo(
-        name: String? = null,
-        major: String? = null,
-        status: EducationStatus? = null,
+        title: String? = null,
+        role: String? = null,
+        description: String? = null,
         startedAt: LocalDate? = null,
         endedAt: LocalDate? = null,
         isVisible: Boolean? = null,
     ) {
-        this.name = name
-        this.major = major
-        this.status = status
+        this.title = title
+        this.role = role
+        this.description = description
         this.startedAt = startedAt
         this.endedAt = endedAt
         this.isVisible = isVisible

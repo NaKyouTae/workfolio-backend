@@ -15,16 +15,12 @@ import org.springframework.transaction.annotation.Transactional
  */
 @Service
 class ResumeCommandService(
-    private val linkService: LinkService,
     private val workerService: WorkerService,
     private val salaryService: SalaryService,
     private val careerService: CareerService,
-    private val degreesService: DegreesService,
-    private val projectService: ProjectService,
     private val educationService: EducationService,
     private val resumeRepository: ResumeRepository,
     private val resumeQueryService: ResumeQueryService,
-    private val certificationsService: CertificationsService,
 ) {
 
     @Transactional
@@ -32,7 +28,7 @@ class ResumeCommandService(
         val worker = workerService.getWorker(workerId)
         val resume = Resume(
             title = request.title,
-            description = "",
+            name = "",
             phone = "",
             email = "",
             birthDate = TimeUtil.now().toLocalDate(),
@@ -53,7 +49,7 @@ class ResumeCommandService(
         // Resume 기본 정보 업데이트
         resume.changeInfo(
             title = request.title,
-            description = request.description,
+            name = request.name,
             phone = request.phone,
             email = request.email,
             birthDate = TimeUtil.ofEpochMilli(request.birthDate).toLocalDate(),
@@ -62,20 +58,11 @@ class ResumeCommandService(
             isDefault = request.isDefault,
         )
 
-        // Certifications 처리
-        updateCertifications(resume.id, request.certificationsList)
-
-        // Degrees 처리
-        updateDegrees(resume.id, request.degreesList)
-
-        // Educations 처리
+        // 학력 처리
         updateEducations(resume.id, request.educationsList)
 
-        // Careers 처리
+        // 경력 처리
         updateCareers(resume.id, request.careersList)
-
-        // Links 처리
-        updateLinks(resume.id, request.linksList)
 
         return resumeRepository.save(resume)
     }
@@ -84,90 +71,6 @@ class ResumeCommandService(
     fun deleteResume(id: String) {
         val resume = resumeQueryService.getResume(id)
         resumeRepository.delete(resume)
-    }
-
-    private fun updateCertifications(
-        resumeId: String,
-        certificationsRequests: List<ResumeUpdateRequest.CertificationsRequest>,
-    ) {
-        val existingCertifications = certificationsService.listCertifications(resumeId).certificationsList
-        val existingIds = existingCertifications.map { it.id }.toSet()
-        val requestIds = certificationsRequests.mapNotNull { it.id }.toSet()
-
-        // 삭제할 certifications (기존에 있지만 요청에 없는 것들)
-        val toDelete = existingCertifications.filter { it.id !in requestIds }
-        toDelete.forEach { certificationsService.deleteCertifications(it.id) }
-
-        // 생성 및 수정할 certifications
-        certificationsRequests.forEach { request ->
-            if (request.id.isNullOrEmpty()) {
-                // 생성
-                certificationsService.createCertifications(
-                    com.spectrum.workfolio.proto.certifications.CertificationsCreateRequest.newBuilder()
-                        .setResumeId(resumeId)
-                        .setName(request.name)
-                        .setNumber(request.number)
-                        .setIssuer(request.issuer)
-                        .setIssuedAt(request.issuedAt)
-                        .setExpirationPeriod(request.expirationPeriod)
-                        .build(),
-                )
-            } else {
-                // 수정
-                certificationsService.updateCertifications(
-                    com.spectrum.workfolio.proto.certifications.CertificationsUpdateRequest.newBuilder()
-                        .setId(request.id)
-                        .setName(request.name)
-                        .setNumber(request.number)
-                        .setIssuer(request.issuer)
-                        .setIssuedAt(request.issuedAt)
-                        .setExpirationPeriod(request.expirationPeriod)
-                        .build(),
-                )
-            }
-        }
-    }
-
-    private fun updateDegrees(
-        resumeId: String,
-        degreesRequests: List<ResumeUpdateRequest.DegreesRequest>,
-    ) {
-        val existingDegrees = degreesService.listDegrees(resumeId).degreesList
-        val existingIds = existingDegrees.map { it.id }.toSet()
-        val requestIds = degreesRequests.mapNotNull { it.id }.toSet()
-
-        // 삭제할 degrees
-        val toDelete = existingDegrees.filter { it.id !in requestIds }
-        toDelete.forEach { degreesService.deleteDegrees(it.id) }
-
-        // 생성 및 수정할 degrees
-        degreesRequests.forEach { request ->
-            if (request.id.isNullOrEmpty()) {
-                // 생성
-                degreesService.createDegrees(
-                    com.spectrum.workfolio.proto.degrees.DegreesCreateRequest.newBuilder()
-                        .setResumeId(resumeId)
-                        .setName(request.name)
-                        .setMajor(request.major)
-                        .setStatus(request.status)
-                        .setStartedAt(request.startedAt)
-                        .setEndedAt(request.endedAt)
-                        .build(),
-                )
-            } else {
-                // 수정
-                degreesService.updateDegrees(
-                    com.spectrum.workfolio.proto.degrees.DegreesUpdateRequest.newBuilder()
-                        .setId(request.id)
-                        .setName(request.name)
-                        .setMajor(request.major)
-                        .setStatus(request.status)
-                        .setStartedAt(request.startedAt)
-                        .setEndedAt(request.endedAt)
-                        .build(),
-                )
-            }
-        }
     }
 
     private fun updateEducations(
@@ -190,9 +93,10 @@ class ResumeCommandService(
                     com.spectrum.workfolio.proto.education.EducationCreateRequest.newBuilder()
                         .setResumeId(resumeId)
                         .setName(request.name)
+                        .setMajor(request.major)
                         .setStartedAt(request.startedAt)
                         .setEndedAt(request.endedAt)
-                        .setAgency(request.agency)
+                        .setIsVisible(request.isVisible)
                         .build(),
                 )
             } else {
@@ -201,9 +105,10 @@ class ResumeCommandService(
                     com.spectrum.workfolio.proto.education.EducationUpdateRequest.newBuilder()
                         .setId(request.id)
                         .setName(request.name)
+                        .setMajor(request.major)
                         .setStartedAt(request.startedAt)
                         .setEndedAt(request.endedAt)
-                        .setAgency(request.agency)
+                        .setIsVisible(request.isVisible)
                         .build(),
                 )
             }
@@ -303,8 +208,8 @@ class ResumeCommandService(
             }
 
             // Projects 추가
-            request.projectsList.forEach { projectRequest ->
-                val project = com.spectrum.workfolio.domain.entity.resume.Project(
+            request.achievementsList.forEach { projectRequest ->
+                val project = com.spectrum.workfolio.domain.entity.resume.Achievement(
                     title = projectRequest.title,
                     description = projectRequest.description,
                     isVisible = projectRequest.isVisible,
@@ -312,7 +217,7 @@ class ResumeCommandService(
                     endedAt = if (projectRequest.endedAt > 0) TimeUtil.ofEpochMilli(projectRequest.endedAt).toLocalDate() else null,
                     career = careerEntity,
                 )
-                careerEntity.addProject(project)
+                careerEntity.addAchievement(project)
             }
 
             // Salaries 추가
@@ -325,30 +230,6 @@ class ResumeCommandService(
                     career = careerEntity,
                 )
                 careerEntity.addSalary(salary)
-            }
-        }
-    }
-
-    private fun updateLinks(
-        resumeId: String,
-        linkRequests: List<ResumeUpdateRequest.LinkRequest>,
-    ) {
-        val existingLinks = linkService.listLinks(resumeId)
-        val existingIds = existingLinks.map { it.id }.toSet()
-        val requestIds = linkRequests.mapNotNull { it.id }.toSet()
-
-        // 삭제할 links
-        val toDelete = existingLinks.filter { it.id !in requestIds }
-        toDelete.forEach { linkService.deleteLink(it.id) }
-
-        // 생성 및 수정할 links
-        linkRequests.forEach { request ->
-            if (request.id.isNullOrEmpty()) {
-                // 생성
-                linkService.createLink(resumeId, request.url, request.isVisible)
-            } else {
-                // 수정
-                linkService.updateLink(request.id, request.url, request.isVisible)
             }
         }
     }

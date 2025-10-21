@@ -21,31 +21,32 @@ import java.time.LocalDate
     ],
 )
 class Salary(
-    amount: Long = 0,
+    amount: Long? = null,
     negotiationDate: LocalDate? = null,
     memo: String? = null,
-    isVisible: Boolean = false,
+    isVisible: Boolean? = null,
     career: Career,
 ) : BaseEntity("SA") {
-    @Column(name = "amount", nullable = false)
-    var amount: Long = amount
+    @Column(name = "amount", nullable = true)
+    var amount: Long? = amount
         protected set
 
     @Column(name = "negotiation_date", nullable = true)
     var negotiationDate: LocalDate? = negotiationDate
         protected set
 
-    @Column(name = "memo", nullable = true)
+    @Column(name = "memo", columnDefinition = "TEXT", nullable = true)
     var memo: String? = memo
         protected set
 
-    @Column(name = "is_visible", nullable = false)
-    var isVisible: Boolean = isVisible
+    @Column(name = "is_visible", nullable = true)
+    var isVisible: Boolean? = isVisible
         protected set
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "career_id", nullable = false)
     var career: Career = career
+        protected set
 
     fun changeInfo(amount: Long, negotiationDate: LocalDate?, memo: String?, isVisible: Boolean) {
         this.amount = amount

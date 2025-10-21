@@ -10,7 +10,7 @@ option java_outer_classname = "SalaryProto";
 
 message SalaryCreateRequest {
   string career_id = 1;
-  uint64 amount = 2;
+  optional uint64 amount = 2;
   optional uint64 negotiation_date = 3;
   optional string memo = 4;
   bool is_visible = 5;
@@ -18,7 +18,7 @@ message SalaryCreateRequest {
 
 message SalaryUpdateRequest {
   string id = 1;
-  uint64 amount = 2;
+  optional uint64 amount = 2;
   optional uint64 negotiation_date = 3;
   optional string memo = 4;
   bool is_visible = 5;

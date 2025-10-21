@@ -7,6 +7,8 @@ import com.spectrum.workfolio.utils.StringUtil
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.FetchType
 import jakarta.persistence.Index
 import jakarta.persistence.JoinColumn
@@ -26,51 +28,52 @@ import java.time.LocalDate
     ],
 )
 class Resume(
-    title: String,
-    description: String,
-    phone: String,
-    email: String,
-    birthDate: LocalDate,
-    gender: Gender,
-    isPublic: Boolean,
-    isDefault: Boolean,
-    publicId: String,
+    title: String? = null,
+    name: String? = null,
+    birthDate: LocalDate? = null,
+    gender: Gender? = null,
+    phone: String? = null,
+    email: String? = null,
+    isPublic: Boolean? = null,
+    isDefault: Boolean? = null,
+    publicId: String? = null,
     worker: Worker,
 ) : BaseEntity("RS") {
-    @Column(name = "title", length = 1024, nullable = false)
-    var title: String = title
+    @Column(name = "title", length = 1024, nullable = true)
+    var title: String? = title
         protected set
 
-    @Column(name = "description", columnDefinition = "TEXT", nullable = false)
-    var description: String = description
+    @Column(name = "name", length = 1024, nullable = true)
+    var name: String? = name
         protected set
 
-    @Column(name = "phone", length = 32, nullable = false)
-    var phone: String = phone
+    @Column(name = "phone", length = 32, nullable = true)
+    var phone: String? = phone
         protected set
 
-    @Column(name = "email", length = 516, nullable = false)
-    var email: String = email
+    @Column(name = "email", length = 516, nullable = true)
+    var email: String? = email
         protected set
 
-    @Column(name = "birth_date", nullable = false)
-    var birthDate: LocalDate = birthDate
+    @Column(name = "birth_date", nullable = true)
+    var birthDate: LocalDate? = birthDate
         protected set
 
-    @Column(name = "gender", nullable = false)
-    var gender: Gender = gender
+    @Enumerated(EnumType.STRING)
+    @Column(name = "gender", length = 24, nullable = true)
+    var gender: Gender? = gender
         protected set
 
-    @Column(name = "is_public", nullable = false)
-    var isPublic: Boolean = isPublic
+    @Column(name = "public_id", length = 16, nullable = true)
+    var publicId: String? = publicId
         protected set
 
-    @Column(name = "public_id", length = 16, nullable = false)
-    var publicId: String = publicId
+    @Column(name = "is_public", nullable = true)
+    var isPublic: Boolean? = isPublic
         protected set
 
-    @Column(name = "is_default", nullable = false)
-    var isDefault: Boolean = isDefault
+    @Column(name = "is_default", nullable = true)
+    var isDefault: Boolean? = isDefault
         protected set
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -83,33 +86,33 @@ class Resume(
     val careers: List<Career> get() = mutableCareers.toList()
 
     @OneToMany(mappedBy = "resume", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
-    private var mutableCertifications: MutableList<Certifications> = mutableListOf()
-    val certifications: List<Certifications> get() = mutableCertifications.toList()
-
-    @OneToMany(mappedBy = "resume", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
-    private var mutableDegrees: MutableList<Degrees> = mutableListOf()
-    val degrees: List<Degrees> get() = mutableDegrees.toList()
-
-    @OneToMany(mappedBy = "resume", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
     private var mutableEducations: MutableList<Education> = mutableListOf()
     val educations: List<Education> get() = mutableEducations.toList()
 
     @OneToMany(mappedBy = "resume", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
-    private var mutableLinks: MutableList<Link> = mutableListOf()
-    val links: List<Link> get() = mutableLinks.toList()
+    private var mutableActivities: MutableList<Activity> = mutableListOf()
+    val activities: List<Activity> get() = mutableActivities.toList()
+
+    @OneToMany(mappedBy = "resume", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
+    private var mutableLanguageSkills: MutableList<LanguageSkill> = mutableListOf()
+    val languageSkills: List<LanguageSkill> get() = mutableLanguageSkills.toList()
+
+    @OneToMany(mappedBy = "resume", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
+    private var mutableAttachments: MutableList<Attachment> = mutableListOf()
+    val attachments: List<Attachment> get() = mutableAttachments.toList()
 
     fun changeInfo(
-        title: String,
-        description: String,
-        phone: String,
-        email: String,
-        birthDate: LocalDate,
-        gender: Gender,
-        isPublic: Boolean,
-        isDefault: Boolean,
+        title: String? = null,
+        name: String? = null,
+        phone: String? = null,
+        email: String? = null,
+        birthDate: LocalDate? = null,
+        gender: Gender? = null,
+        isPublic: Boolean? = null,
+        isDefault: Boolean? = null,
     ) {
         this.title = title
-        this.description = description
+        this.name = name
         this.phone = phone
         this.email = email
         this.birthDate = birthDate
