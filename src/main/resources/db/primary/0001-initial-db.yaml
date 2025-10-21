@@ -394,7 +394,6 @@ databaseChangeLog:
                   name: name
             indexName: idx_careers_name
             tableName: careers
-            unique: true
         - createIndex:
             columns:
               - column:
@@ -513,7 +512,6 @@ databaseChangeLog:
                   name: name
             indexName: idx_educations_name
             tableName: educations
-            unique: true
         - createIndex:
             columns:
               - column:
@@ -581,7 +579,6 @@ databaseChangeLog:
                   name: name
             indexName: idx_degrees_name
             tableName: degrees
-            unique: true
         - createIndex:
             columns:
               - column:
@@ -649,7 +646,6 @@ databaseChangeLog:
                   name: name
             indexName: idx_certifications_name
             tableName: certifications
-            unique: true
         - createIndex:
             columns:
               - column:
