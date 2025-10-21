@@ -57,6 +57,16 @@ message Resume {
   uint64 updated_at = 99;
 }
 
+message ResumeDetail {
+  Resume resume = 1;
+  Worker worker = 2;
+  repeated Career careers = 3;
+  repeated Degrees degrees = 4;
+  repeated Certifications certifications = 5;
+  repeated Education educations = 6;
+  repeated Link links = 7;
+}
+
 message Career {
   enum EmploymentType {
     UNKNOWN = 0;

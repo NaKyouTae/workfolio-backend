@@ -21,3 +21,21 @@ fun Certifications.toProto(): com.spectrum.workfolio.proto.common.Certifications
 
     return builder.build()
 }
+
+fun Certifications.toProtoWithoutResume(): com.spectrum.workfolio.proto.common.Certifications {
+    val builder = com.spectrum.workfolio.proto.common.Certifications.newBuilder()
+
+    builder.setId(this.id)
+    builder.setName(this.name)
+    builder.setNumber(this.number)
+    builder.setIssuer(this.issuer)
+    builder.setIssuedAt(TimeUtil.toEpochMilli(this.issuedAt))
+    builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
+    builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
+
+    if (this.expirationPeriod != null) {
+        builder.setExpirationPeriod(TimeUtil.toEpochMilli(this.expirationPeriod!!))
+    }
+
+    return builder.build()
+}

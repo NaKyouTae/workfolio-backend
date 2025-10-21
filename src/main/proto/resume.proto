@@ -106,6 +106,10 @@ message ResumeListResponse {
   repeated Resume resumes = 1;
 }
 
+message ResumeDetailListResponse {
+  repeated ResumeDetail resumes = 1;
+}
+
 message ResumeResponse {
   Resume resume = 1;
 }

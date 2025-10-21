@@ -3,9 +3,11 @@ package com.spectrum.workfolio.controllers
 import com.spectrum.workfolio.config.annotation.AuthenticatedUser
 import com.spectrum.workfolio.proto.common.SuccessResponse
 import com.spectrum.workfolio.proto.resume.ResumeCreateRequest
+import com.spectrum.workfolio.proto.resume.ResumeDetailListResponse
 import com.spectrum.workfolio.proto.resume.ResumeListResponse
 import com.spectrum.workfolio.proto.resume.ResumeUpdateRequest
 import com.spectrum.workfolio.services.ResumeCommandService
+import com.spectrum.workfolio.services.ResumeQueryService
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/resumes")
 class ResumeController(
+    private val resumeQueryService: ResumeQueryService,
     private val resumeCommandService: ResumeCommandService,
 ) {
 
@@ -25,7 +28,14 @@ class ResumeController(
     fun listResumes(
         @AuthenticatedUser workerId: String,
     ): ResumeListResponse {
-        return resumeCommandService.listResumes(workerId)
+        return resumeQueryService.listResumesResult(workerId)
+    }
+
+    @GetMapping("/details")
+    fun listResumeDetails(
+        @AuthenticatedUser workerId: String,
+    ): ResumeDetailListResponse {
+        return resumeQueryService.listResumeDetailsResult(workerId)
     }
 
     @PostMapping

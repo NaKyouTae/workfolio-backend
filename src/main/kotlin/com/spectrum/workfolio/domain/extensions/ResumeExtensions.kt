@@ -22,3 +22,16 @@ fun Resume.toProto(): com.spectrum.workfolio.proto.common.Resume {
 
     return builder.build()
 }
+
+fun Resume.toDetailProto(): com.spectrum.workfolio.proto.common.ResumeDetail {
+    val builder = com.spectrum.workfolio.proto.common.ResumeDetail.newBuilder()
+
+    builder.setResume(this.toProto())
+    builder.addAllCareers(this.careers.map { it.toProtoWithoutResume() })
+    builder.addAllDegrees(this.degrees.map { it.toProtoWithoutResume() })
+    builder.addAllCertifications(this.certifications.map { it.toProtoWithoutResume() })
+    builder.addAllEducations(this.educations.map { it.toProtoWithoutResume() })
+    builder.addAllLinks(this.links.map { it.toProtoWithoutResume() })
+
+    return builder.build()
+}

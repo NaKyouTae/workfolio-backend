@@ -2,7 +2,11 @@ package com.spectrum.workfolio.services
 
 import com.spectrum.workfolio.domain.entity.resume.Resume
 import com.spectrum.workfolio.domain.enums.MsgKOR
+import com.spectrum.workfolio.domain.extensions.toDetailProto
+import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.ResumeRepository
+import com.spectrum.workfolio.proto.resume.ResumeDetailListResponse
+import com.spectrum.workfolio.proto.resume.ResumeListResponse
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -23,12 +27,19 @@ class ResumeQueryService(
     }
 
     @Transactional(readOnly = true)
-    fun getResumeById(id: String): Resume {
-        return getResume(id)
+    fun listResumesResult(workerId: String): ResumeListResponse {
+        val resumes = resumeRepository.findByWorkerId(workerId)
+        return ResumeListResponse.newBuilder()
+            .addAllResumes(resumes.map { it.toProto() })
+            .build()
     }
 
     @Transactional(readOnly = true)
-    fun existsById(id: String): Boolean {
-        return resumeRepository.existsById(id)
+    fun listResumeDetailsResult(workerId: String): ResumeDetailListResponse {
+        val resumes = resumeRepository.findByWorkerId(workerId)
+        return ResumeDetailListResponse.newBuilder()
+            .addAllResumes(resumes.map { it.toDetailProto() })
+
+            .build()
     }
 }

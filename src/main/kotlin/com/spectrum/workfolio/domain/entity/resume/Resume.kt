@@ -79,8 +79,8 @@ class Resume(
         protected set
 
     @OneToMany(mappedBy = "resume", cascade = [CascadeType.REMOVE])
-    private var mutableCompanies: MutableList<Career> = mutableListOf()
-    val companies: List<Career> get() = mutableCompanies.toList()
+    private var mutableCareers: MutableList<Career> = mutableListOf()
+    val careers: List<Career> get() = mutableCareers.toList()
 
     @OneToMany(mappedBy = "resume", cascade = [CascadeType.REMOVE])
     private var mutableCertifications: MutableList<Certifications> = mutableListOf()
@@ -93,6 +93,10 @@ class Resume(
     @OneToMany(mappedBy = "resume", cascade = [CascadeType.REMOVE])
     private var mutableEducations: MutableList<Education> = mutableListOf()
     val educations: List<Education> get() = mutableEducations.toList()
+
+    @OneToMany(mappedBy = "resume", cascade = [CascadeType.REMOVE])
+    private var mutableLinks: MutableList<Link> = mutableListOf()
+    val links: List<Link> get() = mutableLinks.toList()
 
     fun changeInfo(
         title: String,

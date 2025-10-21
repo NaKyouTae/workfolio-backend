@@ -27,19 +27,6 @@ class ResumeCommandService(
     private val linkService: LinkService,
 ) {
 
-    @Transactional(readOnly = true)
-    fun getResume(id: String): Resume {
-        return resumeQueryService.getResume(id)
-    }
-
-    @Transactional(readOnly = true)
-    fun listResumes(workerId: String): ResumeListResponse {
-        val resumes = resumeRepository.findByWorkerId(workerId)
-        return ResumeListResponse.newBuilder()
-            .addAllResumes(resumes.map { it.toProto() })
-            .build()
-    }
-
     @Transactional
     fun createResume(workerId: String, request: ResumeCreateRequest): Resume {
         val worker = workerService.getWorker(workerId)
@@ -61,7 +48,7 @@ class ResumeCommandService(
 
     @Transactional
     fun updateResume(request: ResumeUpdateRequest): Resume {
-        val resume = this.getResume(request.id)
+        val resume = resumeQueryService.getResume(request.id)
 
         // Resume 기본 정보 업데이트
         resume.changeInfo(
@@ -95,7 +82,7 @@ class ResumeCommandService(
 
     @Transactional
     fun deleteResume(id: String) {
-        val resume = this.getResume(id)
+        val resume = resumeQueryService.getResume(id)
         resumeRepository.delete(resume)
     }
 
