@@ -2,7 +2,6 @@ package com.spectrum.workfolio.domain.entity.resume
 
 import com.spectrum.workfolio.domain.entity.BaseEntity
 import com.spectrum.workfolio.domain.enums.EmploymentType
-import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -11,7 +10,6 @@ import jakarta.persistence.FetchType
 import jakarta.persistence.Index
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
-import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import java.time.LocalDate
 
@@ -27,14 +25,17 @@ import java.time.LocalDate
     ],
 )
 class Career(
-    name: String,
+    name: String, // 회사명
+    position: String, // 직책
+    employmentType: EmploymentType, // 재직 형태
+    department: String, // 부서
+    salary: Int, // 연봉
+    jobGrade: String, // 직급
+    job: String, // 직무
+    startedAt: LocalDate, // 입사년월
+    endedAt: LocalDate? = null, // 퇴사년원
+    isWorking: Boolean = false, // 재직중
     isVisible: Boolean = false,
-    position: String,
-    employmentType: EmploymentType,
-    department: String,
-    startedAt: LocalDate,
-    endedAt: LocalDate? = null,
-    isWorking: Boolean = false,
     resume: Resume,
 ) : BaseEntity("CA") {
     @Column(name = "name", length = 512, nullable = false, unique = true)
@@ -55,6 +56,15 @@ class Career(
     @Column(name = "department", length = 256, nullable = false)
     var department: String = department
 
+    @Column(name = "salary", nullable = false)
+    var salary: Int = salary
+
+    @Column(name = "job_grade", length = 128, nullable = false)
+    var jobGrade: String = jobGrade
+
+    @Column(name = "job", length = 128, nullable = false)
+    var job: String = job
+
     @Column(name = "started_at", nullable = false)
     var startedAt: LocalDate = startedAt
         protected set
@@ -72,37 +82,29 @@ class Career(
     var resume: Resume = resume
         protected set
 
-    @OneToMany(mappedBy = "career", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
-    private var mutablePositions: MutableList<Position> = mutableListOf()
-    val positions: List<Position> get() = mutablePositions.toList()
-
-    @OneToMany(mappedBy = "career", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
-    private var mutableSalaries: MutableList<Salary> = mutableListOf()
-    val salaries: List<Salary> get() = mutableSalaries.toList()
-
-    fun addPosition(position: Position) {
-        mutablePositions.add(position)
-    }
-
-    fun addSalary(salary: Salary) {
-        mutableSalaries.add(salary)
-    }
-
     fun changeInfo(
         name: String,
         position: String,
         employmentType: EmploymentType,
         department: String,
+        salary: Int,
+        jobGrade: String,
+        job: String,
         startedAt: LocalDate,
         endedAt: LocalDate?,
         isWorking: Boolean,
+        isVisible: Boolean,
     ) {
         this.name = name
         this.position = position
         this.employmentType = employmentType
         this.department = department
+        this.salary = salary
+        this.jobGrade = jobGrade
+        this.job = job
         this.startedAt = startedAt
         this.endedAt = endedAt
         this.isWorking = isWorking
+        this.isVisible = isVisible
     }
 }

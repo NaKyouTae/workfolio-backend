@@ -41,9 +41,13 @@ class CareerService(
             position = request.position,
             employmentType = EmploymentType.valueOf(request.employmentType.name),
             department = request.department,
+            jobGrade = request.jobGrade,
+            job = request.job,
+            salary = request.salary,
             startedAt = TimeUtil.ofEpochMilli(request.startedAt).toLocalDate(),
             endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
             isWorking = request.isWorking,
+            isVisible = request.isVisible,
             resume = resume,
         )
 
@@ -61,9 +65,13 @@ class CareerService(
             position = request.position,
             employmentType = EmploymentType.valueOf(request.employmentType.name),
             department = request.department,
+            jobGrade = request.jobGrade,
+            job = request.job,
+            salary = request.salary,
             startedAt = TimeUtil.ofEpochMilli(request.startedAt).toLocalDate(),
             endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
             isWorking = request.isWorking,
+            isVisible = request.isVisible,
         )
 
         val createdCareer = careerRepository.save(career)

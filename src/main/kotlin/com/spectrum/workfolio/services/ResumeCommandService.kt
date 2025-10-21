@@ -251,9 +251,13 @@ class ResumeCommandService(
                             ),
                         )
                         .setDepartment(career.department)
+                        .setJobGrade(career.jobGrade)
+                        .setJob(career.job)
+                        .setSalary(career.salary)
                         .setStartedAt(career.startedAt)
                         .setEndedAt(career.endedAt)
                         .setIsWorking(career.isWorking)
+                        .setIsVisible(career.isVisible)
                         .build(),
                 )
             } else {
@@ -269,9 +273,13 @@ class ResumeCommandService(
                             ),
                         )
                         .setDepartment(career.department)
+                        .setJobGrade(career.jobGrade)
+                        .setJob(career.job)
+                        .setSalary(career.salary)
                         .setStartedAt(career.startedAt)
                         .setEndedAt(career.endedAt)
                         .setIsWorking(career.isWorking)
+                        .setIsVisible(career.isVisible)
                         .build(),
                 )
             }

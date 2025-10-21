@@ -41,7 +41,11 @@ message ResumeUpdateRequest {
       string position = 6;
       EmploymentType employmentType = 7;
       string department = 8;
-      bool is_visible = 9;
+      string job_grade = 9;
+      string job = 10;
+      uint32 salary = 11;
+
+      bool is_visible = 30;
     }
 
     message Project {

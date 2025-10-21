@@ -16,6 +16,11 @@ message CareerCreateRequest {
   string position = 6;
   Career.EmploymentType employmentType = 7;
   string department = 8;
+  string job_grade = 9;
+  string job = 10;
+  uint32 salary = 11;
+
+  bool is_visible = 30;
 
   string resume_id = 99;
 }
@@ -29,7 +34,11 @@ message CareerUpdateRequest {
   string position = 6;
   Career.EmploymentType employmentType = 7;
   string department = 8;
+  string job_grade = 9;
+  string job = 10;
+  uint32 salary = 11;
 
+  bool is_visible = 30;
 }
 
 message CareerListResponse {
