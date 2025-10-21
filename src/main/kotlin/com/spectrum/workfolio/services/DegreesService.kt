@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class DegreesService(
-    private val resumeService: ResumeService,
+    private val resumeQueryService: ResumeQueryService,
     private val degreesRepository: DegreesRepository,
 ) {
 
@@ -27,7 +27,7 @@ class DegreesService(
 
     @Transactional(readOnly = true)
     fun listDegrees(resumeId: String): DegreesListResponse {
-        val resume = resumeService.getResume(resumeId)
+        val resume = resumeQueryService.getResume(resumeId)
         val degrees = degreesRepository.findByResumeIdOrderByStartedAtDescEndedAtDesc(resume.id)
         return DegreesListResponse.newBuilder()
             .addAllDegrees(degrees.map { it.toProto() })
@@ -36,7 +36,7 @@ class DegreesService(
 
     @Transactional
     fun createDegrees(request: DegreesCreateRequest): DegreesResponse {
-        val resume = resumeService.getResume(request.resumeId)
+        val resume = resumeQueryService.getResume(request.resumeId)
         val degrees = Degrees(
             name = request.name,
             major = request.major,
@@ -66,5 +66,17 @@ class DegreesService(
         val updatedDegrees = degreesRepository.save(degrees)
 
         return DegreesResponse.newBuilder().setDegrees(updatedDegrees.toProto()).build()
+    }
+
+    @Transactional
+    fun deleteDegrees(id: String) {
+        val degrees = this.getDegrees(id)
+        degreesRepository.delete(degrees)
+    }
+
+    @Transactional
+    fun deleteDegreesByResumeId(resumeId: String) {
+        val degrees = degreesRepository.findByResumeIdOrderByStartedAtDescEndedAtDesc(resumeId)
+        degreesRepository.deleteAll(degrees)
     }
 }

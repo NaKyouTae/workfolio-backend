@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class CertificationsService(
-    private val resumeService: ResumeService,
+    private val resumeQueryService: ResumeQueryService,
     private val certificationsRepository: CertificationsRepository,
 ) {
 
@@ -28,16 +28,16 @@ class CertificationsService(
 
     @Transactional(readOnly = true)
     fun listCertifications(resumeId: String): CertificationsListResponse {
-        val worker = resumeService.getResume(resumeId)
-        val educations = certificationsRepository.findByResumeIdOrderByIssuedAtDesc(worker.id)
+        val resume = resumeQueryService.getResume(resumeId)
+        val certifications = certificationsRepository.findByResumeIdOrderByIssuedAtDesc(resume.id)
         return CertificationsListResponse.newBuilder()
-            .addAllCertifications(educations.map { it.toProto() })
+            .addAllCertifications(certifications.map { it.toProto() })
             .build()
     }
 
     @Transactional
     fun createCertifications(request: CertificationsCreateRequest): CertificationsResponse {
-        val resume = resumeService.getResume(request.resumeId)
+        val resume = resumeQueryService.getResume(request.resumeId)
         val certifications = Certifications(
             name = request.name,
             number = request.number,
@@ -67,5 +67,17 @@ class CertificationsService(
         val updatedCertifications = certificationsRepository.save(certifications)
 
         return CertificationsResponse.newBuilder().setCertifications(updatedCertifications.toProto()).build()
+    }
+
+    @Transactional
+    fun deleteCertifications(id: String) {
+        val certifications = this.getCertifications(id)
+        certificationsRepository.delete(certifications)
+    }
+
+    @Transactional
+    fun deleteCertificationsByResumeId(resumeId: String) {
+        val certifications = certificationsRepository.findByResumeIdOrderByIssuedAtDesc(resumeId)
+        certificationsRepository.deleteAll(certifications)
     }
 }

@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class EducationService(
-    private val resumeService: ResumeService,
+    private val resumeQueryService: ResumeQueryService,
     private val educationRepository: EducationRepository,
 ) {
 
@@ -26,7 +26,7 @@ class EducationService(
 
     @Transactional(readOnly = true)
     fun listEducations(resumeId: String): EducationListResponse {
-        val resume = resumeService.getResume(resumeId)
+        val resume = resumeQueryService.getResume(resumeId)
         val educations = educationRepository.findByResumeIdOrderByStartedAtDescEndedAtDesc(resume.id)
         return EducationListResponse.newBuilder()
             .addAllEducations(educations.map { it.toProto() })
@@ -35,7 +35,7 @@ class EducationService(
 
     @Transactional
     fun createEducation(request: EducationCreateRequest): EducationResponse {
-        val resume = resumeService.getResume(request.resumeId)
+        val resume = resumeQueryService.getResume(request.resumeId)
         val education = Education(
             name = request.name,
             startedAt = TimeUtil.ofEpochMilli(request.startedAt).toLocalDate(),
@@ -63,5 +63,17 @@ class EducationService(
         val updatedEducation = educationRepository.save(education)
 
         return EducationResponse.newBuilder().setEducation(updatedEducation.toProto()).build()
+    }
+
+    @Transactional
+    fun deleteEducation(id: String) {
+        val education = this.getEducation(id)
+        educationRepository.delete(education)
+    }
+
+    @Transactional
+    fun deleteEducationsByResumeId(resumeId: String) {
+        val educations = educationRepository.findByResumeIdOrderByStartedAtDescEndedAtDesc(resumeId)
+        educationRepository.deleteAll(educations)
     }
 }

@@ -75,6 +75,8 @@ message Career {
   EmploymentType employmentType = 7;
   string department = 8;
 
+  bool is_visible = 30;
+
   Resume resume = 50;
 
   uint64 created_at = 98;
@@ -85,9 +87,10 @@ message Project {
   string id = 1;
   string title = 2;
   string description = 3;
-  bool is_visible = 4;
-  uint64 started_at = 5;
-  optional uint64 ended_at = 6;
+  uint64 started_at = 4;
+  optional uint64 ended_at = 5;
+
+  bool is_visible = 30;
 
   Career career = 50;
 
@@ -101,6 +104,8 @@ message Position {
   uint64 started_at = 3;
   uint64 ended_at = 4;
 
+  bool is_visible = 30;
+
   Career career = 50;
 
   uint64 created_at = 98;
@@ -112,6 +117,8 @@ message Salary {
   uint64 amount = 2;
   uint64 started_at = 4;
   uint64 ended_at = 5;
+
+  bool is_visible = 30;
 
   Career career = 50;
 
@@ -126,6 +133,8 @@ message Certifications {
   string issuer = 4;
   uint64 issued_at = 5;
   uint64 expiration_period = 6;
+
+  bool is_visible = 30;
 
   Resume resume = 50;
 
@@ -148,6 +157,8 @@ message Degrees {
   uint64 ended_at = 5;
   DegreesStatus status = 6;
 
+  bool is_visible = 30;
+
   Resume resume = 50;
 
   uint64 created_at = 98;
@@ -160,6 +171,20 @@ message Education {
   uint64 started_at = 3;
   uint64 ended_at = 4;
   string agency = 5;
+
+  bool is_visible = 30;
+
+  Resume resume = 50;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
+}
+
+message Link {
+  string id = 1;
+  string url = 2;
+
+  bool is_visible = 30;
 
   Resume resume = 50;
 

@@ -335,7 +335,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: name
-                  type: VARCHAR(1024)
+                  type: VARCHAR(512)
                   constraints:
                     nullable: false
               - column:

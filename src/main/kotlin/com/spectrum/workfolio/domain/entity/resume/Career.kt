@@ -36,8 +36,8 @@ class Career(
     endedAt: LocalDate? = null,
     isWorking: Boolean = false,
     resume: Resume,
-) : BaseEntity("CO") {
-    @Column(name = "name", length = 1024, nullable = false, unique = true)
+) : BaseEntity("CA") {
+    @Column(name = "name", length = 512, nullable = false, unique = true)
     var name: String = name
         protected set
 

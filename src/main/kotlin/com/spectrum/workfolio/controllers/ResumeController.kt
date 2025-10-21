@@ -5,7 +5,7 @@ import com.spectrum.workfolio.proto.common.SuccessResponse
 import com.spectrum.workfolio.proto.resume.ResumeCreateRequest
 import com.spectrum.workfolio.proto.resume.ResumeListResponse
 import com.spectrum.workfolio.proto.resume.ResumeUpdateRequest
-import com.spectrum.workfolio.services.ResumeService
+import com.spectrum.workfolio.services.ResumeCommandService
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -18,14 +18,14 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/resumes")
 class ResumeController(
-    private val resumeService: ResumeService,
+    private val resumeCommandService: ResumeCommandService,
 ) {
 
     @GetMapping
     fun listResumes(
         @AuthenticatedUser workerId: String,
     ): ResumeListResponse {
-        return resumeService.listResumes(workerId)
+        return resumeCommandService.listResumes(workerId)
     }
 
     @PostMapping
@@ -33,24 +33,24 @@ class ResumeController(
         @AuthenticatedUser workerId: String,
         @RequestBody request: ResumeCreateRequest,
     ): SuccessResponse {
-        resumeService.createResume(workerId, request)
+        resumeCommandService.createResume(workerId, request)
         return SuccessResponse.newBuilder().setIsSuccess(true).build()
     }
 
-    @PutMapping
+    @PutMapping("/{resumeId}")
     fun updateResume(
-        @AuthenticatedUser workerId: String,
         @RequestBody request: ResumeUpdateRequest,
+        @PathVariable resumeId: String,
     ): SuccessResponse {
-        resumeService.updateResume(workerId, request)
+        resumeCommandService.updateResume(request)
         return SuccessResponse.newBuilder().setIsSuccess(true).build()
     }
 
     @DeleteMapping("/{id}")
     fun deleteResume(
         @PathVariable id: String,
-        ): SuccessResponse {
-        resumeService.deleteResume(id)
+    ): SuccessResponse {
+        resumeCommandService.deleteResume(id)
         return SuccessResponse.newBuilder().setIsSuccess(true).build()
     }
 }

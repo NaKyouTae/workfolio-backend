@@ -25,7 +25,7 @@ class Link(
     resume: Resume,
 ) : BaseEntity("LI") {
 
-    @Column(name = "link", columnDefinition = "TEXT", nullable = false)
+    @Column(name = "url", columnDefinition = "TEXT", nullable = false)
     var url: String = url
         protected set
 

@@ -13,11 +13,10 @@ import com.spectrum.workfolio.utils.TimeUtil
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.context.request.RequestAttributes
 
 @Service
 class CareerService(
-    private val resumeService: ResumeService,
+    private val resumeQueryService: ResumeQueryService,
     private val careerRepository: CareerRepository,
 ) {
 
@@ -36,7 +35,7 @@ class CareerService(
 
     @Transactional
     fun createCareer(request: CareerCreateRequest): CareerResponse {
-        val resume = resumeService.getResume(request.resumeId)
+        val resume = resumeQueryService.getResume(request.resumeId)
         val career = Career(
             name = request.name,
             position = request.position,
@@ -70,5 +69,17 @@ class CareerService(
         val createdCareer = careerRepository.save(career)
 
         return CareerResponse.newBuilder().setCareer(createdCareer.toProto()).build()
+    }
+
+    @Transactional
+    fun deleteCareer(id: String) {
+        val career = this.getCareer(id)
+        careerRepository.delete(career)
+    }
+
+    @Transactional
+    fun deleteCareersByResumeId(resumeId: String) {
+        val careers = careerRepository.findByResumeIdOrderByStartedAtDescEndedAtDesc(resumeId)
+        careerRepository.deleteAll(careers)
     }
 }
