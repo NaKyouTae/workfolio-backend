@@ -47,10 +47,9 @@ class ResumeController(
         return SuccessResponse.newBuilder().setIsSuccess(true).build()
     }
 
-    @PutMapping("/{resumeId}")
+    @PutMapping
     fun updateResume(
         @RequestBody request: ResumeUpdateRequest,
-        @PathVariable resumeId: String,
     ): SuccessResponse {
         resumeCommandService.updateResume(request)
         return SuccessResponse.newBuilder().setIsSuccess(true).build()

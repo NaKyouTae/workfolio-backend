@@ -42,7 +42,7 @@ message Resume {
 
   string id = 1;
   optional string title = 2;
-  optional string description = 3;
+  optional string name = 3;
   optional string phone = 4;
   optional string email = 5;
   optional uint64 brith_date = 6;
@@ -58,13 +58,27 @@ message Resume {
 }
 
 message ResumeDetail {
-  Resume resume = 1;
-  Worker worker = 2;
-  repeated Career careers = 3;
-  repeated Education educations = 4;
-  repeated Activity activities = 5;
-  repeated LanguageSkill language_skills = 6;
-  repeated Attachment attachments = 7;
+  string id = 1;
+  optional string title = 2;
+  optional string name = 3;
+  optional string phone = 4;
+  optional string email = 5;
+  optional uint64 brith_date = 6;
+  optional Resume.Gender gender = 7;
+  optional bool is_public = 8;
+  optional bool is_default = 9;
+  optional string public_id = 10;
+
+  Worker worker = 50;
+
+  repeated Career careers = 51;
+  repeated Education educations = 52;
+  repeated Activity activities = 53;
+  repeated LanguageSkill language_skills = 54;
+  repeated Attachment attachments = 55;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
 }
 
 message Career {

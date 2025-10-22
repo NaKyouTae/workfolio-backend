@@ -12,7 +12,7 @@ fun Resume.toProto(): com.spectrum.workfolio.proto.common.Resume {
 
     builder.setId(this.id)
     builder.setTitle(this.title)
-    builder.setDescription(this.name)
+    builder.setName(this.name)
     builder.setPhone(this.phone)
     builder.setEmail(this.email)
     builder.setPublicId(this.publicId)
@@ -37,7 +37,27 @@ fun Resume.toProto(): com.spectrum.workfolio.proto.common.Resume {
 fun Resume.toDetailProto(): com.spectrum.workfolio.proto.common.ResumeDetail {
     val builder = com.spectrum.workfolio.proto.common.ResumeDetail.newBuilder()
 
-    builder.setResume(this.toProto())
+    builder.setId(this.id)
+    builder.setTitle(this.title)
+    builder.setName(this.name)
+    builder.setPhone(this.phone)
+    builder.setEmail(this.email)
+    builder.setPublicId(this.publicId)
+
+    builder.setWorker(this.worker.toProto())
+
+    builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
+    builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
+
+    if (this.isPublic != null) builder.setIsPublic(this.isPublic!!)
+    if (this.isDefault != null) builder.setIsDefault(this.isDefault!!)
+    if (this.birthDate != null) builder.setBrithDate(TimeUtil.toEpochMilli(this.birthDate!!))
+    if (this.gender != null) {
+        builder.setGender(
+            com.spectrum.workfolio.proto.common.Resume.Gender.valueOf(this.gender!!.name),
+        )
+    }
+
     builder.addAllCareers(this.careers.map { it.toProtoWithoutResume() })
     builder.addAllEducations(this.educations.map { it.toProtoWithoutResume() })
     builder.addAllActivities(this.activities.map { it.toProtoWithoutResume() })

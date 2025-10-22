@@ -377,7 +377,7 @@ class ResumeCommandService(
                     // 생성
                     languageTestService.createLanguageTest(
                         languageSkillId = languageSkillId,
-                        testName = testRequest.testName,
+                        testName = testRequest.name,
                         score = testRequest.score,
                         acquiredAt = testRequest.acquiredAt,
                         isVisible = testRequest.isVisible,
@@ -386,7 +386,7 @@ class ResumeCommandService(
                     // 수정
                     languageTestService.updateLanguageTest(
                         id = testRequest.id,
-                        testName = testRequest.testName,
+                        testName = testRequest.name,
                         score = testRequest.score,
                         acquiredAt = testRequest.acquiredAt,
                         isVisible = testRequest.isVisible,
