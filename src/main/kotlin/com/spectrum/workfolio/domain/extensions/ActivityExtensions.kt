@@ -8,17 +8,20 @@ fun Activity.toProto(): com.spectrum.workfolio.proto.common.Activity {
 
     builder.setId(this.id)
     builder.setName(this.name)
+
+    builder.setDescription(this.description)
     builder.setOrganization(this.organization)
     builder.setCertificateNumber(this.certificateNumber)
-    builder.setDescription(this.description)
-
+    builder.setIsVisible(this.isVisible)
     builder.setResume(this.resume.toProto())
 
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
 
-    if (this.isVisible != null) {
-        builder.setIsVisible(this.isVisible!!)
+    if (this.type != null) {
+        builder.setType(
+            com.spectrum.workfolio.proto.common.Activity.ActivityType.valueOf(this.type!!.name),
+        )
     }
     if (this.startedAt != null) {
         builder.setStartedAt(TimeUtil.toEpochMilli(this.startedAt!!))
@@ -35,14 +38,17 @@ fun Activity.toProtoWithoutResume(): com.spectrum.workfolio.proto.common.Activit
 
     builder.setId(this.id)
     builder.setName(this.name)
+    builder.setDescription(this.description)
     builder.setOrganization(this.organization)
     builder.setCertificateNumber(this.certificateNumber)
-    builder.setDescription(this.description)
+    builder.setIsVisible(this.isVisible)
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
 
-    if (this.isVisible != null) {
-        builder.setIsVisible(this.isVisible!!)
+    if (this.type != null) {
+        builder.setType(
+            com.spectrum.workfolio.proto.common.Activity.ActivityType.valueOf(this.type!!.name),
+        )
     }
     if (this.startedAt != null) {
         builder.setStartedAt(TimeUtil.toEpochMilli(this.startedAt!!))

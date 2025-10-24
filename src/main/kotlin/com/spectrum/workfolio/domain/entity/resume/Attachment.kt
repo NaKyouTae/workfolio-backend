@@ -23,10 +23,10 @@ import jakarta.persistence.Table
     ],
 )
 class Attachment(
+    fileName: String,
+    fileUrl: String,
+    isVisible: Boolean,
     type: AttachmentType? = null,
-    fileName: String? = null,
-    fileUrl: String? = null,
-    isVisible: Boolean? = null,
     resume: Resume,
 ) : BaseEntity("AH") {
 
@@ -35,16 +35,16 @@ class Attachment(
     var type: AttachmentType? = type
         protected set
 
-    @Column(name = "file_name", length = 1024, nullable = true)
-    var fileName: String? = fileName
+    @Column(name = "file_name", length = 1024, nullable = false)
+    var fileName: String = fileName
         protected set
 
-    @Column(name = "file_url", columnDefinition = "TEXT", nullable = true)
-    var fileUrl: String? = fileUrl
+    @Column(name = "file_url", columnDefinition = "TEXT", nullable = false)
+    var fileUrl: String = fileUrl
         protected set
 
-    @Column(name = "is_visible", nullable = true)
-    var isVisible: Boolean? = isVisible
+    @Column(name = "is_visible", nullable = false)
+    var isVisible: Boolean = isVisible
         protected set
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -53,10 +53,10 @@ class Attachment(
         protected set
 
     fun changeInfo(
+        fileName: String,
+        fileUrl: String,
+        isVisible: Boolean,
         type: AttachmentType? = null,
-        fileName: String? = null,
-        fileUrl: String? = null,
-        isVisible: Boolean? = null,
     ) {
         this.type = type
         this.fileName = fileName

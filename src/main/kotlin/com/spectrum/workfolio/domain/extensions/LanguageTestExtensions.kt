@@ -9,15 +9,12 @@ fun LanguageTest.toProto(): com.spectrum.workfolio.proto.common.LanguageTest {
     builder.setId(this.id)
     builder.setName(this.name)
     builder.setScore(this.score)
-
+    builder.setIsVisible(this.isVisible)
     builder.setLanguageSkill(this.languageSkill.toProto())
 
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
 
-    if (this.isVisible != null) {
-        builder.setIsVisible(this.isVisible!!)
-    }
     if (this.acquiredAt != null) {
         builder.setAcquiredAt(TimeUtil.toEpochMilli(this.acquiredAt!!))
     }
@@ -31,13 +28,10 @@ fun LanguageTest.toProtoWithoutSkill(): com.spectrum.workfolio.proto.common.Lang
     builder.setId(this.id)
     builder.setName(this.name)
     builder.setScore(this.score)
-
+    builder.setIsVisible(this.isVisible)
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
 
-    if (this.isVisible != null) {
-        builder.setIsVisible(this.isVisible!!)
-    }
     if (this.acquiredAt != null) {
         builder.setAcquiredAt(TimeUtil.toEpochMilli(this.acquiredAt!!))
     }

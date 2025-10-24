@@ -40,9 +40,11 @@ class EducationService(
         val education = Education(
             name = request.name,
             major = request.major,
-            status = EducationStatus.valueOf(request.status.name),
-            startedAt = TimeUtil.ofEpochMilli(request.startedAt).toLocalDate(),
-            endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
+            description = request.description,
+            status = if (request.hasStatus()) EducationStatus.valueOf(request.status.name) else null,
+            startedAt = if (request.hasStartedAt() && request.startedAt != 0L) TimeUtil.ofEpochMilli(request.startedAt).toLocalDate() else null,
+            endedAt = if (request.hasEndedAt() && request.endedAt != 0L) TimeUtil.ofEpochMilli(request.endedAt).toLocalDate() else null,
+            isVisible = request.isVisible,
             resume = resume,
         )
 
@@ -58,9 +60,11 @@ class EducationService(
         education.changeInfo(
             name = request.name,
             major = request.major,
-            status = EducationStatus.valueOf(request.status.name),
-            startedAt = TimeUtil.ofEpochMilli(request.startedAt).toLocalDate(),
-            endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
+            description = request.description,
+            status = if (request.hasStatus()) EducationStatus.valueOf(request.status.name) else null,
+            startedAt = if (request.hasStartedAt() && request.startedAt != 0L) TimeUtil.ofEpochMilli(request.startedAt).toLocalDate() else null,
+            endedAt = if (request.hasEndedAt() && request.endedAt != 0L) TimeUtil.ofEpochMilli(request.endedAt).toLocalDate() else null,
+            isVisible = request.isVisible,
         )
 
         val updatedEducation = educationRepository.save(education)
@@ -72,6 +76,13 @@ class EducationService(
     fun deleteEducation(id: String) {
         val education = this.getEducation(id)
         educationRepository.delete(education)
+    }
+
+    @Transactional
+    fun deleteEducations(educationIds: List<String>) {
+        if (educationIds.isNotEmpty()) {
+            educationRepository.deleteAllById(educationIds)
+        }
     }
 
     @Transactional

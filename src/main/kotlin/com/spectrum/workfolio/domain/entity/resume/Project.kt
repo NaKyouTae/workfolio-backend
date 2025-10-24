@@ -15,26 +15,26 @@ import java.time.LocalDate
  */
 @Entity
 @Table(
-    name = "achievements",
+    name = "projects",
     indexes = [
-        Index(name = "idx_achievements_career_id", columnList = "career_id"),
+        Index(name = "idx_projects_career_id", columnList = "career_id"),
     ],
 )
-class Achievement(
-    title: String? = null,
-    role: String? = null,
-    description: String? = null,
+class Project(
+    title: String,
+    role: String,
+    description: String,
     startedAt: LocalDate? = null,
     endedAt: LocalDate? = null,
-    isVisible: Boolean? = null,
-    career: Career,
+    isVisible: Boolean,
+    resume: Resume,
 ) : BaseEntity("AC") {
 
-    @Column(name = "title", length = 512, nullable = true)
+    @Column(name = "title", length = 1024, nullable = true)
     var title: String? = title
         protected set
 
-    @Column(name = "role", length = 256, nullable = true)
+    @Column(name = "role", length = 512, nullable = true)
     var role: String? = role
         protected set
 
@@ -50,22 +50,22 @@ class Achievement(
     var endedAt: LocalDate? = endedAt
         protected set
 
-    @Column(name = "is_visible", nullable = true)
-    var isVisible: Boolean? = isVisible
+    @Column(name = "is_visible", nullable = false)
+    var isVisible: Boolean = isVisible
         protected set
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "career_id", nullable = false)
-    var career: Career = career
+    @JoinColumn(name = "resume_id", nullable = false)
+    var resume: Resume = resume
         protected set
 
     fun changeInfo(
-        title: String? = null,
-        role: String? = null,
-        description: String? = null,
+        title: String,
+        role: String,
+        description: String,
         startedAt: LocalDate? = null,
         endedAt: LocalDate? = null,
-        isVisible: Boolean? = null,
+        isVisible: Boolean,
     ) {
         this.title = title
         this.role = role

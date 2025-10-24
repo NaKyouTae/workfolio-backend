@@ -16,21 +16,23 @@ class LanguageTestService(
 
     @Transactional(readOnly = true)
     fun getLanguageTest(id: String): LanguageTest {
-        return languageTestRepository.findById(id).orElseThrow { WorkfolioException(MsgKOR.NOT_FOUND_LANGUAGE_TEST.message) }
+        return languageTestRepository.findById(id).orElseThrow {
+            WorkfolioException(MsgKOR.NOT_FOUND_LANGUAGE_TEST.message)
+        }
     }
 
     @Transactional
     fun createLanguageTest(
         languageSkillId: String,
-        testName: String?,
-        score: String?,
-        acquiredAt: Long?,
-        isVisible: Boolean?,
+        name: String? = null,
+        score: String? = null,
+        acquiredAt: Long? = null,
+        isVisible: Boolean,
     ): LanguageTest {
         val languageSkill = languageSkillService.getLanguageSkill(languageSkillId)
         val languageTest = LanguageTest(
-            name = testName,
-            score = score,
+            name = name ?: "",
+            score = score ?: "",
             acquiredAt = if (acquiredAt != null && acquiredAt > 0) TimeUtil.ofEpochMilli(acquiredAt).toLocalDate() else null,
             isVisible = isVisible,
             languageSkill = languageSkill,
@@ -42,16 +44,16 @@ class LanguageTestService(
     @Transactional
     fun updateLanguageTest(
         id: String,
-        testName: String?,
-        score: String?,
-        acquiredAt: Long?,
-        isVisible: Boolean?,
+        name: String? = null,
+        score: String? = null,
+        acquiredAt: Long? = null,
+        isVisible: Boolean,
     ): LanguageTest {
         val languageTest = this.getLanguageTest(id)
 
         languageTest.changeInfo(
-            name = testName,
-            score = score,
+            name = name ?: "",
+            score = score ?: "",
             acquiredAt = if (acquiredAt != null && acquiredAt > 0) TimeUtil.ofEpochMilli(acquiredAt).toLocalDate() else null,
             isVisible = isVisible,
         )
@@ -63,6 +65,13 @@ class LanguageTestService(
     fun deleteLanguageTest(id: String) {
         val languageTest = this.getLanguageTest(id)
         languageTestRepository.delete(languageTest)
+    }
+
+    @Transactional
+    fun deleteLanguageTests(languageTestIds: List<String>) {
+        if (languageTestIds.isNotEmpty()) {
+            languageTestRepository.deleteAllById(languageTestIds)
+        }
     }
 
     @Transactional

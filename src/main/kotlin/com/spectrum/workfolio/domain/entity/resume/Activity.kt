@@ -24,14 +24,14 @@ import java.time.LocalDate
     ],
 )
 class Activity(
-    type: ActivityType? = null,
-    name: String? = null,
-    organization: String? = null,
-    certificateNumber: String? = null,
-    startedAt: LocalDate? = null,
+    name: String,
+    description: String,
+    organization: String,
+    certificateNumber: String,
+    isVisible: Boolean,
     endedAt: LocalDate? = null,
-    description: String? = null,
-    isVisible: Boolean? = null,
+    type: ActivityType? = null,
+    startedAt: LocalDate? = null,
     resume: Resume,
 ) : BaseEntity("AT") {
 
@@ -40,20 +40,20 @@ class Activity(
     var type: ActivityType? = type
         protected set
 
-    @Column(name = "name", length = 1024, nullable = true)
-    var name: String? = name
+    @Column(name = "name", length = 1024, nullable = false)
+    var name: String = name
         protected set
 
-    @Column(name = "organization", length = 1024, nullable = true)
-    var organization: String? = organization
+    @Column(name = "organization", length = 1024, nullable = false)
+    var organization: String = organization
         protected set
 
-    @Column(name = "certificate_number", length = 512, nullable = true)
-    var certificateNumber: String? = certificateNumber
+    @Column(name = "certificate_number", length = 512, nullable = false)
+    var certificateNumber: String = certificateNumber
         protected set
 
-    @Column(name = "description", columnDefinition = "TEXT", nullable = true)
-    var description: String? = description
+    @Column(name = "description", columnDefinition = "TEXT", nullable = false)
+    var description: String = description
         protected set
 
     @Column(name = "started_at", nullable = true)
@@ -64,8 +64,8 @@ class Activity(
     var endedAt: LocalDate? = endedAt
         protected set
 
-    @Column(name = "is_visible", nullable = true)
-    var isVisible: Boolean? = isVisible
+    @Column(name = "is_visible", nullable = false)
+    var isVisible: Boolean = isVisible
         protected set
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -74,14 +74,14 @@ class Activity(
         protected set
 
     fun changeInfo(
+        name: String,
+        description: String,
+        organization: String,
+        certificateNumber: String,
+        isVisible: Boolean,
+        endedAt: LocalDate? = null,
         type: ActivityType? = null,
-        name: String? = null,
-        organization: String? = null,
-        certificateNumber: String?? = null,
         startedAt: LocalDate? = null,
-        endedAt: LocalDate?? = null,
-        description: String? = null,
-        isVisible: Boolean? = null,
     ) {
         this.type = type
         this.name = name

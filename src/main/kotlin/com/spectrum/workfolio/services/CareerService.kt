@@ -7,7 +7,6 @@ import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.CareerRepository
 import com.spectrum.workfolio.proto.career.CareerCreateRequest
 import com.spectrum.workfolio.proto.career.CareerListResponse
-import com.spectrum.workfolio.proto.career.CareerResponse
 import com.spectrum.workfolio.proto.career.CareerUpdateRequest
 import com.spectrum.workfolio.utils.TimeUtil
 import com.spectrum.workfolio.utils.WorkfolioException
@@ -34,55 +33,60 @@ class CareerService(
     }
 
     @Transactional
-    fun createCareer(request: CareerCreateRequest): CareerResponse {
+    fun createCareer(request: CareerCreateRequest): Career {
         val resume = resumeQueryService.getResume(request.resumeId)
         val career = Career(
-            name = request.name,
-            position = request.position,
-            employmentType = EmploymentType.valueOf(request.employmentType.name),
-            department = request.department,
-            jobGrade = request.jobGrade,
-            job = request.job,
+            name = request.name ?: "",
+            position = request.position ?: "",
+            employmentType = if (request.hasEmploymentType()) EmploymentType.valueOf(request.employmentType.name) else null,
+            department = request.department ?: "",
+            jobGrade = request.jobGrade ?: "",
+            job = request.job ?: "",
             salary = request.salary,
-            startedAt = TimeUtil.ofEpochMilli(request.startedAt).toLocalDate(),
-            endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
+            description = request.description ?: "",
+            startedAt = if (request.hasStartedAt() && request.startedAt != 0L) TimeUtil.ofEpochMilli(request.startedAt).toLocalDate() else null,
+            endedAt = if (request.hasEndedAt() && request.endedAt != 0L) TimeUtil.ofEpochMilli(request.endedAt).toLocalDate() else null,
             isWorking = request.isWorking,
             isVisible = request.isVisible,
             resume = resume,
         )
 
-        val createdCareer = careerRepository.save(career)
-
-        return CareerResponse.newBuilder().setCareer(createdCareer.toProto()).build()
+        return careerRepository.save(career)
     }
 
     @Transactional
-    fun updateCareer(request: CareerUpdateRequest): CareerResponse {
+    fun updateCareer(request: CareerUpdateRequest): Career {
         val career = this.getCareer(request.id)
 
         career.changeInfo(
-            name = request.name,
-            position = request.position,
-            employmentType = EmploymentType.valueOf(request.employmentType.name),
-            department = request.department,
-            jobGrade = request.jobGrade,
-            job = request.job,
+            name = request.name ?: "",
+            position = request.position ?: "",
+            employmentType = if (request.hasEmploymentType()) EmploymentType.valueOf(request.employmentType.name) else null,
+            department = request.department ?: "",
+            jobGrade = request.jobGrade ?: "",
+            job = request.job ?: "",
             salary = request.salary,
-            startedAt = TimeUtil.ofEpochMilli(request.startedAt).toLocalDate(),
-            endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
+            description = request.description ?: "",
+            startedAt = if (request.hasStartedAt() && request.startedAt != 0L) TimeUtil.ofEpochMilli(request.startedAt).toLocalDate() else null,
+            endedAt = if (request.hasEndedAt() && request.endedAt != 0L) TimeUtil.ofEpochMilli(request.endedAt).toLocalDate() else null,
             isWorking = request.isWorking,
             isVisible = request.isVisible,
         )
 
-        val createdCareer = careerRepository.save(career)
-
-        return CareerResponse.newBuilder().setCareer(createdCareer.toProto()).build()
+        return careerRepository.save(career)
     }
 
     @Transactional
     fun deleteCareer(id: String) {
         val career = this.getCareer(id)
         careerRepository.delete(career)
+    }
+
+    @Transactional
+    fun deleteCareers(careerIds: List<String>) {
+        if (careerIds.isNotEmpty()) {
+            careerRepository.deleteAllById(careerIds)
+        }
     }
 
     @Transactional

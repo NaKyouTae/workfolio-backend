@@ -9,36 +9,38 @@ option java_package = "com.spectrum.workfolio.proto.career";
 option java_outer_classname = "CareerProto";
 
 message CareerCreateRequest {
-  optional string name = 2;
+  string name = 2;
   optional uint64 started_at = 3;
   optional uint64 ended_at = 4;
   optional bool is_working = 5;
-  optional string position = 6;
+  string position = 6;
   optional Career.EmploymentType employmentType = 7;
-  optional string department = 8;
-  optional string job_grade = 9;
-  optional string job = 10;
-  optional uint32 salary = 11;
+  string department = 8;
+  string job_grade = 9;
+  string job = 10;
+  uint32 salary = 11;
+  string description = 12;
 
-  optional bool is_visible = 30;
+  bool is_visible = 30;
 
   string resume_id = 99;
 }
 
 message CareerUpdateRequest {
   string id = 1;
-  optional string name = 2;
+  string name = 2;
   optional uint64 started_at = 3;
   optional uint64 ended_at = 4;
   optional bool is_working = 5;
-  optional string position = 6;
+  string position = 6;
   optional Career.EmploymentType employmentType = 7;
-  optional string department = 8;
-  optional string job_grade = 9;
-  optional string job = 10;
-  optional uint32 salary = 11;
+  string department = 8;
+  string job_grade = 9;
+  string job = 10;
+  uint32 salary = 11;
+  string description = 12;
 
-  optional bool is_visible = 30;
+  bool is_visible = 30;
 }
 
 message CareerListResponse {

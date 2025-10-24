@@ -15,6 +15,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 @Configuration
 class WebMvcConfig(
     private val authUserArgumentResolver: AuthUserArgumentResolver,
+    private val protobufHttpMessageConverter: ProtobufHttpMessageConverter,
 ) : WebMvcConfigurer {
 
     override fun addCorsMappings(registry: CorsRegistry) {
@@ -39,6 +40,6 @@ class WebMvcConfig(
     }
 
     override fun configureMessageConverters(converters: MutableList<HttpMessageConverter<*>>) {
-        converters.add(ProtobufHttpMessageConverter())
+        converters.add(protobufHttpMessageConverter)
     }
 }

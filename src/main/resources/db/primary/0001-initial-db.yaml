@@ -271,22 +271,32 @@ databaseChangeLog:
                   name: title
                   type: VARCHAR(1024)
                   constraints:
-                    nullable: true
+                    nullable: false
               - column:
                   name: name
                   type: VARCHAR(1024)
                   constraints:
-                    nullable: true
+                    nullable: false
               - column:
                   name: phone
                   type: VARCHAR(32)
                   constraints:
-                    nullable: true
+                    nullable: false
               - column:
                   name: email
-                  type: VARCHAR(516)
+                  type: VARCHAR(512)
                   constraints:
-                    nullable: true
+                    nullable: false
+              - column:
+                  name: job
+                  type: VARCHAR(512)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+                  constraints:
+                    nullable: false
               - column:
                   name: birth_date
                   type: TIMESTAMP(6)
@@ -301,17 +311,17 @@ databaseChangeLog:
                   name: public_id
                   type: VARCHAR(16)
                   constraints:
-                    nullable: true
+                    nullable: false
               - column:
                   name: is_public
                   type: BOOLEAN
                   constraints:
-                    nullable: true
+                    nullable: false
               - column:
                   name: is_default
                   type: BOOLEAN
                   constraints:
-                    nullable: true
+                    nullable: false
               - column:
                   name: worker_id
                   type: VARCHAR(16)
@@ -347,12 +357,12 @@ databaseChangeLog:
                   name: name
                   type: VARCHAR(1024)
                   constraints:
-                    nullable: true
+                    nullable: false
               - column:
                   name: position
                   type: VARCHAR(512)
                   constraints:
-                    nullable: true
+                    nullable: false
               - column:
                   name: employment_type
                   type: VARCHAR(32)
@@ -362,22 +372,27 @@ databaseChangeLog:
                   name: department
                   type: VARCHAR(512)
                   constraints:
-                    nullable: true
+                    nullable: false
               - column:
                   name: salary
                   type: INT
                   constraints:
-                    nullable: true
+                    nullable: false
               - column:
                   name: job_grade
                   type: VARCHAR(512)
                   constraints:
-                    nullable: true
+                    nullable: false
               - column:
                   name: job
                   type: VARCHAR(512)
                   constraints:
-                    nullable: true
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+                  constraints:
+                    nullable: false
               - column:
                   name: started_at
                   type: TIMESTAMP(6)
@@ -397,7 +412,7 @@ databaseChangeLog:
                   name: is_visible
                   type: BOOLEAN
                   constraints:
-                    nullable: true
+                    nullable: false
               - column:
                   name: resume_id
                   type: VARCHAR(16)
@@ -421,7 +436,7 @@ databaseChangeLog:
             tableName: careers
 
         - createTable:
-            tableName: achievements
+            tableName: projects
             columns:
               - column:
                   name: id
@@ -431,12 +446,12 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: title
-                  type: VARCHAR(512)
+                  type: VARCHAR(1024)
                   constraints:
                     nullable: true
               - column:
                   name: role
-                  type: VARCHAR(256)
+                  type: VARCHAR(512)
                   constraints:
                     nullable: true
               - column:
@@ -448,7 +463,7 @@ databaseChangeLog:
                   name: is_visible
                   type: BOOLEAN
                   constraints:
-                    nullable: true
+                    nullable: false
               - column:
                   name: started_at
                   type: TIMESTAMP(6)
@@ -460,7 +475,7 @@ databaseChangeLog:
                   constraints:
                     nullable: true
               - column:
-                  name: career_id
+                  name: resume_id
                   type: VARCHAR(16)
                   constraints:
                     nullable: false
@@ -477,9 +492,9 @@ databaseChangeLog:
         - createIndex:
             columns:
               - column:
-                  name: career_id
-            indexName: idx_achievements_career_id
-            tableName: achievements
+                  name: resume_id
+            indexName: idx_projects_resume_id
+            tableName: projects
 
         - createTable:
             tableName: salaries
@@ -509,7 +524,7 @@ databaseChangeLog:
                   name: is_visible
                   type: BOOLEAN
                   constraints:
-                    nullable: true
+                    nullable: false
               - column:
                   name: career_id
                   type: VARCHAR(16)
@@ -545,12 +560,17 @@ databaseChangeLog:
                   name: name
                   type: VARCHAR(1024)
                   constraints:
-                    nullable: true
+                    nullable: false
               - column:
                   name: major
                   type: VARCHAR(1024)
                   constraints:
-                    nullable: true
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+                  constraints:
+                    nullable: false
               - column:
                   name: status
                   type: VARCHAR(32)
@@ -570,7 +590,7 @@ databaseChangeLog:
                   name: is_visible
                   type: BOOLEAN
                   constraints:
-                    nullable: true
+                    nullable: false
               - column:
                   name: resume_id
                   type: VARCHAR(16)
@@ -611,17 +631,17 @@ databaseChangeLog:
                   name: file_name
                   type: VARCHAR(1024)
                   constraints:
-                    nullable: true
+                    nullable: false
               - column:
                   name: file_url
                   type: TEXT
                   constraints:
-                    nullable: true
+                    nullable: false
               - column:
                   name: is_visible
                   type: BOOLEAN
                   constraints:
-                    nullable: true
+                    nullable: false
               - column:
                   name: resume_id
                   type: VARCHAR(16)
@@ -662,22 +682,22 @@ databaseChangeLog:
                   name: name
                   type: VARCHAR(1024)
                   constraints:
-                    nullable: true
+                    nullable: false
               - column:
                   name: organization
                   type: VARCHAR(1024)
                   constraints:
-                    nullable: true
+                    nullable: false
               - column:
                   name: certificate_number
                   type: VARCHAR(512)
                   constraints:
-                    nullable: true
+                    nullable: false
               - column:
                   name: description
                   type: TEXT
                   constraints:
-                    nullable: true
+                    nullable: false
               - column:
                   name: started_at
                   type: TIMESTAMP(6)
@@ -692,7 +712,7 @@ databaseChangeLog:
                   name: is_visible
                   type: BOOLEAN
                   constraints:
-                    nullable: true
+                    nullable: false
               - column:
                   name: resume_id
                   type: VARCHAR(16)
@@ -738,7 +758,7 @@ databaseChangeLog:
                   name: is_visible
                   type: BOOLEAN
                   constraints:
-                    nullable: true
+                    nullable: false
               - column:
                   name: resume_id
                   type: VARCHAR(16)
@@ -774,12 +794,12 @@ databaseChangeLog:
                   name: name
                   type: VARCHAR(1024)
                   constraints:
-                    nullable: true
+                    nullable: false
               - column:
                   name: score
-                  type: VARCHAR(256)
+                  type: VARCHAR(512)
                   constraints:
-                    nullable: true
+                    nullable: false
               - column:
                   name: acquired_at
                   type: TIMESTAMP(6)
@@ -789,7 +809,7 @@ databaseChangeLog:
                   name: is_visible
                   type: BOOLEAN
                   constraints:
-                    nullable: true
+                    nullable: false
               - column:
                   name: language_skill_id
                   type: VARCHAR(16)

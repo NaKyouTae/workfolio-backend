@@ -27,16 +27,16 @@ class AttachmentService(
     @Transactional
     fun createAttachment(
         resumeId: String,
-        type: AttachmentType?,
-        fileName: String?,
-        fileUrl: String?,
-        isVisible: Boolean?,
+        type: AttachmentType? = null,
+        fileName: String? = null,
+        fileUrl: String? = null,
+        isVisible: Boolean,
     ): Attachment {
         val resume = resumeQueryService.getResume(resumeId)
         val attachment = Attachment(
             type = type,
-            fileName = fileName,
-            fileUrl = fileUrl,
+            fileName = fileName ?: "",
+            fileUrl = fileUrl ?: "",
             isVisible = isVisible,
             resume = resume,
         )
@@ -50,14 +50,14 @@ class AttachmentService(
         type: AttachmentType?,
         fileName: String?,
         fileUrl: String?,
-        isVisible: Boolean?,
+        isVisible: Boolean,
     ): Attachment {
         val attachment = this.getAttachment(id)
 
         attachment.changeInfo(
             type = type,
-            fileName = fileName,
-            fileUrl = fileUrl,
+            fileName = fileName ?: "",
+            fileUrl = fileUrl ?: "",
             isVisible = isVisible,
         )
 
@@ -68,6 +68,13 @@ class AttachmentService(
     fun deleteAttachment(id: String) {
         val attachment = this.getAttachment(id)
         attachmentRepository.delete(attachment)
+    }
+
+    @Transactional
+    fun deleteAttachments(attachmentIds: List<String>) {
+        if (attachmentIds.isNotEmpty()) {
+            attachmentRepository.deleteAllById(attachmentIds)
+        }
     }
 
     @Transactional

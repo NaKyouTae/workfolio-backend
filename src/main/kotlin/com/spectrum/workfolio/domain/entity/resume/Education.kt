@@ -24,21 +24,26 @@ import java.time.LocalDate
     ],
 )
 class Education(
-    name: String? = null,
-    major: String? = null,
-    status: EducationStatus? = null,
-    startedAt: LocalDate? = null,
+    name: String,
+    major: String,
+    description: String,
     endedAt: LocalDate? = null,
-    isVisible: Boolean? = null,
+    startedAt: LocalDate? = null,
+    status: EducationStatus? = null,
+    isVisible: Boolean,
     resume: Resume,
 ) : BaseEntity("ED") {
 
-    @Column(name = "name", length = 1024, nullable = true)
-    var name: String? = name
+    @Column(name = "name", length = 1024, nullable = false)
+    var name: String = name
         protected set
 
-    @Column(name = "major", length = 1024, nullable = true)
-    var major: String? = major
+    @Column(name = "major", length = 1024, nullable = false)
+    var major: String = major
+        protected set
+
+    @Column(name = "description", columnDefinition = "TEXT", nullable = false)
+    var description: String = description
         protected set
 
     @Enumerated(EnumType.STRING)
@@ -54,8 +59,8 @@ class Education(
     var endedAt: LocalDate? = endedAt
         protected set
 
-    @Column(name = "is_visible", nullable = true)
-    var isVisible: Boolean? = isVisible
+    @Column(name = "is_visible", nullable = false)
+    var isVisible: Boolean = isVisible
         protected set
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -64,15 +69,17 @@ class Education(
         protected set
 
     fun changeInfo(
-        name: String? = null,
-        major: String? = null,
-        status: EducationStatus? = null,
-        startedAt: LocalDate? = null,
+        name: String,
+        major: String,
+        description: String,
         endedAt: LocalDate? = null,
-        isVisible: Boolean? = null,
+        startedAt: LocalDate? = null,
+        status: EducationStatus? = null,
+        isVisible: Boolean,
     ) {
         this.name = name
         this.major = major
+        this.description = description
         this.status = status
         this.startedAt = startedAt
         this.endedAt = endedAt

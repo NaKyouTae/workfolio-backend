@@ -27,7 +27,7 @@ import jakarta.persistence.Table
 class LanguageSkill(
     language: Language? = null,
     level: LanguageLevel? = null,
-    isVisible: Boolean? = null,
+    isVisible: Boolean,
     resume: Resume,
 ) : BaseEntity("LS") {
 
@@ -41,8 +41,8 @@ class LanguageSkill(
     var level: LanguageLevel? = level
         protected set
 
-    @Column(name = "is_visible", nullable = true)
-    var isVisible: Boolean? = isVisible
+    @Column(name = "is_visible", nullable = false)
+    var isVisible: Boolean = isVisible
         protected set
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -57,7 +57,7 @@ class LanguageSkill(
     fun changeInfo(
         language: Language? = null,
         level: LanguageLevel? = null,
-        isVisible: Boolean? = null,
+        isVisible: Boolean,
     ) {
         this.language = language
         this.level = level

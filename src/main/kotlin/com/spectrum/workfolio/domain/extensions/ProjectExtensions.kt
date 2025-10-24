@@ -1,24 +1,20 @@
 package com.spectrum.workfolio.domain.extensions
 
-import com.spectrum.workfolio.domain.entity.resume.Achievement
+import com.spectrum.workfolio.domain.entity.resume.Project
 import com.spectrum.workfolio.utils.TimeUtil
 
-fun Achievement.toProto(): com.spectrum.workfolio.proto.common.Achievement {
-    val builder = com.spectrum.workfolio.proto.common.Achievement.newBuilder()
+fun Project.toProto(): com.spectrum.workfolio.proto.common.Project {
+    val builder = com.spectrum.workfolio.proto.common.Project.newBuilder()
 
     builder.setId(this.id)
     builder.setTitle(this.title)
     builder.setRole(this.role)
     builder.setDescription(this.description)
-
-    builder.setCareer(this.career.toProto())
-
+    builder.setIsVisible(this.isVisible)
+    builder.setResume(this.resume.toProto())
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
 
-    if (this.isVisible != null) {
-        builder.setIsVisible(this.isVisible!!)
-    }
     if (this.startedAt != null) {
         builder.setStartedAt(TimeUtil.toEpochMilli(this.startedAt!!))
     }
@@ -29,19 +25,17 @@ fun Achievement.toProto(): com.spectrum.workfolio.proto.common.Achievement {
     return builder.build()
 }
 
-fun Achievement.toProtoWithoutCareer(): com.spectrum.workfolio.proto.common.Achievement {
-    val builder = com.spectrum.workfolio.proto.common.Achievement.newBuilder()
+fun Project.toProtoWithoutResume(): com.spectrum.workfolio.proto.common.Project {
+    val builder = com.spectrum.workfolio.proto.common.Project.newBuilder()
 
     builder.setId(this.id)
     builder.setTitle(this.title)
     builder.setRole(this.role)
     builder.setDescription(this.description)
+    builder.setIsVisible(this.isVisible)
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
 
-    if (this.isVisible != null) {
-        builder.setIsVisible(this.isVisible!!)
-    }
     if (this.startedAt != null) {
         builder.setStartedAt(TimeUtil.toEpochMilli(this.startedAt!!))
     }

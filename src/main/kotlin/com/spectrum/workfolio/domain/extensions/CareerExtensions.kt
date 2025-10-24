@@ -10,14 +10,15 @@ fun Career.toProto(): com.spectrum.workfolio.proto.common.Career {
     builder.setName(this.name)
     builder.setPosition(this.position)
     builder.setDepartment(this.department)
-    builder.setSalary(this.salary ?: 0)
+    builder.setSalary(this.salary)
     builder.setJobGrade(this.jobGrade)
     builder.setJob(this.job)
+    builder.setDescription(this.description)
     builder.setResume(this.resume.toProto())
+    builder.setIsVisible(this.isVisible)
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
 
-    builder.addAllAchievements(achievements.map { it.toProtoWithoutCareer() })
     builder.addAllSalaries(salaries.map { it.toProtoWithoutCareer() })
 
     if (this.employmentType != null) {
@@ -27,9 +28,6 @@ fun Career.toProto(): com.spectrum.workfolio.proto.common.Career {
     }
     if (this.isWorking != null) {
         builder.setIsWorking(this.isWorking!!)
-    }
-    if (this.isVisible != null) {
-        builder.setIsVisible(this.isVisible!!)
     }
     if (this.startedAt != null) {
         builder.setStartedAt(TimeUtil.toEpochMilli(this.startedAt!!))
@@ -48,12 +46,14 @@ fun Career.toProtoWithoutResume(): com.spectrum.workfolio.proto.common.Career {
     builder.setName(name)
     builder.setPosition(position)
     builder.setDepartment(department)
-    builder.setSalary(salary ?: 0)
+    builder.setSalary(salary)
     builder.setJobGrade(jobGrade)
     builder.setJob(job)
+    builder.setDescription(this.description)
+    builder.setIsVisible(this.isVisible)
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
-    builder.addAllAchievements(achievements.map { it.toProtoWithoutCareer() })
+
     builder.addAllSalaries(salaries.map { it.toProtoWithoutCareer() })
 
     if (this.employmentType != null) {
@@ -63,9 +63,6 @@ fun Career.toProtoWithoutResume(): com.spectrum.workfolio.proto.common.Career {
     }
     if (this.isWorking != null) {
         builder.setIsWorking(this.isWorking!!)
-    }
-    if (this.isVisible != null) {
-        builder.setIsVisible(this.isVisible!!)
     }
     if (this.startedAt != null) {
         builder.setStartedAt(TimeUtil.toEpochMilli(this.startedAt!!))

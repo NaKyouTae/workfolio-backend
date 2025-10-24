@@ -28,31 +28,33 @@ import java.time.LocalDate
     ],
 )
 class Resume(
-    title: String? = null,
-    name: String? = null,
-    birthDate: LocalDate? = null,
+    title: String,
+    name: String,
+    job: String,
+    phone: String,
+    email: String,
+    publicId: String,
+    isPublic: Boolean,
+    isDefault: Boolean,
+    description: String,
     gender: Gender? = null,
-    phone: String? = null,
-    email: String? = null,
-    isPublic: Boolean? = null,
-    isDefault: Boolean? = null,
-    publicId: String? = null,
+    birthDate: LocalDate? = null,
     worker: Worker,
 ) : BaseEntity("RS") {
-    @Column(name = "title", length = 1024, nullable = true)
-    var title: String? = title
+    @Column(name = "title", length = 1024, nullable = false)
+    var title: String = title
         protected set
 
-    @Column(name = "name", length = 1024, nullable = true)
-    var name: String? = name
+    @Column(name = "name", length = 1024, nullable = false)
+    var name: String = name
         protected set
 
-    @Column(name = "phone", length = 32, nullable = true)
-    var phone: String? = phone
+    @Column(name = "phone", length = 32, nullable = false)
+    var phone: String = phone
         protected set
 
-    @Column(name = "email", length = 516, nullable = true)
-    var email: String? = email
+    @Column(name = "email", length = 512, nullable = false)
+    var email: String = email
         protected set
 
     @Column(name = "birth_date", nullable = true)
@@ -64,16 +66,24 @@ class Resume(
     var gender: Gender? = gender
         protected set
 
-    @Column(name = "public_id", length = 16, nullable = true)
-    var publicId: String? = publicId
+    @Column(name = "job", length = 512, nullable = false)
+    var job: String = job
         protected set
 
-    @Column(name = "is_public", nullable = true)
-    var isPublic: Boolean? = isPublic
+    @Column(name = "description", columnDefinition = "TEXT", nullable = false)
+    var description: String = description
         protected set
 
-    @Column(name = "is_default", nullable = true)
-    var isDefault: Boolean? = isDefault
+    @Column(name = "public_id", length = 16, nullable = false)
+    var publicId: String = publicId
+        protected set
+
+    @Column(name = "is_public", nullable = false)
+    var isPublic: Boolean = isPublic
+        protected set
+
+    @Column(name = "is_default", nullable = false)
+    var isDefault: Boolean = isDefault
         protected set
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -82,12 +92,16 @@ class Resume(
         protected set
 
     @OneToMany(mappedBy = "resume", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
+    private var mutableEducations: MutableList<Education> = mutableListOf()
+    val educations: List<Education> get() = mutableEducations.toList()
+
+    @OneToMany(mappedBy = "resume", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
     private var mutableCareers: MutableList<Career> = mutableListOf()
     val careers: List<Career> get() = mutableCareers.toList()
 
     @OneToMany(mappedBy = "resume", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
-    private var mutableEducations: MutableList<Education> = mutableListOf()
-    val educations: List<Education> get() = mutableEducations.toList()
+    private var mutableProjects: MutableList<Project> = mutableListOf()
+    val projects: List<Project> get() = mutableProjects.toList()
 
     @OneToMany(mappedBy = "resume", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
     private var mutableActivities: MutableList<Activity> = mutableListOf()
@@ -102,23 +116,27 @@ class Resume(
     val attachments: List<Attachment> get() = mutableAttachments.toList()
 
     fun changeInfo(
-        title: String? = null,
-        name: String? = null,
-        phone: String? = null,
-        email: String? = null,
-        birthDate: LocalDate? = null,
+        title: String,
+        name: String,
+        job: String,
+        phone: String,
+        email: String,
+        isPublic: Boolean,
+        isDefault: Boolean,
+        description: String,
         gender: Gender? = null,
-        isPublic: Boolean? = null,
-        isDefault: Boolean? = null,
+        birthDate: LocalDate? = null,
     ) {
         this.title = title
         this.name = name
+        this.job = job
         this.phone = phone
         this.email = email
-        this.birthDate = birthDate
-        this.gender = gender
         this.isPublic = isPublic
         this.isDefault = isDefault
+        this.description = description
+        this.gender = gender
+        this.birthDate = birthDate
     }
 
     companion object {

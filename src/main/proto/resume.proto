@@ -16,92 +16,81 @@ message ResumeUpdateRequest {
   message CareerRequest {
     message Career {
       enum EmploymentType {
-        UNKNOWN = 0;
-        FULL_TIME = 1;
-        CONTRACT = 2;
-        INTERN = 3;
-        FREELANCER = 4;
+        FULL_TIME = 0;
+        CONTRACT = 1;
+        INTERN = 2;
+        FREELANCER = 3;
       }
 
       optional string id = 1;
-      optional string name = 2;
+      string name = 2;
       optional uint64 started_at = 3;
       optional uint64 ended_at = 4;
       optional bool is_working = 5;
-      optional string position = 6;
+      string position = 6;
       optional EmploymentType employmentType = 7;
-      optional string department = 8;
-      optional string job_grade = 9;
-      optional string job = 10;
-      optional uint32 salary = 11;
+      string department = 8;
+      string job_grade = 9;
+      string job = 10;
+      uint32 salary = 11;
+      string description = 12;
 
-      optional bool is_visible = 30;
-    }
-
-    message Achievement {
-      optional string id = 1;
-      optional string title = 2;
-      optional string role = 3;
-      optional string description = 4;
-      optional uint64 started_at = 5;
-      optional uint64 ended_at = 6;
-
-      optional bool is_visible = 30;
+      bool is_visible = 30;
     }
 
     message Salary {
       optional string id = 1;
-      optional uint64 amount = 2;
-      optional uint64 negotiation_date = 3;
-      optional string memo = 4;
+      uint64 amount = 2;
+      string memo = 3;
+      optional uint64 negotiation_date = 4;
 
-      optional bool is_visible = 30;
+      bool is_visible = 30;
     }
 
     CareerRequest.Career career = 1;
-    repeated CareerRequest.Achievement achievements = 2;
     repeated CareerRequest.Salary salaries = 3;
   }
 
   message EducationRequest {
     optional string id = 1;
-    optional string major = 2;
-    optional string name = 3;
-    optional Education.EducationStatus status = 4;
-    optional uint64 started_at = 5;
-    optional uint64 ended_at = 6;
+    string major = 2;
+    string name = 3;
+    string description = 4;
+    optional Education.EducationStatus status = 5;
+    optional uint64 started_at = 6;
+    optional uint64 ended_at = 7;
 
-    optional bool is_visible = 30;
+    bool is_visible = 30;
   }
 
   message ActivityRequest {
     optional string id = 1;
     optional Activity.ActivityType type = 2;
-    optional string name = 3;
-    optional string organization = 4;
-    optional string certificate_number = 5;
+    string name = 3;
+    string organization = 4;
+    string certificate_number = 5;
     optional uint64 started_at = 6;
     optional uint64 ended_at = 7;
-    optional string description = 8;
+    string description = 8;
 
-    optional bool is_visible = 30;
+    bool is_visible = 30;
   }
 
   message LanguageSkillRequest {
     message LanguageTestRequest {
       optional string id = 1;
-      optional string name = 2;
-      optional string score = 3;
+      string name = 2;
+      string score = 3;
       optional uint64 acquired_at = 4;
 
-      optional bool is_visible = 30;
+      bool is_visible = 30;
     }
 
     optional string id = 1;
     optional LanguageSkill.Language language = 2;
     optional LanguageSkill.LanguageLevel level = 3;
 
-    optional bool is_visible = 30;
+    bool is_visible = 30;
 
     repeated LanguageTestRequest language_tests = 99;
   }
@@ -109,23 +98,38 @@ message ResumeUpdateRequest {
   message AttachmentRequest {
     optional string id = 1;
     optional Attachment.AttachmentType type = 2;
-    optional string file_name = 3;
-    optional string file_url = 4;
+    string file_name = 3;
+    string file_url = 4;
 
-    optional bool is_visible = 30;
+    bool is_visible = 30;
+  }
+
+  message ProjectRequest {
+    optional string id = 1;
+    string title = 2;
+    string role = 3;
+    string description = 4;
+    optional uint64 started_at = 5;
+    optional uint64 ended_at = 6;
+
+    bool is_visible = 30;
   }
 
   string id = 1;
-  optional string title = 2;
-  optional string name = 3;
-  optional string phone = 4;
-  optional string email = 5;
+  string title = 2;
+  string name = 3;
+  string phone = 4;
+  string email = 5;
   optional uint64 birth_date = 6;
   optional Resume.Gender gender = 7;
-  optional bool is_public = 8;
-  optional bool is_default = 9;
+  string job = 8;
+  optional bool is_public = 9;
+  optional bool is_default = 10;
+  string public_id = 11;
+  string description = 12;
 
   repeated CareerRequest careers = 51;
+  repeated ProjectRequest projects = 52;
   repeated EducationRequest educations = 53;
   repeated ActivityRequest activities = 54;
   repeated LanguageSkillRequest languages = 55;

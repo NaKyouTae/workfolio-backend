@@ -28,24 +28,24 @@ class ActivityService(
     @Transactional
     fun createActivity(
         resumeId: String,
-        type: ActivityType?,
-        name: String?,
-        organization: String?,
-        certificateNumber: String?,
-        startedAt: Long?,
-        endedAt: Long?,
-        description: String?,
-        isVisible: Boolean?,
+        type: ActivityType? = null,
+        name: String? = null,
+        organization: String? = null,
+        certificateNumber: String? = null,
+        startedAt: Long? = null,
+        endedAt: Long? = null,
+        description: String? = null,
+        isVisible: Boolean,
     ): Activity {
         val resume = resumeQueryService.getResume(resumeId)
         val activity = Activity(
             type = type,
-            name = name,
-            organization = organization,
-            certificateNumber = certificateNumber,
+            name = name ?: "",
+            organization = organization ?: "",
+            certificateNumber = certificateNumber ?: "",
             startedAt = if (startedAt != null && startedAt > 0) TimeUtil.ofEpochMilli(startedAt).toLocalDate() else null,
             endedAt = if (endedAt != null && endedAt > 0) TimeUtil.ofEpochMilli(endedAt).toLocalDate() else null,
-            description = description,
+            description = description ?: "",
             isVisible = isVisible,
             resume = resume,
         )
@@ -56,25 +56,25 @@ class ActivityService(
     @Transactional
     fun updateActivity(
         id: String,
-        type: ActivityType?,
-        name: String?,
-        organization: String?,
-        certificateNumber: String?,
-        startedAt: Long?,
-        endedAt: Long?,
-        description: String?,
-        isVisible: Boolean?,
+        type: ActivityType? = null,
+        name: String? = null,
+        organization: String? = null,
+        certificateNumber: String? = null,
+        startedAt: Long? = null,
+        endedAt: Long? = null,
+        description: String? = null,
+        isVisible: Boolean,
     ): Activity {
         val activity = this.getActivity(id)
 
         activity.changeInfo(
             type = type,
-            name = name,
-            organization = organization,
-            certificateNumber = certificateNumber,
+            name = name ?: "",
+            organization = organization ?: "",
+            certificateNumber = certificateNumber ?: "",
             startedAt = if (startedAt != null && startedAt > 0) TimeUtil.ofEpochMilli(startedAt).toLocalDate() else null,
             endedAt = if (endedAt != null && endedAt > 0) TimeUtil.ofEpochMilli(endedAt).toLocalDate() else null,
-            description = description,
+            description = description ?: "",
             isVisible = isVisible,
         )
 
@@ -85,6 +85,13 @@ class ActivityService(
     fun deleteActivity(id: String) {
         val activity = this.getActivity(id)
         activityRepository.delete(activity)
+    }
+
+    @Transactional
+    fun deleteActivities(activityIds: List<String>) {
+        if (activityIds.isNotEmpty()) {
+            activityRepository.deleteAllById(activityIds)
+        }
     }
 
     @Transactional

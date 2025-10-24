@@ -15,16 +15,18 @@ fun Resume.toProto(): com.spectrum.workfolio.proto.common.Resume {
     builder.setName(this.name)
     builder.setPhone(this.phone)
     builder.setEmail(this.email)
+    builder.setJob(this.job)
     builder.setPublicId(this.publicId)
+    builder.setIsPublic(this.isPublic)
+    builder.setIsDefault(this.isDefault)
+    builder.setDescription(this.description)
 
     builder.setWorker(this.worker.toProto())
 
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
 
-    if (this.isPublic != null) builder.setIsPublic(this.isPublic!!)
-    if (this.isDefault != null) builder.setIsDefault(this.isDefault!!)
-    if (this.birthDate != null) builder.setBrithDate(TimeUtil.toEpochMilli(this.birthDate!!))
+    if (this.birthDate != null) builder.setBirthDate(TimeUtil.toEpochMilli(this.birthDate!!))
     if (this.gender != null) {
         builder.setGender(
             com.spectrum.workfolio.proto.common.Resume.Gender.valueOf(this.gender!!.name),
@@ -42,24 +44,27 @@ fun Resume.toDetailProto(): com.spectrum.workfolio.proto.common.ResumeDetail {
     builder.setName(this.name)
     builder.setPhone(this.phone)
     builder.setEmail(this.email)
+    builder.setJob(this.job)
     builder.setPublicId(this.publicId)
+    builder.setIsPublic(this.isPublic)
+    builder.setIsDefault(this.isDefault)
+    builder.setDescription(this.description)
 
     builder.setWorker(this.worker.toProto())
 
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
 
-    if (this.isPublic != null) builder.setIsPublic(this.isPublic!!)
-    if (this.isDefault != null) builder.setIsDefault(this.isDefault!!)
-    if (this.birthDate != null) builder.setBrithDate(TimeUtil.toEpochMilli(this.birthDate!!))
+    if (this.birthDate != null) builder.setBirthDate(TimeUtil.toEpochMilli(this.birthDate!!))
     if (this.gender != null) {
         builder.setGender(
             com.spectrum.workfolio.proto.common.Resume.Gender.valueOf(this.gender!!.name),
         )
     }
 
-    builder.addAllCareers(this.careers.map { it.toProtoWithoutResume() })
     builder.addAllEducations(this.educations.map { it.toProtoWithoutResume() })
+    builder.addAllCareers(this.careers.map { it.toProtoWithoutResume() })
+    builder.addAllProjects(this.projects.map { it.toProtoWithoutResume() })
     builder.addAllActivities(this.activities.map { it.toProtoWithoutResume() })
     builder.addAllLanguageSkills(this.languageSkills.map { it.toProtoWithoutResume() })
     builder.addAllAttachments(this.attachments.map { it.toProtoWithoutResume() })

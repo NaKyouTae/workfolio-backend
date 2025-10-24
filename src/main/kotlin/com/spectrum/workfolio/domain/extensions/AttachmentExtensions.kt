@@ -9,14 +9,16 @@ fun Attachment.toProto(): com.spectrum.workfolio.proto.common.Attachment {
     builder.setId(this.id)
     builder.setFileName(this.fileName)
     builder.setFileUrl(this.fileUrl)
-
+    builder.setIsVisible(this.isVisible)
     builder.setResume(this.resume.toProto())
 
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
 
-    if (this.isVisible != null) {
-        builder.setIsVisible(this.isVisible!!)
+    if (this.type != null) {
+        builder.setType(
+            com.spectrum.workfolio.proto.common.Attachment.AttachmentType.valueOf(this.type!!.name),
+        )
     }
 
     return builder.build()
@@ -28,12 +30,14 @@ fun Attachment.toProtoWithoutResume(): com.spectrum.workfolio.proto.common.Attac
     builder.setId(this.id)
     builder.setFileName(this.fileName)
     builder.setFileUrl(this.fileUrl)
-
+    builder.setIsVisible(this.isVisible)
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
 
-    if (this.isVisible != null) {
-        builder.setIsVisible(this.isVisible!!)
+    if (this.type != null) {
+        builder.setType(
+            com.spectrum.workfolio.proto.common.Attachment.AttachmentType.valueOf(this.type!!.name),
+        )
     }
 
     return builder.build()

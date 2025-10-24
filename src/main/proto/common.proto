@@ -35,21 +35,22 @@ message Account {
 
 message Resume {
   enum Gender {
-    UNKNOWN = 0;
-    MALE = 1;
-    FEMALE = 2;
+    MALE = 0;
+    FEMALE = 1;
   }
 
   string id = 1;
-  optional string title = 2;
-  optional string name = 3;
-  optional string phone = 4;
-  optional string email = 5;
-  optional uint64 brith_date = 6;
-  optional Gender gender = 7;
-  optional bool is_public = 8;
-  optional bool is_default = 9;
-  optional string public_id = 10;
+  string title = 2;
+  string name = 3;
+  string phone = 4;
+  string email = 5;
+  optional uint64 birth_date = 6;
+  optional Resume.Gender gender = 7;
+  string job = 8;
+  optional bool is_public = 9;
+  optional bool is_default = 10;
+  string public_id = 11;
+  string description = 12;
 
   Worker worker = 50;
 
@@ -59,23 +60,26 @@ message Resume {
 
 message ResumeDetail {
   string id = 1;
-  optional string title = 2;
-  optional string name = 3;
-  optional string phone = 4;
-  optional string email = 5;
-  optional uint64 brith_date = 6;
+  string title = 2;
+  string name = 3;
+  string phone = 4;
+  string email = 5;
+  optional uint64 birth_date = 6;
   optional Resume.Gender gender = 7;
-  optional bool is_public = 8;
-  optional bool is_default = 9;
-  optional string public_id = 10;
+  string job = 8;
+  optional bool is_public = 9;
+  optional bool is_default = 10;
+  string public_id = 11;
+  string description = 12;
 
   Worker worker = 50;
 
   repeated Career careers = 51;
   repeated Education educations = 52;
   repeated Activity activities = 53;
-  repeated LanguageSkill language_skills = 54;
-  repeated Attachment attachments = 55;
+  repeated Project projects = 54;
+  repeated LanguageSkill language_skills = 55;
+  repeated Attachment attachments = 56;
 
   uint64 created_at = 98;
   uint64 updated_at = 99;
@@ -83,26 +87,26 @@ message ResumeDetail {
 
 message Career {
   enum EmploymentType {
-    UNKNOWN = 0;
-    FULL_TIME = 1;
-    CONTRACT = 2;
-    INTERN = 3;
-    FREELANCER = 4;
+    FULL_TIME = 0;
+    CONTRACT = 1;
+    INTERN = 2;
+    FREELANCER = 3;
   }
 
   string id = 1;
-  optional string name = 2;
+  string name = 2;
   optional uint64 started_at = 3;
   optional uint64 ended_at = 4;
   optional bool is_working = 5;
-  optional string position = 6;
+  string position = 6;
   optional EmploymentType employmentType = 7;
-  optional string department = 8;
-  optional string job_grade = 9;
-  optional string job = 10;
-  optional uint32 salary = 11;
+  string department = 8;
+  string job_grade = 9;
+  string job = 10;
+  uint32 salary = 11;
+  string description = 12;
 
-  optional bool is_visible = 30;
+  bool is_visible = 30;
 
   Resume resume = 50;
   repeated Achievement achievements = 51;
@@ -114,13 +118,13 @@ message Career {
 
 message Achievement {
   string id = 1;
-  optional string title = 2;
-  optional string role = 3;
-  optional string description = 4;
+  string title = 2;
+  string role = 3;
+  string description = 4;
   optional uint64 started_at = 5;
   optional uint64 ended_at = 6;
 
-  optional bool is_visible = 30;
+  bool is_visible = 30;
 
   Career career = 50;
 
@@ -130,11 +134,11 @@ message Achievement {
 
 message Salary {
   string id = 1;
-  optional uint64 amount = 2;
-  optional uint64 negotiation_date = 3;
-  optional string memo = 4;
+  uint64 amount = 2;
+  string memo = 3;
+  optional uint64 negotiation_date = 4;
 
-  optional bool is_visible = 30;
+  bool is_visible = 30;
 
   Career career = 50;
 
@@ -144,23 +148,23 @@ message Salary {
 
 message Education {
   enum EducationStatus {
-    UNKNOWN = 0;
-    GRADUATED = 1;
-    GRADUATING = 2;
-    ENROLLED = 3;
-    DROPPED_OUT = 4;
-    COMPLETED = 5;
-    ON_LEAVE = 6;
+    GRADUATED = 0;
+    GRADUATING = 1;
+    ENROLLED = 2;
+    DROPPED_OUT = 3;
+    COMPLETED = 4;
+    ON_LEAVE = 5;
   }
 
   string id = 1;
-  optional string major = 2;
-  optional string name = 3;
-  optional EducationStatus status = 4;
-  optional uint64 started_at = 5;
-  optional uint64 ended_at = 6;
+  string major = 2;
+  string name = 3;
+  string description = 4;
+  optional EducationStatus status = 5;
+  optional uint64 started_at = 6;
+  optional uint64 ended_at = 7;
 
-  optional bool is_visible = 30;
+  bool is_visible = 30;
 
   Resume resume = 50;
 
@@ -170,25 +174,40 @@ message Education {
 
 message Activity {
   enum ActivityType {
-    UNKNOWN = 0;
-    INTERNSHIP = 1;
-    EXTERNAL = 2;
-    EDUCATION = 3;
-    CERTIFICATION = 4;
-    AWARD = 5;
-    ETC = 6;
+    EXTERNAL = 0;
+    EDUCATION = 1;
+    CERTIFICATION = 2;
+    AWARD = 3;
+    COMPETITION = 4;
+    ETC = 5;
   }
 
   string id = 1;
   optional ActivityType type = 2;
-  optional string name = 3;
-  optional string organization = 4;
-  optional string certificate_number = 5;
+  string name = 3;
+  string organization = 4;
+  string certificate_number = 5;
   optional uint64 started_at = 6;
   optional uint64 ended_at = 7;
-  optional string description = 8;
+  string description = 8;
 
-  optional bool is_visible = 30;
+  bool is_visible = 30;
+
+  Resume resume = 50;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
+}
+
+message Project {
+  string id = 1;
+  string title = 2;
+  string role = 3;
+  string description = 4;
+  optional uint64 started_at = 5;
+  optional uint64 ended_at = 6;
+
+  bool is_visible = 30;
 
   Resume resume = 50;
 
@@ -198,36 +217,34 @@ message Activity {
 
 message LanguageSkill {
   enum Language {
-    LANGUAGE_UNKNOWN = 0;
-    ENGLISH = 1;
-    JAPANESE = 2;
-    CHINESE = 3;
-    KOREAN = 4;
-    FRENCH = 5;
-    SPANISH = 6;
-    GERMAN = 7;
-    RUSSIAN = 8;
-    VIETNAMESE = 9;
-    ITALIAN = 10;
-    THAI = 11;
-    ARABIC = 12;
-    PORTUGUESE = 13;
-    INDONESIAN = 14;
-    MONGOLIAN = 15;
-    TURKISH = 16;
+    ENGLISH = 0;
+    JAPANESE = 1;
+    CHINESE = 2;
+    KOREAN = 3;
+    FRENCH = 4;
+    SPANISH = 5;
+    GERMAN = 6;
+    RUSSIAN = 7;
+    VIETNAMESE = 8;
+    ITALIAN = 9;
+    THAI = 10;
+    ARABIC = 11;
+    PORTUGUESE = 12;
+    INDONESIAN = 13;
+    MONGOLIAN = 14;
+    TURKISH = 15;
   }
   enum LanguageLevel {
-    LANGUAGE_LEVEL_UNKNOWN = 0;
-    DAILY_CONVERSATION = 1;
-    BUSINESS_CONVERSATION = 2;
-    NATIVE_LEVEL = 3;
+    DAILY_CONVERSATION = 0;
+    BUSINESS_CONVERSATION = 1;
+    NATIVE_LEVEL = 2;
   }
 
   string id = 1;
   optional Language language = 2;
   optional LanguageLevel level = 3;
 
-  optional bool is_visible = 30;
+  bool is_visible = 30;
 
   Resume resume = 50;
   repeated LanguageTest language_tests = 51;
@@ -238,11 +255,11 @@ message LanguageSkill {
 
 message LanguageTest {
   string id = 1;
-  optional string name = 2;
-  optional string score = 3;
+  string name = 2;
+  string score = 3;
   optional uint64 acquired_at = 4;
 
-  optional bool is_visible = 30;
+  bool is_visible = 30;
 
   LanguageSkill language_skill = 50;
 
@@ -252,18 +269,19 @@ message LanguageTest {
 
 message Attachment {
   enum AttachmentType {
-    UNKNOWN = 0;
-    RESUME = 1;
-    PORTFOLIO = 2;
-    CERTIFICATE = 3;
+    RESUME = 0;
+    PORTFOLIO = 1;
+    CERTIFICATE = 2;
+    CAREER_STATEMENT = 3;
+    ETC = 4;
   }
 
   string id = 1;
   optional AttachmentType type = 2;
-  optional string file_name = 3;
-  optional string file_url = 4;
+  string file_name = 3;
+  string file_url = 4;
 
-  optional bool is_visible = 30;
+  bool is_visible = 30;
 
   Resume resume = 50;
 

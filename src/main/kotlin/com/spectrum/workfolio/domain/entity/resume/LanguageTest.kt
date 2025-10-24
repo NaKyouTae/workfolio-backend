@@ -21,27 +21,27 @@ import java.time.LocalDate
     ],
 )
 class LanguageTest(
-    name: String? = null,
-    score: String? = null,
+    name: String,
+    score: String,
     acquiredAt: LocalDate? = null,
-    isVisible: Boolean? = null,
+    isVisible: Boolean,
     languageSkill: LanguageSkill,
 ) : BaseEntity("LT") {
 
-    @Column(name = "name", length = 1024, nullable = true)
-    var name: String? = name
+    @Column(name = "name", length = 1024, nullable = false)
+    var name: String = name
         protected set
 
-    @Column(name = "score", length = 256, nullable = true)
-    var score: String? = score
+    @Column(name = "score", length = 512, nullable = false)
+    var score: String = score
         protected set
 
     @Column(name = "acquired_at", nullable = true)
     var acquiredAt: LocalDate? = acquiredAt
         protected set
 
-    @Column(name = "is_visible", nullable = true)
-    var isVisible: Boolean? = isVisible
+    @Column(name = "is_visible", nullable = false)
+    var isVisible: Boolean = isVisible
         protected set
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -50,10 +50,10 @@ class LanguageTest(
         protected set
 
     fun changeInfo(
-        name: String? = null,
-        score: String? = null,
+        name: String,
+        score: String,
         acquiredAt: LocalDate? = null,
-        isVisible: Boolean? = null,
+        isVisible: Boolean,
     ) {
         this.name = name
         this.score = score

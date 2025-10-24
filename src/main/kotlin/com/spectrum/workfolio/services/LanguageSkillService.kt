@@ -17,7 +17,9 @@ class LanguageSkillService(
 
     @Transactional(readOnly = true)
     fun getLanguageSkill(id: String): LanguageSkill {
-        return languageSkillRepository.findById(id).orElseThrow { WorkfolioException(MsgKOR.NOT_FOUND_LANGUAGE_SKILL.message) }
+        return languageSkillRepository.findById(id).orElseThrow {
+            WorkfolioException(MsgKOR.NOT_FOUND_LANGUAGE_SKILL.message)
+        }
     }
 
     @Transactional(readOnly = true)
@@ -28,9 +30,9 @@ class LanguageSkillService(
     @Transactional
     fun createLanguageSkill(
         resumeId: String,
-        language: Language?,
-        level: LanguageLevel?,
-        isVisible: Boolean?,
+        language: Language? = null,
+        level: LanguageLevel? = null,
+        isVisible: Boolean,
     ): LanguageSkill {
         val resume = resumeQueryService.getResume(resumeId)
         val languageSkill = LanguageSkill(
@@ -46,9 +48,9 @@ class LanguageSkillService(
     @Transactional
     fun updateLanguageSkill(
         id: String,
-        language: Language?,
-        level: LanguageLevel?,
-        isVisible: Boolean?,
+        language: Language? = null,
+        level: LanguageLevel? = null,
+        isVisible: Boolean,
     ): LanguageSkill {
         val languageSkill = this.getLanguageSkill(id)
 
@@ -65,6 +67,13 @@ class LanguageSkillService(
     fun deleteLanguageSkill(id: String) {
         val languageSkill = this.getLanguageSkill(id)
         languageSkillRepository.delete(languageSkill)
+    }
+
+    @Transactional
+    fun deleteLanguageSkills(languageSkillIds: List<String>) {
+        if (languageSkillIds.isNotEmpty()) {
+            languageSkillRepository.deleteAllById(languageSkillIds)
+        }
     }
 
     @Transactional
