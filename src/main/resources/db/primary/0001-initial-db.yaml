@@ -456,17 +456,22 @@ databaseChangeLog:
                   name: title
                   type: VARCHAR(1024)
                   constraints:
-                    nullable: true
+                    nullable: false
+              - column:
+                  name: affiliation
+                  type: VARCHAR(512)
+                  constraints:
+                    nullable: false
               - column:
                   name: role
                   type: VARCHAR(512)
                   constraints:
-                    nullable: true
+                    nullable: false
               - column:
                   name: description
                   type: TEXT
                   constraints:
-                    nullable: true
+                    nullable: false
               - column:
                   name: is_visible
                   type: BOOLEAN
@@ -525,7 +530,7 @@ databaseChangeLog:
                   name: amount
                   type: BIGINT
                   constraints:
-                    nullable: true
+                    nullable: false
               - column:
                   name: negotiation_date
                   type: TIMESTAMP(6)
@@ -535,7 +540,7 @@ databaseChangeLog:
                   name: memo
                   type: TEXT
                   constraints:
-                    nullable: true
+                    nullable: false
               - column:
                   name: is_visible
                   type: BOOLEAN

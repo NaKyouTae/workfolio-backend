@@ -22,6 +22,7 @@ import java.time.LocalDate
 )
 class Project(
     title: String,
+    affiliation: String,
     role: String,
     description: String,
     startedAt: LocalDate? = null,
@@ -31,16 +32,20 @@ class Project(
     resume: Resume,
 ) : BaseEntity("AC") {
 
-    @Column(name = "title", length = 1024, nullable = true)
-    var title: String? = title
+    @Column(name = "title", length = 1024, nullable = false)
+    var title: String = title
         protected set
 
-    @Column(name = "role", length = 512, nullable = true)
-    var role: String? = role
+    @Column(name = "affiliation", length = 512, nullable = false)
+    var affiliation: String = affiliation
         protected set
 
-    @Column(name = "description", columnDefinition = "TEXT", nullable = true)
-    var description: String? = description
+    @Column(name = "role", length = 512, nullable = false)
+    var role: String = role
+        protected set
+
+    @Column(name = "description", columnDefinition = "TEXT", nullable = false)
+    var description: String = description
         protected set
 
     @Column(name = "started_at", nullable = true)
@@ -67,6 +72,7 @@ class Project(
     fun changeInfo(
         title: String,
         role: String,
+        affiliation: String,
         description: String,
         startedAt: LocalDate? = null,
         endedAt: LocalDate? = null,
@@ -75,6 +81,7 @@ class Project(
     ) {
         this.title = title
         this.role = role
+        this.affiliation = affiliation
         this.description = description
         this.startedAt = startedAt
         this.endedAt = endedAt

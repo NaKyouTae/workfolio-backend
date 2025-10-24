@@ -28,6 +28,7 @@ class ProjectService(
     fun createProject(
         resumeId: String,
         title: String? = null,
+        affiliation: String? = null,
         role: String? = null,
         description: String? = null,
         startedAt: Long? = null,
@@ -39,6 +40,7 @@ class ProjectService(
         val project = Project(
             title = title ?: "",
             role = role ?: "",
+            affiliation = affiliation ?: "",
             description = description ?: "",
             startedAt = if (startedAt != null && startedAt > 0) {
                 TimeUtil.ofEpochMilli(startedAt).toLocalDate()
@@ -62,6 +64,7 @@ class ProjectService(
     fun updateProject(
         id: String,
         title: String? = null,
+        affiliation: String? = null,
         role: String? = null,
         description: String? = null,
         startedAt: Long? = null,
@@ -74,6 +77,7 @@ class ProjectService(
         project.changeInfo(
             title = title ?: "",
             role = role ?: "",
+            affiliation = affiliation ?: "",
             description = description ?: "",
             startedAt = if (startedAt != null && startedAt > 0) {
                 TimeUtil.ofEpochMilli(startedAt).toLocalDate()
