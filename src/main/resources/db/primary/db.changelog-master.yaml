@@ -1,4 +1,3 @@
 databaseChangeLog:
   - include:
       file: db/primary/0001-initial-db.yaml
-

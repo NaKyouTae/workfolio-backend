@@ -10,6 +10,7 @@ fun Attachment.toProto(): com.spectrum.workfolio.proto.common.Attachment {
     builder.setFileName(this.fileName)
     builder.setFileUrl(this.fileUrl)
     builder.setIsVisible(this.isVisible)
+    builder.setPriority(this.priority)
     builder.setResume(this.resume.toProto())
 
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
@@ -31,6 +32,7 @@ fun Attachment.toProtoWithoutResume(): com.spectrum.workfolio.proto.common.Attac
     builder.setFileName(this.fileName)
     builder.setFileUrl(this.fileUrl)
     builder.setIsVisible(this.isVisible)
+    builder.setPriority(this.priority)
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
 

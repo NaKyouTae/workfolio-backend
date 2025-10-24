@@ -10,13 +10,13 @@ import org.springframework.stereotype.Repository
 @Repository
 interface ActivityRepository : JpaRepository<Activity, String> {
 
-    fun findByResumeId(resumeId: String): List<Activity>
+    fun findByResumeIdOrderByPriorityAsc(resumeId: String): List<Activity>
 
-    @Query("SELECT a FROM Activity a WHERE a.resume.worker.id = :workerId")
+    @Query("SELECT a FROM Activity a WHERE a.resume.worker.id = :workerId ORDER BY a.priority ASC")
     fun findByWorkerId(@Param("workerId") workerId: String): List<Activity>
 
-    @Query("SELECT a FROM Activity a WHERE a.resume.id = :resumeId AND a.isVisible = true")
+    @Query("SELECT a FROM Activity a WHERE a.resume.id = :resumeId AND a.isVisible = true ORDER BY a.priority ASC")
     fun findVisibleByResumeId(@Param("resumeId") resumeId: String): List<Activity>
 
-    fun findByResumeIdAndType(resumeId: String, type: ActivityType): List<Activity>
+    fun findByResumeIdAndTypeOrderByPriorityAsc(resumeId: String, type: ActivityType): List<Activity>
 }

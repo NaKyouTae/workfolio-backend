@@ -28,6 +28,7 @@ class LanguageTestService(
         score: String? = null,
         acquiredAt: Long? = null,
         isVisible: Boolean,
+        priority: Int = 0,
     ): LanguageTest {
         val languageSkill = languageSkillService.getLanguageSkill(languageSkillId)
         val languageTest = LanguageTest(
@@ -35,6 +36,7 @@ class LanguageTestService(
             score = score ?: "",
             acquiredAt = if (acquiredAt != null && acquiredAt > 0) TimeUtil.ofEpochMilli(acquiredAt).toLocalDate() else null,
             isVisible = isVisible,
+            priority = priority,
             languageSkill = languageSkill,
         )
 
@@ -48,6 +50,7 @@ class LanguageTestService(
         score: String? = null,
         acquiredAt: Long? = null,
         isVisible: Boolean,
+        priority: Int = 0,
     ): LanguageTest {
         val languageTest = this.getLanguageTest(id)
 
@@ -56,6 +59,7 @@ class LanguageTestService(
             score = score ?: "",
             acquiredAt = if (acquiredAt != null && acquiredAt > 0) TimeUtil.ofEpochMilli(acquiredAt).toLocalDate() else null,
             isVisible = isVisible,
+            priority = priority,
         )
 
         return languageTestRepository.save(languageTest)
@@ -76,7 +80,7 @@ class LanguageTestService(
 
     @Transactional
     fun deleteLanguageTestsByLanguageSkillId(languageSkillId: String) {
-        val languageTests = languageTestRepository.findByLanguageSkillId(languageSkillId)
+        val languageTests = languageTestRepository.findByLanguageSkillIdOrderByPriorityAsc(languageSkillId)
         languageTestRepository.deleteAll(languageTests)
     }
 }

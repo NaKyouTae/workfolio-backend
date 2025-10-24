@@ -11,6 +11,7 @@ fun Salary.toProto(): com.spectrum.workfolio.proto.common.Salary {
     builder.setMemo(this.memo)
     builder.setCareer(this.career.toProto())
     builder.setIsVisible(this.isVisible)
+    builder.setPriority(this.priority)
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
 
@@ -28,6 +29,7 @@ fun Salary.toProtoWithoutCareer(): com.spectrum.workfolio.proto.common.Salary {
     builder.setAmount(this.amount)
     builder.setMemo(this.memo)
     builder.setIsVisible(this.isVisible)
+    builder.setPriority(this.priority)
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
 

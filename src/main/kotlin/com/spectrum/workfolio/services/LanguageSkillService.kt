@@ -24,7 +24,7 @@ class LanguageSkillService(
 
     @Transactional(readOnly = true)
     fun listLanguageSkills(resumeId: String): List<LanguageSkill> {
-        return languageSkillRepository.findByResumeId(resumeId)
+        return languageSkillRepository.findByResumeIdOrderByPriorityAsc(resumeId)
     }
 
     @Transactional
@@ -33,12 +33,14 @@ class LanguageSkillService(
         language: Language? = null,
         level: LanguageLevel? = null,
         isVisible: Boolean,
+        priority: Int,
     ): LanguageSkill {
         val resume = resumeQueryService.getResume(resumeId)
         val languageSkill = LanguageSkill(
             language = language,
             level = level,
             isVisible = isVisible,
+            priority = priority,
             resume = resume,
         )
 
@@ -51,6 +53,7 @@ class LanguageSkillService(
         language: Language? = null,
         level: LanguageLevel? = null,
         isVisible: Boolean,
+        priority: Int = 0,
     ): LanguageSkill {
         val languageSkill = this.getLanguageSkill(id)
 
@@ -58,6 +61,7 @@ class LanguageSkillService(
             language = language,
             level = level,
             isVisible = isVisible,
+            priority = priority,
         )
 
         return languageSkillRepository.save(languageSkill)
@@ -78,7 +82,7 @@ class LanguageSkillService(
 
     @Transactional
     fun deleteLanguageSkillsByResumeId(resumeId: String) {
-        val languageSkills = languageSkillRepository.findByResumeId(resumeId)
+        val languageSkills = languageSkillRepository.findByResumeIdOrderByPriorityAsc(resumeId)
         languageSkillRepository.deleteAll(languageSkills)
     }
 }

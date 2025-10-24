@@ -11,6 +11,7 @@ fun Education.toProto(): com.spectrum.workfolio.proto.common.Education {
     builder.setMajor(this.major)
     builder.setDescription(this.description)
     builder.setIsVisible(this.isVisible)
+    builder.setPriority(this.priority)
     builder.setResume(this.resume.toProto())
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
@@ -38,6 +39,7 @@ fun Education.toProtoWithoutResume(): com.spectrum.workfolio.proto.common.Educat
     builder.setMajor(this.major)
     builder.setDescription(this.description)
     builder.setIsVisible(this.isVisible)
+    builder.setPriority(this.priority)
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
 

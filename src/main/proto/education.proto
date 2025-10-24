@@ -21,6 +21,7 @@ message EducationCreateRequest {
   optional uint64 ended_at = 7;
 
   bool is_visible = 30;
+  uint32 priority = 31;
 
   string resume_id = 99;
 }
@@ -35,6 +36,7 @@ message EducationUpdateRequest {
   optional uint64 ended_at = 7;
 
   bool is_visible = 30;
+  uint32 priority = 31;
 }
 
 message EducationResponse {

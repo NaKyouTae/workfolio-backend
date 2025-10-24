@@ -10,13 +10,13 @@ import org.springframework.stereotype.Repository
 @Repository
 interface AttachmentRepository : JpaRepository<Attachment, String> {
 
-    fun findByResumeId(resumeId: String): List<Attachment>
+    fun findByResumeIdOrderByPriorityAsc(resumeId: String): List<Attachment>
 
-    @Query("SELECT a FROM Attachment a WHERE a.resume.worker.id = :workerId")
+    @Query("SELECT a FROM Attachment a WHERE a.resume.worker.id = :workerId ORDER BY a.priority ASC")
     fun findByWorkerId(@Param("workerId") workerId: String): List<Attachment>
 
-    @Query("SELECT a FROM Attachment a WHERE a.resume.id = :resumeId AND a.isVisible = true")
+    @Query("SELECT a FROM Attachment a WHERE a.resume.id = :resumeId AND a.isVisible = true ORDER BY a.priority ASC")
     fun findVisibleByResumeId(@Param("resumeId") resumeId: String): List<Attachment>
 
-    fun findByResumeIdAndType(resumeId: String, type: AttachmentType): List<Attachment>
+    fun findByResumeIdAndTypeOrderByPriorityAsc(resumeId: String, type: AttachmentType): List<Attachment>
 }

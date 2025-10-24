@@ -107,6 +107,7 @@ message Career {
   string description = 12;
 
   bool is_visible = 30;
+  uint32 priority = 31;
 
   Resume resume = 50;
   repeated Achievement achievements = 51;
@@ -139,6 +140,7 @@ message Salary {
   optional uint64 negotiation_date = 4;
 
   bool is_visible = 30;
+  uint32 priority = 31;
 
   Career career = 50;
 
@@ -165,6 +167,7 @@ message Education {
   optional uint64 ended_at = 7;
 
   bool is_visible = 30;
+  uint32 priority = 31;
 
   Resume resume = 50;
 
@@ -192,6 +195,7 @@ message Activity {
   string description = 8;
 
   bool is_visible = 30;
+  uint32 priority = 31;
 
   Resume resume = 50;
 
@@ -208,6 +212,7 @@ message Project {
   optional uint64 ended_at = 6;
 
   bool is_visible = 30;
+  uint32 priority = 31;
 
   Resume resume = 50;
 
@@ -245,6 +250,7 @@ message LanguageSkill {
   optional LanguageLevel level = 3;
 
   bool is_visible = 30;
+  uint32 priority = 31;
 
   Resume resume = 50;
   repeated LanguageTest language_tests = 51;
@@ -260,6 +266,7 @@ message LanguageTest {
   optional uint64 acquired_at = 4;
 
   bool is_visible = 30;
+  uint32 priority = 31;
 
   LanguageSkill language_skill = 50;
 
@@ -282,6 +289,7 @@ message Attachment {
   string file_url = 4;
 
   bool is_visible = 30;
+  uint32 priority = 31;
 
   Resume resume = 50;
 

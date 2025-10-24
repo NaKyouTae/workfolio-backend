@@ -9,11 +9,11 @@ import org.springframework.stereotype.Repository
 @Repository
 interface ProjectRepository : JpaRepository<Project, String> {
 
-    fun findByResumeId(resumeId: String): List<Project>
+    fun findByResumeIdOrderByPriorityAsc(resumeId: String): List<Project>
 
-    @Query("SELECT p FROM Project p WHERE p.resume.worker.id = :workerId")
+    @Query("SELECT p FROM Project p WHERE p.resume.worker.id = :workerId ORDER BY p.priority ASC")
     fun findByWorkerId(@Param("workerId") workerId: String): List<Project>
 
-    @Query("SELECT p FROM Project p WHERE p.resume.id = :resumeId AND p.isVisible = true")
+    @Query("SELECT p FROM Project p WHERE p.resume.id = :resumeId AND p.isVisible = true ORDER BY p.priority ASC")
     fun findVisibleByResumeId(@Param("resumeId") resumeId: String): List<Project>
 }

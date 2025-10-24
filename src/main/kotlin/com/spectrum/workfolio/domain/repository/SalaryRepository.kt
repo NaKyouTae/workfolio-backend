@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface SalaryRepository : JpaRepository<Salary, String> {
-    fun findByCareerIdOrderByNegotiationDateDesc(careerId: String): List<Salary>
+    fun findByCareerIdOrderByPriorityAscNegotiationDateDesc(careerId: String): List<Salary>
 }

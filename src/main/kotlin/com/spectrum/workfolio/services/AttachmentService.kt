@@ -21,7 +21,7 @@ class AttachmentService(
 
     @Transactional(readOnly = true)
     fun listAttachments(resumeId: String): List<Attachment> {
-        return attachmentRepository.findByResumeId(resumeId)
+        return attachmentRepository.findByResumeIdOrderByPriorityAsc(resumeId)
     }
 
     @Transactional
@@ -31,6 +31,7 @@ class AttachmentService(
         fileName: String? = null,
         fileUrl: String? = null,
         isVisible: Boolean,
+        priority: Int = 0,
     ): Attachment {
         val resume = resumeQueryService.getResume(resumeId)
         val attachment = Attachment(
@@ -38,6 +39,7 @@ class AttachmentService(
             fileName = fileName ?: "",
             fileUrl = fileUrl ?: "",
             isVisible = isVisible,
+            priority = priority,
             resume = resume,
         )
 
@@ -51,6 +53,7 @@ class AttachmentService(
         fileName: String?,
         fileUrl: String?,
         isVisible: Boolean,
+        priority: Int = 0,
     ): Attachment {
         val attachment = this.getAttachment(id)
 
@@ -59,6 +62,7 @@ class AttachmentService(
             fileName = fileName ?: "",
             fileUrl = fileUrl ?: "",
             isVisible = isVisible,
+            priority = priority,
         )
 
         return attachmentRepository.save(attachment)
@@ -79,7 +83,7 @@ class AttachmentService(
 
     @Transactional
     fun deleteAttachmentsByResumeId(resumeId: String) {
-        val attachments = attachmentRepository.findByResumeId(resumeId)
+        val attachments = attachmentRepository.findByResumeIdOrderByPriorityAsc(resumeId)
         attachmentRepository.deleteAll(attachments)
     }
 }

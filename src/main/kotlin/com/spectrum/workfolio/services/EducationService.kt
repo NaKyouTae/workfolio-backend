@@ -28,7 +28,7 @@ class EducationService(
     @Transactional(readOnly = true)
     fun listEducations(resumeId: String): EducationListResponse {
         val resume = resumeQueryService.getResume(resumeId)
-        val educations = educationRepository.findByResumeIdOrderByStartedAtDescEndedAtDesc(resume.id)
+        val educations = educationRepository.findByResumeIdOrderByPriorityAscStartedAtDescEndedAtDesc(resume.id)
         return EducationListResponse.newBuilder()
             .addAllEducations(educations.map { it.toProto() })
             .build()
@@ -45,6 +45,7 @@ class EducationService(
             startedAt = if (request.hasStartedAt() && request.startedAt != 0L) TimeUtil.ofEpochMilli(request.startedAt).toLocalDate() else null,
             endedAt = if (request.hasEndedAt() && request.endedAt != 0L) TimeUtil.ofEpochMilli(request.endedAt).toLocalDate() else null,
             isVisible = request.isVisible,
+            priority = request.priority,
             resume = resume,
         )
 
@@ -65,6 +66,7 @@ class EducationService(
             startedAt = if (request.hasStartedAt() && request.startedAt != 0L) TimeUtil.ofEpochMilli(request.startedAt).toLocalDate() else null,
             endedAt = if (request.hasEndedAt() && request.endedAt != 0L) TimeUtil.ofEpochMilli(request.endedAt).toLocalDate() else null,
             isVisible = request.isVisible,
+            priority = request.priority,
         )
 
         val updatedEducation = educationRepository.save(education)
@@ -87,7 +89,7 @@ class EducationService(
 
     @Transactional
     fun deleteEducationsByResumeId(resumeId: String) {
-        val educations = educationRepository.findByResumeIdOrderByStartedAtDescEndedAtDesc(resumeId)
+        val educations = educationRepository.findByResumeIdOrderByPriorityAscStartedAtDescEndedAtDesc(resumeId)
         educationRepository.deleteAll(educations)
     }
 }

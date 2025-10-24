@@ -22,7 +22,7 @@ import java.time.LocalDate
 @Table(
     name = "careers",
     indexes = [
-        Index(name = "idx_careers_resume_id", columnList = "resume_id"),
+        Index(name = "idx_careers_resume_id_priority", columnList = "resume_id, priority"),
     ],
 )
 class Career(
@@ -34,6 +34,7 @@ class Career(
     department: String, // 부서
     description: String,
     isVisible: Boolean,
+    priority: Int = 0, // 정렬 순서
     isWorking: Boolean? = null, // 재직중
     endedAt: LocalDate? = null, // 퇴사년원
     startedAt: LocalDate? = null, // 입사년월
@@ -89,6 +90,10 @@ class Career(
     var isVisible: Boolean = isVisible
         protected set
 
+    @Column(name = "priority", nullable = false)
+    var priority: Int = priority
+        protected set
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resume_id", nullable = false)
     var resume: Resume = resume
@@ -106,6 +111,7 @@ class Career(
         jobGrade: String, // 직급
         department: String, // 부서
         isVisible: Boolean,
+        priority: Int = 0, // 정렬 순서
         description: String,
         isWorking: Boolean? = null, // 재직중
         endedAt: LocalDate? = null, // 퇴사년원
@@ -124,6 +130,7 @@ class Career(
         this.endedAt = endedAt
         this.isWorking = isWorking
         this.isVisible = isVisible
+        this.priority = priority
     }
 
     fun addSalary(salary: Salary) {

@@ -21,7 +21,7 @@ class ProjectService(
 
     @Transactional(readOnly = true)
     fun listProjects(resumeId: String): List<Project> {
-        return projectRepository.findByResumeId(resumeId)
+        return projectRepository.findByResumeIdOrderByPriorityAsc(resumeId)
     }
 
     @Transactional
@@ -33,6 +33,7 @@ class ProjectService(
         startedAt: Long? = null,
         endedAt: Long? = null,
         isVisible: Boolean,
+        priority: Int = 0,
     ): Project {
         val resume = resumeQueryService.getResume(resumeId)
         val project = Project(
@@ -50,6 +51,7 @@ class ProjectService(
                 null
             },
             isVisible = isVisible,
+            priority = priority,
             resume = resume,
         )
 
@@ -65,6 +67,7 @@ class ProjectService(
         startedAt: Long? = null,
         endedAt: Long? = null,
         isVisible: Boolean,
+        priority: Int = 0,
     ): Project {
         val project = this.getProject(id)
 
@@ -83,6 +86,7 @@ class ProjectService(
                 null
             },
             isVisible = isVisible,
+            priority = priority,
         )
 
         return projectRepository.save(project)
@@ -103,7 +107,7 @@ class ProjectService(
 
     @Transactional
     fun deleteProjectsByResumeId(resumeId: String) {
-        val projects = projectRepository.findByResumeId(resumeId)
+        val projects = projectRepository.findByResumeIdOrderByPriorityAsc(resumeId)
         projectRepository.deleteAll(projects)
     }
 }

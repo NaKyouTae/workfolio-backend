@@ -119,6 +119,7 @@ class ResumeCommandService(
                         .setStartedAt(request.startedAt)
                         .setEndedAt(request.endedAt)
                         .setIsVisible(request.isVisible)
+                        .setPriority(request.priority)
                         .build(),
                 )
             } else {
@@ -133,6 +134,7 @@ class ResumeCommandService(
                         .setStartedAt(request.startedAt)
                         .setEndedAt(request.endedAt)
                         .setIsVisible(request.isVisible)
+                        .setPriority(request.priority)
                         .build(),
                 )
             }
@@ -175,6 +177,7 @@ class ResumeCommandService(
                         .setEndedAt(career.endedAt)
                         .setIsWorking(career.isWorking)
                         .setIsVisible(career.isVisible)
+                        .setPriority(career.priority)
                         .build(),
                 )
                 createdCareer
@@ -199,6 +202,7 @@ class ResumeCommandService(
                         .setEndedAt(career.endedAt)
                         .setIsWorking(career.isWorking)
                         .setIsVisible(career.isVisible)
+                        .setPriority(career.priority)
                         .build(),
                 )
                 updatedCareer
@@ -229,6 +233,7 @@ class ResumeCommandService(
                         amount = salaryRequest.amount,
                         memo = salaryRequest.memo,
                         isVisible = salaryRequest.isVisible,
+                        priority = salaryRequest.priority,
                         negotiationDate = negotiationDate,
                         career = careerEntity,
                     )
@@ -241,6 +246,7 @@ class ResumeCommandService(
                         negotiationDate = negotiationDate,
                         memo = salaryRequest.memo,
                         isVisible = salaryRequest.isVisible,
+                        priority = salaryRequest.priority,
                     )
                 }
             }
@@ -271,6 +277,7 @@ class ResumeCommandService(
                     startedAt = request.startedAt,
                     endedAt = request.endedAt,
                     isVisible = request.isVisible,
+                    priority = request.priority,
                 )
             } else {
                 // 수정
@@ -282,6 +289,7 @@ class ResumeCommandService(
                     startedAt = request.startedAt,
                     endedAt = request.endedAt,
                     isVisible = request.isVisible,
+                    priority = request.priority,
                 )
             }
         }
@@ -313,6 +321,7 @@ class ResumeCommandService(
                     endedAt = request.endedAt,
                     description = request.description,
                     isVisible = request.isVisible,
+                    priority = request.priority,
                 )
             } else {
                 // 수정
@@ -326,6 +335,7 @@ class ResumeCommandService(
                     endedAt = request.endedAt,
                     description = request.description,
                     isVisible = request.isVisible,
+                    priority = request.priority,
                 )
             }
         }
@@ -353,6 +363,7 @@ class ResumeCommandService(
                     fileName = request.fileName,
                     fileUrl = request.fileUrl,
                     isVisible = request.isVisible,
+                    priority = request.priority,
                 )
             } else {
                 // 수정
@@ -362,6 +373,7 @@ class ResumeCommandService(
                     fileName = request.fileName,
                     fileUrl = request.fileUrl,
                     isVisible = request.isVisible,
+                    priority = request.priority,
                 )
             }
         }
@@ -388,6 +400,7 @@ class ResumeCommandService(
                     language = convertProtoEnumSafe<com.spectrum.workfolio.domain.enums.Language>(request.language),
                     level = convertProtoEnumSafe<com.spectrum.workfolio.domain.enums.LanguageLevel>(request.level),
                     isVisible = request.isVisible,
+                    priority = request.priority,
                 )
                 createdLanguageSkill.id
             } else {
@@ -397,6 +410,7 @@ class ResumeCommandService(
                     language = convertProtoEnumSafe<com.spectrum.workfolio.domain.enums.Language>(request.language),
                     level = convertProtoEnumSafe<com.spectrum.workfolio.domain.enums.LanguageLevel>(request.level),
                     isVisible = request.isVisible,
+                    priority = request.priority,
                 )
                 request.id
             }
@@ -420,6 +434,7 @@ class ResumeCommandService(
                         score = testRequest.score,
                         acquiredAt = testRequest.acquiredAt,
                         isVisible = testRequest.isVisible,
+                        priority = testRequest.priority,
                     )
                 } else {
                     // 수정
@@ -429,6 +444,7 @@ class ResumeCommandService(
                         score = testRequest.score,
                         acquiredAt = testRequest.acquiredAt,
                         isVisible = testRequest.isVisible,
+                        priority = testRequest.priority,
                     )
                 }
             }

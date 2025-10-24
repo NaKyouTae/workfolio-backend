@@ -414,6 +414,12 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: priority
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
                   name: resume_id
                   type: VARCHAR(16)
                   constraints:
@@ -432,7 +438,9 @@ databaseChangeLog:
             columns:
               - column:
                   name: resume_id
-            indexName: idx_careers_resume_id
+              - column:
+                  name: priority
+            indexName: idx_careers_resume_id_priority
             tableName: careers
 
         - createTable:
@@ -465,6 +473,12 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: priority
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
                   name: started_at
                   type: TIMESTAMP(6)
                   constraints:
@@ -493,7 +507,9 @@ databaseChangeLog:
             columns:
               - column:
                   name: resume_id
-            indexName: idx_projects_resume_id
+              - column:
+                  name: priority
+            indexName: idx_projects_resume_id_priority
             tableName: projects
 
         - createTable:
@@ -526,6 +542,12 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: priority
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
                   name: career_id
                   type: VARCHAR(16)
                   constraints:
@@ -544,7 +566,9 @@ databaseChangeLog:
             columns:
               - column:
                   name: career_id
-            indexName: idx_salaries_career_id
+              - column:
+                  name: priority
+            indexName: idx_salaries_career_id_priority
             tableName: salaries
 
         - createTable:
@@ -592,6 +616,12 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: priority
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
                   name: resume_id
                   type: VARCHAR(16)
                   constraints:
@@ -610,7 +640,9 @@ databaseChangeLog:
             columns:
               - column:
                   name: resume_id
-            indexName: idx_educations_resume_id
+              - column:
+                  name: priority
+            indexName: idx_educations_resume_id_priority
             tableName: educations
 
         - createTable:
@@ -643,6 +675,12 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: priority
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
                   name: resume_id
                   type: VARCHAR(16)
                   constraints:
@@ -661,7 +699,9 @@ databaseChangeLog:
             columns:
               - column:
                   name: resume_id
-            indexName: idx_attachments_resume_id
+              - column:
+                  name: priority
+            indexName: idx_attachments_resume_id_priority
             tableName: attachments
 
         - createTable:
@@ -714,6 +754,12 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: priority
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
                   name: resume_id
                   type: VARCHAR(16)
                   constraints:
@@ -732,7 +778,9 @@ databaseChangeLog:
             columns:
               - column:
                   name: resume_id
-            indexName: idx_activities_resume_id
+              - column:
+                  name: priority
+            indexName: idx_activities_resume_id_priority
             tableName: activities
 
         - createTable:
@@ -760,6 +808,12 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: priority
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
                   name: resume_id
                   type: VARCHAR(16)
                   constraints:
@@ -778,7 +832,9 @@ databaseChangeLog:
             columns:
               - column:
                   name: resume_id
-            indexName: idx_language_skills_resume_id
+              - column:
+                  name: priority
+            indexName: idx_language_skills_resume_id_priority
             tableName: language_skills
 
         - createTable:
@@ -811,6 +867,12 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: priority
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
                   name: language_skill_id
                   type: VARCHAR(16)
                   constraints:
@@ -829,7 +891,9 @@ databaseChangeLog:
             columns:
               - column:
                   name: language_skill_id
-            indexName: idx_language_tests_language_skill_id
+              - column:
+                  name: priority
+            indexName: idx_language_tests_language_skill_id_priority
             tableName: language_tests
 
         - createTable:

@@ -22,6 +22,7 @@ message CareerCreateRequest {
   string description = 12;
 
   bool is_visible = 30;
+  uint32 priority = 31;
 
   string resume_id = 99;
 }
@@ -41,6 +42,7 @@ message CareerUpdateRequest {
   string description = 12;
 
   bool is_visible = 30;
+  uint32 priority = 31;
 }
 
 message CareerListResponse {

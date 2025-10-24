@@ -19,13 +19,14 @@ import jakarta.persistence.Table
 @Table(
     name = "attachments",
     indexes = [
-        Index(name = "idx_attachments_resume_id", columnList = "resume_id"),
+        Index(name = "idx_attachments_resume_id_priority", columnList = "resume_id, priority"),
     ],
 )
 class Attachment(
     fileName: String,
     fileUrl: String,
     isVisible: Boolean,
+    priority: Int = 0,
     type: AttachmentType? = null,
     resume: Resume,
 ) : BaseEntity("AH") {
@@ -47,6 +48,10 @@ class Attachment(
     var isVisible: Boolean = isVisible
         protected set
 
+    @Column(name = "priority", nullable = false)
+    var priority: Int = priority
+        protected set
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resume_id", nullable = false)
     var resume: Resume = resume
@@ -56,11 +61,13 @@ class Attachment(
         fileName: String,
         fileUrl: String,
         isVisible: Boolean,
+        priority: Int = 0,
         type: AttachmentType? = null,
     ) {
         this.type = type
         this.fileName = fileName
         this.fileUrl = fileUrl
         this.isVisible = isVisible
+        this.priority = priority
     }
 }

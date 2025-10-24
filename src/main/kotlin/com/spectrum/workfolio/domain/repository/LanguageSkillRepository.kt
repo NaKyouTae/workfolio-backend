@@ -10,13 +10,17 @@ import org.springframework.stereotype.Repository
 @Repository
 interface LanguageSkillRepository : JpaRepository<LanguageSkill, String> {
 
-    fun findByResumeId(resumeId: String): List<LanguageSkill>
+    fun findByResumeIdOrderByPriorityAsc(resumeId: String): List<LanguageSkill>
 
-    @Query("SELECT ls FROM LanguageSkill ls WHERE ls.resume.worker.id = :workerId")
+    @Query("SELECT ls FROM LanguageSkill ls WHERE ls.resume.worker.id = :workerId ORDER BY ls.priority ASC")
     fun findByWorkerId(@Param("workerId") workerId: String): List<LanguageSkill>
 
-    @Query("SELECT ls FROM LanguageSkill ls WHERE ls.resume.id = :resumeId AND ls.isVisible = true")
-    fun findVisibleByResumeId(@Param("resumeId") resumeId: String): List<LanguageSkill>
+    @Query(
+        "SELECT ls FROM LanguageSkill ls WHERE ls.resume.id = :resumeId AND ls.isVisible = true ORDER BY ls.priority ASC",
+    )
+    fun findVisibleByResumeId(
+        @Param("resumeId") resumeId: String,
+    ): List<LanguageSkill>
 
     fun findByResumeIdAndLanguage(resumeId: String, language: Language): LanguageSkill?
 }

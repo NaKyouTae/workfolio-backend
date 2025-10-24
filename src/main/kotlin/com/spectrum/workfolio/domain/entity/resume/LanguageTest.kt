@@ -17,7 +17,7 @@ import java.time.LocalDate
 @Table(
     name = "language_tests",
     indexes = [
-        Index(name = "idx_language_tests_language_skill_id", columnList = "language_skill_id"),
+        Index(name = "idx_language_tests_language_skill_id_priority", columnList = "language_skill_id, priority"),
     ],
 )
 class LanguageTest(
@@ -25,6 +25,7 @@ class LanguageTest(
     score: String,
     acquiredAt: LocalDate? = null,
     isVisible: Boolean,
+    priority: Int = 0,
     languageSkill: LanguageSkill,
 ) : BaseEntity("LT") {
 
@@ -44,6 +45,10 @@ class LanguageTest(
     var isVisible: Boolean = isVisible
         protected set
 
+    @Column(name = "priority", nullable = false)
+    var priority: Int = priority
+        protected set
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "language_skill_id", nullable = false)
     var languageSkill: LanguageSkill = languageSkill
@@ -54,10 +59,12 @@ class LanguageTest(
         score: String,
         acquiredAt: LocalDate? = null,
         isVisible: Boolean,
+        priority: Int = 0,
     ) {
         this.name = name
         this.score = score
         this.acquiredAt = acquiredAt
         this.isVisible = isVisible
+        this.priority = priority
     }
 }

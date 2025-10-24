@@ -20,7 +20,7 @@ import java.time.LocalDate
 @Table(
     name = "educations",
     indexes = [
-        Index(name = "idx_educations_resume_id", columnList = "resume_id"),
+        Index(name = "idx_educations_resume_id_priority", columnList = "resume_id, priority"),
     ],
 )
 class Education(
@@ -31,6 +31,7 @@ class Education(
     startedAt: LocalDate? = null,
     status: EducationStatus? = null,
     isVisible: Boolean,
+    priority: Int = 0,
     resume: Resume,
 ) : BaseEntity("ED") {
 
@@ -63,6 +64,10 @@ class Education(
     var isVisible: Boolean = isVisible
         protected set
 
+    @Column(name = "priority", nullable = false)
+    var priority: Int = priority
+        protected set
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resume_id", nullable = false)
     var resume: Resume = resume
@@ -76,6 +81,7 @@ class Education(
         startedAt: LocalDate? = null,
         status: EducationStatus? = null,
         isVisible: Boolean,
+        priority: Int = 0,
     ) {
         this.name = name
         this.major = major
@@ -84,5 +90,6 @@ class Education(
         this.startedAt = startedAt
         this.endedAt = endedAt
         this.isVisible = isVisible
+        this.priority = priority
     }
 }

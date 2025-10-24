@@ -17,7 +17,7 @@ import java.time.LocalDate
 @Table(
     name = "salaries",
     indexes = [
-        Index(name = "idx_salaries_career_id", columnList = "career_id"),
+        Index(name = "idx_salaries_career_id_priority", columnList = "career_id, priority"),
     ],
 )
 class Salary(
@@ -25,6 +25,7 @@ class Salary(
     memo: String,
     negotiationDate: LocalDate? = null,
     isVisible: Boolean,
+    priority: Int = 0,
     career: Career,
 ) : BaseEntity("SA") {
     @Column(name = "amount", nullable = false)
@@ -43,15 +44,20 @@ class Salary(
     var isVisible: Boolean = isVisible
         protected set
 
+    @Column(name = "priority", nullable = false)
+    var priority: Int = priority
+        protected set
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "career_id", nullable = false)
     var career: Career = career
         protected set
 
-    fun changeInfo(amount: Long, negotiationDate: LocalDate?, memo: String, isVisible: Boolean) {
+    fun changeInfo(amount: Long, negotiationDate: LocalDate?, memo: String, isVisible: Boolean, priority: Int = 0) {
         this.amount = amount
         this.negotiationDate = negotiationDate
         this.memo = memo
         this.isVisible = isVisible
+        this.priority = priority
     }
 }

@@ -16,6 +16,7 @@ fun Career.toProto(): com.spectrum.workfolio.proto.common.Career {
     builder.setDescription(this.description)
     builder.setResume(this.resume.toProto())
     builder.setIsVisible(this.isVisible)
+    builder.setPriority(this.priority)
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
 
@@ -51,6 +52,7 @@ fun Career.toProtoWithoutResume(): com.spectrum.workfolio.proto.common.Career {
     builder.setJob(job)
     builder.setDescription(this.description)
     builder.setIsVisible(this.isVisible)
+    builder.setPriority(this.priority)
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
 

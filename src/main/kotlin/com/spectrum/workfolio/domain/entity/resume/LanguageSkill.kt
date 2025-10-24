@@ -21,13 +21,14 @@ import jakarta.persistence.Table
 @Table(
     name = "language_skills",
     indexes = [
-        Index(name = "idx_language_skills_resume_id", columnList = "resume_id"),
+        Index(name = "idx_language_skills_resume_id_priority", columnList = "resume_id, priority"),
     ],
 )
 class LanguageSkill(
     language: Language? = null,
     level: LanguageLevel? = null,
     isVisible: Boolean,
+    priority: Int = 0,
     resume: Resume,
 ) : BaseEntity("LS") {
 
@@ -45,6 +46,10 @@ class LanguageSkill(
     var isVisible: Boolean = isVisible
         protected set
 
+    @Column(name = "priority", nullable = false)
+    var priority: Int = priority
+        protected set
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resume_id", nullable = false)
     var resume: Resume = resume
@@ -58,9 +63,11 @@ class LanguageSkill(
         language: Language? = null,
         level: LanguageLevel? = null,
         isVisible: Boolean,
+        priority: Int = 0,
     ) {
         this.language = language
         this.level = level
         this.isVisible = isVisible
+        this.priority = priority
     }
 }

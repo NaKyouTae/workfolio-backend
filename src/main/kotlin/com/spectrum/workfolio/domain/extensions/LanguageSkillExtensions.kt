@@ -8,6 +8,7 @@ fun LanguageSkill.toProto(): com.spectrum.workfolio.proto.common.LanguageSkill {
 
     builder.setId(this.id)
     builder.setIsVisible(this.isVisible)
+    builder.setPriority(this.priority)
     builder.setResume(this.resume.toProto())
     builder.addAllLanguageTests(this.languageTests.map { it.toProtoWithoutSkill() })
 
@@ -33,6 +34,7 @@ fun LanguageSkill.toProtoWithoutResume(): com.spectrum.workfolio.proto.common.La
 
     builder.setId(this.id)
     builder.setIsVisible(this.isVisible)
+    builder.setPriority(this.priority)
     builder.addAllLanguageTests(this.languageTests.map { it.toProtoWithoutSkill() })
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))

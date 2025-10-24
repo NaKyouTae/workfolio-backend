@@ -22,7 +22,7 @@ class ActivityService(
 
     @Transactional(readOnly = true)
     fun listActivities(resumeId: String): List<Activity> {
-        return activityRepository.findByResumeId(resumeId)
+        return activityRepository.findByResumeIdOrderByPriorityAsc(resumeId)
     }
 
     @Transactional
@@ -36,6 +36,7 @@ class ActivityService(
         endedAt: Long? = null,
         description: String? = null,
         isVisible: Boolean,
+        priority: Int = 0,
     ): Activity {
         val resume = resumeQueryService.getResume(resumeId)
         val activity = Activity(
@@ -47,6 +48,7 @@ class ActivityService(
             endedAt = if (endedAt != null && endedAt > 0) TimeUtil.ofEpochMilli(endedAt).toLocalDate() else null,
             description = description ?: "",
             isVisible = isVisible,
+            priority = priority,
             resume = resume,
         )
 
@@ -64,6 +66,7 @@ class ActivityService(
         endedAt: Long? = null,
         description: String? = null,
         isVisible: Boolean,
+        priority: Int = 0,
     ): Activity {
         val activity = this.getActivity(id)
 
@@ -76,6 +79,7 @@ class ActivityService(
             endedAt = if (endedAt != null && endedAt > 0) TimeUtil.ofEpochMilli(endedAt).toLocalDate() else null,
             description = description ?: "",
             isVisible = isVisible,
+            priority = priority,
         )
 
         return activityRepository.save(activity)
@@ -96,7 +100,7 @@ class ActivityService(
 
     @Transactional
     fun deleteActivitiesByResumeId(resumeId: String) {
-        val activities = activityRepository.findByResumeId(resumeId)
+        val activities = activityRepository.findByResumeIdOrderByPriorityAsc(resumeId)
         activityRepository.deleteAll(activities)
     }
 }

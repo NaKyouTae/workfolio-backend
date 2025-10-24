@@ -20,7 +20,7 @@ import java.time.LocalDate
 @Table(
     name = "activities",
     indexes = [
-        Index(name = "idx_activities_resume_id", columnList = "resume_id"),
+        Index(name = "idx_activities_resume_id_priority", columnList = "resume_id, priority"),
     ],
 )
 class Activity(
@@ -29,6 +29,7 @@ class Activity(
     organization: String,
     certificateNumber: String,
     isVisible: Boolean,
+    priority: Int = 0,
     endedAt: LocalDate? = null,
     type: ActivityType? = null,
     startedAt: LocalDate? = null,
@@ -68,6 +69,10 @@ class Activity(
     var isVisible: Boolean = isVisible
         protected set
 
+    @Column(name = "priority", nullable = false)
+    var priority: Int = priority
+        protected set
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resume_id", nullable = false)
     var resume: Resume = resume
@@ -79,6 +84,7 @@ class Activity(
         organization: String,
         certificateNumber: String,
         isVisible: Boolean,
+        priority: Int = 0,
         endedAt: LocalDate? = null,
         type: ActivityType? = null,
         startedAt: LocalDate? = null,
@@ -91,5 +97,6 @@ class Activity(
         this.endedAt = endedAt
         this.description = description
         this.isVisible = isVisible
+        this.priority = priority
     }
 }

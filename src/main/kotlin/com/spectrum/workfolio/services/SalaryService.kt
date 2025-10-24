@@ -22,7 +22,7 @@ class SalaryService(
 
     @Transactional(readOnly = true)
     fun listSalaries(careerId: String): SalaryListResponse {
-        val salaries = salaryRepository.findByCareerIdOrderByNegotiationDateDesc(careerId)
+        val salaries = salaryRepository.findByCareerIdOrderByPriorityAscNegotiationDateDesc(careerId)
         return SalaryListResponse.newBuilder()
             .addAllSalaries(salaries.map { it.toProto() })
             .build()

@@ -26,7 +26,7 @@ class CareerService(
 
     @Transactional(readOnly = true)
     fun listCareers(workerId: String): CareerListResponse {
-        val careers = careerRepository.findByResumeIdOrderByStartedAtDescEndedAtDesc(workerId)
+        val careers = careerRepository.findByResumeIdOrderByPriorityAscStartedAtDescEndedAtDesc(workerId)
         return CareerListResponse.newBuilder()
             .addAllCareers(careers.map { it.toProto() })
             .build()
@@ -48,6 +48,7 @@ class CareerService(
             endedAt = if (request.hasEndedAt() && request.endedAt != 0L) TimeUtil.ofEpochMilli(request.endedAt).toLocalDate() else null,
             isWorking = request.isWorking,
             isVisible = request.isVisible,
+            priority = request.priority,
             resume = resume,
         )
 
@@ -71,6 +72,7 @@ class CareerService(
             endedAt = if (request.hasEndedAt() && request.endedAt != 0L) TimeUtil.ofEpochMilli(request.endedAt).toLocalDate() else null,
             isWorking = request.isWorking,
             isVisible = request.isVisible,
+            priority = request.priority,
         )
 
         return careerRepository.save(career)
@@ -91,7 +93,7 @@ class CareerService(
 
     @Transactional
     fun deleteCareersByResumeId(resumeId: String) {
-        val careers = careerRepository.findByResumeIdOrderByStartedAtDescEndedAtDesc(resumeId)
+        val careers = careerRepository.findByResumeIdOrderByPriorityAscStartedAtDescEndedAtDesc(resumeId)
         careerRepository.deleteAll(careers)
     }
 }

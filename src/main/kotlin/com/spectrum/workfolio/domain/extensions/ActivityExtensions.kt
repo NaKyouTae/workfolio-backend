@@ -13,6 +13,7 @@ fun Activity.toProto(): com.spectrum.workfolio.proto.common.Activity {
     builder.setOrganization(this.organization)
     builder.setCertificateNumber(this.certificateNumber)
     builder.setIsVisible(this.isVisible)
+    builder.setPriority(this.priority)
     builder.setResume(this.resume.toProto())
 
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
@@ -42,6 +43,7 @@ fun Activity.toProtoWithoutResume(): com.spectrum.workfolio.proto.common.Activit
     builder.setOrganization(this.organization)
     builder.setCertificateNumber(this.certificateNumber)
     builder.setIsVisible(this.isVisible)
+    builder.setPriority(this.priority)
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
 

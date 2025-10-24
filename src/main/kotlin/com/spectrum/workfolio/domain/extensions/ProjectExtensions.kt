@@ -11,6 +11,7 @@ fun Project.toProto(): com.spectrum.workfolio.proto.common.Project {
     builder.setRole(this.role)
     builder.setDescription(this.description)
     builder.setIsVisible(this.isVisible)
+    builder.setPriority(this.priority)
     builder.setResume(this.resume.toProto())
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
@@ -33,6 +34,7 @@ fun Project.toProtoWithoutResume(): com.spectrum.workfolio.proto.common.Project 
     builder.setRole(this.role)
     builder.setDescription(this.description)
     builder.setIsVisible(this.isVisible)
+    builder.setPriority(this.priority)
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
 
