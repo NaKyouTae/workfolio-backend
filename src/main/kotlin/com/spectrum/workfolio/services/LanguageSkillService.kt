@@ -1,6 +1,7 @@
 package com.spectrum.workfolio.services
 
 import com.spectrum.workfolio.domain.entity.resume.LanguageSkill
+import com.spectrum.workfolio.domain.entity.resume.Resume
 import com.spectrum.workfolio.domain.enums.Language
 import com.spectrum.workfolio.domain.enums.LanguageLevel
 import com.spectrum.workfolio.domain.enums.MsgKOR
@@ -45,6 +46,23 @@ class LanguageSkillService(
         )
 
         return languageSkillRepository.save(languageSkill)
+    }
+
+
+    @Transactional
+    fun createLanguageSkill(
+        resume: Resume,
+        languageSkill: LanguageSkill,
+    ): LanguageSkill {
+        val newLanguageSkill = LanguageSkill(
+            language = languageSkill.language,
+            level = languageSkill.level,
+            isVisible = languageSkill.isVisible,
+            priority = languageSkill.priority,
+            resume = resume,
+        )
+
+        return languageSkillRepository.save(newLanguageSkill)
     }
 
     @Transactional

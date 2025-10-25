@@ -1,6 +1,7 @@
 package com.spectrum.workfolio.services
 
 import com.spectrum.workfolio.domain.entity.resume.Activity
+import com.spectrum.workfolio.domain.entity.resume.Resume
 import com.spectrum.workfolio.domain.enums.ActivityType
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.repository.ActivityRepository
@@ -53,6 +54,29 @@ class ActivityService(
         )
 
         return activityRepository.save(activity)
+    }
+
+    @Transactional
+    fun createBulkActivity(
+        resume: Resume,
+        activities: List<Activity>,
+    ) {
+        val newActivities = activities.map {
+            Activity(
+                type = it.type,
+                name = it.name,
+                organization = it.organization,
+                certificateNumber = it.certificateNumber,
+                startedAt = it.startedAt,
+                endedAt = it.endedAt,
+                description = it.description,
+                isVisible = it.isVisible,
+                priority = it.priority,
+                resume = resume,
+            )
+        }
+
+        activityRepository.saveAll(newActivities)
     }
 
     @Transactional

@@ -47,6 +47,14 @@ class ResumeController(
         return SuccessResponse.newBuilder().setIsSuccess(true).build()
     }
 
+    @PostMapping("/{id}/duplicate")
+    fun duplicateResume(
+        @PathVariable id: String,
+    ): SuccessResponse {
+        resumeCommandService.duplicateResume(id)
+        return SuccessResponse.newBuilder().setIsSuccess(true).build()
+    }
+
     @PutMapping
     fun updateResume(
         @RequestBody request: ResumeUpdateRequest,

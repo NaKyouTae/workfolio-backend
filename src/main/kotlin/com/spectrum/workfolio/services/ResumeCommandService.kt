@@ -49,6 +49,58 @@ class ResumeCommandService(
     }
 
     @Transactional
+    fun duplicateResume(resumeId: String): Resume {
+        // 1. 원본 Resume 조회
+        val originalResume = resumeQueryService.getResume(resumeId)
+
+        // 2. 새로운 Resume 생성
+        val duplicatedResume = Resume(
+            title = "${originalResume.title} (복제본)",
+            name = originalResume.name,
+            job = originalResume.job,
+            phone = originalResume.phone,
+            email = originalResume.email,
+            publicId = Resume.generatePublicId(), // 새로운 public ID
+            isPublic = false, // 복사본은 비공개로 시작
+            isDefault = false,
+            description = originalResume.description,
+            gender = originalResume.gender,
+            birthDate = originalResume.birthDate,
+            worker = originalResume.worker,
+        )
+        val savedResume = resumeRepository.save(duplicatedResume)
+
+        // 3. 하위 엔티티 복제
+        // 3-1. Education 복제
+        educationService.createBulkEducation(savedResume, originalResume.educations)
+
+        // 3-2. Career 복제 (Salary 포함)
+        originalResume.careers.forEach {
+            val savedCareers = careerService.createCareer(savedResume, it)
+
+            salaryService.createBulkSalary(savedCareers, it.salaries)
+        }
+
+        // 3-3. Project 복제
+        projectService.createBulkProject(savedResume, originalResume.projects)
+
+        // 3-4. Activity 복제
+        activityService.createBulkActivity(savedResume,originalResume.activities)
+
+        // 3-5. LanguageSkill 복제 (LanguageTest 포함)
+        originalResume.languageSkills.forEach {
+            val savedLanguageSkill = languageSkillService.createLanguageSkill(savedResume, it)
+            // LanguageTest 복제
+            languageTestService.createBulkLanguageTest(savedLanguageSkill, it.languageTests)
+        }
+
+        // 3-6. Attachment 복제
+        attachmentService.createBulkAttachment(savedResume, originalResume.attachments)
+
+        return savedResume
+    }
+
+    @Transactional
     fun updateResume(request: ResumeUpdateRequest): Resume {
         val resume = resumeQueryService.getResume(request.id)
 

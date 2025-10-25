@@ -1,6 +1,7 @@
 package com.spectrum.workfolio.services
 
 import com.spectrum.workfolio.domain.entity.resume.Attachment
+import com.spectrum.workfolio.domain.entity.resume.Resume
 import com.spectrum.workfolio.domain.enums.AttachmentType
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.repository.AttachmentRepository
@@ -44,6 +45,25 @@ class AttachmentService(
         )
 
         return attachmentRepository.save(attachment)
+    }
+
+    @Transactional
+    fun createBulkAttachment(
+        resume: Resume,
+        attachments: List<Attachment>,
+    ) {
+        val newAttachments = attachments.map {
+            Attachment(
+                fileName = it.fileName,
+                fileUrl = it.fileUrl,
+                isVisible = it.isVisible,
+                priority = it.priority,
+                type = it.type,
+                resume = resume,
+            )
+        }
+
+        attachmentRepository.saveAll(newAttachments)
     }
 
     @Transactional

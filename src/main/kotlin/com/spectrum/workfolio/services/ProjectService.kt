@@ -1,6 +1,7 @@
 package com.spectrum.workfolio.services
 
 import com.spectrum.workfolio.domain.entity.resume.Project
+import com.spectrum.workfolio.domain.entity.resume.Resume
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.repository.ProjectRepository
 import com.spectrum.workfolio.utils.TimeUtil
@@ -58,6 +59,29 @@ class ProjectService(
         )
 
         return projectRepository.save(project)
+    }
+
+    @Transactional
+    fun createBulkProject(
+        resume: Resume,
+        projects: List<Project>,
+    ) {
+        val newProjects = projects.map {
+            Project(
+                title = it.title,
+                role = it.role,
+                affiliation = it.affiliation,
+                description = it.description,
+                startedAt = it.startedAt,
+                endedAt = it.endedAt,
+                isVisible = it.isVisible,
+                priority = it.priority,
+                resume = resume,
+            )
+        }
+
+
+        projectRepository.saveAll(newProjects)
     }
 
     @Transactional

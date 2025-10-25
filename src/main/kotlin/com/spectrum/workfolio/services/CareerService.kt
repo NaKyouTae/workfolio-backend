@@ -1,6 +1,7 @@
 package com.spectrum.workfolio.services
 
 import com.spectrum.workfolio.domain.entity.resume.Career
+import com.spectrum.workfolio.domain.entity.resume.Resume
 import com.spectrum.workfolio.domain.enums.EmploymentType
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.extensions.toProto
@@ -53,6 +54,31 @@ class CareerService(
         )
 
         return careerRepository.save(career)
+    }
+
+    @Transactional
+    fun createCareer(
+        resume: Resume,
+        career: Career,
+    ): Career {
+        val newCareer = Career(
+            name = career.name,
+            position = career.position,
+            employmentType = career.employmentType,
+            department = career.department,
+            jobGrade = career.jobGrade,
+            job = career.job,
+            salary = career.salary,
+            description = career.description,
+            startedAt = career.startedAt,
+            endedAt = career.endedAt,
+            isWorking = career.isWorking,
+            isVisible = career.isVisible,
+            priority = career.priority,
+            resume = resume,
+        )
+
+        return careerRepository.save(newCareer)
     }
 
     @Transactional

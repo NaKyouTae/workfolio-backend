@@ -1,5 +1,6 @@
 package com.spectrum.workfolio.services
 
+import com.spectrum.workfolio.domain.entity.resume.Career
 import com.spectrum.workfolio.domain.entity.resume.Salary
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.extensions.toProto
@@ -28,6 +29,24 @@ class SalaryService(
             .build()
     }
 
+    @Transactional
+    fun createBulkSalary(
+        career: Career,
+        salaries: List<Salary>,
+    ) {
+        val newSalaries = salaries.map {
+            Salary(
+                amount = it.amount,
+                memo = it.memo,
+                negotiationDate = it.negotiationDate,
+                isVisible = it.isVisible,
+                priority = it.priority,
+                career = career,
+            )
+        }
+
+        salaryRepository.saveAll(newSalaries)
+    }
     @Transactional
     fun deleteSalaries(salaries: List<Salary>) {
         if (salaries.isNotEmpty()) {

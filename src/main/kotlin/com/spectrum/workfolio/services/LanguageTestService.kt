@@ -1,5 +1,6 @@
 package com.spectrum.workfolio.services
 
+import com.spectrum.workfolio.domain.entity.resume.LanguageSkill
 import com.spectrum.workfolio.domain.entity.resume.LanguageTest
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.repository.LanguageTestRepository
@@ -42,6 +43,26 @@ class LanguageTestService(
 
         return languageTestRepository.save(languageTest)
     }
+
+    @Transactional
+    fun createBulkLanguageTest(
+        languageSkill: LanguageSkill,
+        languageTests: List<LanguageTest>,
+    ) {
+        val newLanguageTests = languageTests.map {
+            LanguageTest(
+                name = it.name,
+                score = it.score,
+                acquiredAt = it.acquiredAt,
+                isVisible = it.isVisible,
+                priority = it.priority,
+                languageSkill = languageSkill,
+            )
+        }
+
+        languageTestRepository.saveAll(newLanguageTests)
+    }
+
 
     @Transactional
     fun updateLanguageTest(
