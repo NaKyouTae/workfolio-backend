@@ -17,9 +17,10 @@ message Worker {
 
 message Account {
   enum AccountType {
-    ACCOUNT_TYPE_UNSPECIFIED = 0;
-    ACCOUNT_TYPE_BASIC = 1;
-    ACCOUNT_TYPE_PREMIUM = 2;
+    UNKNOWN = 0;
+    UNSPECIFIED = 1;
+    BASIC = 2;
+    PREMIUM = 3;
   }
 
   string id = 1;
@@ -35,8 +36,9 @@ message Account {
 
 message Resume {
   enum Gender {
-    MALE = 0;
-    FEMALE = 1;
+    UNKNOWN = 0;
+    MALE = 1;
+    FEMALE = 2;
   }
 
   string id = 1;
@@ -87,10 +89,11 @@ message ResumeDetail {
 
 message Career {
   enum EmploymentType {
-    FULL_TIME = 0;
-    CONTRACT = 1;
-    INTERN = 2;
-    FREELANCER = 3;
+    UNKNOWN = 0;
+    FULL_TIME = 1;
+    CONTRACT = 2;
+    INTERN = 3;
+    FREELANCER = 4;
   }
 
   string id = 1;
@@ -150,12 +153,13 @@ message Salary {
 
 message Education {
   enum EducationStatus {
-    GRADUATED = 0;
-    GRADUATING = 1;
-    ENROLLED = 2;
-    DROPPED_OUT = 3;
-    COMPLETED = 4;
-    ON_LEAVE = 5;
+    UNKNOWN = 0;
+    GRADUATED = 1;
+    GRADUATING = 2;
+    ENROLLED = 3;
+    DROPPED_OUT = 4;
+    COMPLETED = 5;
+    ON_LEAVE = 6;
   }
 
   string id = 1;
@@ -177,12 +181,13 @@ message Education {
 
 message Activity {
   enum ActivityType {
-    EXTERNAL = 0;
-    EDUCATION = 1;
-    CERTIFICATION = 2;
-    AWARD = 3;
-    COMPETITION = 4;
-    ETC = 5;
+    UNKNOWN = 0;
+    EXTERNAL = 1;
+    EDUCATION = 2;
+    CERTIFICATION = 3;
+    AWARD = 4;
+    COMPETITION = 5;
+    ETC = 6;
   }
 
   string id = 1;
@@ -223,27 +228,29 @@ message Project {
 
 message LanguageSkill {
   enum Language {
-    ENGLISH = 0;
-    JAPANESE = 1;
-    CHINESE = 2;
-    KOREAN = 3;
-    FRENCH = 4;
-    SPANISH = 5;
-    GERMAN = 6;
-    RUSSIAN = 7;
-    VIETNAMESE = 8;
-    ITALIAN = 9;
-    THAI = 10;
-    ARABIC = 11;
-    PORTUGUESE = 12;
-    INDONESIAN = 13;
-    MONGOLIAN = 14;
-    TURKISH = 15;
+    LANGUAGE_UNKNOWN = 0;
+    ENGLISH = 1;
+    JAPANESE = 2;
+    CHINESE = 3;
+    KOREAN = 4;
+    FRENCH = 5;
+    SPANISH = 6;
+    GERMAN = 7;
+    RUSSIAN = 8;
+    VIETNAMESE = 9;
+    ITALIAN = 10;
+    THAI = 11;
+    ARABIC = 12;
+    PORTUGUESE = 13;
+    INDONESIAN = 14;
+    MONGOLIAN = 15;
+    TURKISH = 16;
   }
   enum LanguageLevel {
-    DAILY_CONVERSATION = 0;
-    BUSINESS_CONVERSATION = 1;
-    NATIVE_LEVEL = 2;
+    LANGUAGE_LEVEL_UNKNOWN = 0;
+    DAILY_CONVERSATION = 1;
+    BUSINESS_CONVERSATION = 2;
+    NATIVE_LEVEL = 3;
   }
 
   string id = 1;
@@ -277,11 +284,12 @@ message LanguageTest {
 
 message Attachment {
   enum AttachmentType {
-    RESUME = 0;
-    PORTFOLIO = 1;
-    CERTIFICATE = 2;
-    CAREER_STATEMENT = 3;
-    ETC = 4;
+    UNKNOWN = 0;
+    RESUME = 1;
+    PORTFOLIO = 2;
+    CERTIFICATE = 3;
+    CAREER_STATEMENT = 4;
+    ETC = 5;
   }
 
   string id = 1;

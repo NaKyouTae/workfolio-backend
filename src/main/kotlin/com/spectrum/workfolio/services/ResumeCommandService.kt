@@ -29,18 +29,19 @@ class ResumeCommandService(
     private val languageSkillService: LanguageSkillService,
 ) {
 
-    @Transactional
     fun createResume(workerId: String, request: ResumeCreateRequest): Resume {
         val worker = workerService.getWorker(workerId)
         val resume = Resume(
             title = request.title,
-            name = "",
-            phone = "",
-            email = "",
-            job = "",
-            description = "",
-            isPublic = false,
-            isDefault = false,
+            name = request.name,
+            phone = request.phone,
+            email = request.email,
+            job = request.job,
+            gender = convertProtoEnumSafe<Gender>(request.gender),
+            birthDate = if (request.hasBirthDate()) TimeUtil.ofEpochMilli(request.birthDate).toLocalDate() else null,
+            description = request.description,
+            isPublic = request.isPublic,
+            isDefault = request.isDefault,
             publicId = Resume.generatePublicId(),
             worker = worker,
         )
@@ -101,22 +102,8 @@ class ResumeCommandService(
     }
 
     @Transactional
-    fun updateResume(request: ResumeUpdateRequest): Resume {
-        val resume = resumeQueryService.getResume(request.id)
-
-        // Resume 기본 정보 업데이트
-        resume.changeInfo(
-            title = request.title,
-            name = request.name,
-            phone = request.phone,
-            email = request.email,
-            job = request.job,
-            description = request.description,
-            birthDate = if (request.hasBirthDate()) TimeUtil.ofEpochMilli(request.birthDate).toLocalDate() else null,
-            gender = convertProtoEnumSafe<Gender>(request.gender),
-            isPublic = request.isPublic,
-            isDefault = request.isDefault,
-        )
+    fun updateResume(workerId: String, request: ResumeUpdateRequest): Resume {
+        val resume = upsertResume(workerId, request)
 
         // 학력 처리
         updateEducations(resume.id, request.educationsList)
@@ -143,6 +130,40 @@ class ResumeCommandService(
     fun deleteResume(id: String) {
         val resume = resumeQueryService.getResume(id)
         resumeRepository.delete(resume)
+    }
+
+    private fun upsertResume(workerId: String, request: ResumeUpdateRequest): Resume {
+        val resume = resumeQueryService.getResumeOptional(request.id)
+
+        return if(resume != null) {
+            resume.changeInfo(
+                title = request.title,
+                name = request.name,
+                phone = request.phone,
+                email = request.email,
+                job = request.job,
+                description = request.description,
+                birthDate = if (request.hasBirthDate()) TimeUtil.ofEpochMilli(request.birthDate).toLocalDate() else null,
+                gender = convertProtoEnumSafe<Gender>(request.gender),
+                isPublic = request.isPublic,
+                isDefault = request.isDefault,
+            )
+
+            resume
+        } else {
+            val resumeCreateRequest = ResumeCreateRequest.newBuilder()
+                .setTitle(request.title)
+                .setName(request.name)
+                .setPhone(request.phone)
+                .setEmail(request.email)
+                .setJob(request.job)
+                .setDescription(request.description)
+                .setIsPublic(request.isPublic)
+                .setIsDefault(request.isDefault)
+                .build()
+
+            this.createResume(workerId, resumeCreateRequest)
+        }
     }
 
     private fun updateEducations(
@@ -199,7 +220,7 @@ class ResumeCommandService(
     ) {
         val existingCareers = careerService.listCareers(resumeId).careersList
         val existingIds = existingCareers.map { it.id }.toSet()
-        val requestIds = careerRequests.mapNotNull { it.career.id }.toSet()
+        val requestIds = careerRequests.filter { it.career.id.isNotEmpty() }.mapNotNull { it.career.id }.toSet()
 
         // 삭제할 careers
         val toDelete = existingCareers.filter { it.id !in requestIds }

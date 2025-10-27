@@ -38,15 +38,6 @@ class ResumeController(
         return resumeQueryService.listResumeDetailsResult(workerId)
     }
 
-    @PostMapping
-    fun createResume(
-        @AuthenticatedUser workerId: String,
-        @RequestBody request: ResumeCreateRequest,
-    ): SuccessResponse {
-        resumeCommandService.createResume(workerId, request)
-        return SuccessResponse.newBuilder().setIsSuccess(true).build()
-    }
-
     @PostMapping("/{id}/duplicate")
     fun duplicateResume(
         @PathVariable id: String,
@@ -57,9 +48,10 @@ class ResumeController(
 
     @PutMapping
     fun updateResume(
+        @AuthenticatedUser workerId: String,
         @RequestBody request: ResumeUpdateRequest,
     ): SuccessResponse {
-        resumeCommandService.updateResume(request)
+        resumeCommandService.updateResume(workerId, request)
         return SuccessResponse.newBuilder().setIsSuccess(true).build()
     }
 

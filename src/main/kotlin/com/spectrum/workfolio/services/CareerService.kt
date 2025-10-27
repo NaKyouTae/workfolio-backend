@@ -9,6 +9,7 @@ import com.spectrum.workfolio.domain.repository.CareerRepository
 import com.spectrum.workfolio.proto.career.CareerCreateRequest
 import com.spectrum.workfolio.proto.career.CareerListResponse
 import com.spectrum.workfolio.proto.career.CareerUpdateRequest
+import com.spectrum.workfolio.utils.EnumUtils.convertProtoEnumSafe
 import com.spectrum.workfolio.utils.TimeUtil
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.stereotype.Service
@@ -39,7 +40,7 @@ class CareerService(
         val career = Career(
             name = request.name ?: "",
             position = request.position ?: "",
-            employmentType = if (request.hasEmploymentType()) EmploymentType.valueOf(request.employmentType.name) else null,
+            employmentType = convertProtoEnumSafe<EmploymentType>(request.employmentType),
             department = request.department ?: "",
             jobGrade = request.jobGrade ?: "",
             job = request.job ?: "",
@@ -88,7 +89,7 @@ class CareerService(
         career.changeInfo(
             name = request.name ?: "",
             position = request.position ?: "",
-            employmentType = if (request.hasEmploymentType()) EmploymentType.valueOf(request.employmentType.name) else null,
+            employmentType = convertProtoEnumSafe<EmploymentType>(request.employmentType),
             department = request.department ?: "",
             jobGrade = request.jobGrade ?: "",
             job = request.job ?: "",

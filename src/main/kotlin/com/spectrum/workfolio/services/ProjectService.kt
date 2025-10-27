@@ -44,7 +44,7 @@ class ProjectService(
             affiliation = affiliation ?: "",
             description = description ?: "",
             startedAt = if (startedAt != null && startedAt > 0) {
-                TimeUtil.ofEpochMilli(startedAt).toLocalDate()
+                TimeUtil.ofEpochMilliNullable(startedAt)?.toLocalDate()
             } else {
                 null
             },

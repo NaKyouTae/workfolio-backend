@@ -10,6 +10,7 @@ import com.spectrum.workfolio.proto.education.EducationCreateRequest
 import com.spectrum.workfolio.proto.education.EducationListResponse
 import com.spectrum.workfolio.proto.education.EducationResponse
 import com.spectrum.workfolio.proto.education.EducationUpdateRequest
+import com.spectrum.workfolio.utils.EnumUtils.convertProtoEnumSafe
 import com.spectrum.workfolio.utils.TimeUtil
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.stereotype.Service
@@ -42,7 +43,7 @@ class EducationService(
             name = request.name,
             major = request.major,
             description = request.description,
-            status = if (request.hasStatus()) EducationStatus.valueOf(request.status.name) else null,
+            status = convertProtoEnumSafe<EducationStatus>(request.status),
             startedAt = if (request.hasStartedAt() && request.startedAt != 0L) TimeUtil.ofEpochMilli(request.startedAt).toLocalDate() else null,
             endedAt = if (request.hasEndedAt() && request.endedAt != 0L) TimeUtil.ofEpochMilli(request.endedAt).toLocalDate() else null,
             isVisible = request.isVisible,
@@ -85,7 +86,7 @@ class EducationService(
             name = request.name,
             major = request.major,
             description = request.description,
-            status = if (request.hasStatus()) EducationStatus.valueOf(request.status.name) else null,
+            status = convertProtoEnumSafe<EducationStatus>(request.status),
             startedAt = if (request.hasStartedAt() && request.startedAt != 0L) TimeUtil.ofEpochMilli(request.startedAt).toLocalDate() else null,
             endedAt = if (request.hasEndedAt() && request.endedAt != 0L) TimeUtil.ofEpochMilli(request.endedAt).toLocalDate() else null,
             isVisible = request.isVisible,
