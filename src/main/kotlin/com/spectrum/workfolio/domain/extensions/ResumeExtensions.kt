@@ -16,7 +16,6 @@ fun Resume.toProto(): com.spectrum.workfolio.proto.common.Resume {
     builder.setPhone(this.phone)
     builder.setEmail(this.email)
     builder.setJob(this.job)
-    builder.setPublicId(this.publicId)
     builder.setIsPublic(this.isPublic)
     builder.setIsDefault(this.isDefault)
     builder.setDescription(this.description)

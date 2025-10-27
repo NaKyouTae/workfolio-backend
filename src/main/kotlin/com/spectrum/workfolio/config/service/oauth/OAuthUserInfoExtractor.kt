@@ -1,6 +1,8 @@
 package com.spectrum.workfolio.config.service.oauth
 
+import com.spectrum.workfolio.domain.enums.Gender
 import org.springframework.security.oauth2.core.user.OAuth2User
+import java.time.LocalDate
 
 /**
  * OAuth 제공자별 사용자 정보 추출 인터페이스
@@ -14,7 +16,10 @@ interface OAuthUserInfoExtractor {
  */
 data class OAuthUserInfo(
     val providerId: String,
-    val name: String,
-    val email: String? = null,
+    val nickName: String,
+    val email: String,
+    val phoneNumber: String,
+    val birthDate: LocalDate,
+    val gender: Gender,
     val profileImageUrl: String? = null,
 )

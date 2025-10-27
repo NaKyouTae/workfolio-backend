@@ -157,6 +157,8 @@ class ResumeCommandService(
                 .setPhone(request.phone)
                 .setEmail(request.email)
                 .setJob(request.job)
+                .setGender(request.gender)
+                .setBirthDate(request.birthDate)
                 .setDescription(request.description)
                 .setIsPublic(request.isPublic)
                 .setIsDefault(request.isDefault)

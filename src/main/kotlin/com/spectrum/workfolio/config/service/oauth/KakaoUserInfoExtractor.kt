@@ -1,10 +1,12 @@
 package com.spectrum.workfolio.config.service.oauth
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.spectrum.workfolio.domain.enums.Gender
 import com.spectrum.workfolio.domain.enums.KakaoAccount
 import org.slf4j.LoggerFactory
 import org.springframework.security.oauth2.core.user.OAuth2User
 import org.springframework.stereotype.Component
+import java.time.LocalDate
 
 /**
  * 카카오 OAuth 사용자 정보 추출기
@@ -27,8 +29,11 @@ class KakaoUserInfoExtractor : OAuthUserInfoExtractor {
 
             OAuthUserInfo(
                 providerId = providerId,
-                name = profile.nickname,
+                nickName = profile.nickname,
                 email = kakaoAccount.email,
+                phoneNumber = kakaoAccount.getNormalizedPhoneNumber(),
+                gender = Gender.valueOf(kakaoAccount.gender.uppercase()),
+                birthDate = kakaoAccount.getBirthDate(),
                 profileImageUrl = profile.profileImageUrl,
             )
         } catch (e: Exception) {

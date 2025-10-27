@@ -1,8 +1,10 @@
 package com.spectrum.workfolio.config.service.oauth
 
+import com.spectrum.workfolio.domain.enums.Gender
 import org.slf4j.LoggerFactory
 import org.springframework.security.oauth2.core.user.OAuth2User
 import org.springframework.stereotype.Component
+import java.time.LocalDate
 
 /**
  * 구글 OAuth 사용자 정보 추출기
@@ -24,8 +26,11 @@ class GoogleUserInfoExtractor : OAuthUserInfoExtractor {
 
             OAuthUserInfo(
                 providerId = providerId,
-                name = name,
-                email = attributes["email"]?.toString(),
+                nickName = name,
+                email = "",
+                phoneNumber = "",
+                birthDate = LocalDate.now(),
+                gender = Gender.MALE,
                 profileImageUrl = attributes["picture"]?.toString(),
             )
         } catch (e: Exception) {

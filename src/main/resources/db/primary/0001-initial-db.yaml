@@ -13,16 +13,33 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: name
-                  type: VARCHAR(256)
-                  constraints:
-                    nullable: false
-              - column:
                   name: nick_name
                   type: VARCHAR(512)
                   constraints:
-                    nullable: true
+                    nullable: false
                     unique: true
+              - column:
+                  name: phone
+                  type: VARCHAR(32)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: email
+                  type: VARCHAR(512)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: birth_date
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: gender
+                  type: VARCHAR(24)
+                  constraints:
+                    nullable: false
               - column:
                   name: created_at
                   type: TIMESTAMP(6)
@@ -36,14 +53,22 @@ databaseChangeLog:
         - createIndex:
             columns:
               - column:
-                  name: name
-            indexName: idx_workers_name
+                  name: nick_name
+            indexName: idx_workers_nick_name
             tableName: workers
+            unique: true
         - createIndex:
             columns:
               - column:
-                  name: nick_name
-            indexName: idx_workers_nick_name
+                  name: email
+            indexName: idx_workers_email
+            tableName: workers
+            unique: true
+        - createIndex:
+            columns:
+              - column:
+                  name: phone
+            indexName: idx_workers_phone
             tableName: workers
             unique: true
 

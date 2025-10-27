@@ -1,6 +1,8 @@
 package com.spectrum.workfolio.domain.enums
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 data class KakaoTokenResponse(
     @JsonProperty("access_token")
@@ -31,47 +33,80 @@ data class KakaoDTO(
 )
 
 data class KakaoAccount(
-    @JsonProperty("profile_needs_agreement")
-    val profileNeedsAgreement: Boolean, // 사용자 동의 시 프로필 정보 제공 가능 여부
-    @JsonProperty("profile_nickname_needs_agreement")
-    val profileNicknameNeedsAgreement: Boolean, // 닉네임 동의 여부
-    @JsonProperty("profile_image_needs_agreement")
-    val profileImageNeedsAgreement: Boolean, // 프로필 사진 동의 여부
     val profile: Profile, // 프로필 정보
+    val name: String, // 카카오계정 이름
+    @JsonProperty("phone_number")
+    val phoneNumber: String, // 전화번호
+    val email: String, // 카카오계정 이메일
+    val birthyear: String, // 출생 연도
+    val birthday: String, // 생일 (MMDD 형식)
+    val gender: String, // 성별 (female, male)
+    @JsonProperty("age_range")
+    val ageRange: String? = null, // 연령대
+    val ci: String? = null, // 연계정보 (CI)
+
+    @JsonProperty("profile_needs_agreement")
+    val profileNeedsAgreement: Boolean? = null, // 사용자 동의 시 프로필 정보 제공 가능 여부
+    @JsonProperty("profile_nickname_needs_agreement")
+    val profileNicknameNeedsAgreement: Boolean? = null, // 닉네임 동의 여부
+    @JsonProperty("profile_image_needs_agreement")
+    val profileImageNeedsAgreement: Boolean? = null, // 프로필 사진 동의 여부
     @JsonProperty("name_needs_agreement")
-    val nameNeedsAgreement: Boolean, // 이름 동의 여부
-    val name: String?, // 카카오계정 이름
+    val nameNeedsAgreement: Boolean? = null, // 이름 동의 여부
+    @JsonProperty("has_email")
+    val hasEmail: Boolean, // 이메일 보유 여부
     @JsonProperty("email_needs_agreement")
-    val emailNeedsAgreement: Boolean, // 이메일 동의 여부
+    val emailNeedsAgreement: Boolean? = null, // 이메일 동의 여부
     @JsonProperty("is_email_valid")
-    val isEmailValid: Boolean, // 이메일 유효 여부
+    val isEmailValid: Boolean? = null, // 이메일 유효 여부
     @JsonProperty("is_email_verified")
-    val isEmailVerified: Boolean, // 이메일 인증 여부
-    val email: String?, // 카카오계정 이메일
-    @JsonProperty("age_range_needs_agreement")
-    val ageRangeNeedsAgreement: Boolean, // 연령대 동의 여부
-    val ageRange: String?, // 연령대
-    @JsonProperty("birthyear_needs_agreement")
-    val birthyearNeedsAgreement: Boolean, // 출생 연도 동의 여부
-    val birthyear: String?, // 출생 연도
-    @JsonProperty("birthday_needs_agreement")
-    val birthdayNeedsAgreement: Boolean, // 생일 동의 여부
-    val birthday: String?, // 생일 (MMDD 형식)
-    val birthdayType: String?, // 생일 타입 (양력, 음력)
-    @JsonProperty("is_leap_month")
-    val isLeapMonth: Boolean?, // 윤달 여부
-    @JsonProperty("gender_needs_agreement")
-    val genderNeedsAgreement: Boolean, // 성별 동의 여부
-    val gender: String?, // 성별 (female, male)
+    val isEmailVerified: Boolean? = null, // 이메일 인증 여부
+    @JsonProperty("has_phone_number")
+    val hasPhoneNumber: Boolean, // 전화번호 보유 여부
     @JsonProperty("phone_number_needs_agreement")
-    val phoneNumberNeedsAgreement: Boolean, // 전화번호 동의 여부
-    val phoneNumber: String?, // 전화번호
+    val phoneNumberNeedsAgreement: Boolean? = null, // 전화번호 동의 여부
+    @JsonProperty("has_birthyear")
+    val hasBirthyear: Boolean, // 출생 연도 보유 여부
+    @JsonProperty("birthyear_needs_agreement")
+    val birthyearNeedsAgreement: Boolean? = null, // 출생 연도 동의 여부
+    @JsonProperty("has_birthday")
+    val hasBirthday: Boolean, // 생일 보유 여부
+    @JsonProperty("birthday_needs_agreement")
+    val birthdayNeedsAgreement: Boolean? = null, // 생일 동의 여부
+    @JsonProperty("birthday_type")
+    val birthdayType: String? = null, // 생일 타입 (SOLAR: 양력, LUNAR: 음력)
+    @JsonProperty("is_leap_month")
+    val isLeapMonth: Boolean? = null, // 윤달 여부
+    @JsonProperty("has_gender")
+    val hasGender: Boolean, // 성별 보유 여부
+    @JsonProperty("gender_needs_agreement")
+    val genderNeedsAgreement: Boolean? = null, // 성별 동의 여부
+    @JsonProperty("age_range_needs_agreement")
+    val ageRangeNeedsAgreement: Boolean? = null, // 연령대 동의 여부
     @JsonProperty("ci_needs_agreement")
-    val ciNeedsAgreement: Boolean, // CI 동의 여부
-    val ci: String?, // 연계정보 (CI)
+    val ciNeedsAgreement: Boolean? = null, // CI 동의 여부
     @JsonProperty("ci_authenticated_at")
-    val ciAuthenticatedAt: String?, // CI 발급 시각, UTC
-)
+    val ciAuthenticatedAt: String? = null, // CI 발급 시각, UTC
+) {
+    /**
+     * birthyear와 birthday를 결합하여 LocalDate로 변환
+     * @return birthyear와 birthday가 모두 존재하면 LocalDate, 아니면 null
+     */
+    fun getBirthDate(): LocalDate {
+        val dateString = birthyear + birthday // "19930804" 형식
+        return LocalDate.parse(dateString, DateTimeFormatter.ofPattern("yyyyMMdd"))
+    }
+    
+    /**
+     * 전화번호를 일반적인 형식으로 변환 ("+82 10-9109-2682" -> "01091092682")
+     * @return 숫자만 포함된 전화번호 문자열
+     */
+    fun getNormalizedPhoneNumber(): String {
+        return phoneNumber
+            .replace("+82 ", "0")  // 국가 코드 +82를 0으로 변환
+            .replace(Regex("[\\s-]"), "")  // 공백과 하이픈 제거
+    }
+}
 
 data class Profile(
     val nickname: String, // 닉네임

@@ -41,7 +41,7 @@ class UserRegistrationService(
         oauthUserInfo: OAuthUserInfo,
         accountType: AccountType,
     ): Account {
-        logger.info("새 사용자 등록 시작: providerId={}, name={}", oauthUserInfo.providerId, oauthUserInfo.name)
+        logger.info("새 사용자 등록 시작: providerId={}, name={}", oauthUserInfo.providerId, oauthUserInfo.nickName)
 
         try {
             // 1. Worker 생성
@@ -68,7 +68,13 @@ class UserRegistrationService(
     }
 
     private fun createWorker(oauthUserInfo: OAuthUserInfo): Worker {
-        val worker = Worker(name = oauthUserInfo.name, nickName = StringUtil.generateRandomString(8))
+        val worker = Worker(
+            nickName = oauthUserInfo.nickName,
+            phone = oauthUserInfo.phoneNumber,
+            email = oauthUserInfo.email,
+            birthDate = oauthUserInfo.birthDate,
+            gender = oauthUserInfo.gender,
+        )
         return workerService.createWorker(worker)
     }
 

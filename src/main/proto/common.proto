@@ -7,9 +7,17 @@ option java_package = "com.spectrum.workfolio.proto.common";
 option java_outer_classname = "CommonProto";
 
 message Worker {
+  enum Gender {
+    MALE = 0;
+    FEMALE = 1;
+  }
+
   string id = 1;
-  string name = 2;
-  string nick_name = 3;
+  string nick_name = 2;
+  string phone = 3;
+  string email = 4;
+  uint64 brith_date = 5;
+  Gender gender = 6;
 
   uint64 created_at = 98;
   uint64 updated_at = 99;
@@ -51,8 +59,7 @@ message Resume {
   string job = 8;
   optional bool is_public = 9;
   optional bool is_default = 10;
-  string public_id = 11;
-  string description = 12;
+  string description = 11;
 
   Worker worker = 50;
 
