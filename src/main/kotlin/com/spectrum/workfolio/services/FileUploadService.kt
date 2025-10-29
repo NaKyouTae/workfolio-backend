@@ -52,4 +52,19 @@ class FileUploadService(
     fun deleteFileFromStorage(fileUrl: String) {
         supabaseStorageService.deleteFileByUrl(fileUrl)
     }
+
+    /**
+     * Storage에서 파일 복사
+     * @param sourceFileUrl 원본 파일 URL
+     * @param destinationFileName 새로운 파일 이름
+     * @param destinationStoragePath 새로운 저장 경로
+     * @return 복사된 파일의 URL
+     */
+    fun copyFileInStorage(
+        sourceFileUrl: String,
+        destinationFileName: String,
+        destinationStoragePath: String,
+    ): String {
+        return supabaseStorageService.copyFile(sourceFileUrl, destinationFileName, destinationStoragePath)
+    }
 }

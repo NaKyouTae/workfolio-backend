@@ -101,6 +101,63 @@ class SupabaseStorageService(
     }
 
     /**
+     * Supabase Storage에서 파일 복사 (다운로드 후 재업로드 방식)
+     * @param sourceFileUrl 원본 파일의 Public URL
+     * @param destinationFileName 새로운 파일 이름
+     * @param destinationStoragePath 새로운 저장 경로
+     * @return 복사된 파일의 public URL
+     */
+    fun copyFile(sourceFileUrl: String, destinationFileName: String, destinationStoragePath: String): String {
+        try {
+            val sourceFilePath = extractFilePathFromUrl(sourceFileUrl)
+            val destinationFilePath = "$destinationStoragePath/$destinationFileName"
+
+            logger.info(
+                "Copying file in Supabase Storage (Download & Re-upload): " +
+                    "source=$sourceFilePath, destination=$destinationFilePath",
+            )
+
+            // 1. 원본 파일 다운로드
+            val getObjectRequest = software.amazon.awssdk.services.s3.model.GetObjectRequest.builder()
+                .bucket(bucket)
+                .key(sourceFilePath)
+                .build()
+
+            val responseInputStream = s3Client.getObject(getObjectRequest)
+            val fileBytes = responseInputStream.readBytes()
+            val contentType = responseInputStream.response().contentType()
+
+            logger.info(
+                "Downloaded source file: size=${fileBytes.size} bytes, " +
+                    "contentType=$contentType",
+            )
+
+            // 2. 새 위치에 업로드
+            val putObjectRequest = PutObjectRequest.builder()
+                .bucket(bucket)
+                .key(destinationFilePath)
+                .contentType(contentType ?: "application/octet-stream")
+                .contentLength(fileBytes.size.toLong())
+                .acl(ObjectCannedACL.PUBLIC_READ)
+                .build()
+
+            val requestBody = RequestBody.fromBytes(fileBytes)
+            val result = s3Client.putObject(putObjectRequest, requestBody)
+
+            logger.info(
+                "File copied successfully: destination=$destinationFilePath, " +
+                    "etag=${result.eTag()}",
+            )
+
+            // 3. 새로운 파일의 Public URL 반환
+            return getPublicUrl(destinationFilePath)
+        } catch (e: Exception) {
+            logger.error("Failed to copy file in Supabase Storage: ${e.message}", e)
+            throw WorkfolioException("파일 복사 중 오류가 발생했습니다: ${e.message}")
+        }
+    }
+
+    /**
      * Public URL 생성
      * @param filePath bucket 내 파일 경로
      * @return Public URL

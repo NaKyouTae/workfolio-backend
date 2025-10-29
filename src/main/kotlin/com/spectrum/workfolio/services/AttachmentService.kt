@@ -7,7 +7,6 @@ import com.spectrum.workfolio.domain.enums.AttachmentCategory
 import com.spectrum.workfolio.domain.enums.AttachmentType
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.repository.AttachmentRepository
-import com.spectrum.workfolio.utils.Base64MultipartFile
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -92,20 +91,69 @@ class AttachmentService(
         resume: Resume,
         attachments: List<Attachment>,
     ) {
-        val newAttachments = attachments.map {
-            Attachment(
-                fileName = it.fileName,
-                fileUrl = it.fileUrl,
-                url = it.url,
-                isVisible = it.isVisible,
-                priority = it.priority,
-                type = it.type,
-                category = it.category,
+        val newAttachments = attachments.map { originalAttachment ->
+            // 먼저 새 Attachment 생성 (ID 획득을 위해)
+            val newAttachment = Attachment(
+                fileName = originalAttachment.fileName,
+                fileUrl = "", // 임시로 빈 값
+                url = originalAttachment.url,
+                isVisible = originalAttachment.isVisible,
+                priority = originalAttachment.priority,
+                type = originalAttachment.type,
+                category = originalAttachment.category,
                 resume = resume,
             )
+            val savedAttachment = attachmentRepository.save(newAttachment)
+
+            // 원본에 파일이 있으면 Storage에서 복사
+            if (originalAttachment.fileUrl.isNotBlank()) {
+                try {
+                    logger.info(
+                        "Starting file copy for attachment: " +
+                            "originalId=${originalAttachment.id}, " +
+                            "newId=${savedAttachment.id}, " +
+                            "sourceUrl=${originalAttachment.fileUrl}",
+                    )
+
+                    // 원본 파일명에서 확장자 추출
+                    val extension = originalAttachment.fileName.substringAfterLast(".", "")
+                    // 새로운 파일명 생성: {새AttachmentId}.{확장자}
+                    val newFileName = "${savedAttachment.id}.$extension"
+
+                    // Storage에서 파일 복사
+                    val copiedFileUrl = fileUploadService.copyFileInStorage(
+                        sourceFileUrl = originalAttachment.fileUrl,
+                        destinationFileName = newFileName,
+                        destinationStoragePath = "resumes/attachments/${resume.id}",
+                    )
+
+                    // 복사된 파일 URL로 업데이트
+                    savedAttachment.changeFileUrl(copiedFileUrl)
+
+                    logger.info(
+                        "File copied successfully for attachment: " +
+                            "originalUrl=${originalAttachment.fileUrl}, " +
+                            "newUrl=$copiedFileUrl",
+                    )
+                } catch (e: Exception) {
+                    logger.error(
+                        "Failed to copy file for attachment: " +
+                            "originalId=${originalAttachment.id}, " +
+                            "newId=${savedAttachment.id}, " +
+                            "error=${e.message}",
+                        e,
+                    )
+                    // 파일 복사 실패 시 원본 URL을 그대로 사용 (fallback)
+                    savedAttachment.changeFileUrl(originalAttachment.fileUrl)
+                }
+            } else {
+                logger.info("No file to copy for attachment: ${originalAttachment.id} (fileUrl is blank)")
+            }
+
+            savedAttachment
         }
 
-        attachmentRepository.saveAll(newAttachments)
+        logger.info("Bulk created ${newAttachments.size} attachments for resume: ${resume.id}")
     }
 
     @Transactional
