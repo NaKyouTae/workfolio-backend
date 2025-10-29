@@ -90,8 +90,7 @@ class RecordGroup(
 
     companion object {
         fun generateShortPublicId(): String {
-            val uuid = StringUtil.generateRandomString(16)
-            return "WORKFOLIO:$uuid"
+            return StringUtil.generateRandomString(16)
         }
     }
 }

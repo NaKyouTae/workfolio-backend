@@ -100,6 +100,7 @@ dependencies {
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-rules-ruleauthors:$detektVersion")
 
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")  // Supabase Storage용
     implementation("org.springframework.boot:spring-boot-starter-batch")
     implementation("org.springframework.boot:spring-boot-starter-quartz")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -107,7 +108,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
     implementation("org.redisson:redisson-spring-boot-starter:3.41.0")
-    implementation("com.mysql:mysql-connector-j:8.3.0")
+    implementation("org.postgresql:postgresql:42.7.3")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.liquibase:liquibase-core:4.31.0")

@@ -14,33 +14,50 @@ services:
 #    networks:
 #      - workfolio-network
 
-  mysql:
-    image: mysql:8.0
-    container_name: mysql
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres
     env_file:
       - ./docker-compose.env
     environment:
-      MYSQL_DATABASE: workfolio
-      MYSQL_USER: spectrum
-      MYSQL_PASSWORD: "123456789a"
-      MYSQL_ROOT_PASSWORD: "123456789a"
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "123456789a"
     ports:
-      - "3306:3306"
+      - "5432:5432"
     volumes:
-      - mysql-data:/var/lib/mysql
-      - ./docker/mysql/init:/docker-entrypoint-initdb.d
+      - postgres-data:/var/lib/postgresql/data
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d
     command:
-      - mysqld
-      - --max_connections=100
-      - --innodb_buffer_pool_size=256M
-      - --innodb_log_file_size=64M
-      - --innodb_flush_log_at_trx_commit=1
-      - --character-set-server=utf8mb4
-      - --collation-server=utf8mb4_unicode_ci
+      - postgres
+      - -c
+      - max_connections=100
+      - -c
+      - shared_buffers=256MB
+      - -c
+      - effective_cache_size=1GB
+      - -c
+      - maintenance_work_mem=64MB
+      - -c
+      - checkpoint_completion_target=0.9
+      - -c
+      - wal_buffers=16MB
+      - -c
+      - default_statistics_target=100
+      - -c
+      - random_page_cost=1.1
+      - -c
+      - effective_io_concurrency=200
+      - -c
+      - work_mem=2621kB
+      - -c
+      - min_wal_size=1GB
+      - -c
+      - max_wal_size=4GB
     networks:
       - workfolio-network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      test: ["CMD-SHELL", "pg_isready -U spectrum -d workfolio"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -86,7 +103,7 @@ services:
 #      - workfolio-network
 
 volumes:
-  mysql-data:
+  postgres-data:
   redis-data:
 
 networks:
