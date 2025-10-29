@@ -86,7 +86,7 @@ class ResumeCommandService(
         projectService.createBulkProject(savedResume, originalResume.projects)
 
         // 3-4. Activity 복제
-        activityService.createBulkActivity(savedResume,originalResume.activities)
+        activityService.createBulkActivity(savedResume, originalResume.activities)
 
         // 3-5. LanguageSkill 복제 (LanguageTest 포함)
         originalResume.languageSkills.forEach {
@@ -135,7 +135,7 @@ class ResumeCommandService(
     private fun upsertResume(workerId: String, request: ResumeUpdateRequest): Resume {
         val resume = resumeQueryService.getResumeOptional(request.id)
 
-        return if(resume != null) {
+        return if (resume != null) {
             resume.changeInfo(
                 title = request.title,
                 name = request.name,
@@ -439,6 +439,7 @@ class ResumeCommandService(
                     type = convertProtoEnumSafe<com.spectrum.workfolio.domain.enums.AttachmentType>(request.type),
                     fileName = request.fileName,
                     fileUrl = request.fileUrl,
+                    fileData = if (request.hasFileData()) request.fileData else null,
                     isVisible = request.isVisible,
                     priority = request.priority,
                 )
@@ -449,6 +450,7 @@ class ResumeCommandService(
                     type = convertProtoEnumSafe<com.spectrum.workfolio.domain.enums.AttachmentType>(request.type),
                     fileName = request.fileName,
                     fileUrl = request.fileUrl,
+                    fileData = if (request.hasFileData()) request.fileData else null,
                     isVisible = request.isVisible,
                     priority = request.priority,
                 )

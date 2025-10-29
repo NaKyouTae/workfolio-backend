@@ -108,6 +108,7 @@ message ResumeUpdateRequest {
     optional Attachment.AttachmentType type = 2;
     string file_name = 3;
     string file_url = 4;
+    optional bytes file_data = 5;
 
     bool is_visible = 30;
     uint32 priority = 31;

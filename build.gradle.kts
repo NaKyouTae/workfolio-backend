@@ -100,7 +100,6 @@ dependencies {
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-rules-ruleauthors:$detektVersion")
 
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-webflux")  // Supabase Storage용
     implementation("org.springframework.boot:spring-boot-starter-batch")
     implementation("org.springframework.boot:spring-boot-starter-quartz")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -118,6 +117,10 @@ dependencies {
     implementation("com.google.protobuf:protobuf-kotlin:4.29.2")
     implementation("com.google.protobuf:protobuf-java:4.29.2") // protobuf 라이브러리
     implementation("com.google.protobuf:protobuf-java-util:4.29.2") // protobuf JSON 변환 유틸리티
+
+    // AWS SDK 2.x for Supabase Storage
+    implementation("io.awspring.cloud:spring-cloud-aws-starter:3.4.0")
+    implementation("software.amazon.awssdk:s3:2.36.3")
 
     testImplementation("org.springframework.batch:spring-batch-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")

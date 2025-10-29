@@ -48,7 +48,6 @@ class LanguageSkillService(
         return languageSkillRepository.save(languageSkill)
     }
 
-
     @Transactional
     fun createLanguageSkill(
         resume: Resume,

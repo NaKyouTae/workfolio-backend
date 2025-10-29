@@ -47,6 +47,7 @@ class SalaryService(
 
         salaryRepository.saveAll(newSalaries)
     }
+
     @Transactional
     fun deleteSalaries(salaries: List<Salary>) {
         if (salaries.isNotEmpty()) {

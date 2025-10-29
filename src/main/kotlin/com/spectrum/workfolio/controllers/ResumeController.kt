@@ -2,7 +2,6 @@ package com.spectrum.workfolio.controllers
 
 import com.spectrum.workfolio.config.annotation.AuthenticatedUser
 import com.spectrum.workfolio.proto.common.SuccessResponse
-import com.spectrum.workfolio.proto.resume.ResumeCreateRequest
 import com.spectrum.workfolio.proto.resume.ResumeDetailListResponse
 import com.spectrum.workfolio.proto.resume.ResumeListResponse
 import com.spectrum.workfolio.proto.resume.ResumeUpdateRequest

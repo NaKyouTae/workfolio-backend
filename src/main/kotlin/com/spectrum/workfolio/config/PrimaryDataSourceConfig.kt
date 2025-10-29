@@ -3,11 +3,11 @@ package com.spectrum.workfolio.config
 import com.zaxxer.hikari.HikariDataSource
 import liquibase.integration.spring.SpringLiquibase
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateProperties
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateSettings
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -85,7 +85,7 @@ class PrimaryDataSourceConfig {
 
             val vendorAdapter = HibernateJpaVendorAdapter().apply {
                 setShowSql(showSql.toBoolean())
-                setGenerateDdl(false)  // Liquibase로만 스키마 관리
+                setGenerateDdl(false) // Liquibase로만 스키마 관리
             }
             jpaVendorAdapter = vendorAdapter
 

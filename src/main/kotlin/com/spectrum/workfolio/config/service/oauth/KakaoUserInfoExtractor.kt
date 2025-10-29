@@ -6,7 +6,6 @@ import com.spectrum.workfolio.domain.enums.KakaoAccount
 import org.slf4j.LoggerFactory
 import org.springframework.security.oauth2.core.user.OAuth2User
 import org.springframework.stereotype.Component
-import java.time.LocalDate
 
 /**
  * 카카오 OAuth 사용자 정보 추출기

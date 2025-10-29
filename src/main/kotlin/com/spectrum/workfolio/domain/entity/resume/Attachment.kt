@@ -70,4 +70,10 @@ class Attachment(
         this.isVisible = isVisible
         this.priority = priority
     }
+
+    fun changeFileUrl(
+        fileUrl: String,
+    ) {
+        this.fileUrl = fileUrl
+    }
 }

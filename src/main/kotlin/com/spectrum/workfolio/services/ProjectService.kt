@@ -80,7 +80,6 @@ class ProjectService(
             )
         }
 
-
         projectRepository.saveAll(newProjects)
     }
 

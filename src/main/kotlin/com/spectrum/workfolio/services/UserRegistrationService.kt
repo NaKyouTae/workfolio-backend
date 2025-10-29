@@ -11,7 +11,6 @@ import com.spectrum.workfolio.proto.record.RecordCreateRequest
 import com.spectrum.workfolio.proto.record_group.CreateRecordGroupRequest
 import com.spectrum.workfolio.proto.record_group.RecordGroupResponse
 import com.spectrum.workfolio.proto.worker.SystemConfigCreateRequest
-import com.spectrum.workfolio.utils.StringUtil
 import com.spectrum.workfolio.utils.TimeUtil
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service

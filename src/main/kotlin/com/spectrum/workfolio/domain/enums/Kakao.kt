@@ -96,15 +96,15 @@ data class KakaoAccount(
         val dateString = birthyear + birthday // "19930804" 형식
         return LocalDate.parse(dateString, DateTimeFormatter.ofPattern("yyyyMMdd"))
     }
-    
+
     /**
      * 전화번호를 일반적인 형식으로 변환 ("+82 10-9109-2682" -> "01091092682")
      * @return 숫자만 포함된 전화번호 문자열
      */
     fun getNormalizedPhoneNumber(): String {
         return phoneNumber
-            .replace("+82 ", "0")  // 국가 코드 +82를 0으로 변환
-            .replace(Regex("[\\s-]"), "")  // 공백과 하이픈 제거
+            .replace("+82 ", "0") // 국가 코드 +82를 0으로 변환
+            .replace(Regex("[\\s-]"), "") // 공백과 하이픈 제거
     }
 }
 
