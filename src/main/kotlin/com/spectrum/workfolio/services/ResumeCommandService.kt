@@ -437,8 +437,10 @@ class ResumeCommandService(
                 attachmentService.createAttachment(
                     resumeId = resumeId,
                     type = convertProtoEnumSafe<com.spectrum.workfolio.domain.enums.AttachmentType>(request.type),
+                    category = com.spectrum.workfolio.domain.enums.AttachmentCategory.valueOf(request.category.name),
                     fileName = request.fileName,
                     fileUrl = request.fileUrl,
+                    url = request.url,
                     fileData = if (request.hasFileData()) request.fileData else null,
                     isVisible = request.isVisible,
                     priority = request.priority,
@@ -448,8 +450,10 @@ class ResumeCommandService(
                 attachmentService.updateAttachment(
                     id = request.id,
                     type = convertProtoEnumSafe<com.spectrum.workfolio.domain.enums.AttachmentType>(request.type),
+                    category = com.spectrum.workfolio.domain.enums.AttachmentCategory.valueOf(request.category.name),
                     fileName = request.fileName,
                     fileUrl = request.fileUrl,
+                    url = request.url,
                     fileData = if (request.hasFileData()) request.fileData else null,
                     isVisible = request.isVisible,
                     priority = request.priority,

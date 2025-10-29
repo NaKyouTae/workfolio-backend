@@ -1,6 +1,7 @@
 package com.spectrum.workfolio.domain.entity.resume
 
 import com.spectrum.workfolio.domain.entity.BaseEntity
+import com.spectrum.workfolio.domain.enums.AttachmentCategory
 import com.spectrum.workfolio.domain.enums.AttachmentType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -25,8 +26,10 @@ import jakarta.persistence.Table
 class Attachment(
     fileName: String,
     fileUrl: String,
+    url: String,
     isVisible: Boolean,
     priority: Int = 0,
+    category: AttachmentCategory,
     type: AttachmentType? = null,
     resume: Resume,
 ) : BaseEntity("AH") {
@@ -36,12 +39,21 @@ class Attachment(
     var type: AttachmentType? = type
         protected set
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "category", length = 512, nullable = false)
+    var category: AttachmentCategory = category
+        protected set
+
     @Column(name = "file_name", length = 1024, nullable = false)
     var fileName: String = fileName
         protected set
 
     @Column(name = "file_url", columnDefinition = "TEXT", nullable = false)
     var fileUrl: String = fileUrl
+        protected set
+
+    @Column(name = "url", columnDefinition = "TEXT", nullable = false)
+    var url: String = url
         protected set
 
     @Column(name = "is_visible", nullable = false)
@@ -60,13 +72,17 @@ class Attachment(
     fun changeInfo(
         fileName: String,
         fileUrl: String,
+        url: String,
         isVisible: Boolean,
         priority: Int = 0,
+        category: AttachmentCategory,
         type: AttachmentType? = null,
     ) {
         this.type = type
+        this.category = category
         this.fileName = fileName
         this.fileUrl = fileUrl
+        this.url = url
         this.isVisible = isVisible
         this.priority = priority
     }

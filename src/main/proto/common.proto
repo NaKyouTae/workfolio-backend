@@ -291,7 +291,7 @@ message LanguageTest {
 
 message Attachment {
   enum AttachmentType {
-    UNKNOWN = 0;
+    TYPE_UNKNOWN = 0;
     RESUME = 1;
     PORTFOLIO = 2;
     CERTIFICATE = 3;
@@ -299,10 +299,18 @@ message Attachment {
     ETC = 5;
   }
 
+  enum AttachmentCategory {
+    CATEGORY_UNKNOWN = 0;
+    FILE = 1;
+    URL = 2;
+  }
+
   string id = 1;
   optional AttachmentType type = 2;
-  string file_name = 3;
-  string file_url = 4;
+  AttachmentCategory category = 3;
+  string url = 4;
+  string file_name = 5;
+  string file_url = 6;
 
   bool is_visible = 30;
   uint32 priority = 31;

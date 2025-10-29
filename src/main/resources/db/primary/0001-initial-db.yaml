@@ -690,12 +690,22 @@ databaseChangeLog:
                   constraints:
                     nullable: true
               - column:
+                  name: category
+                  type: VARCHAR(512)
+                  constraints:
+                    nullable: false
+              - column:
                   name: file_name
                   type: VARCHAR(1024)
                   constraints:
                     nullable: false
               - column:
                   name: file_url
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: url
                   type: TEXT
                   constraints:
                     nullable: false

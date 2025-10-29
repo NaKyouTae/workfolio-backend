@@ -3,6 +3,7 @@ package com.spectrum.workfolio.services
 import com.google.protobuf.ByteString
 import com.spectrum.workfolio.domain.entity.resume.Attachment
 import com.spectrum.workfolio.domain.entity.resume.Resume
+import com.spectrum.workfolio.domain.enums.AttachmentCategory
 import com.spectrum.workfolio.domain.enums.AttachmentType
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.repository.AttachmentRepository
@@ -36,8 +37,10 @@ class AttachmentService(
     fun createAttachment(
         resumeId: String,
         type: AttachmentType? = null,
+        category: AttachmentCategory,
         fileName: String? = null,
         fileUrl: String? = null,
+        url: String? = null,
         fileData: ByteString? = null,
         isVisible: Boolean,
         priority: Int = 0,
@@ -47,8 +50,10 @@ class AttachmentService(
         // 먼저 Attachment 생성하여 ID 획득
         val attachment = Attachment(
             type = type,
+            category = category,
             fileName = fileName ?: "",
             fileUrl = "",
+            url = url ?: "",
             isVisible = isVisible,
             priority = priority,
             resume = resume,
@@ -91,9 +96,11 @@ class AttachmentService(
             Attachment(
                 fileName = it.fileName,
                 fileUrl = it.fileUrl,
+                url = it.url,
                 isVisible = it.isVisible,
                 priority = it.priority,
                 type = it.type,
+                category = it.category,
                 resume = resume,
             )
         }
@@ -104,9 +111,11 @@ class AttachmentService(
     @Transactional
     fun updateAttachment(
         id: String,
-        type: AttachmentType?,
-        fileName: String?,
-        fileUrl: String?,
+        type: AttachmentType? = null,
+        category: AttachmentCategory,
+        fileName: String? = null,
+        fileUrl: String? = null,
+        url: String? = null,
         fileData: ByteString? = null,
         isVisible: Boolean,
         priority: Int = 0,
@@ -152,8 +161,10 @@ class AttachmentService(
 
         attachment.changeInfo(
             type = type,
+            category = category,
             fileName = fileName ?: "",
             fileUrl = uploadedFileUrl,
+            url = url ?: "",
             isVisible = isVisible,
             priority = priority,
         )
