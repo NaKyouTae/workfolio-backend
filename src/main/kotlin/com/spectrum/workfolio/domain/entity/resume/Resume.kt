@@ -30,7 +30,7 @@ import java.time.LocalDate
 class Resume(
     title: String,
     name: String,
-    job: String,
+    position: String,
     phone: String,
     email: String,
     publicId: String,
@@ -66,8 +66,8 @@ class Resume(
     var gender: Gender? = gender
         protected set
 
-    @Column(name = "job", length = 512, nullable = false)
-    var job: String = job
+    @Column(name = "position", length = 512, nullable = false)
+    var position: String = position
         protected set
 
     @Column(name = "description", columnDefinition = "TEXT", nullable = false)
@@ -118,7 +118,7 @@ class Resume(
     fun changeInfo(
         title: String,
         name: String,
-        job: String,
+        position: String,
         phone: String,
         email: String,
         isPublic: Boolean,
@@ -129,7 +129,7 @@ class Resume(
     ) {
         this.title = title
         this.name = name
-        this.job = job
+        this.position = position
         this.phone = phone
         this.email = email
         this.isPublic = isPublic

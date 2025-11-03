@@ -40,7 +40,7 @@ class ResumeCommandService(
             name = request.name,
             phone = request.phone,
             email = request.email,
-            job = request.job,
+            position = request.position,
             gender = convertProtoEnumSafe<Gender>(request.gender),
             birthDate = if (request.hasBirthDate()) TimeUtil.ofEpochMilli(request.birthDate).toLocalDate() else null,
             description = request.description,
@@ -62,7 +62,7 @@ class ResumeCommandService(
         val duplicatedResume = Resume(
             title = "${originalResume.title} (복제본)",
             name = originalResume.name,
-            job = originalResume.job,
+            position = originalResume.position,
             phone = originalResume.phone,
             email = originalResume.email,
             publicId = Resume.generatePublicId(), // 새로운 public ID
@@ -145,7 +145,7 @@ class ResumeCommandService(
                 name = request.name,
                 phone = request.phone,
                 email = request.email,
-                job = request.job,
+                position = request.position,
                 description = request.description,
                 birthDate = if (request.hasBirthDate()) {
                     TimeUtil.ofEpochMilli(request.birthDate)
@@ -165,7 +165,7 @@ class ResumeCommandService(
                 .setName(request.name)
                 .setPhone(request.phone)
                 .setEmail(request.email)
-                .setJob(request.job)
+                .setPosition(request.position)
                 .setGender(request.gender)
                 .setBirthDate(request.birthDate)
                 .setDescription(request.description)
@@ -253,8 +253,8 @@ class ResumeCommandService(
                             ),
                         )
                         .setDepartment(career.department)
-                        .setJobGrade(career.jobGrade)
-                        .setJob(career.job)
+                        .setJobTitle(career.jobTitle)
+                        .setRank(career.rank)
                         .setDescription(career.description)
                         .setSalary(career.salary)
                         .setStartedAt(career.startedAt)
@@ -278,8 +278,8 @@ class ResumeCommandService(
                             ),
                         )
                         .setDepartment(career.department)
-                        .setJobGrade(career.jobGrade)
-                        .setJob(career.job)
+                        .setJobTitle(career.jobTitle)
+                        .setRank(career.rank)
                         .setDescription(career.description)
                         .setSalary(career.salary)
                         .setStartedAt(career.startedAt)

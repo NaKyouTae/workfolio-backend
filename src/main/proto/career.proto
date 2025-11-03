@@ -16,8 +16,8 @@ message CareerCreateRequest {
   string position = 6;
   optional Career.EmploymentType employmentType = 7;
   string department = 8;
-  string job_grade = 9;
-  string job = 10;
+  string job_title = 9;
+  string rank = 10;
   uint32 salary = 11;
   string description = 12;
 
@@ -36,8 +36,8 @@ message CareerUpdateRequest {
   string position = 6;
   optional Career.EmploymentType employmentType = 7;
   string department = 8;
-  string job_grade = 9;
-  string job = 10;
+  string job_title = 9;
+  string rank = 10;
   uint32 salary = 11;
   string description = 12;
 

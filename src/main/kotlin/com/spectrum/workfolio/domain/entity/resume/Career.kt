@@ -28,9 +28,9 @@ import java.time.LocalDate
 class Career(
     name: String, // 회사명
     salary: Int, // 최종 연봉
-    job: String, // 직무
-    position: String, // 직책
-    jobGrade: String, // 직급
+    position: String, // 직무
+    jobTitle: String, // 직책
+    rank: String, // 직급
     department: String, // 부서
     description: String,
     isVisible: Boolean,
@@ -62,12 +62,12 @@ class Career(
     var salary: Int = salary
         protected set
 
-    @Column(name = "job_grade", length = 512, nullable = false)
-    var jobGrade: String = jobGrade
+    @Column(name = "job_title", length = 512, nullable = false)
+    var jobTitle: String = jobTitle
         protected set
 
-    @Column(name = "job", length = 512, nullable = false)
-    var job: String = job
+    @Column(name = "rank", length = 512, nullable = false)
+    var rank: String = rank
         protected set
 
     @Column(name = "description", columnDefinition = "TEXT", nullable = false)
@@ -106,9 +106,9 @@ class Career(
     fun changeInfo(
         name: String, // 회사명
         salary: Int, // 최종 연봉
-        job: String, // 직무
+        rank: String, // 직무
         position: String, // 직책
-        jobGrade: String, // 직급
+        jobTitle: String, // 직급
         department: String, // 부서
         isVisible: Boolean,
         priority: Int = 0, // 정렬 순서
@@ -123,8 +123,8 @@ class Career(
         this.employmentType = employmentType
         this.department = department
         this.salary = salary
-        this.jobGrade = jobGrade
-        this.job = job
+        this.jobTitle = jobTitle
+        this.rank = rank
         this.description = description
         this.startedAt = startedAt
         this.endedAt = endedAt
