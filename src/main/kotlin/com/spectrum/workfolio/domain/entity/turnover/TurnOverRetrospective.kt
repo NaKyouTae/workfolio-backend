@@ -2,7 +2,6 @@ package com.spectrum.workfolio.domain.entity.turnover
 
 import com.spectrum.workfolio.domain.entity.BaseEntity
 import com.spectrum.workfolio.domain.enums.EmploymentType
-import com.spectrum.workfolio.domain.enums.WorkType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -32,7 +31,7 @@ class TurnOverRetrospective(
     score: Int, // 점수
     reviewSummary: String, // 한줄 회고
     joinedAt: LocalDate? = null, // 입사년월
-    workType: WorkType? = null, // 근무 형태
+    workType: String, // 근무 형태
     employmentType: EmploymentType? = null, // 재직 형태
     turnOver: TurnOver,
 ) : BaseEntity("TR") {
@@ -81,9 +80,8 @@ class TurnOverRetrospective(
     var employmentType: EmploymentType? = employmentType
         protected set
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "work_type", length = 32, nullable = true)
-    var workType: WorkType? = workType
+    @Column(name = "work_type", length = 512, nullable = false)
+    var workType: String = workType
         protected set
 
     @OneToOne(fetch = FetchType.LAZY)

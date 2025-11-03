@@ -405,3 +405,186 @@ message SystemConfig {
   uint64 created_at = 98;
   uint64 updated_at = 99;
 }
+
+message TurnOver {
+  string id = 1;
+  string name = 2;
+
+  Worker worker = 50;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
+}
+
+message TurnOverDetail {
+  string id = 1;
+  string name = 2;
+
+  Worker worker = 50;
+  TurnOverGoalDetail turn_over_goal = 51;
+  TurnOverChallengeDetail turn_over_challenge = 52;
+  TurnOverRetrospective turn_over_retrospective = 53;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
+}
+
+message TurnOverGoal {
+  string id = 1;
+  string reason = 2;
+  string goal = 3;
+
+  TurnOver turn_over = 50;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
+}
+
+message TurnOverGoalDetail {
+  string id = 1;
+  string reason = 2;
+  string goal = 3;
+
+  repeated SelfIntroduction self_introductions = 50;
+  repeated InterviewQuestion interview_questions = 51;
+  repeated CheckList check_list = 52;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
+}
+
+message SelfIntroduction {
+  string id = 1;
+  string question = 2;
+  string content = 3;
+
+  TurnOverGoal turn_over_goal = 50;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
+}
+
+message InterviewQuestion {
+  string id = 1;
+  string question = 2;
+  string answer = 3;
+
+  TurnOverGoal turn_over_goal = 50;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
+}
+
+message CheckList {
+  string id = 1;
+  bool checked = 2;
+  string content = 3;
+
+  TurnOverGoal turn_over_goal = 50;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
+}
+
+message TurnOverChallenge {
+  string id = 1;
+
+  TurnOver turn_over = 50;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
+}
+
+message TurnOverChallengeDetail {
+  string id = 1;
+
+  repeated JobApplication job_applications = 50;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
+}
+
+message JobApplication {
+  string id = 1;
+  string name = 2;
+  string position = 3;
+  string job_posting_title = 4;
+  string job_posting_url = 5;
+  optional uint64 started_at = 6;
+  optional uint64 ended_at = 7;
+  string application_source = 8;
+  string memo = 9;
+
+  TurnOverChallenge turn_over_challenge = 50;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
+}
+
+message JobApplicationDetail {
+  string id = 1;
+  string name = 2;
+  string position = 3;
+  string job_posting_title = 4;
+  string job_posting_url = 5;
+  optional uint64 started_at = 6;
+  optional uint64 ended_at = 7;
+  string application_source = 8;
+  string memo = 9;
+
+  repeated ApplicationStage application_stages = 50;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
+}
+
+message ApplicationStage {
+  enum ApplicationStageStatus {
+    UNKNOWN = 0;
+    PENDING = 1;
+    PASSED = 2;
+    FAILED = 3;
+    SCHEDULED = 4;
+    CANCELLED = 5;
+  }
+
+  string id = 1;
+  string name = 2;
+  ApplicationStageStatus status = 3;
+  optional uint64 started_at = 4;
+  string memo = 5;
+
+  JobApplication job_application = 50;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
+}
+
+message TurnOverRetrospective {
+  enum EmploymentType {
+    EMPLOYMENT_TYPE_UNKNOWN = 0;
+    FULL_TIME = 1;
+    CONTRACT = 2;
+    FREELANCER = 3;
+    INTERN = 4;
+  }
+
+  string id = 1;
+  string name = 2;
+  uint32 salary = 3;
+  string position = 4;
+  string job_title = 5;
+  string rank = 6;
+  string department = 7;
+  string reason = 8;
+  uint32 score = 9;
+  string review_summary = 10;
+  optional uint64 joined_at = 11;
+  string work_type = 12;
+  optional EmploymentType employment_type = 13;
+
+  TurnOver turn_over = 50;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
+}

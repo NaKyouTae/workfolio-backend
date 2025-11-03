@@ -38,7 +38,8 @@ class ResumeCommandService(
 
     fun createResume(workerId: String, request: ResumeCreateRequest): Resume {
         val worker = workerService.getWorker(workerId)
-        val resume = Resume(
+
+        return Resume(
             title = request.title,
             name = request.name,
             phone = request.phone,
@@ -52,8 +53,6 @@ class ResumeCommandService(
             publicId = Resume.generatePublicId(),
             worker = worker,
         )
-
-        return resumeRepository.save(resume)
     }
 
     @Transactional

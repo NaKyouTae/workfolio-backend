@@ -1415,9 +1415,9 @@ databaseChangeLog:
                     nullable: true
               - column:
                   name: work_type
-                  type: VARCHAR(32)
+                  type: VARCHAR(512)
                   constraints:
-                    nullable: true
+                    nullable: false
               - column:
                   name: turn_over_id
                   type: VARCHAR(16)

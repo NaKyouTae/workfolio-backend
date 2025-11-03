@@ -39,6 +39,10 @@ object TimeUtil {
         }
     }
 
+    fun toEpochMilliNullable(at: LocalDateTime?): Long? {
+        return at?.let { this.toEpochMilli(it) }
+    }
+
     fun dateStart(date: LocalDateTime): LocalDateTime {
         return date.toLocalDate().atStartOfDay()
     }
