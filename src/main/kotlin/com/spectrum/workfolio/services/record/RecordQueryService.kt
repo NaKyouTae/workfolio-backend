@@ -1,4 +1,4 @@
-package com.spectrum.workfolio.services
+package com.spectrum.workfolio.services.record
 
 import com.spectrum.workfolio.domain.entity.record.Record
 import com.spectrum.workfolio.domain.enums.MsgKOR

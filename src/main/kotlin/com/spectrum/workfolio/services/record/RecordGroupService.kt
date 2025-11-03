@@ -1,4 +1,4 @@
-package com.spectrum.workfolio.services
+package com.spectrum.workfolio.services.record
 
 import com.spectrum.workfolio.domain.entity.record.RecordGroup
 import com.spectrum.workfolio.domain.enums.MsgKOR
@@ -10,6 +10,7 @@ import com.spectrum.workfolio.proto.record_group.RecordGroupDetailResponse
 import com.spectrum.workfolio.proto.record_group.RecordGroupJoinRequest
 import com.spectrum.workfolio.proto.record_group.RecordGroupResponse
 import com.spectrum.workfolio.proto.record_group.RecordGroupUpdateRequest
+import com.spectrum.workfolio.services.WorkerService
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

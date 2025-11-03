@@ -1,7 +1,7 @@
 package com.spectrum.workfolio.services
 
 import com.google.protobuf.ByteString
-import com.spectrum.workfolio.domain.entity.BaseAttachment
+import com.spectrum.workfolio.domain.entity.resume.Attachment
 import com.spectrum.workfolio.utils.Base64MultipartFile
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.stereotype.Service
@@ -50,7 +50,7 @@ class FileUploadService(
         }
     }
 
-    fun deleteFileFromStorage(attachments: List<BaseAttachment>) {
+    fun deleteFileFromStorage(attachments: List<Attachment>) {
         attachments.forEach { attachment ->
             if (attachment.fileUrl.isNotBlank()) {
                 supabaseStorageService.deleteFileByUrl(attachment.fileUrl)

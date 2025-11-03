@@ -1,16 +1,17 @@
-package com.spectrum.workfolio.services
+package com.spectrum.workfolio.services.record
 
 import com.spectrum.workfolio.domain.dto.AttachmentCreateDto
 import com.spectrum.workfolio.domain.dto.AttachmentUpdateDto
 import com.spectrum.workfolio.domain.entity.record.Record
 import com.spectrum.workfolio.domain.entity.record.Record.Companion.generateRecordType
-import com.spectrum.workfolio.domain.entity.record.RecordAttachment
+import com.spectrum.workfolio.domain.enums.AttachmentTargetType
 import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.RecordRepository
-import com.spectrum.workfolio.interfaces.AttachmentService
 import com.spectrum.workfolio.proto.record.RecordCreateRequest
 import com.spectrum.workfolio.proto.record.RecordResponse
 import com.spectrum.workfolio.proto.record.RecordUpdateRequest
+import com.spectrum.workfolio.services.AttachmentCommandService
+import com.spectrum.workfolio.services.WorkerService
 import com.spectrum.workfolio.utils.TimeUtil
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -21,7 +22,7 @@ class RecordCommandService(
     private val recordRepository: RecordRepository,
     private val recordGroupService: RecordGroupService,
     private val recordQueryService: RecordQueryService,
-    private val attachmentService: AttachmentService<RecordAttachment>,
+    private val attachmentCommandService: AttachmentCommandService,
 ) {
 
     @Transactional
@@ -47,9 +48,10 @@ class RecordCommandService(
 
         if (request.attachmentsList.isNotEmpty()) {
             request.attachmentsList.map {
-                attachmentService.createAttachment(
+                attachmentCommandService.createAttachment(
                     AttachmentCreateDto(
                         targetId = createdRecord.id,
+                        targetType = AttachmentTargetType.ENTITY_RECORD,
                         fileName = it.fileName,
                         fileData = it.fileData,
                         storagePath = "record/attachments/${createdRecord.id}",
@@ -79,7 +81,7 @@ class RecordCommandService(
 
         if (request.attachmentsList.isNotEmpty()) {
             request.attachmentsList.map {
-                attachmentService.updateAttachment(
+                attachmentCommandService.updateAttachment(
                     AttachmentUpdateDto(
                         id = updatedRecord.id,
                         fileName = it.fileName,

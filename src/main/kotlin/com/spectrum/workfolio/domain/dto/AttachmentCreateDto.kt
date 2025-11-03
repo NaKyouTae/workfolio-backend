@@ -2,10 +2,12 @@ package com.spectrum.workfolio.domain.dto
 
 import com.google.protobuf.ByteString
 import com.spectrum.workfolio.domain.enums.AttachmentCategory
+import com.spectrum.workfolio.domain.enums.AttachmentTargetType
 import com.spectrum.workfolio.domain.enums.AttachmentType
 
 data class AttachmentCreateDto(
     val targetId: String,
+    val targetType: AttachmentTargetType,
     val storagePath: String,
 
     val category: AttachmentCategory? = null,

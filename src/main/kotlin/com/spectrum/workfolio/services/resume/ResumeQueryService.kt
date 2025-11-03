@@ -1,4 +1,4 @@
-package com.spectrum.workfolio.services
+package com.spectrum.workfolio.services.resume
 
 import com.spectrum.workfolio.domain.entity.resume.Resume
 import com.spectrum.workfolio.domain.enums.MsgKOR
@@ -7,6 +7,7 @@ import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.ResumeRepository
 import com.spectrum.workfolio.proto.resume.ResumeDetailListResponse
 import com.spectrum.workfolio.proto.resume.ResumeListResponse
+import com.spectrum.workfolio.services.AttachmentQueryService
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class ResumeQueryService(
     private val resumeRepository: ResumeRepository,
+    private val attachmentQueryService: AttachmentQueryService,
 ) {
 
     @Transactional(readOnly = true)
@@ -42,8 +44,11 @@ class ResumeQueryService(
     @Transactional(readOnly = true)
     fun listResumeDetailsResult(workerId: String): ResumeDetailListResponse {
         val resumes = resumeRepository.findByWorkerId(workerId)
+        val resumeIds = resumes.map { it.id }
+        val attachments = attachmentQueryService.listAttachments(resumeIds)
+
         return ResumeDetailListResponse.newBuilder()
-            .addAllResumes(resumes.map { it.toDetailProto() })
+            .addAllResumes(resumes.map { it.toDetailProto(attachments) })
             .build()
     }
 }

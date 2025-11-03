@@ -6,8 +6,8 @@ import com.spectrum.workfolio.proto.record.ListRecordResponse
 import com.spectrum.workfolio.proto.record.RecordCreateRequest
 import com.spectrum.workfolio.proto.record.RecordResponse
 import com.spectrum.workfolio.proto.record.RecordUpdateRequest
-import com.spectrum.workfolio.services.RecordCommandService
-import com.spectrum.workfolio.services.RecordQueryService
+import com.spectrum.workfolio.services.record.RecordCommandService
+import com.spectrum.workfolio.services.record.RecordQueryService
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable

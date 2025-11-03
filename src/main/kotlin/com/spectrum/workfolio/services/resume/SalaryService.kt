@@ -1,4 +1,4 @@
-package com.spectrum.workfolio.services
+package com.spectrum.workfolio.services.resume
 
 import com.spectrum.workfolio.domain.entity.resume.Career
 import com.spectrum.workfolio.domain.entity.resume.Salary
@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class SalaryService(
-    private val careerService: CareerService,
     private val salaryRepository: SalaryRepository,
 ) {
 

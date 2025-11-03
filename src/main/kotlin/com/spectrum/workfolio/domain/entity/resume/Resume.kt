@@ -111,10 +111,6 @@ class Resume(
     private var mutableLanguageSkills: MutableList<LanguageSkill> = mutableListOf()
     val languageSkills: List<LanguageSkill> get() = mutableLanguageSkills.toList()
 
-    @OneToMany(mappedBy = "resume", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
-    private var mutableResumeAttachments: MutableList<ResumeAttachment> = mutableListOf()
-    val resumeAttachments: List<ResumeAttachment> get() = mutableResumeAttachments.toList()
-
     fun changeInfo(
         title: String,
         name: String,

@@ -103,10 +103,10 @@ message ResumeUpdateRequest {
     repeated LanguageTestRequest language_tests = 99;
   }
 
-  message ResumeAttachmentRequest {
+  message AttachmentRequest {
     optional string id = 1;
-    optional ResumeAttachment.ResumeAttachmentType type = 2;
-    ResumeAttachment.ResumeAttachmentCategory category = 3;
+    optional Attachment.AttachmentType type = 2;
+    Attachment.AttachmentCategory category = 3;
     string url = 4;
     string file_name = 5;
     string file_url = 6;
@@ -146,7 +146,7 @@ message ResumeUpdateRequest {
   repeated EducationRequest educations = 53;
   repeated ActivityRequest activities = 54;
   repeated LanguageSkillRequest languages = 55;
-  repeated ResumeAttachmentRequest attachments = 56;
+  repeated AttachmentRequest attachments = 56;
 }
 
 message ResumeListResponse {

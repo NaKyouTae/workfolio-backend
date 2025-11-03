@@ -2,12 +2,12 @@ package com.spectrum.workfolio.services
 
 import com.spectrum.workfolio.domain.dto.AttachmentCreateDto
 import com.spectrum.workfolio.domain.dto.AttachmentUpdateDto
-import com.spectrum.workfolio.domain.entity.record.Record
-import com.spectrum.workfolio.domain.entity.record.RecordAttachment
+import com.spectrum.workfolio.domain.entity.resume.Attachment
+import com.spectrum.workfolio.domain.entity.resume.Resume
+import com.spectrum.workfolio.domain.enums.AttachmentCategory
 import com.spectrum.workfolio.domain.enums.MsgKOR
-import com.spectrum.workfolio.domain.repository.RecordAttachmentRepository
-import com.spectrum.workfolio.interfaces.AttachmentService
-import com.spectrum.workfolio.utils.EntityTypeValidator.requireEntityType
+import com.spectrum.workfolio.domain.repository.AttachmentRepository
+import com.spectrum.workfolio.utils.EntityTypeValidator
 import com.spectrum.workfolio.utils.FileUtil
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.slf4j.LoggerFactory
@@ -15,37 +15,45 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-class RecordAttachmentServiceImpl(
-    private val recordQueryService: RecordQueryService,
+class AttachmentCommandService(
     private val fileUploadService: FileUploadService,
-    private val recordAttachmentRepository: RecordAttachmentRepository,
-) : AttachmentService<RecordAttachment> {
+    private val attachmentRepository: AttachmentRepository,
+) {
 
-    private val logger = LoggerFactory.getLogger(RecordAttachmentServiceImpl::class.java)
+    private val logger = LoggerFactory.getLogger(AttachmentCommandService::class.java)
 
     @Transactional(readOnly = true)
-    override fun getAttachment(id: String): RecordAttachment {
-        return recordAttachmentRepository.findById(id).orElseThrow {
+    fun getAttachment(id: String): Attachment {
+        return attachmentRepository.findById(id).orElseThrow {
             WorkfolioException(MsgKOR.NOT_FOUND_ATTACHMENT.message)
         }
     }
 
     @Transactional(readOnly = true)
-    override fun listAttachments(targetId: String): List<RecordAttachment> {
-        return recordAttachmentRepository.findByRecordIdOrderByCreatedAtDesc(targetId)
+    fun listAttachments(targetId: String): List<Attachment> {
+        return attachmentRepository.findByTargetIdOrderByPriorityAsc(targetId)
+    }
+
+    @Transactional(readOnly = true)
+    fun listAttachments(targetIds: List<String>): List<Attachment> {
+        return attachmentRepository.findByTargetIdInOrderByPriorityAsc(targetIds)
     }
 
     @Transactional
-    override fun createAttachment(dto: AttachmentCreateDto): RecordAttachment {
-        val record = recordQueryService.getRecordEntity(dto.targetId)
-
+    fun createAttachment(dto: AttachmentCreateDto): Attachment {
         // 먼저 Attachment 생성하여 ID 획득
-        val resumeAttachment = RecordAttachment(
+        val attachment = Attachment(
+            type = dto.type,
+            category = dto.category ?: AttachmentCategory.FILE,
             fileName = dto.fileName ?: "",
             fileUrl = "",
-            record = record,
+            url = dto.url ?: "",
+            isVisible = dto.isVisible,
+            priority = dto.priority,
+            targetId = dto.targetId,
+            targetType = dto.targetType,
         )
-        val savedAttachment = recordAttachmentRepository.save(resumeAttachment)
+        val savedAttachment = attachmentRepository.save(attachment)
 
         // fileData가 있으면 Supabase Storage에 업로드
         val uploadedFileUrl = if (dto.fileData != null && !dto.fileData.isEmpty) {
@@ -61,7 +69,7 @@ class RecordAttachmentServiceImpl(
                 )
             } catch (e: Exception) {
                 // 업로드 실패 시 생성된 Attachment 삭제 (롤백)
-                recordAttachmentRepository.delete(savedAttachment)
+                attachmentRepository.delete(savedAttachment)
                 throw e
             }
         } else {
@@ -75,20 +83,26 @@ class RecordAttachmentServiceImpl(
     }
 
     @Transactional
-    override fun createBulkAttachment(
+    fun createBulkAttachment(
         entity: Any,
-        attachments: List<RecordAttachment>,
+        attachments: List<Attachment>,
     ) {
-        val record = requireEntityType<Record>(entity)
+        val resume = EntityTypeValidator.requireEntityType<Resume>(entity)
 
-        val newAttachments = attachments.map { originalAttachment ->
+        attachments.map { originalAttachment ->
             // 먼저 새 Attachment 생성 (ID 획득을 위해)
-            val newResumeAttachment = RecordAttachment(
+            val newAttachment = Attachment(
                 fileName = originalAttachment.fileName,
                 fileUrl = "", // 임시로 빈 값
-                record = record,
+                url = originalAttachment.url,
+                isVisible = originalAttachment.isVisible,
+                priority = originalAttachment.priority,
+                type = originalAttachment.type,
+                category = originalAttachment.category,
+                targetId = originalAttachment.targetId,
+                targetType = originalAttachment.targetType,
             )
-            val savedAttachment = recordAttachmentRepository.save(newResumeAttachment)
+            val savedAttachment = attachmentRepository.save(newAttachment)
 
             // 원본에 파일이 있으면 Storage에서 복사
             if (originalAttachment.fileUrl.isNotBlank()) {
@@ -102,13 +116,11 @@ class RecordAttachmentServiceImpl(
                     val copiedFileUrl = fileUploadService.copyFileInStorage(
                         sourceFileUrl = originalAttachment.fileUrl,
                         destinationFileName = newFileName,
-                        destinationStoragePath = "resumes/attachments/${record.id}",
+                        destinationStoragePath = "resumes/attachments/${resume.id}",
                     )
 
-                    // 복사된 파일 URL로 업데이트
                     savedAttachment.changeFileUrl(copiedFileUrl)
                 } catch (e: Exception) {
-                    // 파일 복사 실패 시 원본 URL을 그대로 사용 (fallback)
                     savedAttachment.changeFileUrl(originalAttachment.fileUrl)
                 }
             } else {
@@ -120,70 +132,73 @@ class RecordAttachmentServiceImpl(
     }
 
     @Transactional
-    override fun updateAttachment(dto: AttachmentUpdateDto): RecordAttachment {
+    fun updateAttachment(dto: AttachmentUpdateDto): Attachment {
         val attachment = this.getAttachment(dto.id)
 
         // fileData가 있으면 Supabase Storage에 업로드하고 기존 파일 삭제
         val uploadedFileUrl = if (dto.fileData != null && !dto.fileData.isEmpty) {
-            try {
-                // 파일 확장자 추출
-                val extension = FileUtil.extractFileExtension(dto.fileName ?: attachment.fileName)
-                val storageFileName = "${attachment.id}.$extension"
+            // 파일 확장자 추출
+            val extension = FileUtil.extractFileExtension(dto.fileName ?: attachment.fileName)
+            val storageFileName = "${attachment.id}.$extension"
 
-                // 새 파일 업로드
-                val newFileUrl = fileUploadService.uploadFileToStorage(
-                    fileData = dto.fileData,
-                    fileName = storageFileName,
-                    storagePath = dto.storagePath,
-                )
+            // 새 파일 업로드
+            val newFileUrl = fileUploadService.uploadFileToStorage(
+                fileData = dto.fileData,
+                fileName = storageFileName,
+                storagePath = dto.storagePath,
+            )
 
-                // 업로드 성공 후 기존 파일 삭제
-                fileUploadService.deleteFileFromStorage(listOf(attachment))
+            fileUploadService.deleteFileFromStorage(listOf(attachment))
 
-                newFileUrl
-            } catch (e: Exception) {
-                // 업로드 실패 시 기존 파일 유지
-                throw e
-            }
+            newFileUrl
         } else {
             dto.fileUrl ?: attachment.fileUrl
         }
 
         attachment.changeInfo(
+            type = dto.type,
+            category = dto.category ?: AttachmentCategory.FILE,
             fileName = dto.fileName ?: "",
             fileUrl = uploadedFileUrl,
+            url = dto.url ?: "",
+            isVisible = dto.isVisible,
+            priority = dto.priority,
         )
 
         return attachment
     }
 
     @Transactional
-    override fun deleteAttachment(id: String) {
+    fun deleteAttachment(id: String) {
         val attachment = this.getAttachment(id)
 
         fileUploadService.deleteFileFromStorage(listOf(attachment))
-        recordAttachmentRepository.delete(attachment)
+
+        attachmentRepository.delete(attachment)
     }
 
     @Transactional
-    override fun deleteAttachments(attachmentIds: List<String>) {
+    fun deleteAttachments(attachmentIds: List<String>) {
         if (attachmentIds.isEmpty()) {
             return
         }
 
         // ID로 Attachment 조회하여 파일 URL 가져오기
-        val attachments = recordAttachmentRepository.findAllById(attachmentIds)
+        val attachments = attachmentRepository.findAllById(attachmentIds)
 
         fileUploadService.deleteFileFromStorage(attachments)
 
         // DB에서 Attachment 삭제
-        recordAttachmentRepository.deleteAllById(attachmentIds)
+        attachmentRepository.deleteAllById(attachmentIds)
     }
 
     @Transactional
-    override fun deleteAttachmentsByTargetId(targetId: String) {
-        val attachments = recordAttachmentRepository.findByRecordIdOrderByCreatedAtDesc(targetId)
+    fun deleteAttachmentsByTargetId(targetId: String) {
+        val attachments = attachmentRepository.findByTargetIdOrderByPriorityAsc(targetId)
+
         fileUploadService.deleteFileFromStorage(attachments)
-        recordAttachmentRepository.deleteAll(attachments)
+
+        // DB에서 Attachment 삭제
+        attachmentRepository.deleteAll(attachments)
     }
 }

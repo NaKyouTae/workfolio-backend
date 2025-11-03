@@ -1,14 +1,16 @@
-package com.spectrum.workfolio.services
+package com.spectrum.workfolio.services.resume
 
 import com.spectrum.workfolio.domain.dto.AttachmentCreateDto
 import com.spectrum.workfolio.domain.dto.AttachmentUpdateDto
 import com.spectrum.workfolio.domain.entity.resume.Resume
-import com.spectrum.workfolio.domain.entity.resume.ResumeAttachment
+import com.spectrum.workfolio.domain.enums.AttachmentTargetType
 import com.spectrum.workfolio.domain.enums.Gender
 import com.spectrum.workfolio.domain.repository.ResumeRepository
-import com.spectrum.workfolio.interfaces.AttachmentService
 import com.spectrum.workfolio.proto.resume.ResumeCreateRequest
 import com.spectrum.workfolio.proto.resume.ResumeUpdateRequest
+import com.spectrum.workfolio.services.AttachmentCommandService
+import com.spectrum.workfolio.services.AttachmentQueryService
+import com.spectrum.workfolio.services.WorkerService
 import com.spectrum.workfolio.utils.EnumUtils.convertProtoEnumSafe
 import com.spectrum.workfolio.utils.TimeUtil
 import org.springframework.stereotype.Service
@@ -27,10 +29,11 @@ class ResumeCommandService(
     private val activityService: ActivityService,
     private val resumeRepository: ResumeRepository,
     private val educationService: EducationService,
-    private val attachmentService: AttachmentService<ResumeAttachment>,
     private val resumeQueryService: ResumeQueryService,
     private val languageTestService: LanguageTestService,
     private val languageSkillService: LanguageSkillService,
+    private val attachmentQueryService: AttachmentQueryService,
+    private val attachmentCommandService: AttachmentCommandService,
 ) {
 
     fun createResume(workerId: String, request: ResumeCreateRequest): Resume {
@@ -99,8 +102,10 @@ class ResumeCommandService(
             languageTestService.createBulkLanguageTest(savedLanguageSkill, it.languageTests)
         }
 
+        val originalAttachments = attachmentQueryService.listAttachments(originalResume.id)
+
         // 3-6. Attachment 복제
-        attachmentService.createBulkAttachment(savedResume, originalResume.resumeAttachments)
+        attachmentCommandService.createBulkAttachment(savedResume, originalAttachments)
 
         return savedResume
     }
@@ -429,23 +434,24 @@ class ResumeCommandService(
 
     private fun updateAttachments(
         resumeId: String,
-        attachmentRequests: List<ResumeUpdateRequest.ResumeAttachmentRequest>,
+        attachmentRequests: List<ResumeUpdateRequest.AttachmentRequest>,
     ) {
-        val existingAttachments = attachmentService.listAttachments(resumeId)
+        val existingAttachments = attachmentQueryService.listAttachments(resumeId)
         val existingIds = existingAttachments.map { it.id }.toSet()
         val requestIds = attachmentRequests.mapNotNull { it.id }.toSet()
 
         // 삭제할 attachments
         val toDelete = existingAttachments.filter { it.id !in requestIds }
-        attachmentService.deleteAttachments(toDelete.map { it.id })
+        attachmentCommandService.deleteAttachments(toDelete.map { it.id })
 
         // 생성 및 수정할 attachments
         attachmentRequests.forEach { request ->
             if (request.id.isNullOrEmpty()) {
                 // 생성
-                attachmentService.createAttachment(
+                attachmentCommandService.createAttachment(
                     AttachmentCreateDto(
                         targetId = resumeId,
+                        targetType = AttachmentTargetType.ENTITY_RESUME,
                         type = convertProtoEnumSafe<com.spectrum.workfolio.domain.enums.AttachmentType>(request.type),
                         category = com.spectrum.workfolio.domain.enums.AttachmentCategory.valueOf(request.category.name),
                         fileName = request.fileName,
@@ -459,7 +465,7 @@ class ResumeCommandService(
                 )
             } else {
                 // 수정
-                attachmentService.updateAttachment(
+                attachmentCommandService.updateAttachment(
                     AttachmentUpdateDto(
                         id = request.id,
                         type = convertProtoEnumSafe<com.spectrum.workfolio.domain.enums.AttachmentType>(request.type),

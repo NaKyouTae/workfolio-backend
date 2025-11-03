@@ -9,7 +9,7 @@ import com.spectrum.workfolio.proto.record_group.RecordGroupJoinRequest
 import com.spectrum.workfolio.proto.record_group.RecordGroupListResponse
 import com.spectrum.workfolio.proto.record_group.RecordGroupResponse
 import com.spectrum.workfolio.proto.record_group.RecordGroupUpdateRequest
-import com.spectrum.workfolio.services.RecordGroupService
+import com.spectrum.workfolio.services.record.RecordGroupService
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable

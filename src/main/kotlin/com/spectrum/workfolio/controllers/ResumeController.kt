@@ -5,8 +5,8 @@ import com.spectrum.workfolio.proto.common.SuccessResponse
 import com.spectrum.workfolio.proto.resume.ResumeDetailListResponse
 import com.spectrum.workfolio.proto.resume.ResumeListResponse
 import com.spectrum.workfolio.proto.resume.ResumeUpdateRequest
-import com.spectrum.workfolio.services.ResumeCommandService
-import com.spectrum.workfolio.services.ResumeQueryService
+import com.spectrum.workfolio.services.resume.ResumeCommandService
+import com.spectrum.workfolio.services.resume.ResumeQueryService
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable

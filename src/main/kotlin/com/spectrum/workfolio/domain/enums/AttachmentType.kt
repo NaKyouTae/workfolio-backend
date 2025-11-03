@@ -8,4 +8,5 @@ enum class AttachmentType {
     PORTFOLIO, // 포트폴리오
     CERTIFICATE, // 증명서
     CAREER_STATEMENT, // 경력기술서
+    RECORD, // 기록용
 }

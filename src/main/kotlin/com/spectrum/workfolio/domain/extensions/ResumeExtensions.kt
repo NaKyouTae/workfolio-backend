@@ -1,5 +1,6 @@
 package com.spectrum.workfolio.domain.extensions
 
+import com.spectrum.workfolio.domain.entity.resume.Attachment
 import com.spectrum.workfolio.domain.entity.resume.Resume
 import com.spectrum.workfolio.utils.TimeUtil
 
@@ -35,7 +36,7 @@ fun Resume.toProto(): com.spectrum.workfolio.proto.common.Resume {
     return builder.build()
 }
 
-fun Resume.toDetailProto(): com.spectrum.workfolio.proto.common.ResumeDetail {
+fun Resume.toDetailProto(attachments: List<Attachment>): com.spectrum.workfolio.proto.common.ResumeDetail {
     val builder = com.spectrum.workfolio.proto.common.ResumeDetail.newBuilder()
 
     builder.setId(this.id)
@@ -66,7 +67,10 @@ fun Resume.toDetailProto(): com.spectrum.workfolio.proto.common.ResumeDetail {
     builder.addAllProjects(this.projects.map { it.toProtoWithoutResume() })
     builder.addAllActivities(this.activities.map { it.toProtoWithoutResume() })
     builder.addAllLanguageSkills(this.languageSkills.map { it.toProtoWithoutResume() })
-    builder.addAllAttachments(this.resumeAttachments.map { it.toProtoWithoutResume() })
+
+    val attachmentsByTargetId = attachments.groupBy { it.targetId }
+
+    builder.addAllAttachments(attachmentsByTargetId[this.id]?.map { it.toProto() })
 
     return builder.build()
 }

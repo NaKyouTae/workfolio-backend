@@ -1,4 +1,4 @@
-package com.spectrum.workfolio.services
+package com.spectrum.workfolio.services.resume
 
 import com.spectrum.workfolio.domain.entity.resume.Activity
 import com.spectrum.workfolio.domain.entity.resume.Resume
