@@ -9,19 +9,31 @@ option java_package = "com.spectrum.workfolio.proto.record";
 option java_outer_classname = "RecordProto";
 
 message RecordCreateRequest {
+  message Attachment {
+    string file_name = 1;
+    bytes file_data = 2;
+  }
+
   string title = 1;
   string description = 2;
   int64 started_at = 3;
   int64 ended_at = 4;
+  repeated Attachment attachments = 5;
 
   string record_group_id = 99;
 }
 
 message RecordUpdateRequest {
+  message Attachment {
+    string file_name = 1;
+    bytes file_data = 2;
+  }
+
   string title = 1;
   string description = 2;
   int64 started_at = 3;
   int64 ended_at = 4;
+  repeated Attachment attachments = 5;
 
   string id = 99;
 }

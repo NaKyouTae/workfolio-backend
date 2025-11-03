@@ -43,6 +43,7 @@ class AttachmentService(
         fileData: ByteString? = null,
         isVisible: Boolean,
         priority: Int = 0,
+        storagePath: String,
     ): Attachment {
         val resume = resumeQueryService.getResume(resumeId)
 
@@ -69,7 +70,7 @@ class AttachmentService(
                 fileUploadService.uploadFileToStorage(
                     fileData = fileData,
                     fileName = storageFileName,
-                    storagePath = "resumes/attachments/$resumeId",
+                    storagePath = storagePath,
                 )
             } catch (e: Exception) {
                 // 업로드 실패 시 생성된 Attachment 삭제 (롤백)
@@ -167,6 +168,7 @@ class AttachmentService(
         fileData: ByteString? = null,
         isVisible: Boolean,
         priority: Int = 0,
+        storagePath: String,
     ): Attachment {
         val attachment = this.getAttachment(id)
 
@@ -185,7 +187,7 @@ class AttachmentService(
                 val newFileUrl = fileUploadService.uploadFileToStorage(
                     fileData = fileData,
                     fileName = storageFileName,
-                    storagePath = "resumes/attachments/${attachment.resume.id}",
+                    storagePath = storagePath,
                 )
 
                 // 업로드 성공 후 기존 파일 삭제

@@ -444,6 +444,7 @@ class ResumeCommandService(
                     fileData = if (request.hasFileData()) request.fileData else null,
                     isVisible = request.isVisible,
                     priority = request.priority,
+                    storagePath = "resumes/attachments/$resumeId"
                 )
             } else {
                 // 수정
@@ -457,6 +458,7 @@ class ResumeCommandService(
                     fileData = if (request.hasFileData()) request.fileData else null,
                     isVisible = request.isVisible,
                     priority = request.priority,
+                    storagePath = "resumes/attachments/${resumeId}"
                 )
             }
         }

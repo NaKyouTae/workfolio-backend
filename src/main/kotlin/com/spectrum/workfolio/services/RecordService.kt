@@ -2,6 +2,8 @@ package com.spectrum.workfolio.services
 
 import com.spectrum.workfolio.domain.entity.record.Record
 import com.spectrum.workfolio.domain.entity.record.Record.Companion.generateRecordType
+import com.spectrum.workfolio.domain.enums.AttachmentCategory
+import com.spectrum.workfolio.domain.enums.AttachmentType
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.RecordRepository
@@ -9,6 +11,7 @@ import com.spectrum.workfolio.proto.record.ListRecordResponse
 import com.spectrum.workfolio.proto.record.RecordCreateRequest
 import com.spectrum.workfolio.proto.record.RecordResponse
 import com.spectrum.workfolio.proto.record.RecordUpdateRequest
+import com.spectrum.workfolio.utils.EnumUtils.convertProtoEnumSafe
 import com.spectrum.workfolio.utils.TimeUtil
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.stereotype.Service
@@ -19,8 +22,8 @@ import java.time.LocalDateTime
 class RecordService(
     private val workerService: WorkerService,
     private val recordRepository: RecordRepository,
+    private val attachmentService: AttachmentService,
     private val recordGroupService: RecordGroupService,
-    private val careerService: CareerService,
 ) {
 
     private fun getRecordEntity(id: String): Record {
@@ -82,6 +85,23 @@ class RecordService(
 
         val createdRecord = recordRepository.save(record)
 
+        if (request.attachmentsList.isNotEmpty()) {
+            request.attachmentsList.map {
+                attachmentService.createAttachment(
+                    resumeId = createdRecord.id,
+                    type = AttachmentType.ETC,
+                    category = AttachmentCategory.FILE,
+                    fileName = it.fileName,
+                    fileUrl = "",
+                    url = "",
+                    fileData = it.fileData,
+                    isVisible = true,
+                    priority = 0,
+                    storagePath = "record/attachments/${createdRecord.id}",
+                )
+            }
+        }
+
         return RecordResponse.newBuilder().setRecord(createdRecord.toProto()).build()
     }
 
@@ -100,6 +120,23 @@ class RecordService(
         )
 
         val updatedRecord = recordRepository.save(record)
+
+        if (request.attachmentsList.isNotEmpty()) {
+            request.attachmentsList.map {
+                attachmentService.updateAttachment(
+                    id = updatedRecord.id,
+                    type = AttachmentType.ETC,
+                    category = AttachmentCategory.FILE,
+                    fileName = it.fileName,
+                    fileUrl = "",
+                    url = "",
+                    fileData = it.fileData,
+                    isVisible = true,
+                    priority = 0,
+                    storagePath = "record/attachments/${updatedRecord.id}",
+                )
+            }
+        }
 
         return RecordResponse.newBuilder().setRecord(updatedRecord.toProto()).build()
     }
