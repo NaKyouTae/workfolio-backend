@@ -7,6 +7,7 @@ import com.spectrum.workfolio.domain.entity.record.Record.Companion.generateReco
 import com.spectrum.workfolio.domain.entity.record.RecordAttachment
 import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.RecordRepository
+import com.spectrum.workfolio.interfaces.AttachmentService
 import com.spectrum.workfolio.proto.record.RecordCreateRequest
 import com.spectrum.workfolio.proto.record.RecordResponse
 import com.spectrum.workfolio.proto.record.RecordUpdateRequest

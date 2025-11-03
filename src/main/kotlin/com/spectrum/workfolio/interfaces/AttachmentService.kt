@@ -1,4 +1,4 @@
-package com.spectrum.workfolio.services
+package com.spectrum.workfolio.interfaces
 
 import com.spectrum.workfolio.domain.dto.AttachmentCreateDto
 import com.spectrum.workfolio.domain.dto.AttachmentUpdateDto

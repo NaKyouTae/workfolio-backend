@@ -7,6 +7,7 @@ import com.spectrum.workfolio.domain.entity.resume.ResumeAttachment
 import com.spectrum.workfolio.domain.enums.AttachmentCategory
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.repository.ResumeAttachmentRepository
+import com.spectrum.workfolio.interfaces.AttachmentService
 import com.spectrum.workfolio.utils.EntityTypeValidator.requireEntityType
 import com.spectrum.workfolio.utils.FileUtil
 import com.spectrum.workfolio.utils.WorkfolioException

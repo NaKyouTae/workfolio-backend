@@ -6,6 +6,7 @@ import com.spectrum.workfolio.domain.entity.record.Record
 import com.spectrum.workfolio.domain.entity.record.RecordAttachment
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.repository.RecordAttachmentRepository
+import com.spectrum.workfolio.interfaces.AttachmentService
 import com.spectrum.workfolio.utils.EntityTypeValidator.requireEntityType
 import com.spectrum.workfolio.utils.FileUtil
 import com.spectrum.workfolio.utils.WorkfolioException

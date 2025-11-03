@@ -6,6 +6,7 @@ import com.spectrum.workfolio.domain.entity.resume.Resume
 import com.spectrum.workfolio.domain.entity.resume.ResumeAttachment
 import com.spectrum.workfolio.domain.enums.Gender
 import com.spectrum.workfolio.domain.repository.ResumeRepository
+import com.spectrum.workfolio.interfaces.AttachmentService
 import com.spectrum.workfolio.proto.resume.ResumeCreateRequest
 import com.spectrum.workfolio.proto.resume.ResumeUpdateRequest
 import com.spectrum.workfolio.utils.EnumUtils.convertProtoEnumSafe
