@@ -2,7 +2,7 @@ package com.spectrum.workfolio.services
 
 import com.spectrum.workfolio.domain.dto.AttachmentCreateDto
 import com.spectrum.workfolio.domain.dto.AttachmentUpdateDto
-import com.spectrum.workfolio.domain.entity.resume.Attachment
+import com.spectrum.workfolio.domain.entity.common.Attachment
 import com.spectrum.workfolio.domain.entity.resume.Resume
 import com.spectrum.workfolio.domain.enums.AttachmentCategory
 import com.spectrum.workfolio.domain.enums.MsgKOR

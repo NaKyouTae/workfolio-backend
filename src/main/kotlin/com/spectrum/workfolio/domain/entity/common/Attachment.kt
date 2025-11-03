@@ -1,4 +1,4 @@
-package com.spectrum.workfolio.domain.entity.resume
+package com.spectrum.workfolio.domain.entity.common
 
 import com.spectrum.workfolio.domain.entity.BaseEntity
 import com.spectrum.workfolio.domain.enums.AttachmentCategory

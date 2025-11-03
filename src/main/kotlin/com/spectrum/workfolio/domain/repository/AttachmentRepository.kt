@@ -1,6 +1,6 @@
 package com.spectrum.workfolio.domain.repository
 
-import com.spectrum.workfolio.domain.entity.resume.Attachment
+import com.spectrum.workfolio.domain.entity.common.Attachment
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 

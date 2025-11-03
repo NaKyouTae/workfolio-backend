@@ -1,7 +1,7 @@
 package com.spectrum.workfolio.services
 
 import com.google.protobuf.ByteString
-import com.spectrum.workfolio.domain.entity.resume.Attachment
+import com.spectrum.workfolio.domain.entity.common.Attachment
 import com.spectrum.workfolio.utils.Base64MultipartFile
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.stereotype.Service

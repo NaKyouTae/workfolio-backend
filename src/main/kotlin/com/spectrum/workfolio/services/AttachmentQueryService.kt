@@ -1,6 +1,6 @@
 package com.spectrum.workfolio.services
 
-import com.spectrum.workfolio.domain.entity.resume.Attachment
+import com.spectrum.workfolio.domain.entity.common.Attachment
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.repository.AttachmentRepository
 import com.spectrum.workfolio.utils.WorkfolioException

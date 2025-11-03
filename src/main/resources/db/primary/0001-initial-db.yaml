@@ -995,213 +995,6 @@ databaseChangeLog:
             tableName: accounts
 
         - createTable:
-            tableName: job_searches
-            columns:
-              - column:
-                  name: id
-                  type: VARCHAR(16)
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: title
-                  type: VARCHAR(1024)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: started_at
-                  type: TIMESTAMP(6)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: ended_at
-                  type: TIMESTAMP(6)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: memo
-                  type: TEXT
-                  constraints:
-                    nullable: true
-              - column:
-                  name: prev_career_id
-                  type: VARCHAR(16)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: next_career_id
-                  type: VARCHAR(16)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: worker_id
-                  type: VARCHAR(16)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: created_at
-                  type: TIMESTAMP(6)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: updated_at
-                  type: TIMESTAMP(6)
-                  constraints:
-                    nullable: false
-        - createIndex:
-            columns:
-              - column:
-                  name: worker_id
-              - column:
-                  name: started_at
-              - column:
-                  name: ended_at
-            indexName: idx_job_searches_worker_id_started_at_ended_at
-            tableName: job_searches
-
-        - createTable:
-            tableName: job_search_companies
-            columns:
-              - column:
-                  name: id
-                  type: VARCHAR(16)
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: name
-                  type: VARCHAR(1024)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: status
-                  type: VARCHAR(128)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: applied_at
-                  type: TIMESTAMP(6)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: closed_at
-                  type: TIMESTAMP(6)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: ended_at
-                  type: TIMESTAMP(6)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: industry
-                  type: VARCHAR(512)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: business_size
-                  type: VARCHAR(512)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: location
-                  type: VARCHAR(512)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: description
-                  type: TEXT
-                  constraints:
-                    nullable: true
-              - column:
-                  name: memo
-                  type: TEXT
-                  constraints:
-                    nullable: true
-              - column:
-                  name: link
-                  type: TEXT
-                  constraints:
-                    nullable: true
-              - column:
-                  name: job_search_id
-                  type: VARCHAR(16)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: created_at
-                  type: TIMESTAMP(6)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: updated_at
-                  type: TIMESTAMP(6)
-                  constraints:
-                    nullable: false
-        - createIndex:
-            columns:
-              - column:
-                  name: job_search_id
-            indexName: idx_job_search_companies_job_search_id
-            tableName: job_search_companies
-
-        - createTable:
-            tableName: interviews
-            columns:
-              - column:
-                  name: id
-                  type: VARCHAR(16)
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: title
-                  type: VARCHAR(1024)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: type
-                  type: VARCHAR(128)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: started_at
-                  type: TIMESTAMP(6)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: ended_at
-                  type: TIMESTAMP(6)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: memo
-                  type: TEXT
-                  constraints:
-                    nullable: true
-              - column:
-                  name: job_search_company_id
-                  type: VARCHAR(16)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: created_at
-                  type: TIMESTAMP(6)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: updated_at
-                  type: TIMESTAMP(6)
-                  constraints:
-                    nullable: false
-        - createIndex:
-            columns:
-              - column:
-                  name: job_search_company_id
-            indexName: idx_interviews_job_search_company_id
-            tableName: interviews
-
-        - createTable:
             tableName: system_configs
             columns:
               - column:
@@ -1243,3 +1036,488 @@ databaseChangeLog:
                   name: worker_id
             indexName: idx_system_configs_type_worker_id
             tableName: system_configs
+
+        - createTable:
+            tableName: turn_overs
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: worker_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+        - createIndex:
+            columns:
+              - column:
+                  name: worker_id
+            indexName: idx_turn_overs_worker_id
+            tableName: turn_overs
+
+        - createTable:
+            tableName: turn_over_goals
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: reason
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: goal
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: turn_over_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+        - createIndex:
+            columns:
+              - column:
+                  name: turn_over_id
+            indexName: idx_turn_over_goals_turn_over_id
+            tableName: turn_over_goals
+
+        - createTable:
+            tableName: self_introductions
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: question
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: content
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: turn_over_goal_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+        - createIndex:
+            columns:
+              - column:
+                  name: turn_over_goal_id
+            indexName: idx_self_introductions_turn_over_goal_id
+            tableName: self_introductions
+
+        - createTable:
+            tableName: interview_questions
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: question
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: answer
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: turn_over_goal_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+        - createIndex:
+            columns:
+              - column:
+                  name: turn_over_goal_id
+            indexName: idx_interview_questions_turn_over_goal_id
+            tableName: interview_questions
+
+        - createTable:
+            tableName: turn_over_challenges
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: turn_over_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+        - createIndex:
+            columns:
+              - column:
+                  name: turn_over_id
+            indexName: idx_turn_over_challenges_turn_over_id
+            tableName: turn_over_challenges
+
+        - createTable:
+            tableName: job_applications
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: position
+                  type: VARCHAR(512)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: job_posting_title
+                  type: VARCHAR(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: job_posting_url
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: started_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: ended_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: application_source
+                  type: VARCHAR(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: memo
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: turn_over_challenge_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+        - createIndex:
+            columns:
+              - column:
+                  name: turn_over_challenge_id
+            indexName: idx_job_applications_turn_over_challenge_id
+            tableName: job_applications
+
+        - createTable:
+            tableName: application_stages
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: VARCHAR(32)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: started_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: memo
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: job_application_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+        - createIndex:
+            columns:
+              - column:
+                  name: job_application_id
+            indexName: idx_application_stages_job_application_id
+            tableName: application_stages
+
+        - createTable:
+            tableName: turn_over_retrospectives
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: salary
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: position
+                  type: VARCHAR(512)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: job_title
+                  type: VARCHAR(512)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: rank
+                  type: VARCHAR(512)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: department
+                  type: VARCHAR(512)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: reason
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: score
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: review_summary
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: joined_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: employment_type
+                  type: VARCHAR(32)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: work_type
+                  type: VARCHAR(32)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: turn_over_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+        - createIndex:
+            columns:
+              - column:
+                  name: turn_over_id
+            indexName: idx_turn_over_retrospectives_turn_over_id
+            tableName: turn_over_retrospectives
+
+        - createTable:
+            tableName: memos
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: content
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: target_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: target_type
+                  type: VARCHAR(32)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+        - createIndex:
+            columns:
+              - column:
+                  name: target_id
+            indexName: idx_memos_target_id
+            tableName: memos
+
+        - createTable:
+            tableName: check_list
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: checked
+                  type: BOOL
+                  constraints:
+                    nullable: false
+              - column:
+                  name: content
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: turn_over_goal_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+        - createIndex:
+            columns:
+              - column:
+                  name: turn_over_goal_id
+            indexName: idx_check_list_turn_over_goal_id
+            tableName: check_list
