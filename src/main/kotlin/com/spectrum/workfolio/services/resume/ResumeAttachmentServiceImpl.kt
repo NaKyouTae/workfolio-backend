@@ -87,7 +87,7 @@ class ResumeAttachmentServiceImpl(
     ) {
         val resume = requireEntityType<Resume>(entity)
 
-        val newAttachments = attachments.map { originalAttachment ->
+        attachments.map { originalAttachment ->
             // 먼저 새 Attachment 생성 (ID 획득을 위해)
             val newResumeAttachment = ResumeAttachment(
                 fileName = originalAttachment.fileName,
@@ -104,13 +104,6 @@ class ResumeAttachmentServiceImpl(
             // 원본에 파일이 있으면 Storage에서 복사
             if (originalAttachment.fileUrl.isNotBlank()) {
                 try {
-                    logger.info(
-                        "Starting file copy for attachment: " +
-                            "originalId=${originalAttachment.id}, " +
-                            "newId=${savedAttachment.id}, " +
-                            "sourceUrl=${originalAttachment.fileUrl}",
-                    )
-
                     // 원본 파일명에서 확장자 추출
                     val extension = originalAttachment.fileName.substringAfterLast(".", "")
                     // 새로운 파일명 생성: {새AttachmentId}.{확장자}
@@ -123,23 +116,8 @@ class ResumeAttachmentServiceImpl(
                         destinationStoragePath = "resumes/attachments/${resume.id}",
                     )
 
-                    // 복사된 파일 URL로 업데이트
                     savedAttachment.changeFileUrl(copiedFileUrl)
-
-                    logger.info(
-                        "File copied successfully for attachment: " +
-                            "originalUrl=${originalAttachment.fileUrl}, " +
-                            "newUrl=$copiedFileUrl",
-                    )
                 } catch (e: Exception) {
-                    logger.error(
-                        "Failed to copy file for attachment: " +
-                            "originalId=${originalAttachment.id}, " +
-                            "newId=${savedAttachment.id}, " +
-                            "error=${e.message}",
-                        e,
-                    )
-                    // 파일 복사 실패 시 원본 URL을 그대로 사용 (fallback)
                     savedAttachment.changeFileUrl(originalAttachment.fileUrl)
                 }
             } else {
@@ -148,8 +126,6 @@ class ResumeAttachmentServiceImpl(
 
             savedAttachment
         }
-
-        logger.info("Bulk created ${newAttachments.size} attachments for resume: ${resume.id}")
     }
 
     @Transactional
@@ -175,7 +151,6 @@ class ResumeAttachmentServiceImpl(
                 newFileUrl
             } catch (e: Exception) {
                 // 업로드 실패 시 기존 파일 유지
-                logger.error("Failed to upload new file, keeping old file", e)
                 throw e
             }
         } else {
