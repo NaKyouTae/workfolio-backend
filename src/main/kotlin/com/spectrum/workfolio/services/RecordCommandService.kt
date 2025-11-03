@@ -1,9 +1,10 @@
 package com.spectrum.workfolio.services
 
+import com.spectrum.workfolio.domain.dto.AttachmentCreateDto
+import com.spectrum.workfolio.domain.dto.AttachmentUpdateDto
 import com.spectrum.workfolio.domain.entity.record.Record
 import com.spectrum.workfolio.domain.entity.record.Record.Companion.generateRecordType
-import com.spectrum.workfolio.domain.enums.AttachmentCategory
-import com.spectrum.workfolio.domain.enums.AttachmentType
+import com.spectrum.workfolio.domain.entity.record.RecordAttachment
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.RecordRepository
@@ -11,7 +12,6 @@ import com.spectrum.workfolio.proto.record.ListRecordResponse
 import com.spectrum.workfolio.proto.record.RecordCreateRequest
 import com.spectrum.workfolio.proto.record.RecordResponse
 import com.spectrum.workfolio.proto.record.RecordUpdateRequest
-import com.spectrum.workfolio.utils.EnumUtils.convertProtoEnumSafe
 import com.spectrum.workfolio.utils.TimeUtil
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.stereotype.Service
@@ -19,50 +19,13 @@ import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
 @Service
-class RecordService(
+class RecordCommandService(
     private val workerService: WorkerService,
     private val recordRepository: RecordRepository,
-    private val attachmentService: AttachmentService,
     private val recordGroupService: RecordGroupService,
+    private val recordQueryService: RecordQueryService,
+    private val attachmentService: AttachmentService<RecordAttachment>,
 ) {
-
-    private fun getRecordEntity(id: String): Record {
-        return recordRepository.findById(id).orElseThrow { WorkfolioException(MsgKOR.NOT_FOUND_RECORD.name) }
-    }
-
-    @Transactional(readOnly = true)
-    fun getRecord(id: String): RecordResponse {
-        val record = this.getRecordEntity(id)
-        return RecordResponse.newBuilder().setRecord(record.toProto()).build()
-    }
-
-    @Transactional(readOnly = true)
-    fun listMonthlyRecord(year: Int, month: Int, recordGroupIds: List<String>): ListRecordResponse {
-        val startDate = LocalDateTime.of(year, month, 1, 0, 0, 0)
-        val endDate = startDate.plusMonths(1)
-
-        return getRecordByDateRange(startDate, endDate, recordGroupIds)
-    }
-
-    @Transactional(readOnly = true)
-    fun listWeeklyRecord(weekStartDate: String, weekEndDate: String, recordGroupIds: List<String>): ListRecordResponse {
-        val startDate = TimeUtil.dateStart(weekStartDate)
-        val endDate = TimeUtil.dateEnd(weekEndDate)
-        return getRecordByDateRange(startDate, endDate, recordGroupIds)
-    }
-
-    private fun getRecordByDateRange(
-        startDate: LocalDateTime,
-        endDate: LocalDateTime,
-        recordGroupIds: List<String>,
-    ): ListRecordResponse {
-        val list = recordRepository.findByDateRange(recordGroupIds, startDate, endDate)
-        val sortedList =
-            list.sortedWith(compareBy<Record> { it.startedAt.toLocalDate() }.thenByDescending { it.getDuration() })
-        val listResponse = sortedList.map { it.toProto() }
-
-        return ListRecordResponse.newBuilder().addAllRecords(listResponse).build()
-    }
 
     @Transactional
     fun createRecord(workerId: String, request: RecordCreateRequest): RecordResponse {
@@ -88,16 +51,12 @@ class RecordService(
         if (request.attachmentsList.isNotEmpty()) {
             request.attachmentsList.map {
                 attachmentService.createAttachment(
-                    resumeId = createdRecord.id,
-                    type = AttachmentType.ETC,
-                    category = AttachmentCategory.FILE,
-                    fileName = it.fileName,
-                    fileUrl = "",
-                    url = "",
-                    fileData = it.fileData,
-                    isVisible = true,
-                    priority = 0,
-                    storagePath = "record/attachments/${createdRecord.id}",
+                    AttachmentCreateDto(
+                        targetId = createdRecord.id,
+                        fileName = it.fileName,
+                        fileData = it.fileData,
+                        storagePath = "record/attachments/${createdRecord.id}",
+                    )
                 )
             }
         }
@@ -107,7 +66,7 @@ class RecordService(
 
     @Transactional
     fun updateRecord(request: RecordUpdateRequest): RecordResponse {
-        val record = this.getRecordEntity(request.id)
+        val record = recordQueryService.getRecordEntity(request.id)
         val startedAt = TimeUtil.ofEpochMilli(request.startedAt)
         val endedAt = TimeUtil.ofEpochMilli(request.endedAt)
 
@@ -124,16 +83,12 @@ class RecordService(
         if (request.attachmentsList.isNotEmpty()) {
             request.attachmentsList.map {
                 attachmentService.updateAttachment(
-                    id = updatedRecord.id,
-                    type = AttachmentType.ETC,
-                    category = AttachmentCategory.FILE,
-                    fileName = it.fileName,
-                    fileUrl = "",
-                    url = "",
-                    fileData = it.fileData,
-                    isVisible = true,
-                    priority = 0,
-                    storagePath = "record/attachments/${updatedRecord.id}",
+                    AttachmentUpdateDto(
+                        id = updatedRecord.id,
+                        fileName = it.fileName,
+                        fileData = it.fileData,
+                        storagePath = "record/attachments/${updatedRecord.id}",
+                    )
                 )
             }
         }
@@ -144,7 +99,7 @@ class RecordService(
     @Transactional
     fun deleteRecord(workerId: String, recordId: String) {
         val worker = workerService.getWorker(workerId)
-        val record = this.getRecordEntity(recordId)
+        val record = recordQueryService.getRecordEntity(recordId)
 
         // TODO worker가 레코드 그룹에 편집자 이상 권한이 있을 경우에만 삭제 가능
 //        if () {

@@ -6,7 +6,8 @@ import com.spectrum.workfolio.proto.record.ListRecordResponse
 import com.spectrum.workfolio.proto.record.RecordCreateRequest
 import com.spectrum.workfolio.proto.record.RecordResponse
 import com.spectrum.workfolio.proto.record.RecordUpdateRequest
-import com.spectrum.workfolio.services.RecordService
+import com.spectrum.workfolio.services.RecordCommandService
+import com.spectrum.workfolio.services.RecordQueryService
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -20,14 +21,15 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/records")
 class RecordController(
-    private val recordService: RecordService,
+    private val recordQueryService: RecordQueryService,
+    private val recordCommandService: RecordCommandService,
 ) {
 
     @GetMapping("/{id}")
     fun getRecord(
         @PathVariable id: String,
     ): RecordResponse {
-        return recordService.getRecord(id)
+        return recordQueryService.getRecord(id)
     }
 
     @GetMapping("/monthly")
@@ -36,7 +38,7 @@ class RecordController(
         @RequestParam month: Int,
         @RequestParam recordGroupIds: List<String>,
     ): ListRecordResponse {
-        return recordService.listMonthlyRecord(year, month, recordGroupIds)
+        return recordQueryService.listMonthlyRecord(year, month, recordGroupIds)
     }
 
     @GetMapping("/weekly")
@@ -45,7 +47,7 @@ class RecordController(
         @RequestParam endDate: String,
         @RequestParam recordGroupIds: List<String>,
     ): ListRecordResponse {
-        return recordService.listWeeklyRecord(startDate, endDate, recordGroupIds)
+        return recordQueryService.listWeeklyRecord(startDate, endDate, recordGroupIds)
     }
 
     @PostMapping
@@ -53,14 +55,14 @@ class RecordController(
         @AuthenticatedUser workerId: String,
         @RequestBody request: RecordCreateRequest,
     ): RecordResponse {
-        return recordService.createRecord(workerId, request)
+        return recordCommandService.createRecord(workerId, request)
     }
 
     @PutMapping
     fun updateRecord(
         @RequestBody request: RecordUpdateRequest,
     ): RecordResponse {
-        return recordService.updateRecord(request)
+        return recordCommandService.updateRecord(request)
     }
 
     @DeleteMapping("{recordId}")
@@ -68,7 +70,7 @@ class RecordController(
         @AuthenticatedUser workerId: String,
         @PathVariable recordId: String,
     ): SuccessResponse {
-        recordService.deleteRecord(workerId, recordId)
+        recordCommandService.deleteRecord(workerId, recordId)
         return SuccessResponse.newBuilder().setIsSuccess(true).build()
     }
 }

@@ -221,6 +221,49 @@ databaseChangeLog:
             tableName: records
 
         - createTable:
+            tableName: record_attachments
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: file_name
+                  type: VARCHAR(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: file_url
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: record_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+        - createIndex:
+            columns:
+              - column:
+                  name: record_id
+              - column:
+                  name: created_at
+            indexName: idx_record_attachments_record_id_created_at
+            tableName: record_attachments
+
+        - createTable:
             tableName: worker_record_groups
             columns:
               - column:
@@ -676,7 +719,7 @@ databaseChangeLog:
             tableName: educations
 
         - createTable:
-            tableName: attachments
+            tableName: resume_attachments
             columns:
               - column:
                   name: id
@@ -741,8 +784,8 @@ databaseChangeLog:
                   name: resume_id
               - column:
                   name: priority
-            indexName: idx_attachments_resume_id_priority
-            tableName: attachments
+            indexName: idx_resume_attachments_resume_id_priority
+            tableName: resume_attachments
 
         - createTable:
             tableName: activities

@@ -22,11 +22,11 @@ import java.time.LocalDateTime
  */
 @Service
 class UserRegistrationService(
-    private val recordService: RecordService,
     private val workerService: WorkerService,
     private val accountService: AccountService,
     private val recordGroupService: RecordGroupService,
     private val systemConfigService: SystemConfigService,
+    private val recordCommandService: RecordCommandService,
 ) {
 
     private val logger = LoggerFactory.getLogger(UserRegistrationService::class.java)
@@ -100,7 +100,7 @@ class UserRegistrationService(
             .setRecordGroupId(recordGroupId)
             .build()
 
-        recordService.createRecord(workerId, recordRequest)
+        recordCommandService.createRecord(workerId, recordRequest)
     }
 
     private fun createAccount(

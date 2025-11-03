@@ -1,6 +1,9 @@
 package com.spectrum.workfolio.services
 
+import com.spectrum.workfolio.domain.dto.AttachmentCreateDto
+import com.spectrum.workfolio.domain.dto.AttachmentUpdateDto
 import com.spectrum.workfolio.domain.entity.resume.Resume
+import com.spectrum.workfolio.domain.entity.resume.ResumeAttachment
 import com.spectrum.workfolio.domain.enums.Gender
 import com.spectrum.workfolio.domain.repository.ResumeRepository
 import com.spectrum.workfolio.proto.resume.ResumeCreateRequest
@@ -23,7 +26,7 @@ class ResumeCommandService(
     private val activityService: ActivityService,
     private val resumeRepository: ResumeRepository,
     private val educationService: EducationService,
-    private val attachmentService: AttachmentService,
+    private val attachmentService: AttachmentService<ResumeAttachment>,
     private val resumeQueryService: ResumeQueryService,
     private val languageTestService: LanguageTestService,
     private val languageSkillService: LanguageSkillService,
@@ -96,7 +99,7 @@ class ResumeCommandService(
         }
 
         // 3-6. Attachment 복제
-        attachmentService.createBulkAttachment(savedResume, originalResume.attachments)
+        attachmentService.createBulkAttachment(savedResume, originalResume.resumeAttachments)
 
         return savedResume
     }
@@ -143,7 +146,8 @@ class ResumeCommandService(
                 email = request.email,
                 job = request.job,
                 description = request.description,
-                birthDate = if (request.hasBirthDate()) TimeUtil.ofEpochMilli(request.birthDate).toLocalDate() else null,
+                birthDate = if (request.hasBirthDate()) TimeUtil.ofEpochMilli(request.birthDate)
+                    .toLocalDate() else null,
                 gender = convertProtoEnumSafe<Gender>(request.gender),
                 isPublic = request.isPublic,
                 isDefault = request.isDefault,
@@ -420,7 +424,7 @@ class ResumeCommandService(
 
     private fun updateAttachments(
         resumeId: String,
-        attachmentRequests: List<ResumeUpdateRequest.AttachmentRequest>,
+        attachmentRequests: List<ResumeUpdateRequest.ResumeAttachmentRequest>,
     ) {
         val existingAttachments = attachmentService.listAttachments(resumeId)
         val existingIds = existingAttachments.map { it.id }.toSet()
@@ -435,30 +439,34 @@ class ResumeCommandService(
             if (request.id.isNullOrEmpty()) {
                 // 생성
                 attachmentService.createAttachment(
-                    resumeId = resumeId,
-                    type = convertProtoEnumSafe<com.spectrum.workfolio.domain.enums.AttachmentType>(request.type),
-                    category = com.spectrum.workfolio.domain.enums.AttachmentCategory.valueOf(request.category.name),
-                    fileName = request.fileName,
-                    fileUrl = request.fileUrl,
-                    url = request.url,
-                    fileData = if (request.hasFileData()) request.fileData else null,
-                    isVisible = request.isVisible,
-                    priority = request.priority,
-                    storagePath = "resumes/attachments/$resumeId"
+                    AttachmentCreateDto(
+                        targetId = resumeId,
+                        type = convertProtoEnumSafe<com.spectrum.workfolio.domain.enums.AttachmentType>(request.type),
+                        category = com.spectrum.workfolio.domain.enums.AttachmentCategory.valueOf(request.category.name),
+                        fileName = request.fileName,
+                        fileUrl = request.fileUrl,
+                        url = request.url,
+                        fileData = if (request.hasFileData()) request.fileData else null,
+                        isVisible = request.isVisible,
+                        priority = request.priority,
+                        storagePath = "resumes/attachments/$resumeId"
+                    )
                 )
             } else {
                 // 수정
                 attachmentService.updateAttachment(
-                    id = request.id,
-                    type = convertProtoEnumSafe<com.spectrum.workfolio.domain.enums.AttachmentType>(request.type),
-                    category = com.spectrum.workfolio.domain.enums.AttachmentCategory.valueOf(request.category.name),
-                    fileName = request.fileName,
-                    fileUrl = request.fileUrl,
-                    url = request.url,
-                    fileData = if (request.hasFileData()) request.fileData else null,
-                    isVisible = request.isVisible,
-                    priority = request.priority,
-                    storagePath = "resumes/attachments/${resumeId}"
+                    AttachmentUpdateDto(
+                        id = request.id,
+                        type = convertProtoEnumSafe<com.spectrum.workfolio.domain.enums.AttachmentType>(request.type),
+                        category = com.spectrum.workfolio.domain.enums.AttachmentCategory.valueOf(request.category.name),
+                        fileName = request.fileName,
+                        fileUrl = request.fileUrl,
+                        url = request.url,
+                        fileData = if (request.hasFileData()) request.fileData else null,
+                        isVisible = request.isVisible,
+                        priority = request.priority,
+                        storagePath = "resumes/attachments/${resumeId}"
+                    )
                 )
             }
         }

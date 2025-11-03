@@ -88,7 +88,7 @@ message ResumeDetail {
   repeated Activity activities = 53;
   repeated Project projects = 54;
   repeated LanguageSkill language_skills = 55;
-  repeated Attachment attachments = 56;
+  repeated ResumeAttachment attachments = 56;
 
   uint64 created_at = 98;
   uint64 updated_at = 99;
@@ -289,8 +289,8 @@ message LanguageTest {
   uint64 updated_at = 99;
 }
 
-message Attachment {
-  enum AttachmentType {
+message ResumeAttachment {
+  enum ResumeAttachmentType {
     TYPE_UNKNOWN = 0;
     RESUME = 1;
     PORTFOLIO = 2;
@@ -299,15 +299,15 @@ message Attachment {
     ETC = 5;
   }
 
-  enum AttachmentCategory {
+  enum ResumeAttachmentCategory {
     CATEGORY_UNKNOWN = 0;
     FILE = 1;
     URL = 2;
   }
 
   string id = 1;
-  optional AttachmentType type = 2;
-  AttachmentCategory category = 3;
+  optional ResumeAttachmentType type = 2;
+  ResumeAttachmentCategory category = 3;
   string url = 4;
   string file_name = 5;
   string file_url = 6;
@@ -338,6 +338,17 @@ message Record {
 
   Worker worker = 50;
   RecordGroup record_group = 51;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
+}
+
+message RecordAttachment {
+  string id = 1;
+  string file_name = 2;
+  string file_url = 3;
+
+  Record record = 50;
 
   uint64 created_at = 98;
   uint64 updated_at = 99;

@@ -1,6 +1,6 @@
 package com.spectrum.workfolio.domain.entity.resume
 
-import com.spectrum.workfolio.domain.entity.BaseEntity
+import com.spectrum.workfolio.domain.entity.BaseAttachment
 import com.spectrum.workfolio.domain.enums.AttachmentCategory
 import com.spectrum.workfolio.domain.enums.AttachmentType
 import jakarta.persistence.Column
@@ -14,16 +14,16 @@ import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 
 /**
- * 첨부파일
+ * 이력서 첨부파일
  */
 @Entity
 @Table(
-    name = "attachments",
+    name = "resume_attachments",
     indexes = [
-        Index(name = "idx_attachments_resume_id_priority", columnList = "resume_id, priority"),
+        Index(name = "idx_resume_attachments_resume_id_priority", columnList = "resume_id, priority"),
     ],
 )
-class Attachment(
+class ResumeAttachment(
     fileName: String,
     fileUrl: String,
     url: String,
@@ -32,7 +32,11 @@ class Attachment(
     category: AttachmentCategory,
     type: AttachmentType? = null,
     resume: Resume,
-) : BaseEntity("AH") {
+) : BaseAttachment(
+    prefixId = "EA",
+    fileName = fileName,
+    fileUrl = fileUrl,
+) {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type", length = 512, nullable = true)
@@ -42,14 +46,6 @@ class Attachment(
     @Enumerated(EnumType.STRING)
     @Column(name = "category", length = 512, nullable = false)
     var category: AttachmentCategory = category
-        protected set
-
-    @Column(name = "file_name", length = 1024, nullable = false)
-    var fileName: String = fileName
-        protected set
-
-    @Column(name = "file_url", columnDefinition = "TEXT", nullable = false)
-    var fileUrl: String = fileUrl
         protected set
 
     @Column(name = "url", columnDefinition = "TEXT", nullable = false)
@@ -85,11 +81,5 @@ class Attachment(
         this.url = url
         this.isVisible = isVisible
         this.priority = priority
-    }
-
-    fun changeFileUrl(
-        fileUrl: String,
-    ) {
-        this.fileUrl = fileUrl
     }
 }

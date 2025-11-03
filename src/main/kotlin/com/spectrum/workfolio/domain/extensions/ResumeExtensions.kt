@@ -66,7 +66,7 @@ fun Resume.toDetailProto(): com.spectrum.workfolio.proto.common.ResumeDetail {
     builder.addAllProjects(this.projects.map { it.toProtoWithoutResume() })
     builder.addAllActivities(this.activities.map { it.toProtoWithoutResume() })
     builder.addAllLanguageSkills(this.languageSkills.map { it.toProtoWithoutResume() })
-    builder.addAllAttachments(this.attachments.map { it.toProtoWithoutResume() })
+    builder.addAllAttachments(this.resumeAttachments.map { it.toProtoWithoutResume() })
 
     return builder.build()
 }
