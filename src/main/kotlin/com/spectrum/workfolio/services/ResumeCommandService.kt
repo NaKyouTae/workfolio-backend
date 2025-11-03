@@ -146,8 +146,12 @@ class ResumeCommandService(
                 email = request.email,
                 job = request.job,
                 description = request.description,
-                birthDate = if (request.hasBirthDate()) TimeUtil.ofEpochMilli(request.birthDate)
-                    .toLocalDate() else null,
+                birthDate = if (request.hasBirthDate()) {
+                    TimeUtil.ofEpochMilli(request.birthDate)
+                        .toLocalDate()
+                } else {
+                    null
+                },
                 gender = convertProtoEnumSafe<Gender>(request.gender),
                 isPublic = request.isPublic,
                 isDefault = request.isDefault,
@@ -449,8 +453,8 @@ class ResumeCommandService(
                         fileData = if (request.hasFileData()) request.fileData else null,
                         isVisible = request.isVisible,
                         priority = request.priority,
-                        storagePath = "resumes/attachments/$resumeId"
-                    )
+                        storagePath = "resumes/attachments/$resumeId",
+                    ),
                 )
             } else {
                 // 수정
@@ -465,8 +469,8 @@ class ResumeCommandService(
                         fileData = if (request.hasFileData()) request.fileData else null,
                         isVisible = request.isVisible,
                         priority = request.priority,
-                        storagePath = "resumes/attachments/${resumeId}"
-                    )
+                        storagePath = "resumes/attachments/$resumeId",
+                    ),
                 )
             }
         }

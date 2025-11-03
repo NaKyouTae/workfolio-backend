@@ -10,7 +10,9 @@ fun ResumeAttachment.toProto(): com.spectrum.workfolio.proto.common.ResumeAttach
     builder.setFileName(this.fileName)
     builder.setFileUrl(this.fileUrl)
     builder.setUrl(this.url)
-    builder.setCategory(com.spectrum.workfolio.proto.common.ResumeAttachment.ResumeAttachmentCategory.valueOf(this.category.name))
+    builder.setCategory(
+        com.spectrum.workfolio.proto.common.ResumeAttachment.ResumeAttachmentCategory.valueOf(this.category.name),
+    )
     builder.setIsVisible(this.isVisible)
     builder.setPriority(this.priority)
     builder.setResume(this.resume.toProto())
@@ -34,7 +36,9 @@ fun ResumeAttachment.toProtoWithoutResume(): com.spectrum.workfolio.proto.common
     builder.setFileName(this.fileName)
     builder.setFileUrl(this.fileUrl)
     builder.setUrl(this.url)
-    builder.setCategory(com.spectrum.workfolio.proto.common.ResumeAttachment.ResumeAttachmentCategory.valueOf(this.category.name))
+    builder.setCategory(
+        com.spectrum.workfolio.proto.common.ResumeAttachment.ResumeAttachmentCategory.valueOf(this.category.name),
+    )
     builder.setIsVisible(this.isVisible)
     builder.setPriority(this.priority)
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))

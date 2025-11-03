@@ -17,14 +17,14 @@ object EntityTypeValidator {
      */
     @Suppress("UNCHECKED_CAST")
     inline fun <reified T> requireEntityType(
-        entity: Any
+        entity: Any,
     ): T {
         return if (entity is T) {
             entity
         } else {
             throw IllegalArgumentException(
                 "Expected ${T::class.qualifiedName} entity but got: ${entity::class.qualifiedName}. " +
-                    "requires a ${T::class.simpleName} entity."
+                    "requires a ${T::class.simpleName} entity.",
             )
         }
     }
@@ -37,4 +37,3 @@ object EntityTypeValidator {
         return entity as? T
     }
 }
-

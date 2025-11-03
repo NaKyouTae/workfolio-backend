@@ -5,18 +5,14 @@ import com.spectrum.workfolio.domain.dto.AttachmentUpdateDto
 import com.spectrum.workfolio.domain.entity.record.Record
 import com.spectrum.workfolio.domain.entity.record.Record.Companion.generateRecordType
 import com.spectrum.workfolio.domain.entity.record.RecordAttachment
-import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.RecordRepository
-import com.spectrum.workfolio.proto.record.ListRecordResponse
 import com.spectrum.workfolio.proto.record.RecordCreateRequest
 import com.spectrum.workfolio.proto.record.RecordResponse
 import com.spectrum.workfolio.proto.record.RecordUpdateRequest
 import com.spectrum.workfolio.utils.TimeUtil
-import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDateTime
 
 @Service
 class RecordCommandService(
@@ -56,7 +52,7 @@ class RecordCommandService(
                         fileName = it.fileName,
                         fileData = it.fileData,
                         storagePath = "record/attachments/${createdRecord.id}",
-                    )
+                    ),
                 )
             }
         }
@@ -88,7 +84,7 @@ class RecordCommandService(
                         fileName = it.fileName,
                         fileData = it.fileData,
                         storagePath = "record/attachments/${updatedRecord.id}",
-                    )
+                    ),
                 )
             }
         }

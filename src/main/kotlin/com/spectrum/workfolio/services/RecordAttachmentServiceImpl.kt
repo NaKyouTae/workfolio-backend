@@ -24,7 +24,9 @@ class RecordAttachmentServiceImpl(
 
     @Transactional(readOnly = true)
     override fun getAttachment(id: String): RecordAttachment {
-        return recordAttachmentRepository.findById(id).orElseThrow { WorkfolioException(MsgKOR.NOT_FOUND_ATTACHMENT.message) }
+        return recordAttachmentRepository.findById(id).orElseThrow {
+            WorkfolioException(MsgKOR.NOT_FOUND_ATTACHMENT.message)
+        }
     }
 
     @Transactional(readOnly = true)
@@ -77,7 +79,7 @@ class RecordAttachmentServiceImpl(
         attachments: List<RecordAttachment>,
     ) {
         val record = requireEntityType<Record>(entity)
-        
+
         val newAttachments = attachments.map { originalAttachment ->
             // 먼저 새 Attachment 생성 (ID 획득을 위해)
             val newResumeAttachment = RecordAttachment(

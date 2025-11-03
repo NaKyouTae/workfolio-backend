@@ -2,8 +2,8 @@ package com.spectrum.workfolio.services
 
 import com.spectrum.workfolio.domain.dto.AttachmentCreateDto
 import com.spectrum.workfolio.domain.dto.AttachmentUpdateDto
-import com.spectrum.workfolio.domain.entity.resume.ResumeAttachment
 import com.spectrum.workfolio.domain.entity.resume.Resume
+import com.spectrum.workfolio.domain.entity.resume.ResumeAttachment
 import com.spectrum.workfolio.domain.enums.AttachmentCategory
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.repository.ResumeAttachmentRepository
@@ -25,7 +25,9 @@ class ResumeAttachmentServiceImpl(
 
     @Transactional(readOnly = true)
     override fun getAttachment(id: String): ResumeAttachment {
-        return resumeAttachmentRepository.findById(id).orElseThrow { WorkfolioException(MsgKOR.NOT_FOUND_ATTACHMENT.message) }
+        return resumeAttachmentRepository.findById(id).orElseThrow {
+            WorkfolioException(MsgKOR.NOT_FOUND_ATTACHMENT.message)
+        }
     }
 
     @Transactional(readOnly = true)
@@ -83,7 +85,7 @@ class ResumeAttachmentServiceImpl(
         attachments: List<ResumeAttachment>,
     ) {
         val resume = requireEntityType<Resume>(entity)
-        
+
         val newAttachments = attachments.map { originalAttachment ->
             // 먼저 새 Attachment 생성 (ID 획득을 위해)
             val newResumeAttachment = ResumeAttachment(

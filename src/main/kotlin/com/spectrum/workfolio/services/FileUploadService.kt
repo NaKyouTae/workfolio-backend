@@ -1,6 +1,5 @@
 package com.spectrum.workfolio.services
 
-import com.fasterxml.jackson.databind.JsonSerializable
 import com.google.protobuf.ByteString
 import com.spectrum.workfolio.domain.entity.BaseAttachment
 import com.spectrum.workfolio.utils.Base64MultipartFile
