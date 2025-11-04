@@ -25,14 +25,21 @@ class CheckListService(
         return checkListRepository.findByTurnOverGoalId(id)
     }
 
-    @Transactional
-    fun create(turnOverGoal: TurnOverGoal, request: TurnOverUpsertRequest.TurnOverGoalRequest.CheckListRequest): CheckList {
-        val checkList = CheckList(
+    // Cascade용: 엔티티만 생성 (저장 X)
+    fun createEntity(
+        turnOverGoal: TurnOverGoal,
+        request: TurnOverUpsertRequest.TurnOverGoalRequest.CheckListRequest,
+    ): CheckList {
+        return CheckList(
             checked = request.checked,
             content = request.content,
             turnOverGoal = turnOverGoal,
         )
+    }
 
+    @Transactional
+    fun create(turnOverGoal: TurnOverGoal, request: TurnOverUpsertRequest.TurnOverGoalRequest.CheckListRequest): CheckList {
+        val checkList = createEntity(turnOverGoal, request)
         return checkListRepository.save(checkList)
     }
 

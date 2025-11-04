@@ -14,7 +14,18 @@ import jakarta.persistence.Table
 )
 class TurnOverChallenge : BaseEntity("TG") {
 
-    @OneToMany(mappedBy = "turnOverChallenge", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
+    @OneToMany(
+        mappedBy = "turnOverChallenge",
+        cascade = [CascadeType.ALL],
+        fetch = FetchType.LAZY,
+        orphanRemoval = true,
+    )
     private var mutableJobApplications: MutableList<JobApplication> = mutableListOf()
     val jobApplications: List<JobApplication> get() = mutableJobApplications.toList()
+
+    // Cascade를 위한 컬렉션 동기화 메서드
+    fun syncJobApplications(newJobApplications: List<JobApplication>) {
+        mutableJobApplications.clear()
+        mutableJobApplications.addAll(newJobApplications)
+    }
 }

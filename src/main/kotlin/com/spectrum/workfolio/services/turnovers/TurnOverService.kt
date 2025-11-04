@@ -5,6 +5,7 @@ import com.spectrum.workfolio.domain.entity.turnover.TurnOver
 import com.spectrum.workfolio.domain.entity.turnover.TurnOverChallenge
 import com.spectrum.workfolio.domain.entity.turnover.TurnOverGoal
 import com.spectrum.workfolio.domain.entity.turnover.TurnOverRetrospective
+import com.spectrum.workfolio.domain.enums.ApplicationStageStatus
 import com.spectrum.workfolio.domain.enums.AttachmentTargetType
 import com.spectrum.workfolio.domain.enums.MemoTargetType
 import com.spectrum.workfolio.domain.enums.MsgKOR
@@ -20,6 +21,7 @@ import com.spectrum.workfolio.services.AttachmentQueryService
 import com.spectrum.workfolio.services.MemoCommandService
 import com.spectrum.workfolio.services.MemoQueryService
 import com.spectrum.workfolio.services.WorkerService
+import com.spectrum.workfolio.utils.TimeUtil
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -54,15 +56,21 @@ class TurnOverService(
         val turnOver = this.getTurnOver(id)
 
         val turnOverGoal = turnOverGoalService.getTurnOverGoalDetail(turnOver.turnOverGoal.id)
-        val turnOverChallenge = turnOverChallengeService.getTurnOverChallengeDetail(turnOver.turnOverChallenge.id)
-        val turnOverRetrospective = turnOverRetrospectiveService.getTurnOverRetrospectiveDetail(turnOver.turnOverRetrospective.id)
+        val turnOverChallenge = turnOverChallengeService.getTurnOverChallengeDetail(
+            turnOver.turnOverChallenge.id,
+        )
+        val turnOverRetrospective = turnOverRetrospectiveService.getTurnOverRetrospectiveDetail(
+            turnOver.turnOverRetrospective.id,
+        )
 
         return TurnOverDetailResponse.newBuilder()
-            .setTurnOver(turnOver.toDetailProto(
-                turnOverGoal = turnOverGoal,
-                turnOverChallenge = turnOverChallenge,
-                turnOverRetrospective = turnOverRetrospective,
-            ))
+            .setTurnOver(
+                turnOver.toDetailProto(
+                    turnOverGoal = turnOverGoal,
+                    turnOverChallenge = turnOverChallenge,
+                    turnOverRetrospective = turnOverRetrospective,
+                ),
+            )
             .build()
     }
 
@@ -122,48 +130,81 @@ class TurnOverService(
         turnOverGoal: TurnOverGoal,
         requests: List<TurnOverUpsertRequest.TurnOverGoalRequest.SelfIntroductionRequest>,
     ) {
-        val existingEntities = selfIntroductionService.getSelfIntroductions(turnOverGoal.id)
-        val requestIds = requests.mapNotNull { it.id }.toSet()
+        // 기존 엔티티 Map (ID로 빠른 조회)
+        val existingMap = turnOverGoal.selfIntroductions.associateBy { it.id }
 
-        val createEntities = requests.filter { !it.hasId() }
-        val updateEntities = requests.filter { it.hasId() }
-        val toDelete = existingEntities.filter { it.id !in requestIds }
+        // 새로운 엔티티 리스트 생성
+        val updatedEntities = requests.map { request ->
+            if (request.hasId() && existingMap.containsKey(request.id)) {
+                // 기존 엔티티 업데이트 (Dirty Checking)
+                existingMap[request.id]!!.apply {
+                    changeInfo(
+                        question = request.question,
+                        content = request.content,
+                    )
+                }
+            } else {
+                // 새 엔티티 생성
+                selfIntroductionService.createEntity(turnOverGoal, request)
+            }
+        }
 
-        selfIntroductionService.deleteSelfIntroductions(toDelete.map { it.id })
-        selfIntroductionService.createBulk(turnOverGoal, createEntities)
-        selfIntroductionService.updateBulk(turnOverGoal.id, updateEntities)
+        // Cascade를 통한 자동 처리 (삭제/추가)
+        turnOverGoal.syncSelfIntroductions(updatedEntities)
     }
 
     private fun upsertInterviewQuestion(
         turnOverGoal: TurnOverGoal,
         requests: List<TurnOverUpsertRequest.TurnOverGoalRequest.InterviewQuestionRequest>,
     ) {
-        val existingEntities = interviewQuestionService.getInterviewQuestions(turnOverGoal.id)
-        val requestIds = requests.mapNotNull { it.id }.toSet()
+        // 기존 엔티티 Map (ID로 빠른 조회)
+        val existingMap = turnOverGoal.interviewQuestions.associateBy { it.id }
 
-        val createEntities = requests.filter { !it.hasId() }
-        val updateEntities = requests.filter { it.hasId() }
-        val toDelete = existingEntities.filter { it.id !in requestIds }
+        // 새로운 엔티티 리스트 생성
+        val updatedEntities = requests.map { request ->
+            if (request.hasId() && existingMap.containsKey(request.id)) {
+                // 기존 엔티티 업데이트 (Dirty Checking)
+                existingMap[request.id]!!.apply {
+                    changeInfo(
+                        question = request.question,
+                        answer = request.answer,
+                    )
+                }
+            } else {
+                // 새 엔티티 생성
+                interviewQuestionService.createEntity(turnOverGoal, request)
+            }
+        }
 
-        interviewQuestionService.deleteInterviewQuestions(toDelete.map { it.id })
-        interviewQuestionService.createBulk(turnOverGoal, createEntities)
-        interviewQuestionService.updateBulk(turnOverGoal.id, updateEntities)
+        // Cascade를 통한 자동 처리 (삭제/추가)
+        turnOverGoal.syncInterviewQuestions(updatedEntities)
     }
 
     private fun upsertCheckList(
         turnOverGoal: TurnOverGoal,
         requests: List<TurnOverUpsertRequest.TurnOverGoalRequest.CheckListRequest>,
     ) {
-        val existingCheckList = checkListService.getCheckLists(turnOverGoal.id)
-        val requestIds = requests.mapNotNull { it.id }.toSet()
+        // 기존 엔티티 Map (ID로 빠른 조회)
+        val existingMap = turnOverGoal.checkList.associateBy { it.id }
 
-        val createEntities = requests.filter { !it.hasId() }
-        val updateEntities = requests.filter { it.hasId() }
-        val toDelete = existingCheckList.filter { it.id !in requestIds }
+        // 새로운 엔티티 리스트 생성
+        val updatedEntities = requests.map { request ->
+            if (request.hasId() && existingMap.containsKey(request.id)) {
+                // 기존 엔티티 업데이트 (Dirty Checking)
+                existingMap[request.id]!!.apply {
+                    changeInfo(
+                        checked = request.checked,
+                        content = request.content,
+                    )
+                }
+            } else {
+                // 새 엔티티 생성
+                checkListService.createEntity(turnOverGoal, request)
+            }
+        }
 
-        checkListService.deleteCheckLists(toDelete.map { it.id })
-        checkListService.create(turnOverGoal, createEntities)
-        checkListService.updateBulk(turnOverGoal.id, updateEntities)
+        // Cascade를 통한 자동 처리 (삭제/추가)
+        turnOverGoal.syncCheckLists(updatedEntities)
     }
 
     private fun upsertTurnOverChallenge(request: TurnOverUpsertRequest.TurnOverChallengeRequest): TurnOverChallenge {
@@ -184,42 +225,68 @@ class TurnOverService(
         turnOverChallenge: TurnOverChallenge,
         requests: List<TurnOverUpsertRequest.TurnOverChallengeRequest.JobApplicationRequest>,
     ) {
-        val existingJobApplications = jobApplicationService.getJobApplications(turnOverChallenge.id)
-        val requestIds = requests.mapNotNull { it.id }.toSet()
+        // 기존 엔티티 Map (ID로 빠른 조회)
+        val existingMap = turnOverChallenge.jobApplications.associateBy { it.id }
 
-        val createEntities = requests.filter { !it.hasId() }
-        val updateEntities = requests.filter { it.hasId() }
-        val toDelete = existingJobApplications.filter { it.id !in requestIds }
-
-        jobApplicationService.deleteJobApplications(toDelete.map { it.id })
-
-        // 생성된 엔티티 처리
-        val createdJobApplications = jobApplicationService.createBulk(turnOverChallenge, createEntities)
-        createdJobApplications.forEachIndexed { index, jobApplication ->
-            upsertApplicationStage(jobApplication, createEntities[index].applicationStagesList)
+        // 새로운 엔티티 리스트 생성
+        val updatedEntities = requests.map { request ->
+            if (request.hasId() && existingMap.containsKey(request.id)) {
+                // 기존 엔티티 업데이트 (Dirty Checking)
+                val jobApplication = existingMap[request.id]!!.apply {
+                    changeInfo(
+                        name = request.name,
+                        position = request.position,
+                        jobPostingTitle = request.jobPostingTitle,
+                        jobPostingUrl = request.jobPostingUrl,
+                        startedAt = TimeUtil.ofEpochMilliNullable(request.startedAt)?.toLocalDate(),
+                        endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
+                        applicationSource = request.applicationSource,
+                        memo = request.memo,
+                    )
+                }
+                // ApplicationStage도 Cascade로 처리
+                upsertApplicationStage(jobApplication, request.applicationStagesList)
+                jobApplication
+            } else {
+                // 새 엔티티 생성
+                val jobApplication = jobApplicationService.createEntity(turnOverChallenge, request)
+                // ApplicationStage도 Cascade로 처리
+                upsertApplicationStage(jobApplication, request.applicationStagesList)
+                jobApplication
+            }
         }
 
-        // 업데이트된 엔티티 처리
-        val updatedJobApplications = jobApplicationService.updateBulk(turnOverChallenge.id, updateEntities)
-        updatedJobApplications.forEachIndexed { index, jobApplication ->
-            upsertApplicationStage(jobApplication, updateEntities[index].applicationStagesList)
-        }
+        // Cascade를 통한 자동 처리 (삭제/추가)
+        turnOverChallenge.syncJobApplications(updatedEntities)
     }
 
     private fun upsertApplicationStage(
         jobApplication: JobApplication,
         requests: List<TurnOverUpsertRequest.TurnOverChallengeRequest.JobApplicationRequest.ApplicationStageRequest>,
     ) {
-        val existingApplicationStages = applicationStageService.getApplicationStages(jobApplication.id)
-        val requestIds = requests.mapNotNull { it.id }.toSet()
+        // 기존 엔티티 Map (ID로 빠른 조회)
+        val existingMap = jobApplication.applicationStages.associateBy { it.id }
 
-        val createEntities = requests.filter { !it.hasId() }
-        val updateEntities = requests.filter { it.hasId() }
-        val toDelete = existingApplicationStages.filter { it.id !in requestIds }
+        // 새로운 엔티티 리스트 생성
+        val updatedEntities = requests.map { request ->
+            if (request.hasId() && existingMap.containsKey(request.id)) {
+                // 기존 엔티티 업데이트 (Dirty Checking)
+                existingMap[request.id]!!.apply {
+                    changeInfo(
+                        name = request.name,
+                        status = ApplicationStageStatus.valueOf(request.status.name),
+                        startedAt = TimeUtil.ofEpochMilliNullable(request.startedAt)?.toLocalDate(),
+                        memo = request.memo,
+                    )
+                }
+            } else {
+                // 새 엔티티 생성
+                applicationStageService.createEntity(jobApplication, request)
+            }
+        }
 
-        applicationStageService.deleteApplicationStages(toDelete.map { it.id })
-        applicationStageService.createBulk(jobApplication, createEntities)
-        applicationStageService.updateBulk(jobApplication.id, updateEntities)
+        // Cascade를 통한 자동 처리 (삭제/추가)
+        jobApplication.syncApplicationStages(updatedEntities)
     }
 
     private fun upsertTurnOverRetrospective(request: TurnOverUpsertRequest.TurnOverRetrospectiveRequest): TurnOverRetrospective {
@@ -262,8 +329,8 @@ class TurnOverService(
         val requestIds = attachmentRequests.mapNotNull { it.id }.toSet()
 
         val toDelete = existingAttachments.filter { it.id !in requestIds }
-        val createRequests = attachmentRequests.filter { it.id.isNullOrEmpty() }
-        val updateRequests = attachmentRequests.filter { !existingIds.contains(it.id) }
+        val createRequests = attachmentRequests.filter { !it.hasId() }
+        val updateRequests = attachmentRequests.filter { it.hasId() }
 
         attachmentCommandService.deleteAttachments(toDelete.map { it.id })
         attachmentCommandService.createBulkAttachment(AttachmentTargetType.ENTITY_RESUME, targetId, createRequests)

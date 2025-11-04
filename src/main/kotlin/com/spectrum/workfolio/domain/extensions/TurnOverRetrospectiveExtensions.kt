@@ -61,7 +61,9 @@ fun TurnOverRetrospective.toDetailProto(memos: List<Memo>, attachments: List<Att
     }
     if (this.employmentType != null) {
         builder.setEmploymentType(
-            com.spectrum.workfolio.proto.common.TurnOverRetrospectiveDetail.EmploymentType.valueOf(this.employmentType!!.name),
+            com.spectrum.workfolio.proto.common.TurnOverRetrospectiveDetail.EmploymentType.valueOf(
+                this.employmentType!!.name,
+            ),
         )
     }
 

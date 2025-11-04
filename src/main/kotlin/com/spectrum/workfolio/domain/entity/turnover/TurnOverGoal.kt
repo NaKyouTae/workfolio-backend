@@ -25,17 +25,45 @@ class TurnOverGoal(
     var goal: String = goal
         protected set
 
-    @OneToMany(mappedBy = "turnOverGoal", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "turnOverGoal", cascade = [CascadeType.ALL], fetch = FetchType.LAZY, orphanRemoval = true)
     private var mutableSelfIntroductions: MutableList<SelfIntroduction> = mutableListOf()
     val selfIntroductions: List<SelfIntroduction> get() = mutableSelfIntroductions.toList()
 
-    @OneToMany(mappedBy = "turnOverGoal", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "turnOverGoal", cascade = [CascadeType.ALL], fetch = FetchType.LAZY, orphanRemoval = true)
     private var mutableInterviewQuestions: MutableList<InterviewQuestion> = mutableListOf()
     val interviewQuestions: List<InterviewQuestion> get() = mutableInterviewQuestions.toList()
 
-    @OneToMany(mappedBy = "turnOverGoal", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "turnOverGoal", cascade = [CascadeType.ALL], fetch = FetchType.LAZY, orphanRemoval = true)
     private var mutableCheckList: MutableList<CheckList> = mutableListOf()
     val checkList: List<CheckList> get() = mutableCheckList.toList()
+
+    fun addSelfIntroduction(selfIntroduction: SelfIntroduction) {
+        mutableSelfIntroductions.add(selfIntroduction)
+    }
+
+    fun addInterviewQuestion(interviewQuestion: InterviewQuestion) {
+        mutableInterviewQuestions.add(interviewQuestion)
+    }
+
+    fun addCheckList(checkList: CheckList) {
+        mutableCheckList.add(checkList)
+    }
+
+    // Cascade를 위한 컬렉션 동기화 메서드
+    fun syncSelfIntroductions(newSelfIntroductions: List<SelfIntroduction>) {
+        mutableSelfIntroductions.clear()
+        mutableSelfIntroductions.addAll(newSelfIntroductions)
+    }
+
+    fun syncInterviewQuestions(newInterviewQuestions: List<InterviewQuestion>) {
+        mutableInterviewQuestions.clear()
+        mutableInterviewQuestions.addAll(newInterviewQuestions)
+    }
+
+    fun syncCheckLists(newCheckLists: List<CheckList>) {
+        mutableCheckList.clear()
+        mutableCheckList.addAll(newCheckLists)
+    }
 
     fun changeInfo(
         reason: String,

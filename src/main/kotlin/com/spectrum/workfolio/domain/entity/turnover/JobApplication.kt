@@ -67,9 +67,20 @@ class JobApplication(
     var turnOverChallenge: TurnOverChallenge = turnOverChallenge
         protected set
 
-    @OneToMany(mappedBy = "jobApplication", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
+    @OneToMany(
+        mappedBy = "jobApplication",
+        cascade = [CascadeType.ALL],
+        fetch = FetchType.LAZY,
+        orphanRemoval = true,
+    )
     private var mutableApplicationStages: MutableList<ApplicationStage> = mutableListOf()
     val applicationStages: List<ApplicationStage> get() = mutableApplicationStages.toList()
+
+    // Cascade를 위한 컬렉션 동기화 메서드
+    fun syncApplicationStages(newApplicationStages: List<ApplicationStage>) {
+        mutableApplicationStages.clear()
+        mutableApplicationStages.addAll(newApplicationStages)
+    }
 
     fun changeInfo(
         name: String, // 회사명

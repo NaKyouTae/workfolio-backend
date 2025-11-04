@@ -25,14 +25,21 @@ class InterviewQuestionService(
         return interviewQuestionRepository.findByTurnOverGoalId(turnOverGoalId)
     }
 
-    @Transactional
-    fun create(turnOverGoal: TurnOverGoal, request: TurnOverUpsertRequest.TurnOverGoalRequest.InterviewQuestionRequest): InterviewQuestion {
-        val interviewQuestion = InterviewQuestion(
+    // Cascade용: 엔티티만 생성 (저장 X)
+    fun createEntity(
+        turnOverGoal: TurnOverGoal,
+        request: TurnOverUpsertRequest.TurnOverGoalRequest.InterviewQuestionRequest,
+    ): InterviewQuestion {
+        return InterviewQuestion(
             question = request.question,
             answer = request.answer,
             turnOverGoal = turnOverGoal,
         )
+    }
 
+    @Transactional
+    fun create(turnOverGoal: TurnOverGoal, request: TurnOverUpsertRequest.TurnOverGoalRequest.InterviewQuestionRequest): InterviewQuestion {
+        val interviewQuestion = createEntity(turnOverGoal, request)
         return interviewQuestionRepository.save(interviewQuestion)
     }
 

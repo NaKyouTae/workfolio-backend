@@ -25,14 +25,21 @@ class SelfIntroductionService(
         return selfIntroductionRepository.findByTurnOverGoalId(turnOverGoalId)
     }
 
-    @Transactional
-    fun create(turnOverGoal: TurnOverGoal, request: TurnOverUpsertRequest.TurnOverGoalRequest.SelfIntroductionRequest): SelfIntroduction {
-        val selfIntroduction = SelfIntroduction(
+    // Cascade용: 엔티티만 생성 (저장 X)
+    fun createEntity(
+        turnOverGoal: TurnOverGoal,
+        request: TurnOverUpsertRequest.TurnOverGoalRequest.SelfIntroductionRequest,
+    ): SelfIntroduction {
+        return SelfIntroduction(
             question = request.question,
             content = request.content,
             turnOverGoal = turnOverGoal,
         )
+    }
 
+    @Transactional
+    fun create(turnOverGoal: TurnOverGoal, request: TurnOverUpsertRequest.TurnOverGoalRequest.SelfIntroductionRequest): SelfIntroduction {
+        val selfIntroduction = createEntity(turnOverGoal, request)
         return selfIntroductionRepository.save(selfIntroduction)
     }
 

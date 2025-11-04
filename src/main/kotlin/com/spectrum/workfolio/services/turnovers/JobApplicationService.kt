@@ -26,12 +26,12 @@ class JobApplicationService(
         return jobApplicationRepository.findByTurnOverChallengeId(turnOverChallengeId)
     }
 
-    @Transactional
-    fun create(
+    // Cascade용: 엔티티만 생성 (저장 X)
+    fun createEntity(
         turnOverChallenge: TurnOverChallenge,
         request: TurnOverUpsertRequest.TurnOverChallengeRequest.JobApplicationRequest,
     ): JobApplication {
-        val jobApplication = JobApplication(
+        return JobApplication(
             name = request.name,
             position = request.position,
             jobPostingTitle = request.jobPostingTitle,
@@ -42,7 +42,14 @@ class JobApplicationService(
             memo = request.memo,
             turnOverChallenge = turnOverChallenge,
         )
+    }
 
+    @Transactional
+    fun create(
+        turnOverChallenge: TurnOverChallenge,
+        request: TurnOverUpsertRequest.TurnOverChallengeRequest.JobApplicationRequest,
+    ): JobApplication {
+        val jobApplication = createEntity(turnOverChallenge, request)
         return jobApplicationRepository.save(jobApplication)
     }
 

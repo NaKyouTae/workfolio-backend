@@ -28,19 +28,26 @@ class ApplicationStageService(
         return applicationStageRepository.findByJobApplicationId(jobApplicationId)
     }
 
-    @Transactional
-    fun create(
+    // Cascade용: 엔티티만 생성 (저장 X)
+    fun createEntity(
         jobApplication: JobApplication,
         request: TurnOverUpsertRequest.TurnOverChallengeRequest.JobApplicationRequest.ApplicationStageRequest,
     ): ApplicationStage {
-        val applicationStage = ApplicationStage(
+        return ApplicationStage(
             name = request.name,
             status = ApplicationStageStatus.valueOf(request.status.name),
             startedAt = TimeUtil.ofEpochMilliNullable(request.startedAt)?.toLocalDate(),
             memo = request.memo,
             jobApplication = jobApplication,
         )
+    }
 
+    @Transactional
+    fun create(
+        jobApplication: JobApplication,
+        request: TurnOverUpsertRequest.TurnOverChallengeRequest.JobApplicationRequest.ApplicationStageRequest,
+    ): ApplicationStage {
+        val applicationStage = createEntity(jobApplication, request)
         return applicationStageRepository.save(applicationStage)
     }
 
