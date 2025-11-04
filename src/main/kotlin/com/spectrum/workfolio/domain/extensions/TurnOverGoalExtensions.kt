@@ -10,8 +10,6 @@ fun TurnOverGoal.toProto(): com.spectrum.workfolio.proto.common.TurnOverGoal {
     builder.setReason(this.reason)
     builder.setGoal(this.goal)
 
-    builder.setTurnOver(this.turnOver.toProto())
-
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
 

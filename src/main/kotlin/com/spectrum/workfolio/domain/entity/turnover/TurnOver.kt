@@ -35,15 +35,22 @@ class TurnOver(
     var worker: Worker = worker
         protected set
 
-    @OneToOne(mappedBy = "turnOver", cascade = [CascadeType.REMOVE])
+    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
+    @JoinColumn(name = "turn_over_goal_id", nullable = false)
     var turnOverGoal: TurnOverGoal = turnOverGoal
         protected set
 
-    @OneToOne(mappedBy = "turnOver", cascade = [CascadeType.REMOVE])
+    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
+    @JoinColumn(name = "turn_over_challenge_id", nullable = false)
     var turnOverChallenge: TurnOverChallenge = turnOverChallenge
         protected set
 
-    @OneToOne(mappedBy = "turnOver", cascade = [CascadeType.REMOVE])
+    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
+    @JoinColumn(name = "turn_over_retrospective_id", nullable = false)
     var turnOverRetrospective: TurnOverRetrospective = turnOverRetrospective
         protected set
+
+    fun changeInfo(name: String) {
+        this.name = name
+    }
 }

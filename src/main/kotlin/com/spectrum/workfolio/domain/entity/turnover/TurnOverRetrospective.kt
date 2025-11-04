@@ -6,19 +6,13 @@ import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
-import jakarta.persistence.FetchType
-import jakarta.persistence.Index
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 import java.time.LocalDate
 
 @Entity
 @Table(
     name = "turn_over_retrospectives",
-    indexes = [
-        Index(name = "idx_turn_over_retrospectives_turn_over_id", columnList = "turn_over_id"),
-    ],
+    indexes = [],
 )
 class TurnOverRetrospective(
     name: String, // 회사명
@@ -33,7 +27,6 @@ class TurnOverRetrospective(
     joinedAt: LocalDate? = null, // 입사년월
     workType: String, // 근무 형태
     employmentType: EmploymentType? = null, // 재직 형태
-    turnOver: TurnOver,
 ) : BaseEntity("TR") {
     @Column(name = "name", length = 1024, nullable = false)
     var name: String = name
@@ -84,8 +77,31 @@ class TurnOverRetrospective(
     var workType: String = workType
         protected set
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "turn_over_id", nullable = false)
-    var turnOver: TurnOver = turnOver
-        protected set
+    fun changeInfo(
+        name: String, // 회사명
+        salary: Int, // 연봉
+        position: String, // 직무
+        jobTitle: String, // 직책
+        rank: String, // 직급
+        department: String, // 부서
+        reason: String, // 선택 사유
+        score: Int, // 점수
+        reviewSummary: String, // 한줄 회고
+        joinedAt: LocalDate? = null, // 입사년월
+        workType: String, // 근무 형태
+        employmentType: EmploymentType? = null, // 재직 형태
+    ) {
+        this.name = name
+        this.salary = salary
+        this.position = position
+        this.jobTitle = jobTitle
+        this.rank = rank
+        this.department = department
+        this.reason = reason
+        this.score = score
+        this.reviewSummary = reviewSummary
+        this.joinedAt = joinedAt
+        this.workType = workType
+        this.employmentType = employmentType
+    }
 }

@@ -6,6 +6,8 @@ import com.spectrum.workfolio.domain.enums.Language
 import com.spectrum.workfolio.domain.enums.LanguageLevel
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.repository.LanguageSkillRepository
+import com.spectrum.workfolio.proto.resume.ResumeUpdateRequest
+import com.spectrum.workfolio.utils.EnumUtils.convertProtoEnumSafe
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -65,6 +67,25 @@ class LanguageSkillService(
     }
 
     @Transactional
+    fun createBulkLanguageSkill(
+        resumeId: String,
+        requests: List<ResumeUpdateRequest.LanguageSkillRequest>,
+    ): List<LanguageSkill> {
+        val resume = resumeQueryService.getResume(resumeId)
+        val entities = requests.map { request ->
+            LanguageSkill(
+                language = convertProtoEnumSafe<Language>(request.language),
+                level = convertProtoEnumSafe<LanguageLevel>(request.level),
+                isVisible = request.isVisible,
+                priority = request.priority,
+                resume = resume,
+            )
+        }
+
+        return languageSkillRepository.saveAll(entities)
+    }
+
+    @Transactional
     fun updateLanguageSkill(
         id: String,
         language: Language? = null,
@@ -82,6 +103,30 @@ class LanguageSkillService(
         )
 
         return languageSkillRepository.save(languageSkill)
+    }
+
+    @Transactional
+    fun updateBulkLanguageSkill(
+        resumeId: String,
+        requests: List<ResumeUpdateRequest.LanguageSkillRequest>,
+    ): List<LanguageSkill> {
+        val existingLanguageSkills = languageSkillRepository.findByResumeIdOrderByPriorityAsc(resumeId)
+
+        val requestMap = requests.filter { it.id.isNotEmpty() }.associateBy { it.id }
+
+        val updatedEntities = existingLanguageSkills.mapNotNull { entity ->
+            requestMap[entity.id]?.let { request ->
+                entity.changeInfo(
+                    language = convertProtoEnumSafe<Language>(request.language),
+                    level = convertProtoEnumSafe<LanguageLevel>(request.level),
+                    isVisible = request.isVisible,
+                    priority = request.priority,
+                )
+                entity
+            }
+        }
+
+        return languageSkillRepository.saveAll(updatedEntities)
     }
 
     @Transactional

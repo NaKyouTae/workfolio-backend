@@ -7,11 +7,11 @@ import com.spectrum.workfolio.domain.enums.AttachmentType
 data class AttachmentUpdateDto(
     val id: String,
     val storagePath: String,
+    val type: AttachmentType,
+    val category: AttachmentCategory,
 
-    val category: AttachmentCategory? = null,
     val isVisible: Boolean = false,
     val priority: Int = 0,
-    val type: AttachmentType? = null,
     val fileName: String? = null,
     val fileUrl: String? = null,
     val url: String? = null,

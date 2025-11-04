@@ -8,8 +8,6 @@ fun TurnOverChallenge.toProto(): com.spectrum.workfolio.proto.common.TurnOverCha
 
     builder.setId(this.id)
 
-    builder.setTurnOver(this.turnOver.toProto())
-
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
 
@@ -21,7 +19,7 @@ fun TurnOverChallenge.toDetailProto(): com.spectrum.workfolio.proto.common.TurnO
 
     builder.setId(this.id)
 
-    builder.addAllJobApplications(this.jobApplications.map { it.toWithoutTurnOverGoalProto() })
+    builder.addAllJobApplications(this.jobApplications.map { it.toDetailProto() })
 
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))

@@ -18,8 +18,6 @@ fun TurnOverRetrospective.toProto(): com.spectrum.workfolio.proto.common.TurnOve
     builder.setReviewSummary(this.reviewSummary)
     builder.setWorkType(this.workType)
 
-    builder.setTurnOver(this.turnOver.toProto())
-
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
 

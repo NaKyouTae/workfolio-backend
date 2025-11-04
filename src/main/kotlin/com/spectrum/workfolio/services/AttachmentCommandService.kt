@@ -5,8 +5,11 @@ import com.spectrum.workfolio.domain.dto.AttachmentUpdateDto
 import com.spectrum.workfolio.domain.entity.common.Attachment
 import com.spectrum.workfolio.domain.entity.resume.Resume
 import com.spectrum.workfolio.domain.enums.AttachmentCategory
+import com.spectrum.workfolio.domain.enums.AttachmentTargetType
+import com.spectrum.workfolio.domain.enums.AttachmentType
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.repository.AttachmentRepository
+import com.spectrum.workfolio.proto.resume.ResumeUpdateRequest
 import com.spectrum.workfolio.utils.EntityTypeValidator
 import com.spectrum.workfolio.utils.FileUtil
 import com.spectrum.workfolio.utils.WorkfolioException
@@ -44,7 +47,7 @@ class AttachmentCommandService(
         // 먼저 Attachment 생성하여 ID 획득
         val attachment = Attachment(
             type = dto.type,
-            category = dto.category ?: AttachmentCategory.FILE,
+            category = dto.category,
             fileName = dto.fileName ?: "",
             fileUrl = "",
             url = dto.url ?: "",
@@ -84,16 +87,59 @@ class AttachmentCommandService(
 
     @Transactional
     fun createBulkAttachment(
+        targetType: AttachmentTargetType,
+        targetId: String,
+        requests: List<ResumeUpdateRequest.AttachmentRequest>,
+    ): List<Attachment> {
+        return requests.map { request ->
+            val attachment = Attachment(
+                type = AttachmentType.valueOf(request.type.name),
+                category = AttachmentCategory.valueOf(request.category.name),
+                fileName = request.fileName,
+                fileUrl = "",
+                url = request.url,
+                isVisible = request.isVisible,
+                priority = request.priority,
+                targetId = targetId,
+                targetType = targetType,
+            )
+            val savedAttachment = attachmentRepository.save(attachment)
+
+            // fileData가 있으면 Supabase Storage에 업로드
+            val uploadedFileUrl = if (request.hasFileData() && !request.fileData.isEmpty) {
+                try {
+                    val extension = FileUtil.extractFileExtension(request.fileName)
+                    val storageFileName = "${savedAttachment.id}.$extension"
+
+                    fileUploadService.uploadFileToStorage(
+                        fileData = request.fileData,
+                        fileName = storageFileName,
+                        storagePath = "resumes/attachments/$targetId",
+                    )
+                } catch (e: Exception) {
+                    attachmentRepository.delete(savedAttachment)
+                    throw e
+                }
+            } else {
+                request.fileUrl
+            }
+
+            savedAttachment.changeFileUrl(uploadedFileUrl)
+            savedAttachment
+        }
+    }
+
+    @Transactional
+    fun createBulkAttachmentFromEntity(
         entity: Any,
         attachments: List<Attachment>,
     ) {
         val resume = EntityTypeValidator.requireEntityType<Resume>(entity)
 
         attachments.map { originalAttachment ->
-            // 먼저 새 Attachment 생성 (ID 획득을 위해)
             val newAttachment = Attachment(
                 fileName = originalAttachment.fileName,
-                fileUrl = "", // 임시로 빈 값
+                fileUrl = "",
                 url = originalAttachment.url,
                 isVisible = originalAttachment.isVisible,
                 priority = originalAttachment.priority,
@@ -104,15 +150,11 @@ class AttachmentCommandService(
             )
             val savedAttachment = attachmentRepository.save(newAttachment)
 
-            // 원본에 파일이 있으면 Storage에서 복사
             if (originalAttachment.fileUrl.isNotBlank()) {
                 try {
-                    // 원본 파일명에서 확장자 추출
                     val extension = originalAttachment.fileName.substringAfterLast(".", "")
-                    // 새로운 파일명 생성: {새AttachmentId}.{확장자}
                     val newFileName = "${savedAttachment.id}.$extension"
 
-                    // Storage에서 파일 복사
                     val copiedFileUrl = fileUploadService.copyFileInStorage(
                         sourceFileUrl = originalAttachment.fileUrl,
                         destinationFileName = newFileName,
@@ -129,6 +171,52 @@ class AttachmentCommandService(
 
             savedAttachment
         }
+    }
+
+    @Transactional
+    fun updateBulkAttachment(
+        targetId: String,
+        requests: List<ResumeUpdateRequest.AttachmentRequest>,
+    ): List<Attachment> {
+        val existingAttachments = attachmentRepository.findByTargetIdOrderByPriorityAsc(targetId)
+
+        val requestMap = requests
+            .filter { it.id.isNotBlank() }
+            .associateBy { it.id }
+
+        val updatedEntities = existingAttachments.mapNotNull { attachment ->
+            requestMap[attachment.id]?.let { request ->
+                // fileData가 있으면 Supabase Storage에 업로드하고 기존 파일 삭제
+                val uploadedFileUrl = if (request.hasFileData() && !request.fileData.isEmpty) {
+                    val extension = FileUtil.extractFileExtension(request.fileName)
+                    val storageFileName = "${attachment.id}.$extension"
+
+                    val newFileUrl = fileUploadService.uploadFileToStorage(
+                        fileData = request.fileData,
+                        fileName = storageFileName,
+                        storagePath = "resumes/attachments/$targetId",
+                    )
+
+                    fileUploadService.deleteFileFromStorage(listOf(attachment))
+                    newFileUrl
+                } else {
+                    request.fileUrl
+                }
+
+                attachment.changeInfo(
+                    type = AttachmentType.valueOf(request.type.name),
+                    category = AttachmentCategory.valueOf(request.category.name),
+                    fileName = request.fileName,
+                    fileUrl = uploadedFileUrl,
+                    url = request.url,
+                    isVisible = request.isVisible,
+                    priority = request.priority,
+                )
+                attachment
+            }
+        }
+
+        return attachmentRepository.saveAll(updatedEntities)
     }
 
     @Transactional

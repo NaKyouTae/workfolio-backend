@@ -4,6 +4,7 @@ import com.spectrum.workfolio.domain.entity.resume.LanguageSkill
 import com.spectrum.workfolio.domain.entity.resume.LanguageTest
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.repository.LanguageTestRepository
+import com.spectrum.workfolio.proto.resume.ResumeUpdateRequest
 import com.spectrum.workfolio.utils.TimeUtil
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.stereotype.Service
@@ -35,7 +36,7 @@ class LanguageTestService(
         val languageTest = LanguageTest(
             name = name ?: "",
             score = score ?: "",
-            acquiredAt = if (acquiredAt != null && acquiredAt > 0) TimeUtil.ofEpochMilli(acquiredAt).toLocalDate() else null,
+            acquiredAt = TimeUtil.ofEpochMilliNullable(acquiredAt)?.toLocalDate(),
             isVisible = isVisible,
             priority = priority,
             languageSkill = languageSkill,
@@ -64,6 +65,26 @@ class LanguageTestService(
     }
 
     @Transactional
+    fun createBulkLanguageTest(
+        languageSkillId: String,
+        requests: List<ResumeUpdateRequest.LanguageSkillRequest.LanguageTestRequest>,
+    ): List<LanguageTest> {
+        val languageSkill = languageSkillService.getLanguageSkill(languageSkillId)
+        val entities = requests.map { request ->
+            LanguageTest(
+                name = request.name,
+                score = request.score,
+                acquiredAt = TimeUtil.ofEpochMilliNullable(request.acquiredAt)?.toLocalDate(),
+                isVisible = request.isVisible,
+                priority = request.priority,
+                languageSkill = languageSkill,
+            )
+        }
+
+        return languageTestRepository.saveAll(entities)
+    }
+
+    @Transactional
     fun updateLanguageTest(
         id: String,
         name: String? = null,
@@ -77,12 +98,38 @@ class LanguageTestService(
         languageTest.changeInfo(
             name = name ?: "",
             score = score ?: "",
-            acquiredAt = if (acquiredAt != null && acquiredAt > 0) TimeUtil.ofEpochMilli(acquiredAt).toLocalDate() else null,
+            acquiredAt = TimeUtil.ofEpochMilliNullable(acquiredAt)?.toLocalDate(),
             isVisible = isVisible,
             priority = priority,
         )
 
         return languageTestRepository.save(languageTest)
+    }
+
+    @Transactional
+    fun updateBulkLanguageTest(
+        languageSkillId: String,
+        requests: List<ResumeUpdateRequest.LanguageSkillRequest.LanguageTestRequest>,
+    ): List<LanguageTest> {
+        val languageSkill = languageSkillService.getLanguageSkill(languageSkillId)
+        val existingLanguageTests = languageTestRepository.findByLanguageSkillIdOrderByPriorityAsc(languageSkillId)
+
+        val requestMap = requests.filter { it.id.isNullOrEmpty() }.associateBy { it.id }
+
+        val updatedEntities = existingLanguageTests.mapNotNull { entity ->
+            requestMap[entity.id]?.let { request ->
+                entity.changeInfo(
+                    name = request.name,
+                    score = request.score,
+                    acquiredAt = TimeUtil.ofEpochMilliNullable(request.acquiredAt)?.toLocalDate(),
+                    isVisible = request.isVisible,
+                    priority = request.priority,
+                )
+                entity
+            }
+        }
+
+        return languageTestRepository.saveAll(updatedEntities)
     }
 
     @Transactional

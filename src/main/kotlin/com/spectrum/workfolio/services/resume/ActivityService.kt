@@ -5,6 +5,8 @@ import com.spectrum.workfolio.domain.entity.resume.Resume
 import com.spectrum.workfolio.domain.enums.ActivityType
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.repository.ActivityRepository
+import com.spectrum.workfolio.proto.resume.ResumeUpdateRequest
+import com.spectrum.workfolio.utils.EnumUtils.convertProtoEnumSafe
 import com.spectrum.workfolio.utils.TimeUtil
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.stereotype.Service
@@ -45,8 +47,8 @@ class ActivityService(
             name = name ?: "",
             organization = organization ?: "",
             certificateNumber = certificateNumber ?: "",
-            startedAt = if (startedAt != null && startedAt > 0) TimeUtil.ofEpochMilli(startedAt).toLocalDate() else null,
-            endedAt = if (endedAt != null && endedAt > 0) TimeUtil.ofEpochMilli(endedAt).toLocalDate() else null,
+            startedAt = TimeUtil.ofEpochMilliNullable(startedAt)?.toLocalDate(),
+            endedAt = TimeUtil.ofEpochMilliNullable(endedAt)?.toLocalDate(),
             description = description ?: "",
             isVisible = isVisible,
             priority = priority,
@@ -57,7 +59,7 @@ class ActivityService(
     }
 
     @Transactional
-    fun createBulkActivity(
+    fun createBulkActivityFromEntity(
         resume: Resume,
         activities: List<Activity>,
     ) {
@@ -99,14 +101,67 @@ class ActivityService(
             name = name ?: "",
             organization = organization ?: "",
             certificateNumber = certificateNumber ?: "",
-            startedAt = if (startedAt != null && startedAt > 0) TimeUtil.ofEpochMilli(startedAt).toLocalDate() else null,
-            endedAt = if (endedAt != null && endedAt > 0) TimeUtil.ofEpochMilli(endedAt).toLocalDate() else null,
+            startedAt = TimeUtil.ofEpochMilliNullable(startedAt)?.toLocalDate(),
+            endedAt = TimeUtil.ofEpochMilliNullable(endedAt)?.toLocalDate(),
             description = description ?: "",
             isVisible = isVisible,
             priority = priority,
         )
 
         return activityRepository.save(activity)
+    }
+
+    @Transactional
+    fun createBulkActivity(
+        resumeId: String,
+        requests: List<ResumeUpdateRequest.ActivityRequest>,
+    ): List<Activity> {
+        val resume = resumeQueryService.getResume(resumeId)
+        val entities = requests.map { request ->
+            Activity(
+                type = convertProtoEnumSafe<ActivityType>(request.type),
+                name = request.name,
+                organization = request.organization,
+                certificateNumber = request.certificateNumber,
+                startedAt = TimeUtil.ofEpochMilliNullable(request.startedAt)?.toLocalDate(),
+                endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
+                description = request.description,
+                isVisible = request.isVisible,
+                priority = request.priority,
+                resume = resume,
+            )
+        }
+
+        return activityRepository.saveAll(entities)
+    }
+
+    @Transactional
+    fun updateBulkActivity(
+        resumeId: String,
+        requests: List<ResumeUpdateRequest.ActivityRequest>,
+    ): List<Activity> {
+        val existingActivities = activityRepository.findByResumeIdOrderByPriorityAsc(resumeId)
+
+        val requestMap = requests.associateBy { it.id }
+
+        val updatedEntities = existingActivities.mapNotNull { entity ->
+            requestMap[entity.id]?.let { request ->
+                entity.changeInfo(
+                    type = convertProtoEnumSafe<ActivityType>(request.type),
+                    name = request.name,
+                    organization = request.organization,
+                    certificateNumber = request.certificateNumber,
+                    startedAt = TimeUtil.ofEpochMilliNullable(request.startedAt)?.toLocalDate(),
+                    endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
+                    description = request.description,
+                    isVisible = request.isVisible,
+                    priority = request.priority,
+                )
+                entity
+            }
+        }
+
+        return activityRepository.saveAll(updatedEntities)
     }
 
     @Transactional

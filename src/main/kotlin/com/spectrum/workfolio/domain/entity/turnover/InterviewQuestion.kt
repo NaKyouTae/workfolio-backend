@@ -33,4 +33,9 @@ class InterviewQuestion(
     @JoinColumn(name = "turn_over_goal_id", nullable = false)
     var turnOverGoal: TurnOverGoal = turnOverGoal
         protected set
+
+    fun changeInfo(question: String, answer: String) {
+        this.question = question
+        this.answer = answer
+    }
 }

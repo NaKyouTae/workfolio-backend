@@ -70,4 +70,24 @@ class JobApplication(
     @OneToMany(mappedBy = "jobApplication", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
     private var mutableApplicationStages: MutableList<ApplicationStage> = mutableListOf()
     val applicationStages: List<ApplicationStage> get() = mutableApplicationStages.toList()
+
+    fun changeInfo(
+        name: String, // 회사명
+        position: String, // 직무
+        jobPostingTitle: String, // 공고명
+        jobPostingUrl: String, // 공고문 URL
+        startedAt: LocalDate? = null, // 모집 시작 기간
+        endedAt: LocalDate? = null, // 모집 마감 기간
+        applicationSource: String, // 지원 경로
+        memo: String, // 메모
+    ) {
+        this.name = name
+        this.position = position
+        this.jobPostingTitle = jobPostingTitle
+        this.jobPostingUrl = jobPostingUrl
+        this.startedAt = startedAt
+        this.endedAt = endedAt
+        this.applicationSource = applicationSource
+        this.memo = memo
+    }
 }

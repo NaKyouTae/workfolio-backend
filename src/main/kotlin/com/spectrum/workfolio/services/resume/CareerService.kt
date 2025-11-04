@@ -9,6 +9,7 @@ import com.spectrum.workfolio.domain.repository.CareerRepository
 import com.spectrum.workfolio.proto.career.CareerCreateRequest
 import com.spectrum.workfolio.proto.career.CareerListResponse
 import com.spectrum.workfolio.proto.career.CareerUpdateRequest
+import com.spectrum.workfolio.proto.resume.ResumeUpdateRequest
 import com.spectrum.workfolio.utils.EnumUtils.convertProtoEnumSafe
 import com.spectrum.workfolio.utils.TimeUtil
 import com.spectrum.workfolio.utils.WorkfolioException
@@ -46,8 +47,8 @@ class CareerService(
             rank = request.rank ?: "",
             salary = request.salary,
             description = request.description ?: "",
-            startedAt = if (request.hasStartedAt() && request.startedAt != 0L) TimeUtil.ofEpochMilli(request.startedAt).toLocalDate() else null,
-            endedAt = if (request.hasEndedAt() && request.endedAt != 0L) TimeUtil.ofEpochMilli(request.endedAt).toLocalDate() else null,
+            startedAt = TimeUtil.ofEpochMilliNullable(request.startedAt)?.toLocalDate(),
+            endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
             isWorking = request.isWorking,
             isVisible = request.isVisible,
             priority = request.priority,
@@ -83,6 +84,34 @@ class CareerService(
     }
 
     @Transactional
+    fun createBulkCareer(
+        resumeId: String,
+        requests: List<ResumeUpdateRequest.CareerRequest.CareerItem>,
+    ): List<Career> {
+        val resume = resumeQueryService.getResume(resumeId)
+        val entities = requests.map { request ->
+            Career(
+                name = request.name ?: "",
+                position = request.position ?: "",
+                employmentType = convertProtoEnumSafe<EmploymentType>(request.employmentType),
+                department = request.department ?: "",
+                jobTitle = request.jobTitle ?: "",
+                rank = request.rank ?: "",
+                salary = request.salary,
+                description = request.description ?: "",
+                startedAt = TimeUtil.ofEpochMilliNullable(request.startedAt)?.toLocalDate(),
+                endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
+                isWorking = request.isWorking,
+                isVisible = request.isVisible,
+                priority = request.priority,
+                resume = resume,
+            )
+        }
+
+        return careerRepository.saveAll(entities)
+    }
+
+    @Transactional
     fun updateCareer(request: CareerUpdateRequest): Career {
         val career = this.getCareer(request.id)
 
@@ -95,14 +124,49 @@ class CareerService(
             rank = request.rank ?: "",
             salary = request.salary,
             description = request.description ?: "",
-            startedAt = if (request.hasStartedAt() && request.startedAt != 0L) TimeUtil.ofEpochMilli(request.startedAt).toLocalDate() else null,
-            endedAt = if (request.hasEndedAt() && request.endedAt != 0L) TimeUtil.ofEpochMilli(request.endedAt).toLocalDate() else null,
+            startedAt = TimeUtil.ofEpochMilliNullable(request.startedAt)?.toLocalDate(),
+            endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
             isWorking = request.isWorking,
             isVisible = request.isVisible,
             priority = request.priority,
         )
 
         return careerRepository.save(career)
+    }
+
+    @Transactional
+    fun updateBulkCareer(
+        resumeId: String,
+        requests: List<ResumeUpdateRequest.CareerRequest.CareerItem>,
+    ): List<Career> {
+        val existingCareers = careerRepository.findByResumeIdOrderByPriorityAscStartedAtDescEndedAtDesc(resumeId)
+
+        val requestMap = requests
+            .filter { it.id.isNotBlank() }
+            .associateBy { it.id }
+
+        val updatedEntities = existingCareers.mapNotNull { entity ->
+            requestMap[entity.id]?.let { request ->
+                entity.changeInfo(
+                    name = request.name ?: "",
+                    position = request.position ?: "",
+                    employmentType = convertProtoEnumSafe<EmploymentType>(request.employmentType),
+                    department = request.department ?: "",
+                    jobTitle = request.jobTitle ?: "",
+                    rank = request.rank ?: "",
+                    salary = request.salary,
+                    description = request.description ?: "",
+                    startedAt = TimeUtil.ofEpochMilliNullable(request.startedAt)?.toLocalDate(),
+                    endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
+                    isWorking = request.isWorking,
+                    isVisible = request.isVisible,
+                    priority = request.priority,
+                )
+                entity
+            }
+        }
+
+        return careerRepository.saveAll(updatedEntities)
     }
 
     @Transactional

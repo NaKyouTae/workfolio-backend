@@ -313,16 +313,6 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: job
-                  type: VARCHAR(512)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: description
-                  type: TEXT
-                  constraints:
-                    nullable: false
-              - column:
                   name: birth_date
                   type: TIMESTAMP(6)
                   constraints:
@@ -332,6 +322,16 @@ databaseChangeLog:
                   type: VARCHAR(24)
                   constraints:
                     nullable: true
+              - column:
+                  name: position
+                  type: VARCHAR(512)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+                  constraints:
+                    nullable: false
               - column:
                   name: public_id
                   type: VARCHAR(16)
@@ -404,12 +404,12 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: job_grade
+                  name: job_title
                   type: VARCHAR(512)
                   constraints:
                     nullable: false
               - column:
-                  name: job
+                  name: rank
                   type: VARCHAR(512)
                   constraints:
                     nullable: false
@@ -1052,6 +1052,21 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: turn_over_goal_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: turn_over_challenge_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: turn_over_retrospective_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
                   name: worker_id
                   type: VARCHAR(16)
                   constraints:
@@ -1093,11 +1108,6 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: turn_over_id
-                  type: VARCHAR(16)
-                  constraints:
-                    nullable: false
-              - column:
                   name: created_at
                   type: TIMESTAMP(6)
                   constraints:
@@ -1107,12 +1117,6 @@ databaseChangeLog:
                   type: TIMESTAMP(6)
                   constraints:
                     nullable: false
-        - createIndex:
-            columns:
-              - column:
-                  name: turn_over_id
-            indexName: idx_turn_over_goals_turn_over_id
-            tableName: turn_over_goals
 
         - createTable:
             tableName: self_introductions
@@ -1206,11 +1210,6 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: turn_over_id
-                  type: VARCHAR(16)
-                  constraints:
-                    nullable: false
-              - column:
                   name: created_at
                   type: TIMESTAMP(6)
                   constraints:
@@ -1220,12 +1219,6 @@ databaseChangeLog:
                   type: TIMESTAMP(6)
                   constraints:
                     nullable: false
-        - createIndex:
-            columns:
-              - column:
-                  name: turn_over_id
-            indexName: idx_turn_over_challenges_turn_over_id
-            tableName: turn_over_challenges
 
         - createTable:
             tableName: job_applications
@@ -1419,11 +1412,6 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: turn_over_id
-                  type: VARCHAR(16)
-                  constraints:
-                    nullable: false
-              - column:
                   name: created_at
                   type: TIMESTAMP(6)
                   constraints:
@@ -1433,12 +1421,6 @@ databaseChangeLog:
                   type: TIMESTAMP(6)
                   constraints:
                     nullable: false
-        - createIndex:
-            columns:
-              - column:
-                  name: turn_over_id
-            indexName: idx_turn_over_retrospectives_turn_over_id
-            tableName: turn_over_retrospectives
 
         - createTable:
             tableName: memos

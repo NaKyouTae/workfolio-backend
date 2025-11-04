@@ -4,6 +4,7 @@ import com.spectrum.workfolio.domain.entity.resume.Project
 import com.spectrum.workfolio.domain.entity.resume.Resume
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.repository.ProjectRepository
+import com.spectrum.workfolio.proto.resume.ResumeUpdateRequest
 import com.spectrum.workfolio.utils.TimeUtil
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.stereotype.Service
@@ -43,16 +44,8 @@ class ProjectService(
             role = role ?: "",
             affiliation = affiliation ?: "",
             description = description ?: "",
-            startedAt = if (startedAt != null && startedAt > 0) {
-                TimeUtil.ofEpochMilliNullable(startedAt)?.toLocalDate()
-            } else {
-                null
-            },
-            endedAt = if (endedAt != null && endedAt > 0) {
-                TimeUtil.ofEpochMilli(endedAt).toLocalDate()
-            } else {
-                null
-            },
+            startedAt = TimeUtil.ofEpochMilliNullable(startedAt)?.toLocalDate(),
+            endedAt = TimeUtil.ofEpochMilliNullable(endedAt)?.toLocalDate(),
             isVisible = isVisible,
             priority = priority,
             resume = resume,
@@ -62,7 +55,7 @@ class ProjectService(
     }
 
     @Transactional
-    fun createBulkProject(
+    fun createBulkProjectFromEntity(
         resume: Resume,
         projects: List<Project>,
     ) {
@@ -102,21 +95,64 @@ class ProjectService(
             role = role ?: "",
             affiliation = affiliation ?: "",
             description = description ?: "",
-            startedAt = if (startedAt != null && startedAt > 0) {
-                TimeUtil.ofEpochMilli(startedAt).toLocalDate()
-            } else {
-                null
-            },
-            endedAt = if (endedAt != null && endedAt > 0) {
-                TimeUtil.ofEpochMilli(endedAt).toLocalDate()
-            } else {
-                null
-            },
+            startedAt = TimeUtil.ofEpochMilliNullable(startedAt)?.toLocalDate(),
+            endedAt = TimeUtil.ofEpochMilliNullable(endedAt)?.toLocalDate(),
             isVisible = isVisible,
             priority = priority,
         )
 
         return projectRepository.save(project)
+    }
+
+    @Transactional
+    fun createBulkProject(
+        resumeId: String,
+        requests: List<ResumeUpdateRequest.ProjectRequest>,
+    ): List<Project> {
+        val resume = resumeQueryService.getResume(resumeId)
+        val entities = requests.map { request ->
+            Project(
+                title = request.title,
+                role = request.role,
+                affiliation = request.affiliation,
+                description = request.description,
+                startedAt = TimeUtil.ofEpochMilliNullable(request.startedAt)?.toLocalDate(),
+                endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
+                isVisible = request.isVisible,
+                priority = request.priority,
+                resume = resume,
+            )
+        }
+
+        return projectRepository.saveAll(entities)
+    }
+
+    @Transactional
+    fun updateBulkProject(
+        resumeId: String,
+        requests: List<ResumeUpdateRequest.ProjectRequest>,
+    ): List<Project> {
+        val existingProjects = projectRepository.findByResumeIdOrderByPriorityAsc(resumeId)
+
+        val requestMap = requests.associateBy { it.id }
+
+        val updatedEntities = existingProjects.mapNotNull { entity ->
+            requestMap[entity.id]?.let { request ->
+                entity.changeInfo(
+                    title = request.title,
+                    role = request.role,
+                    affiliation = request.affiliation,
+                    description = request.description,
+                    startedAt = TimeUtil.ofEpochMilliNullable(request.startedAt)?.toLocalDate(),
+                    endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
+                    isVisible = request.isVisible,
+                    priority = request.priority,
+                )
+                entity
+            }
+        }
+
+        return projectRepository.saveAll(updatedEntities)
     }
 
     @Transactional

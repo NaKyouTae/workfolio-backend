@@ -33,4 +33,12 @@ class CheckList(
     @JoinColumn(name = "turn_over_goal_id", nullable = false)
     var turnOverGoal: TurnOverGoal = turnOverGoal
         protected set
+
+    fun changeInfo(
+        checked: Boolean,
+        content: String,
+    ) {
+        this.checked = checked
+        this.content = content
+    }
 }

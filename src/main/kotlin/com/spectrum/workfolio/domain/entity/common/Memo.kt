@@ -33,4 +33,10 @@ class Memo(
     @Column(name = "target_id", length = 16, nullable = false)
     var targetId: String = targetId
         protected set
+
+    fun changeInfo(
+        content: String,
+    ) {
+        this.content = content
+    }
 }

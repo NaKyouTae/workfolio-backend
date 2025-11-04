@@ -4,7 +4,9 @@ import com.spectrum.workfolio.domain.dto.AttachmentCreateDto
 import com.spectrum.workfolio.domain.dto.AttachmentUpdateDto
 import com.spectrum.workfolio.domain.entity.record.Record
 import com.spectrum.workfolio.domain.entity.record.Record.Companion.generateRecordType
+import com.spectrum.workfolio.domain.enums.AttachmentCategory
 import com.spectrum.workfolio.domain.enums.AttachmentTargetType
+import com.spectrum.workfolio.domain.enums.AttachmentType
 import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.RecordRepository
 import com.spectrum.workfolio.proto.record.RecordCreateRequest
@@ -54,6 +56,8 @@ class RecordCommandService(
                         targetType = AttachmentTargetType.ENTITY_RECORD,
                         fileName = it.fileName,
                         fileData = it.fileData,
+                        type = AttachmentType.RECORD,
+                        category = AttachmentCategory.FILE,
                         storagePath = "record/attachments/${createdRecord.id}",
                     ),
                 )
@@ -86,6 +90,8 @@ class RecordCommandService(
                         id = updatedRecord.id,
                         fileName = it.fileName,
                         fileData = it.fileData,
+                        type = AttachmentType.RECORD,
+                        category = AttachmentCategory.FILE,
                         storagePath = "record/attachments/${updatedRecord.id}",
                     ),
                 )

@@ -48,4 +48,16 @@ class ApplicationStage(
     @JoinColumn(name = "job_application_id", nullable = false)
     var jobApplication: JobApplication = jobApplication
         protected set
+
+    fun changeInfo(
+        name: String, // 절차 명
+        status: ApplicationStageStatus, // 진행 상태
+        startedAt: LocalDate? = null, // 진행 일자
+        memo: String, // 메모
+    ) {
+        this.name = name
+        this.status = status
+        this.startedAt = startedAt
+        this.memo = memo
+    }
 }

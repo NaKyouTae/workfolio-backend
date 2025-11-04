@@ -33,4 +33,9 @@ class SelfIntroduction(
     @JoinColumn(name = "turn_over_goal_id", nullable = false)
     var turnOverGoal: TurnOverGoal = turnOverGoal
         protected set
+
+    fun changeInfo(question: String, content: String) {
+        this.question = question
+        this.content = content
+    }
 }

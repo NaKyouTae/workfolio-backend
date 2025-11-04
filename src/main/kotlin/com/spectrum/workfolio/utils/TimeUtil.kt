@@ -31,8 +31,8 @@ object TimeUtil {
         return LocalDateTime.now().toString()
     }
 
-    fun ofEpochMilliNullable(at: Long): LocalDateTime? {
-        return if (at != 0L) {
+    fun ofEpochMilliNullable(at: Long?): LocalDateTime? {
+        return if (at != null && at != 0L) {
             this.ofEpochMilli(at)
         } else {
             null

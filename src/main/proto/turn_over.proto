@@ -9,6 +9,25 @@ option java_package = "com.spectrum.workfolio.proto.turn_over";
 option java_outer_classname = "TurnOverProto";
 
 message TurnOverUpsertRequest {
+  message AttachmentRequest {
+    optional string id = 1;
+    optional Attachment.AttachmentType type = 2;
+    Attachment.AttachmentCategory category = 3;
+    string url = 4;
+    string file_name = 5;
+    string file_url = 6;
+    string target_id = 7;
+    Attachment.AttachmentTargetType target_type = 8;
+
+    bool is_visible = 30;
+    uint32 priority = 31;
+  }
+
+  message MemoRequest {
+    optional string id = 1;
+    string content = 2;
+  }
+
   message TurnOverGoalRequest {
     message SelfIntroductionRequest {
       optional string id = 1;
@@ -34,18 +53,21 @@ message TurnOverUpsertRequest {
     repeated SelfIntroductionRequest self_introductions = 4;
     repeated InterviewQuestionRequest interview_questions = 5;
     repeated CheckListRequest check_list = 6;
+    repeated MemoRequest memos = 7;
+    repeated AttachmentRequest attachments = 8;
   }
 
   message TurnOverChallengeRequest {
     message JobApplicationRequest {
       message ApplicationStageRequest {
         optional string id = 1;
-        ApplicationStage.ApplicationStageStatus status = 2;
-        optional uint64 started_at = 3;
-        string memo = 4;
+        string name = 2;
+        ApplicationStage.ApplicationStageStatus status = 3;
+        optional uint64 started_at = 4;
+        string memo = 5;
       }
 
-      string id = 1;
+      optional string id = 1;
       string name = 2;
       string position = 3;
       string job_posting_title = 4;
@@ -59,6 +81,8 @@ message TurnOverUpsertRequest {
 
     optional string id = 1;
     repeated JobApplicationRequest job_applications = 2;
+    repeated MemoRequest memos = 3;
+    repeated AttachmentRequest attachments = 4;
   }
 
   message TurnOverRetrospectiveRequest {
@@ -69,11 +93,15 @@ message TurnOverUpsertRequest {
     string job_title = 5;
     string rank = 6;
     string department = 7;
-    uint32 score = 8;
-    string review_summary = 9;
-    optional uint64 joined_at = 10;
-    string work_type = 11;
-    TurnOverRetrospective.EmploymentType employment_type = 12;
+    string reason = 8;
+    uint32 score = 9;
+    string review_summary = 10;
+    optional uint64 joined_at = 11;
+    string work_type = 12;
+    TurnOverRetrospective.EmploymentType employment_type = 13;
+
+    repeated MemoRequest memos = 14;
+    repeated AttachmentRequest attachments = 15;
   }
 
   optional string id = 1;

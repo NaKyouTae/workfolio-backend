@@ -28,14 +28,14 @@ class Attachment(
     isVisible: Boolean,
     priority: Int = 0,
     category: AttachmentCategory,
-    type: AttachmentType? = null,
+    type: AttachmentType,
     targetId: String,
     targetType: AttachmentTargetType,
 ) : BaseEntity("AT") {
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "type", length = 512, nullable = true)
-    var type: AttachmentType? = type
+    @Column(name = "type", length = 512, nullable = false)
+    var type: AttachmentType = type
         protected set
 
     @Enumerated(EnumType.STRING)
@@ -79,7 +79,7 @@ class Attachment(
         isVisible: Boolean,
         priority: Int = 0,
         category: AttachmentCategory,
-        type: AttachmentType? = null,
+        type: AttachmentType,
     ) {
         this.type = type
         this.category = category

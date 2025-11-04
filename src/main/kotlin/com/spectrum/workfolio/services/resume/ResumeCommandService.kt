@@ -1,12 +1,9 @@
 package com.spectrum.workfolio.services.resume
 
-import com.spectrum.workfolio.domain.dto.AttachmentCreateDto
-import com.spectrum.workfolio.domain.dto.AttachmentUpdateDto
 import com.spectrum.workfolio.domain.entity.resume.Resume
 import com.spectrum.workfolio.domain.enums.AttachmentTargetType
 import com.spectrum.workfolio.domain.enums.Gender
 import com.spectrum.workfolio.domain.repository.ResumeRepository
-import com.spectrum.workfolio.proto.resume.ResumeCreateRequest
 import com.spectrum.workfolio.proto.resume.ResumeUpdateRequest
 import com.spectrum.workfolio.services.AttachmentCommandService
 import com.spectrum.workfolio.services.AttachmentQueryService
@@ -36,23 +33,25 @@ class ResumeCommandService(
     private val attachmentCommandService: AttachmentCommandService,
 ) {
 
-    fun createResume(workerId: String, request: ResumeCreateRequest): Resume {
+    fun createResume(workerId: String, request: ResumeUpdateRequest): Resume {
         val worker = workerService.getWorker(workerId)
 
-        return Resume(
+        val resume = Resume(
             title = request.title,
             name = request.name,
             phone = request.phone,
             email = request.email,
             position = request.position,
             gender = convertProtoEnumSafe<Gender>(request.gender),
-            birthDate = if (request.hasBirthDate()) TimeUtil.ofEpochMilli(request.birthDate).toLocalDate() else null,
+            birthDate = TimeUtil.ofEpochMilliNullable(request.birthDate)?.toLocalDate(),
             description = request.description,
             isPublic = request.isPublic,
             isDefault = request.isDefault,
             publicId = Resume.generatePublicId(),
             worker = worker,
         )
+
+        return resumeRepository.save(resume)
     }
 
     @Transactional
@@ -89,10 +88,10 @@ class ResumeCommandService(
         }
 
         // 3-3. Project 복제
-        projectService.createBulkProject(savedResume, originalResume.projects)
+        projectService.createBulkProjectFromEntity(savedResume, originalResume.projects)
 
         // 3-4. Activity 복제
-        activityService.createBulkActivity(savedResume, originalResume.activities)
+        activityService.createBulkActivityFromEntity(savedResume, originalResume.activities)
 
         // 3-5. LanguageSkill 복제 (LanguageTest 포함)
         originalResume.languageSkills.forEach {
@@ -104,7 +103,7 @@ class ResumeCommandService(
         val originalAttachments = attachmentQueryService.listAttachments(originalResume.id)
 
         // 3-6. Attachment 복제
-        attachmentCommandService.createBulkAttachment(savedResume, originalAttachments)
+        attachmentCommandService.createBulkAttachmentFromEntity(savedResume, originalAttachments)
 
         return savedResume
     }
@@ -151,12 +150,7 @@ class ResumeCommandService(
                 email = request.email,
                 position = request.position,
                 description = request.description,
-                birthDate = if (request.hasBirthDate()) {
-                    TimeUtil.ofEpochMilli(request.birthDate)
-                        .toLocalDate()
-                } else {
-                    null
-                },
+                birthDate = TimeUtil.ofEpochMilliNullable(request.birthDate)?.toLocalDate(),
                 gender = convertProtoEnumSafe<Gender>(request.gender),
                 isPublic = request.isPublic,
                 isDefault = request.isDefault,
@@ -164,20 +158,7 @@ class ResumeCommandService(
 
             resume
         } else {
-            val resumeCreateRequest = ResumeCreateRequest.newBuilder()
-                .setTitle(request.title)
-                .setName(request.name)
-                .setPhone(request.phone)
-                .setEmail(request.email)
-                .setPosition(request.position)
-                .setGender(request.gender)
-                .setBirthDate(request.birthDate)
-                .setDescription(request.description)
-                .setIsPublic(request.isPublic)
-                .setIsDefault(request.isDefault)
-                .build()
-
-            this.createResume(workerId, resumeCreateRequest)
+            this.createResume(workerId, request)
         }
     }
 
@@ -186,47 +167,15 @@ class ResumeCommandService(
         educationRequests: List<ResumeUpdateRequest.EducationRequest>,
     ) {
         val existingEducations = educationService.listEducations(resumeId).educationsList
-        val existingIds = existingEducations.map { it.id }.toSet()
         val requestIds = educationRequests.mapNotNull { it.id }.toSet()
 
-        // 삭제할 educations
         val toDelete = existingEducations.filter { it.id !in requestIds }
-        educationService.deleteEducations(toDelete.map { it.id })
+        val createRequests = educationRequests.filter { it.id.isNullOrEmpty() }
+        val updateRequests = educationRequests.filter { !it.id.isNullOrEmpty() }
 
-        // 생성 및 수정할 educations
-        educationRequests.forEach { request ->
-            if (request.id.isNullOrEmpty()) {
-                // 생성
-                educationService.createEducation(
-                    com.spectrum.workfolio.proto.education.EducationCreateRequest.newBuilder()
-                        .setResumeId(resumeId)
-                        .setStatus(request.status)
-                        .setName(request.name)
-                        .setMajor(request.major)
-                        .setDescription(request.description)
-                        .setStartedAt(request.startedAt)
-                        .setEndedAt(request.endedAt)
-                        .setIsVisible(request.isVisible)
-                        .setPriority(request.priority)
-                        .build(),
-                )
-            } else {
-                // 수정
-                educationService.updateEducation(
-                    com.spectrum.workfolio.proto.education.EducationUpdateRequest.newBuilder()
-                        .setId(request.id)
-                        .setStatus(request.status)
-                        .setName(request.name)
-                        .setMajor(request.major)
-                        .setDescription(request.description)
-                        .setStartedAt(request.startedAt)
-                        .setEndedAt(request.endedAt)
-                        .setIsVisible(request.isVisible)
-                        .setPriority(request.priority)
-                        .build(),
-                )
-            }
-        }
+        educationService.deleteEducations(toDelete.map { it.id })
+        educationService.createBulkEducation(resumeId, createRequests)
+        educationService.updateBulkEducation(resumeId, updateRequests)
     }
 
     private fun updateCareers(
@@ -234,89 +183,46 @@ class ResumeCommandService(
         careerRequests: List<ResumeUpdateRequest.CareerRequest>,
     ) {
         val existingCareers = careerService.listCareers(resumeId).careersList
-        val existingIds = existingCareers.map { it.id }.toSet()
         val requestIds = careerRequests.filter { it.career.id.isNotEmpty() }.mapNotNull { it.career.id }.toSet()
 
-        // 삭제할 careers
         val toDelete = existingCareers.filter { it.id !in requestIds }
+        val createRequests = careerRequests.filter { it.career.id.isNullOrEmpty() }.map { it.career }
+        val updateRequests = careerRequests.filter { !it.career.id.isNullOrEmpty() }.map { it.career }
+
         careerService.deleteCareers(toDelete.map { it.id })
+        val createdCareers = careerService.createBulkCareer(resumeId, createRequests)
+        val updatedCareers = careerService.updateBulkCareer(resumeId, updateRequests)
 
-        // 생성 및 수정할 careers
-        careerRequests.forEach { request ->
-            val career = request.career
-            val careerEntity = if (career.id.isNullOrEmpty()) {
-                // 생성
-                val createdCareer = careerService.createCareer(
-                    com.spectrum.workfolio.proto.career.CareerCreateRequest.newBuilder()
-                        .setResumeId(resumeId)
-                        .setName(career.name)
-                        .setPosition(career.position)
-                        .setEmploymentType(
-                            com.spectrum.workfolio.proto.common.Career.EmploymentType.valueOf(
-                                career.employmentType.name,
-                            ),
-                        )
-                        .setDepartment(career.department)
-                        .setJobTitle(career.jobTitle)
-                        .setRank(career.rank)
-                        .setDescription(career.description)
-                        .setSalary(career.salary)
-                        .setStartedAt(career.startedAt)
-                        .setEndedAt(career.endedAt)
-                        .setIsWorking(career.isWorking)
-                        .setIsVisible(career.isVisible)
-                        .setPriority(career.priority)
-                        .build(),
+        // 생성된 Career의 Salary 처리
+        createdCareers.forEachIndexed { index, careerEntity ->
+            val request = careerRequests.filter { it.career.id.isNullOrEmpty() }[index]
+            request.salariesList.forEach { salaryRequest ->
+                val salary = com.spectrum.workfolio.domain.entity.resume.Salary(
+                    amount = salaryRequest.amount,
+                    memo = salaryRequest.memo,
+                    isVisible = salaryRequest.isVisible,
+                    priority = salaryRequest.priority,
+                    negotiationDate = TimeUtil.ofEpochMilliNullable(salaryRequest.negotiationDate)?.toLocalDate(),
+                    career = careerEntity,
                 )
-                createdCareer
-            } else {
-                // 수정
-                val updatedCareer = careerService.updateCareer(
-                    com.spectrum.workfolio.proto.career.CareerUpdateRequest.newBuilder()
-                        .setId(career.id)
-                        .setName(career.name)
-                        .setPosition(career.position)
-                        .setEmploymentType(
-                            com.spectrum.workfolio.proto.common.Career.EmploymentType.valueOf(
-                                career.employmentType.name,
-                            ),
-                        )
-                        .setDepartment(career.department)
-                        .setJobTitle(career.jobTitle)
-                        .setRank(career.rank)
-                        .setDescription(career.description)
-                        .setSalary(career.salary)
-                        .setStartedAt(career.startedAt)
-                        .setEndedAt(career.endedAt)
-                        .setIsWorking(career.isWorking)
-                        .setIsVisible(career.isVisible)
-                        .setPriority(career.priority)
-                        .build(),
-                )
-                updatedCareer
+                careerEntity.addSalary(salary)
             }
+        }
 
-            // Salaries 처리
+        // 업데이트된 Career의 Salary 처리
+        updatedCareers.forEach { careerEntity ->
+            val request = careerRequests.find { it.career.id == careerEntity.id } ?: return@forEach
             val existingSalaries = careerEntity.salaries
             val requestSalaryIds = request.salariesList.mapNotNull { it.id }.filter { it.isNotBlank() }.toSet()
 
-            // 삭제할 salaries (request에 없는 것들)
-            // orphanRemoval = true 설정으로 컬렉션에서 제거만 하면 자동으로 DB에서도 삭제됨
             val salariesToDelete = existingSalaries.filter { it.id !in requestSalaryIds }
             if (salariesToDelete.isNotEmpty()) {
                 careerEntity.removeSalaries(salariesToDelete)
             }
 
-            // 생성 및 수정할 salaries
             request.salariesList.forEach { salaryRequest ->
-                val negotiationDate = if (salaryRequest.hasNegotiationDate() && salaryRequest.negotiationDate != 0L) {
-                    TimeUtil.ofEpochMilli(salaryRequest.negotiationDate).toLocalDate()
-                } else {
-                    null
-                }
-
+                val negotiationDate = TimeUtil.ofEpochMilliNullable(salaryRequest.negotiationDate)?.toLocalDate()
                 if (salaryRequest.id.isNullOrEmpty()) {
-                    // 생성
                     val salary = com.spectrum.workfolio.domain.entity.resume.Salary(
                         amount = salaryRequest.amount,
                         memo = salaryRequest.memo,
@@ -327,7 +233,6 @@ class ResumeCommandService(
                     )
                     careerEntity.addSalary(salary)
                 } else {
-                    // 수정
                     val existingSalary = existingSalaries.find { it.id == salaryRequest.id }
                     existingSalary?.changeInfo(
                         amount = salaryRequest.amount,
@@ -346,43 +251,15 @@ class ResumeCommandService(
         projectRequests: List<ResumeUpdateRequest.ProjectRequest>,
     ) {
         val existingProjects = projectService.listProjects(resumeId)
-        val existingIds = existingProjects.map { it.id }.toSet()
         val requestIds = projectRequests.mapNotNull { it.id }.toSet()
 
-        // 삭제할 projects
         val toDelete = existingProjects.filter { it.id !in requestIds }
-        projectService.deleteProjects(toDelete.map { it.id })
+        val createRequests = projectRequests.filter { it.id.isNullOrEmpty() }
+        val updateRequests = projectRequests.filter { !it.id.isNullOrEmpty() }
 
-        // 생성 및 수정할 projects
-        projectRequests.forEach { request ->
-            if (request.id.isNullOrEmpty()) {
-                // 생성
-                projectService.createProject(
-                    resumeId = resumeId,
-                    title = request.title,
-                    role = request.role,
-                    affiliation = request.affiliation,
-                    description = request.description,
-                    startedAt = request.startedAt,
-                    endedAt = request.endedAt,
-                    isVisible = request.isVisible,
-                    priority = request.priority,
-                )
-            } else {
-                // 수정
-                projectService.updateProject(
-                    id = request.id,
-                    title = request.title,
-                    role = request.role,
-                    affiliation = request.affiliation,
-                    description = request.description,
-                    startedAt = request.startedAt,
-                    endedAt = request.endedAt,
-                    isVisible = request.isVisible,
-                    priority = request.priority,
-                )
-            }
-        }
+        projectService.deleteProjects(toDelete.map { it.id })
+        projectService.createBulkProject(resumeId, createRequests)
+        projectService.updateBulkProject(resumeId, updateRequests)
     }
 
     private fun updateActivities(
@@ -390,96 +267,32 @@ class ResumeCommandService(
         activityRequests: List<ResumeUpdateRequest.ActivityRequest>,
     ) {
         val existingActivities = activityService.listActivities(resumeId)
-        val existingIds = existingActivities.map { it.id }.toSet()
         val requestIds = activityRequests.mapNotNull { it.id }.toSet()
 
-        // 삭제할 activities
         val toDelete = existingActivities.filter { it.id !in requestIds }
-        activityService.deleteActivities(toDelete.map { it.id })
+        val createRequests = activityRequests.filter { it.id.isNullOrEmpty() }
+        val updateRequests = activityRequests.filter { !it.id.isNullOrEmpty() }
 
-        // 생성 및 수정할 activities
-        activityRequests.forEach { request ->
-            if (request.id.isNullOrEmpty()) {
-                // 생성
-                activityService.createActivity(
-                    resumeId = resumeId,
-                    type = convertProtoEnumSafe<com.spectrum.workfolio.domain.enums.ActivityType>(request.type),
-                    name = request.name,
-                    organization = request.organization,
-                    certificateNumber = request.certificateNumber,
-                    startedAt = request.startedAt,
-                    endedAt = request.endedAt,
-                    description = request.description,
-                    isVisible = request.isVisible,
-                    priority = request.priority,
-                )
-            } else {
-                // 수정
-                activityService.updateActivity(
-                    id = request.id,
-                    type = convertProtoEnumSafe<com.spectrum.workfolio.domain.enums.ActivityType>(request.type),
-                    name = request.name,
-                    organization = request.organization,
-                    certificateNumber = request.certificateNumber,
-                    startedAt = request.startedAt,
-                    endedAt = request.endedAt,
-                    description = request.description,
-                    isVisible = request.isVisible,
-                    priority = request.priority,
-                )
-            }
-        }
+        activityService.deleteActivities(toDelete.map { it.id })
+        activityService.createBulkActivity(resumeId, createRequests)
+        activityService.updateBulkActivity(resumeId, updateRequests)
     }
 
     private fun updateAttachments(
-        resumeId: String,
+        targetId: String,
         attachmentRequests: List<ResumeUpdateRequest.AttachmentRequest>,
     ) {
-        val existingAttachments = attachmentQueryService.listAttachments(resumeId)
+        val existingAttachments = attachmentQueryService.listAttachments(targetId)
         val existingIds = existingAttachments.map { it.id }.toSet()
         val requestIds = attachmentRequests.mapNotNull { it.id }.toSet()
 
-        // 삭제할 attachments
         val toDelete = existingAttachments.filter { it.id !in requestIds }
-        attachmentCommandService.deleteAttachments(toDelete.map { it.id })
+        val createRequests = attachmentRequests.filter { it.id.isNullOrEmpty() }
+        val updateRequests = attachmentRequests.filter { !existingIds.contains(it.id) }
 
-        // 생성 및 수정할 attachments
-        attachmentRequests.forEach { request ->
-            if (request.id.isNullOrEmpty()) {
-                // 생성
-                attachmentCommandService.createAttachment(
-                    AttachmentCreateDto(
-                        targetId = resumeId,
-                        targetType = AttachmentTargetType.ENTITY_RESUME,
-                        type = convertProtoEnumSafe<com.spectrum.workfolio.domain.enums.AttachmentType>(request.type),
-                        category = com.spectrum.workfolio.domain.enums.AttachmentCategory.valueOf(request.category.name),
-                        fileName = request.fileName,
-                        fileUrl = request.fileUrl,
-                        url = request.url,
-                        fileData = if (request.hasFileData()) request.fileData else null,
-                        isVisible = request.isVisible,
-                        priority = request.priority,
-                        storagePath = "resumes/attachments/$resumeId",
-                    ),
-                )
-            } else {
-                // 수정
-                attachmentCommandService.updateAttachment(
-                    AttachmentUpdateDto(
-                        id = request.id,
-                        type = convertProtoEnumSafe<com.spectrum.workfolio.domain.enums.AttachmentType>(request.type),
-                        category = com.spectrum.workfolio.domain.enums.AttachmentCategory.valueOf(request.category.name),
-                        fileName = request.fileName,
-                        fileUrl = request.fileUrl,
-                        url = request.url,
-                        fileData = if (request.hasFileData()) request.fileData else null,
-                        isVisible = request.isVisible,
-                        priority = request.priority,
-                        storagePath = "resumes/attachments/$resumeId",
-                    ),
-                )
-            }
-        }
+        attachmentCommandService.deleteAttachments(toDelete.map { it.id })
+        attachmentCommandService.createBulkAttachment(AttachmentTargetType.ENTITY_RESUME, targetId, createRequests)
+        attachmentCommandService.updateBulkAttachment(targetId, updateRequests)
     }
 
     private fun updateLanguageSkills(
@@ -487,69 +300,40 @@ class ResumeCommandService(
         languageSkillRequests: List<ResumeUpdateRequest.LanguageSkillRequest>,
     ) {
         val existingLanguageSkills = languageSkillService.listLanguageSkills(resumeId)
-        val existingIds = existingLanguageSkills.map { it.id }.toSet()
         val requestIds = languageSkillRequests.mapNotNull { it.id }.toSet()
 
-        // 삭제할 language skills
         val toDelete = existingLanguageSkills.filter { it.id !in requestIds }
+        val createRequests = languageSkillRequests.filter { it.id.isNullOrEmpty() }
+        val updateRequests = languageSkillRequests.filter { !it.id.isNullOrEmpty() }
+
         languageSkillService.deleteLanguageSkills(toDelete.map { it.id })
+        val createdLanguageSkills = languageSkillService.createBulkLanguageSkill(resumeId, createRequests)
+        val updatedLanguageSkills = languageSkillService.updateBulkLanguageSkill(resumeId, updateRequests)
 
-        // 생성 및 수정할 language skills
-        languageSkillRequests.forEach { request ->
-            val languageSkillId = if (request.id.isNullOrEmpty()) {
-                // 생성
-                val createdLanguageSkill = languageSkillService.createLanguageSkill(
-                    resumeId = resumeId,
-                    language = convertProtoEnumSafe<com.spectrum.workfolio.domain.enums.Language>(request.language),
-                    level = convertProtoEnumSafe<com.spectrum.workfolio.domain.enums.LanguageLevel>(request.level),
-                    isVisible = request.isVisible,
-                    priority = request.priority,
-                )
-                createdLanguageSkill.id
-            } else {
-                // 수정
-                languageSkillService.updateLanguageSkill(
-                    id = request.id,
-                    language = convertProtoEnumSafe<com.spectrum.workfolio.domain.enums.Language>(request.language),
-                    level = convertProtoEnumSafe<com.spectrum.workfolio.domain.enums.LanguageLevel>(request.level),
-                    isVisible = request.isVisible,
-                    priority = request.priority,
-                )
-                request.id
+        // 생성된 LanguageSkill의 LanguageTest 처리
+        createdLanguageSkills.forEachIndexed { index, languageSkill ->
+            val request = languageSkillRequests.filter { it.id.isNullOrEmpty() }[index]
+            if (request.languageTestsList.isNotEmpty()) {
+                languageTestService.createBulkLanguageTest(languageSkill.id, request.languageTestsList)
             }
+        }
 
-            // 기존 language tests 조회
-            val existingLanguageTests = languageSkillService.getLanguageSkill(languageSkillId).languageTests
-            val existingTestIds = existingLanguageTests.map { it.id }.toSet()
+        // 업데이트된 LanguageSkill의 LanguageTest 처리
+        updatedLanguageSkills.forEach { languageSkill ->
+            val request = languageSkillRequests.find { it.id == languageSkill.id } ?: return@forEach
+            val existingLanguageTests = languageSkill.languageTests
             val requestTestIds = request.languageTestsList.mapNotNull { it.id }.toSet()
 
-            // 삭제할 language tests
             val testsToDelete = existingLanguageTests.filter { it.id !in requestTestIds }
-            languageTestService.deleteLanguageTests(testsToDelete.map { it.id })
+            val createTestRequests = request.languageTestsList.filter { it.id.isNullOrEmpty() }
+            val updateTestRequests = request.languageTestsList.filter { !it.id.isNullOrEmpty() }
 
-            // 생성 및 수정할 language tests
-            request.languageTestsList.forEach { testRequest ->
-                if (testRequest.id.isNullOrEmpty()) {
-                    // 생성
-                    languageTestService.createLanguageTest(
-                        languageSkillId = languageSkillId,
-                        name = testRequest.name,
-                        score = testRequest.score,
-                        acquiredAt = testRequest.acquiredAt,
-                        isVisible = testRequest.isVisible,
-                        priority = testRequest.priority,
-                    )
-                } else {
-                    // 수정
-                    languageTestService.updateLanguageTest(
-                        id = testRequest.id,
-                        name = testRequest.name,
-                        score = testRequest.score,
-                        acquiredAt = testRequest.acquiredAt,
-                        isVisible = testRequest.isVisible,
-                        priority = testRequest.priority,
-                    )
-                }
+            languageTestService.deleteLanguageTests(testsToDelete.map { it.id })
+            if (createTestRequests.isNotEmpty()) {
+                languageTestService.createBulkLanguageTest(languageSkill.id, createTestRequests)
+            }
+            if (updateTestRequests.isNotEmpty()) {
+                languageTestService.updateBulkLanguageTest(languageSkill.id, updateTestRequests)
             }
         }
     }
