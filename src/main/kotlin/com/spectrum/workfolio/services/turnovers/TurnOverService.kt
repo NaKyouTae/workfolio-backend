@@ -12,7 +12,6 @@ import com.spectrum.workfolio.domain.extensions.toDetailProto
 import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.TurnOverRepository
 import com.spectrum.workfolio.proto.attachment.AttachmentRequest
-import com.spectrum.workfolio.proto.turn_over.TurnOverDetailListResponse
 import com.spectrum.workfolio.proto.turn_over.TurnOverDetailResponse
 import com.spectrum.workfolio.proto.turn_over.TurnOverListResponse
 import com.spectrum.workfolio.proto.turn_over.TurnOverUpsertRequest
@@ -53,8 +52,17 @@ class TurnOverService(
     @Transactional(readOnly = true)
     fun getTurnOverDetailResult(id: String): TurnOverDetailResponse {
         val turnOver = this.getTurnOver(id)
+
+        val turnOverGoal = turnOverGoalService.getTurnOverGoalDetail(turnOver.turnOverGoal.id)
+        val turnOverChallenge = turnOverChallengeService.getTurnOverChallengeDetail(turnOver.turnOverChallenge.id)
+        val turnOverRetrospective = turnOverRetrospectiveService.getTurnOverRetrospectiveDetail(turnOver.turnOverRetrospective.id)
+
         return TurnOverDetailResponse.newBuilder()
-            .setTurnOver(turnOver.toDetailProto())
+            .setTurnOver(turnOver.toDetailProto(
+                turnOverGoal = turnOverGoal,
+                turnOverChallenge = turnOverChallenge,
+                turnOverRetrospective = turnOverRetrospective,
+            ))
             .build()
     }
 
@@ -63,14 +71,6 @@ class TurnOverService(
         val turnOvers = turnOverRepository.findByWorkerId(workerId)
         return TurnOverListResponse.newBuilder()
             .addAllTurnOvers(turnOvers.map { it.toProto() })
-            .build()
-    }
-
-    @Transactional(readOnly = true)
-    fun listDetailTurnOversResult(workerId: String): TurnOverDetailListResponse {
-        val turnOvers = turnOverRepository.findByWorkerId(workerId)
-        return TurnOverDetailListResponse.newBuilder()
-            .addAllTurnOvers(turnOvers.map { it.toDetailProto() })
             .build()
     }
 
@@ -268,5 +268,15 @@ class TurnOverService(
         attachmentCommandService.deleteAttachments(toDelete.map { it.id })
         attachmentCommandService.createBulkAttachment(AttachmentTargetType.ENTITY_RESUME, targetId, createRequests)
         attachmentCommandService.updateBulkAttachment(targetId, updateRequests)
+    }
+
+    @Transactional
+    fun duplicate(id: String) {
+        // TODO duplicate turn over
+    }
+
+    @Transactional
+    fun delete(id: String) {
+        turnOverRepository.deleteById(id)
     }
 }

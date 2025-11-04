@@ -1,5 +1,7 @@
 package com.spectrum.workfolio.domain.extensions
 
+import com.spectrum.workfolio.domain.entity.common.Attachment
+import com.spectrum.workfolio.domain.entity.common.Memo
 import com.spectrum.workfolio.domain.entity.turnover.TurnOverRetrospective
 import com.spectrum.workfolio.utils.TimeUtil
 
@@ -33,8 +35,8 @@ fun TurnOverRetrospective.toProto(): com.spectrum.workfolio.proto.common.TurnOve
     return builder.build()
 }
 
-fun TurnOverRetrospective.toWithoutTurnOverProto(): com.spectrum.workfolio.proto.common.TurnOverRetrospective {
-    val builder = com.spectrum.workfolio.proto.common.TurnOverRetrospective.newBuilder()
+fun TurnOverRetrospective.toDetailProto(memos: List<Memo>, attachments: List<Attachment>): com.spectrum.workfolio.proto.common.TurnOverRetrospectiveDetail {
+    val builder = com.spectrum.workfolio.proto.common.TurnOverRetrospectiveDetail.newBuilder()
 
     builder.setId(this.id)
     builder.setName(this.name)
@@ -48,6 +50,9 @@ fun TurnOverRetrospective.toWithoutTurnOverProto(): com.spectrum.workfolio.proto
     builder.setReviewSummary(this.reviewSummary)
     builder.setWorkType(this.workType)
 
+    builder.addAllMemos(memos.map { it.toProto() })
+    builder.addAllAttachments(attachments.map { it.toProto() })
+
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
 
@@ -56,7 +61,7 @@ fun TurnOverRetrospective.toWithoutTurnOverProto(): com.spectrum.workfolio.proto
     }
     if (this.employmentType != null) {
         builder.setEmploymentType(
-            com.spectrum.workfolio.proto.common.TurnOverRetrospective.EmploymentType.valueOf(this.employmentType!!.name),
+            com.spectrum.workfolio.proto.common.TurnOverRetrospectiveDetail.EmploymentType.valueOf(this.employmentType!!.name),
         )
     }
 

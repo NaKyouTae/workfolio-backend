@@ -1,5 +1,7 @@
 package com.spectrum.workfolio.domain.extensions
 
+import com.spectrum.workfolio.domain.entity.common.Attachment
+import com.spectrum.workfolio.domain.entity.common.Memo
 import com.spectrum.workfolio.domain.entity.turnover.TurnOverChallenge
 import com.spectrum.workfolio.utils.TimeUtil
 
@@ -14,12 +16,17 @@ fun TurnOverChallenge.toProto(): com.spectrum.workfolio.proto.common.TurnOverCha
     return builder.build()
 }
 
-fun TurnOverChallenge.toDetailProto(): com.spectrum.workfolio.proto.common.TurnOverChallengeDetail {
+fun TurnOverChallenge.toDetailProto(
+    memos: List<Memo>,
+    attachments: List<Attachment>,
+): com.spectrum.workfolio.proto.common.TurnOverChallengeDetail {
     val builder = com.spectrum.workfolio.proto.common.TurnOverChallengeDetail.newBuilder()
 
     builder.setId(this.id)
 
     builder.addAllJobApplications(this.jobApplications.map { it.toDetailProto() })
+    builder.addAllMemos(memos.map { it.toProto() })
+    builder.addAllAttachments(attachments.map { it.toProto() })
 
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))

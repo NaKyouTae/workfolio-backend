@@ -365,7 +365,7 @@ message TurnOverDetail {
   Worker worker = 50;
   TurnOverGoalDetail turn_over_goal = 51;
   TurnOverChallengeDetail turn_over_challenge = 52;
-  TurnOverRetrospective turn_over_retrospective = 53;
+  TurnOverRetrospectiveDetail turn_over_retrospective = 53;
 
   uint64 created_at = 98;
   uint64 updated_at = 99;
@@ -390,6 +390,8 @@ message TurnOverGoalDetail {
   repeated SelfIntroduction self_introductions = 50;
   repeated InterviewQuestion interview_questions = 51;
   repeated CheckList check_list = 52;
+  repeated Memo memos = 53;
+  repeated Attachment attachments = 54;
 
   uint64 created_at = 98;
   uint64 updated_at = 99;
@@ -441,6 +443,8 @@ message TurnOverChallengeDetail {
   string id = 1;
 
   repeated JobApplicationDetail job_applications = 50;
+  repeated Memo memos = 51;
+  repeated Attachment attachments = 52;
 
   uint64 created_at = 98;
   uint64 updated_at = 99;
@@ -525,7 +529,35 @@ message TurnOverRetrospective {
   string work_type = 12;
   optional EmploymentType employment_type = 13;
 
-  TurnOver turn_over = 50;
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
+}
+
+message TurnOverRetrospectiveDetail {
+  enum EmploymentType {
+    EMPLOYMENT_TYPE_UNKNOWN = 0;
+    FULL_TIME = 1;
+    CONTRACT = 2;
+    FREELANCER = 3;
+    INTERN = 4;
+  }
+
+  string id = 1;
+  string name = 2;
+  uint32 salary = 3;
+  string position = 4;
+  string job_title = 5;
+  string rank = 6;
+  string department = 7;
+  string reason = 8;
+  uint32 score = 9;
+  string review_summary = 10;
+  optional uint64 joined_at = 11;
+  string work_type = 12;
+  optional EmploymentType employment_type = 13;
+
+  repeated Memo memos = 51;
+  repeated Attachment attachments = 52;
 
   uint64 created_at = 98;
   uint64 updated_at = 99;

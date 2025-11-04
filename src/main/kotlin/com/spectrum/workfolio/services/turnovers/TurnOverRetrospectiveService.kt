@@ -3,8 +3,12 @@ package com.spectrum.workfolio.services.turnovers
 import com.spectrum.workfolio.domain.entity.turnover.TurnOverRetrospective
 import com.spectrum.workfolio.domain.enums.EmploymentType
 import com.spectrum.workfolio.domain.enums.MsgKOR
+import com.spectrum.workfolio.domain.extensions.toDetailProto
 import com.spectrum.workfolio.domain.repository.TurnOverRetrospectiveRepository
+import com.spectrum.workfolio.proto.common.TurnOverRetrospectiveDetail
 import com.spectrum.workfolio.proto.turn_over.TurnOverUpsertRequest
+import com.spectrum.workfolio.services.AttachmentQueryService
+import com.spectrum.workfolio.services.MemoQueryService
 import com.spectrum.workfolio.utils.EnumUtils.convertProtoEnumSafe
 import com.spectrum.workfolio.utils.TimeUtil
 import com.spectrum.workfolio.utils.WorkfolioException
@@ -13,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class TurnOverRetrospectiveService(
+    private val memoQueryService: MemoQueryService,
+    private val attachmentQueryService: AttachmentQueryService,
     private val turnOverRetrospectiveRepository: TurnOverRetrospectiveRepository,
 ) {
     @Transactional(readOnly = true)
@@ -20,6 +26,14 @@ class TurnOverRetrospectiveService(
         return turnOverRetrospectiveRepository.findById(id).orElseThrow {
             WorkfolioException(MsgKOR.NOT_FOUND_TURN_OVER_RETROSPECTIVE.message)
         }
+    }
+
+    @Transactional(readOnly = true)
+    fun getTurnOverRetrospectiveDetail(id: String): TurnOverRetrospectiveDetail {
+        val turnOverRetrospective = this.getTurnOverRetrospective(id)
+        val memos = memoQueryService.listMemos(turnOverRetrospective.id)
+        val attachments = attachmentQueryService.listAttachments(turnOverRetrospective.id)
+        return turnOverRetrospective.toDetailProto(memos, attachments)
     }
 
     @Transactional

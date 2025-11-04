@@ -1,5 +1,7 @@
 package com.spectrum.workfolio.domain.extensions
 
+import com.spectrum.workfolio.domain.entity.common.Attachment
+import com.spectrum.workfolio.domain.entity.common.Memo
 import com.spectrum.workfolio.domain.entity.turnover.TurnOverGoal
 import com.spectrum.workfolio.utils.TimeUtil
 
@@ -16,7 +18,7 @@ fun TurnOverGoal.toProto(): com.spectrum.workfolio.proto.common.TurnOverGoal {
     return builder.build()
 }
 
-fun TurnOverGoal.toDetailProto(): com.spectrum.workfolio.proto.common.TurnOverGoalDetail {
+fun TurnOverGoal.toDetailProto(memos: List<Memo>, attachments: List<Attachment>): com.spectrum.workfolio.proto.common.TurnOverGoalDetail {
     val builder = com.spectrum.workfolio.proto.common.TurnOverGoalDetail.newBuilder()
 
     builder.setId(this.id)
@@ -26,6 +28,8 @@ fun TurnOverGoal.toDetailProto(): com.spectrum.workfolio.proto.common.TurnOverGo
     builder.addAllSelfIntroductions(this.selfIntroductions.map { it.toWithoutTurnOverGoalProto() })
     builder.addAllInterviewQuestions(this.interviewQuestions.map { it.toWithoutTurnOverGoalProto() })
     builder.addAllCheckList(this.checkList.map { it.toWithoutTurnOverGoalProto() })
+    builder.addAllMemos(memos.map { it.toProto() })
+    builder.addAllAttachments(attachments.map { it.toProto() })
 
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))

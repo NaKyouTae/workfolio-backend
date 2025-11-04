@@ -10,6 +10,9 @@ fun Attachment.toProto(): com.spectrum.workfolio.proto.common.Attachment {
     builder.setFileName(this.fileName)
     builder.setFileUrl(this.fileUrl)
     builder.setUrl(this.url)
+    builder.setType(
+        com.spectrum.workfolio.proto.common.Attachment.AttachmentType.valueOf(this.type.name),
+    )
     builder.setCategory(
         com.spectrum.workfolio.proto.common.Attachment.AttachmentCategory.valueOf(this.category.name),
     )
@@ -22,12 +25,6 @@ fun Attachment.toProto(): com.spectrum.workfolio.proto.common.Attachment {
 
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
-
-    if (this.type != null) {
-        builder.setType(
-            com.spectrum.workfolio.proto.common.Attachment.AttachmentType.valueOf(this.type!!.name),
-        )
-    }
 
     return builder.build()
 }
