@@ -4,6 +4,7 @@ import com.spectrum.workfolio.domain.entity.resume.Resume
 import com.spectrum.workfolio.domain.enums.AttachmentTargetType
 import com.spectrum.workfolio.domain.enums.Gender
 import com.spectrum.workfolio.domain.repository.ResumeRepository
+import com.spectrum.workfolio.proto.attachment.AttachmentRequest
 import com.spectrum.workfolio.proto.resume.ResumeUpdateRequest
 import com.spectrum.workfolio.services.AttachmentCommandService
 import com.spectrum.workfolio.services.AttachmentQueryService
@@ -280,7 +281,7 @@ class ResumeCommandService(
 
     private fun updateAttachments(
         targetId: String,
-        attachmentRequests: List<ResumeUpdateRequest.AttachmentRequest>,
+        attachmentRequests: List<AttachmentRequest>,
     ) {
         val existingAttachments = attachmentQueryService.listAttachments(targetId)
         val existingIds = existingAttachments.map { it.id }.toSet()

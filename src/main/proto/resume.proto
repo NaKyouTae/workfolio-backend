@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 import "common.proto";
+import "attachment.proto";
 
 package com.spectrum.workfolio.proto;
 
@@ -101,19 +102,6 @@ message ResumeUpdateRequest {
     uint32 priority = 31;
 
     repeated LanguageTestRequest language_tests = 99;
-  }
-
-  message AttachmentRequest {
-    optional string id = 1;
-    optional Attachment.AttachmentType type = 2;
-    Attachment.AttachmentCategory category = 3;
-    string url = 4;
-    string file_name = 5;
-    string file_url = 6;
-    optional bytes file_data = 7;
-
-    bool is_visible = 30;
-    uint32 priority = 31;
   }
 
   message ProjectRequest {

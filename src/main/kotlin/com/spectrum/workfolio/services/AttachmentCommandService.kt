@@ -9,7 +9,7 @@ import com.spectrum.workfolio.domain.enums.AttachmentTargetType
 import com.spectrum.workfolio.domain.enums.AttachmentType
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.repository.AttachmentRepository
-import com.spectrum.workfolio.proto.resume.ResumeUpdateRequest
+import com.spectrum.workfolio.proto.attachment.AttachmentRequest
 import com.spectrum.workfolio.utils.EntityTypeValidator
 import com.spectrum.workfolio.utils.FileUtil
 import com.spectrum.workfolio.utils.WorkfolioException
@@ -89,7 +89,7 @@ class AttachmentCommandService(
     fun createBulkAttachment(
         targetType: AttachmentTargetType,
         targetId: String,
-        requests: List<ResumeUpdateRequest.AttachmentRequest>,
+        requests: List<AttachmentRequest>,
     ): List<Attachment> {
         return requests.map { request ->
             val attachment = Attachment(
@@ -176,7 +176,7 @@ class AttachmentCommandService(
     @Transactional
     fun updateBulkAttachment(
         targetId: String,
-        requests: List<ResumeUpdateRequest.AttachmentRequest>,
+        requests: List<AttachmentRequest>,
     ): List<Attachment> {
         val existingAttachments = attachmentRepository.findByTargetIdOrderByPriorityAsc(targetId)
 
@@ -257,15 +257,6 @@ class AttachmentCommandService(
     }
 
     @Transactional
-    fun deleteAttachment(id: String) {
-        val attachment = this.getAttachment(id)
-
-        fileUploadService.deleteFileFromStorage(listOf(attachment))
-
-        attachmentRepository.delete(attachment)
-    }
-
-    @Transactional
     fun deleteAttachments(attachmentIds: List<String>) {
         if (attachmentIds.isEmpty()) {
             return
@@ -278,15 +269,5 @@ class AttachmentCommandService(
 
         // DB에서 Attachment 삭제
         attachmentRepository.deleteAllById(attachmentIds)
-    }
-
-    @Transactional
-    fun deleteAttachmentsByTargetId(targetId: String) {
-        val attachments = attachmentRepository.findByTargetIdOrderByPriorityAsc(targetId)
-
-        fileUploadService.deleteFileFromStorage(attachments)
-
-        // DB에서 Attachment 삭제
-        attachmentRepository.deleteAll(attachments)
     }
 }

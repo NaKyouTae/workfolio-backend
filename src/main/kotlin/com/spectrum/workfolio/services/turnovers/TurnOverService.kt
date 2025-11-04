@@ -5,12 +5,19 @@ import com.spectrum.workfolio.domain.entity.turnover.TurnOver
 import com.spectrum.workfolio.domain.entity.turnover.TurnOverChallenge
 import com.spectrum.workfolio.domain.entity.turnover.TurnOverGoal
 import com.spectrum.workfolio.domain.entity.turnover.TurnOverRetrospective
+import com.spectrum.workfolio.domain.enums.AttachmentTargetType
 import com.spectrum.workfolio.domain.enums.MemoTargetType
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.extensions.toDetailProto
+import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.TurnOverRepository
+import com.spectrum.workfolio.proto.attachment.AttachmentRequest
 import com.spectrum.workfolio.proto.turn_over.TurnOverDetailListResponse
+import com.spectrum.workfolio.proto.turn_over.TurnOverDetailResponse
+import com.spectrum.workfolio.proto.turn_over.TurnOverListResponse
 import com.spectrum.workfolio.proto.turn_over.TurnOverUpsertRequest
+import com.spectrum.workfolio.services.AttachmentCommandService
+import com.spectrum.workfolio.services.AttachmentQueryService
 import com.spectrum.workfolio.services.MemoCommandService
 import com.spectrum.workfolio.services.MemoQueryService
 import com.spectrum.workfolio.services.WorkerService
@@ -27,8 +34,10 @@ class TurnOverService(
     private val turnOverRepository: TurnOverRepository,
     private val turnOverGoalService: TurnOverGoalService,
     private val jobApplicationService: JobApplicationService,
+    private val attachmentQueryService: AttachmentQueryService,
     private val applicationStageService: ApplicationStageService,
     private val selfIntroductionService: SelfIntroductionService,
+    private val attachmentCommandService: AttachmentCommandService,
     private val interviewQuestionService: InterviewQuestionService,
     private val turnOverChallengeService: TurnOverChallengeService,
     private val turnOverRetrospectiveService: TurnOverRetrospectiveService,
@@ -42,7 +51,23 @@ class TurnOverService(
     }
 
     @Transactional(readOnly = true)
-    fun listTurnOversResult(workerId: String): TurnOverDetailListResponse {
+    fun getTurnOverDetailResult(id: String): TurnOverDetailResponse {
+        val turnOver = this.getTurnOver(id)
+        return TurnOverDetailResponse.newBuilder()
+            .setTurnOver(turnOver.toDetailProto())
+            .build()
+    }
+
+    @Transactional(readOnly = true)
+    fun listTurnOversResult(workerId: String): TurnOverListResponse {
+        val turnOvers = turnOverRepository.findByWorkerId(workerId)
+        return TurnOverListResponse.newBuilder()
+            .addAllTurnOvers(turnOvers.map { it.toProto() })
+            .build()
+    }
+
+    @Transactional(readOnly = true)
+    fun listDetailTurnOversResult(workerId: String): TurnOverDetailListResponse {
         val turnOvers = turnOverRepository.findByWorkerId(workerId)
         return TurnOverDetailListResponse.newBuilder()
             .addAllTurnOvers(turnOvers.map { it.toDetailProto() })
@@ -88,6 +113,7 @@ class TurnOverService(
         upsertInterviewQuestion(turnOverGoal, request.interviewQuestionsList)
         upsertCheckList(turnOverGoal, request.checkListList)
         upsertMemo(MemoTargetType.TURN_OVER_GOAL, turnOverGoal.id, request.memosList)
+        updateAttachments(turnOverGoal.id, request.attachmentsList)
 
         return turnOverGoal
     }
@@ -149,6 +175,7 @@ class TurnOverService(
 
         upsertJobApplication(turnOverChallenge, request.jobApplicationsList)
         upsertMemo(MemoTargetType.TURN_OVER_CHALLENGE, turnOverChallenge.id, request.memosList)
+        updateAttachments(turnOverChallenge.id, request.attachmentsList)
 
         return turnOverChallenge
     }
@@ -203,6 +230,7 @@ class TurnOverService(
         }
 
         upsertMemo(MemoTargetType.TURN_OVER_RETROSPECT, turnOverRetrospective.id, request.memosList)
+        updateAttachments(turnOverRetrospective.id, request.attachmentsList)
 
         return turnOverRetrospective
     }
@@ -223,5 +251,22 @@ class TurnOverService(
         memoCommandService.deleteMemos(toDelete.map { it.id })
         memoCommandService.createBulkMemo(targetType, targetId, createMemos)
         memoCommandService.updateBulkMemo(targetId, updateMemos)
+    }
+
+    private fun updateAttachments(
+        targetId: String,
+        attachmentRequests: List<AttachmentRequest>,
+    ) {
+        val existingAttachments = attachmentQueryService.listAttachments(targetId)
+        val existingIds = existingAttachments.map { it.id }.toSet()
+        val requestIds = attachmentRequests.mapNotNull { it.id }.toSet()
+
+        val toDelete = existingAttachments.filter { it.id !in requestIds }
+        val createRequests = attachmentRequests.filter { it.id.isNullOrEmpty() }
+        val updateRequests = attachmentRequests.filter { !existingIds.contains(it.id) }
+
+        attachmentCommandService.deleteAttachments(toDelete.map { it.id })
+        attachmentCommandService.createBulkAttachment(AttachmentTargetType.ENTITY_RESUME, targetId, createRequests)
+        attachmentCommandService.updateBulkAttachment(targetId, updateRequests)
     }
 }

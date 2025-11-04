@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 import "common.proto";
+import "attachment.proto";
 
 package com.spectrum.workfolio.proto;
 
@@ -9,20 +10,6 @@ option java_package = "com.spectrum.workfolio.proto.turn_over";
 option java_outer_classname = "TurnOverProto";
 
 message TurnOverUpsertRequest {
-  message AttachmentRequest {
-    optional string id = 1;
-    optional Attachment.AttachmentType type = 2;
-    Attachment.AttachmentCategory category = 3;
-    string url = 4;
-    string file_name = 5;
-    string file_url = 6;
-    string target_id = 7;
-    Attachment.AttachmentTargetType target_type = 8;
-
-    bool is_visible = 30;
-    uint32 priority = 31;
-  }
-
   message MemoRequest {
     optional string id = 1;
     string content = 2;
@@ -121,4 +108,9 @@ message TurnOverDetailListResponse {
 
 message TurnOverResponse {
   TurnOver turn_over = 1;
+}
+
+
+message TurnOverDetailResponse {
+  TurnOverDetail turn_over = 1;
 }

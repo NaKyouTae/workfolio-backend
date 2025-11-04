@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package com.spectrum.workfolio.proto;
+
+option java_multiple_files = true;
+option java_package = "com.spectrum.workfolio.proto.attachment";
+option java_outer_classname = "AttachmentProto";
+
+message AttachmentRequest {
+  optional string id = 1;
+  optional Attachment.AttachmentType type = 2;
+  Attachment.AttachmentCategory category = 3;
+  string url = 4;
+  string file_name = 5;
+  string file_url = 6;
+  optional bytes file_data = 7;
+
+  bool is_visible = 30;
+  uint32 priority = 31;
+}
