@@ -22,7 +22,7 @@ class CheckListService(
 
     @Transactional(readOnly = true)
     fun getCheckLists(id: String): List<CheckList> {
-        return checkListRepository.findByTurnOverGoalId(id)
+        return checkListRepository.findByTurnOverGoalIdOrderByPriorityAsc(id)
     }
 
     // Cascade용: 엔티티만 생성 (저장 X)
@@ -34,6 +34,8 @@ class CheckListService(
             checked = request.checked,
             content = request.content,
             turnOverGoal = turnOverGoal,
+            isVisible = request.isVisible,
+            priority = request.priority,
         )
     }
 
@@ -50,6 +52,8 @@ class CheckListService(
                 checked = it.checked,
                 content = it.content,
                 turnOverGoal = turnOverGoal,
+                isVisible = it.isVisible,
+                priority = it.priority,
             )
         }
 
@@ -63,6 +67,8 @@ class CheckListService(
         checkList.changeInfo(
             checked = request.checked,
             content = request.content,
+            isVisible = request.isVisible,
+            priority = request.priority,
         )
 
         return checkListRepository.save(checkList)
@@ -84,6 +90,8 @@ class CheckListService(
                 entity.changeInfo(
                     checked = request.checked,
                     content = request.content,
+                    isVisible = request.isVisible,
+                    priority = request.priority,
                 )
                 entity
             }

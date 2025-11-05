@@ -1138,6 +1138,17 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: is_visible
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: priority
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
                   name: turn_over_goal_id
                   type: VARCHAR(16)
                   constraints:
@@ -1176,6 +1187,17 @@ databaseChangeLog:
               - column:
                   name: answer
                   type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_visible
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: priority
+                  type: INT
+                  defaultValueNumeric: 0
                   constraints:
                     nullable: false
               - column:
@@ -1270,6 +1292,17 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: is_visible
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: priority
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
                   name: turn_over_challenge_id
                   type: VARCHAR(16)
                   constraints:
@@ -1318,6 +1351,17 @@ databaseChangeLog:
               - column:
                   name: memo
                   type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_visible
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: priority
+                  type: INT
+                  defaultValueNumeric: 0
                   constraints:
                     nullable: false
               - column:
@@ -1447,6 +1491,17 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: is_visible
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: priority
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
                   name: created_at
                   type: TIMESTAMP(6)
                   constraints:
@@ -1480,6 +1535,17 @@ databaseChangeLog:
               - column:
                   name: content
                   type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_visible
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: priority
+                  type: INT
+                  defaultValueNumeric: 0
                   constraints:
                     nullable: false
               - column:

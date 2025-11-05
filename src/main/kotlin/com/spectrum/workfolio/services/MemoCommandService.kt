@@ -19,6 +19,8 @@ class MemoCommandService(
             content = request.content,
             targetType = targetType,
             targetId = targetId,
+            isVisible = request.isVisible,
+            priority = request.priority,
         )
 
         return memoRepository.save(memo)
@@ -35,6 +37,8 @@ class MemoCommandService(
                 content = memo.content,
                 targetType = targetType,
                 targetId = targetId,
+                isVisible = memo.isVisible,
+                priority = memo.priority,
             )
         }
 
@@ -47,6 +51,8 @@ class MemoCommandService(
 
         memo.changeInfo(
             content = request.content,
+            isVisible = request.isVisible,
+            priority = request.priority,
         )
 
         return memoRepository.save(memo)
@@ -67,6 +73,8 @@ class MemoCommandService(
             requestMap[memo.id]?.let { request ->
                 memo.changeInfo(
                     content = request.content,
+                    isVisible = request.isVisible,
+                    priority = request.priority,
                 )
                 memo
             }

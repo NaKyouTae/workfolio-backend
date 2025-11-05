@@ -22,7 +22,7 @@ class InterviewQuestionService(
 
     @Transactional(readOnly = true)
     fun getInterviewQuestions(turnOverGoalId: String): List<InterviewQuestion> {
-        return interviewQuestionRepository.findByTurnOverGoalId(turnOverGoalId)
+        return interviewQuestionRepository.findByTurnOverGoalIdOrderByPriorityAsc(turnOverGoalId)
     }
 
     // Cascade용: 엔티티만 생성 (저장 X)
@@ -34,6 +34,8 @@ class InterviewQuestionService(
             question = request.question,
             answer = request.answer,
             turnOverGoal = turnOverGoal,
+            isVisible = request.isVisible,
+            priority = request.priority,
         )
     }
 
@@ -53,6 +55,8 @@ class InterviewQuestionService(
                 question = request.question,
                 answer = request.answer,
                 turnOverGoal = turnOverGoal,
+                isVisible = request.isVisible,
+                priority = request.priority,
             )
         }
 
@@ -66,6 +70,8 @@ class InterviewQuestionService(
         interviewQuestion.changeInfo(
             question = request.question,
             answer = request.answer,
+            isVisible = request.isVisible,
+            priority = request.priority,
         )
 
         return interviewQuestionRepository.save(interviewQuestion)
@@ -87,6 +93,8 @@ class InterviewQuestionService(
                 entity.changeInfo(
                     question = request.question,
                     answer = request.answer,
+                    isVisible = request.isVisible,
+                    priority = request.priority,
                 )
                 entity
             }

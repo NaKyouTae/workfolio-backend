@@ -23,7 +23,7 @@ class JobApplicationService(
 
     @Transactional(readOnly = true)
     fun getJobApplications(turnOverChallengeId: String): List<JobApplication> {
-        return jobApplicationRepository.findByTurnOverChallengeId(turnOverChallengeId)
+        return jobApplicationRepository.findByTurnOverChallengeIdOrderByPriorityAsc(turnOverChallengeId)
     }
 
     // Cascade용: 엔티티만 생성 (저장 X)
@@ -41,6 +41,8 @@ class JobApplicationService(
             applicationSource = request.applicationSource,
             memo = request.memo,
             turnOverChallenge = turnOverChallenge,
+            isVisible = request.isVisible,
+            priority = request.priority,
         )
     }
 
@@ -69,6 +71,8 @@ class JobApplicationService(
                 applicationSource = request.applicationSource,
                 memo = request.memo,
                 turnOverChallenge = turnOverChallenge,
+                isVisible = request.isVisible,
+                priority = request.priority,
             )
         }
 
@@ -88,6 +92,8 @@ class JobApplicationService(
             endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
             applicationSource = request.applicationSource,
             memo = request.memo,
+            isVisible = request.isVisible,
+            priority = request.priority,
         )
 
         return jobApplicationRepository.save(jobApplication)
@@ -115,6 +121,8 @@ class JobApplicationService(
                     endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
                     applicationSource = request.applicationSource,
                     memo = request.memo,
+                    isVisible = request.isVisible,
+                    priority = request.priority,
                 )
                 entity
             }

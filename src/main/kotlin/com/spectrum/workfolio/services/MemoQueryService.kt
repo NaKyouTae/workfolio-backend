@@ -20,11 +20,11 @@ class MemoQueryService(
 
     @Transactional(readOnly = true)
     fun listMemos(targetId: String): List<Memo> {
-        return memoRepository.findByTargetId(targetId)
+        return memoRepository.findByTargetIdOrderByPriorityAsc(targetId)
     }
 
     @Transactional(readOnly = true)
     fun listMemos(targetIds: List<String>): List<Memo> {
-        return memoRepository.findByTargetIdIn(targetIds)
+        return memoRepository.findByTargetIdInOrderByPriorityAsc(targetIds)
     }
 }

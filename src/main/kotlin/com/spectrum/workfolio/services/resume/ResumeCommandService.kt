@@ -104,7 +104,8 @@ class ResumeCommandService(
         val originalAttachments = attachmentQueryService.listAttachments(originalResume.id)
 
         // 3-6. Attachment 복제
-        attachmentCommandService.createBulkAttachmentFromEntity(savedResume, originalAttachments)
+        val storagePath = "resumes/attachments"
+        attachmentCommandService.createBulkAttachmentFromEntity(savedResume, storagePath, originalAttachments)
 
         return savedResume
     }
@@ -283,6 +284,7 @@ class ResumeCommandService(
         targetId: String,
         attachmentRequests: List<AttachmentRequest>,
     ) {
+        val storagePath = "resumes/attachments"
         val existingAttachments = attachmentQueryService.listAttachments(targetId)
         val existingIds = existingAttachments.map { it.id }.toSet()
         val requestIds = attachmentRequests.mapNotNull { it.id }.toSet()
@@ -292,8 +294,13 @@ class ResumeCommandService(
         val updateRequests = attachmentRequests.filter { !existingIds.contains(it.id) }
 
         attachmentCommandService.deleteAttachments(toDelete.map { it.id })
-        attachmentCommandService.createBulkAttachment(AttachmentTargetType.ENTITY_RESUME, targetId, "resumes/attachments", createRequests)
-        attachmentCommandService.updateBulkAttachment(targetId, "resumes/attachments", updateRequests)
+        attachmentCommandService.createBulkAttachment(
+            AttachmentTargetType.ENTITY_RESUME,
+            targetId,
+            storagePath,
+            createRequests,
+        )
+        attachmentCommandService.updateBulkAttachment(targetId, storagePath, updateRequests)
     }
 
     private fun updateLanguageSkills(

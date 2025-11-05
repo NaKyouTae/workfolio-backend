@@ -13,6 +13,9 @@ fun ApplicationStage.toProto(): com.spectrum.workfolio.proto.common.ApplicationS
     )
     builder.setMemo(this.memo)
 
+    builder.setIsVisible(this.isVisible)
+    builder.setPriority(this.priority)
+
     builder.setJobApplication(this.jobApplication.toProto())
 
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
@@ -34,6 +37,9 @@ fun ApplicationStage.toWithoutJobApplicationProto(): com.spectrum.workfolio.prot
         com.spectrum.workfolio.proto.common.ApplicationStage.ApplicationStageStatus.valueOf(this.status.name),
     )
     builder.setMemo(this.memo)
+
+    builder.setIsVisible(this.isVisible)
+    builder.setPriority(this.priority)
 
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))

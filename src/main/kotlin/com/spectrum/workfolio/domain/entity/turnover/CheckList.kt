@@ -20,6 +20,8 @@ class CheckList(
     checked: Boolean,
     content: String,
     turnOverGoal: TurnOverGoal,
+    isVisible: Boolean = true,
+    priority: Int = 0,
 ) : BaseEntity("CL") {
     @Column(name = "checked", nullable = false)
     var checked: Boolean = checked
@@ -27,6 +29,14 @@ class CheckList(
 
     @Column(name = "content", columnDefinition = "TEXT", nullable = false)
     var content: String = content
+        protected set
+
+    @Column(name = "is_visible", nullable = false)
+    var isVisible: Boolean = isVisible
+        protected set
+
+    @Column(name = "priority", nullable = false)
+    var priority: Int = priority
         protected set
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -37,8 +47,12 @@ class CheckList(
     fun changeInfo(
         checked: Boolean,
         content: String,
+        isVisible: Boolean,
+        priority: Int,
     ) {
         this.checked = checked
         this.content = content
+        this.isVisible = isVisible
+        this.priority = priority
     }
 }

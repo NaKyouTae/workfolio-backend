@@ -24,7 +24,7 @@ fun TurnOverChallenge.toDetailProto(
 
     builder.setId(this.id)
 
-    builder.addAllJobApplications(this.jobApplications.map { it.toDetailProto() })
+    builder.addAllJobApplications(this.jobApplications.map { it.toDetailProto() }.sortedBy { it.priority })
     builder.addAllMemos(memos.map { it.toProto() })
     builder.addAllAttachments(attachments.map { it.toProto() })
 

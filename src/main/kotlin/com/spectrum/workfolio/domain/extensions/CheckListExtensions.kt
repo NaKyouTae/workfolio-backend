@@ -10,6 +10,9 @@ fun CheckList.toProto(): com.spectrum.workfolio.proto.common.CheckList {
     builder.setChecked(this.checked)
     builder.setContent(this.content)
 
+    builder.setIsVisible(this.isVisible)
+    builder.setPriority(this.priority)
+
     builder.setTurnOverGoal(this.turnOverGoal.toProto())
 
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
@@ -24,6 +27,9 @@ fun CheckList.toWithoutTurnOverGoalProto(): com.spectrum.workfolio.proto.common.
     builder.setId(this.id)
     builder.setChecked(this.checked)
     builder.setContent(this.content)
+
+    builder.setIsVisible(this.isVisible)
+    builder.setPriority(this.priority)
 
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))

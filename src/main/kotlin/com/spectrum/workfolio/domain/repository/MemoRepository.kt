@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface MemoRepository : JpaRepository<Memo, String> {
-    fun findByTargetId(targetId: String): List<Memo>
-    fun findByTargetIdIn(targetIds: List<String>): List<Memo>
+    fun findByTargetIdOrderByPriorityAsc(targetId: String): List<Memo>
+    fun findByTargetIdInOrderByPriorityAsc(targetIds: List<String>): List<Memo>
 }

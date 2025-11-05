@@ -149,6 +149,8 @@ class TurnOverService(
                     changeInfo(
                         question = request.question,
                         content = request.content,
+                        isVisible = request.isVisible,
+                        priority = request.priority,
                     )
                 }
             } else {
@@ -176,6 +178,8 @@ class TurnOverService(
                     changeInfo(
                         question = request.question,
                         answer = request.answer,
+                        isVisible = request.isVisible,
+                        priority = request.priority,
                     )
                 }
             } else {
@@ -203,6 +207,8 @@ class TurnOverService(
                     changeInfo(
                         checked = request.checked,
                         content = request.content,
+                        isVisible = request.isVisible,
+                        priority = request.priority,
                     )
                 }
             } else {
@@ -224,7 +230,11 @@ class TurnOverService(
 
         upsertJobApplication(turnOverChallenge, request.jobApplicationsList)
         upsertMemo(MemoTargetType.TURN_OVER_CHALLENGE, turnOverChallenge.id, request.memosList)
-        updateAttachments(AttachmentTargetType.ENTITY_TURN_OVER_CHALLENGE, turnOverChallenge.id, request.attachmentsList)
+        updateAttachments(
+            AttachmentTargetType.ENTITY_TURN_OVER_CHALLENGE,
+            turnOverChallenge.id,
+            request.attachmentsList,
+        )
 
         return turnOverChallenge
     }
@@ -246,6 +256,8 @@ class TurnOverService(
                         position = request.position,
                         jobPostingTitle = request.jobPostingTitle,
                         jobPostingUrl = request.jobPostingUrl,
+                        isVisible = request.isVisible,
+                        priority = request.priority,
                         startedAt = TimeUtil.ofEpochMilliNullable(request.startedAt)?.toLocalDate(),
                         endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
                         applicationSource = request.applicationSource,
@@ -282,6 +294,8 @@ class TurnOverService(
                 existingMap[request.id]!!.apply {
                     changeInfo(
                         name = request.name,
+                        isVisible = request.isVisible,
+                        priority = request.priority,
                         status = ApplicationStageStatus.valueOf(request.status.name),
                         startedAt = TimeUtil.ofEpochMilliNullable(request.startedAt)?.toLocalDate(),
                         memo = request.memo,
@@ -305,7 +319,11 @@ class TurnOverService(
         }
 
         upsertMemo(MemoTargetType.TURN_OVER_RETROSPECT, turnOverRetrospective.id, request.memosList)
-        updateAttachments(AttachmentTargetType.ENTITY_TURN_OVER_RETROSPECTIVE, turnOverRetrospective.id, request.attachmentsList)
+        updateAttachments(
+            AttachmentTargetType.ENTITY_TURN_OVER_RETROSPECTIVE,
+            turnOverRetrospective.id,
+            request.attachmentsList,
+        )
 
         return turnOverRetrospective
     }
@@ -333,6 +351,7 @@ class TurnOverService(
         targetId: String,
         attachmentRequests: List<AttachmentRequest>,
     ) {
+        val storagePath = "turn-overs/attachments"
         val existingAttachments = attachmentQueryService.listAttachments(targetId)
         val existingIds = existingAttachments.map { it.id }.toSet()
         val requestIds = attachmentRequests.mapNotNull { it.id }.toSet()
@@ -342,8 +361,8 @@ class TurnOverService(
         val updateRequests = attachmentRequests.filter { it.hasId() }
 
         attachmentCommandService.deleteAttachments(toDelete.map { it.id })
-        attachmentCommandService.createBulkAttachment(targetType, targetId, "turn-overs/attachments", createRequests)
-        attachmentCommandService.updateBulkAttachment(targetId, "turn-overs/attachments", updateRequests)
+        attachmentCommandService.createBulkAttachment(targetType, targetId, storagePath, createRequests)
+        attachmentCommandService.updateBulkAttachment(targetId, storagePath, updateRequests)
     }
 
     @Transactional

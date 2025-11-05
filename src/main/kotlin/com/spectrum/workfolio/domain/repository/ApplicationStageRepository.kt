@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface ApplicationStageRepository : JpaRepository<ApplicationStage, String> {
-    fun findByJobApplicationId(jobApplicationId: String): List<ApplicationStage>
+    fun findByJobApplicationIdOrderByPriorityAsc(jobApplicationId: String): List<ApplicationStage>
 }

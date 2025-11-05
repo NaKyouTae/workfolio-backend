@@ -5,7 +5,6 @@ import com.spectrum.workfolio.domain.entity.turnover.JobApplication
 import com.spectrum.workfolio.domain.enums.ApplicationStageStatus
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.repository.ApplicationStageRepository
-import com.spectrum.workfolio.proto.common.jobApplication
 import com.spectrum.workfolio.proto.turn_over.TurnOverUpsertRequest
 import com.spectrum.workfolio.utils.TimeUtil
 import com.spectrum.workfolio.utils.WorkfolioException
@@ -25,7 +24,7 @@ class ApplicationStageService(
 
     @Transactional(readOnly = true)
     fun getApplicationStages(jobApplicationId: String): List<ApplicationStage> {
-        return applicationStageRepository.findByJobApplicationId(jobApplicationId)
+        return applicationStageRepository.findByJobApplicationIdOrderByPriorityAsc(jobApplicationId)
     }
 
     // Cascade용: 엔티티만 생성 (저장 X)
@@ -39,6 +38,8 @@ class ApplicationStageService(
             startedAt = TimeUtil.ofEpochMilliNullable(request.startedAt)?.toLocalDate(),
             memo = request.memo,
             jobApplication = jobApplication,
+            isVisible = request.isVisible,
+            priority = request.priority,
         )
     }
 
@@ -63,6 +64,8 @@ class ApplicationStageService(
                 startedAt = TimeUtil.ofEpochMilliNullable(request.startedAt)?.toLocalDate(),
                 memo = request.memo,
                 jobApplication = jobApplication,
+                isVisible = request.isVisible,
+                priority = request.priority,
             )
         }
 
@@ -78,6 +81,8 @@ class ApplicationStageService(
             status = ApplicationStageStatus.valueOf(request.status.name),
             startedAt = TimeUtil.ofEpochMilliNullable(request.startedAt)?.toLocalDate(),
             memo = request.memo,
+            isVisible = request.isVisible,
+            priority = request.priority,
         )
 
         return applicationStageRepository.save(applicationStage)
@@ -101,6 +106,8 @@ class ApplicationStageService(
                     status = ApplicationStageStatus.valueOf(request.status.name),
                     startedAt = TimeUtil.ofEpochMilliNullable(request.startedAt)?.toLocalDate(),
                     memo = request.memo,
+                    isVisible = request.isVisible,
+                    priority = request.priority,
                 )
                 entity
             }

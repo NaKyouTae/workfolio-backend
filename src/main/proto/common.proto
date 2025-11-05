@@ -402,6 +402,9 @@ message SelfIntroduction {
   string question = 2;
   string content = 3;
 
+  bool is_visible = 30;
+  uint32 priority = 31;
+
   TurnOverGoal turn_over_goal = 50;
 
   uint64 created_at = 98;
@@ -413,6 +416,9 @@ message InterviewQuestion {
   string question = 2;
   string answer = 3;
 
+  bool is_visible = 30;
+  uint32 priority = 31;
+
   TurnOverGoal turn_over_goal = 50;
 
   uint64 created_at = 98;
@@ -423,6 +429,9 @@ message CheckList {
   string id = 1;
   bool checked = 2;
   string content = 3;
+
+  bool is_visible = 30;
+  uint32 priority = 31;
 
   TurnOverGoal turn_over_goal = 50;
 
@@ -461,6 +470,9 @@ message JobApplication {
   string application_source = 8;
   string memo = 9;
 
+  bool is_visible = 30;
+  uint32 priority = 31;
+
   TurnOverChallenge turn_over_challenge = 50;
 
   uint64 created_at = 98;
@@ -477,6 +489,9 @@ message JobApplicationDetail {
   optional uint64 ended_at = 7;
   string application_source = 8;
   string memo = 9;
+
+  bool is_visible = 30;
+  uint32 priority = 31;
 
   repeated ApplicationStage application_stages = 50;
 
@@ -499,6 +514,9 @@ message ApplicationStage {
   ApplicationStageStatus status = 3;
   optional uint64 started_at = 4;
   string memo = 5;
+
+  bool is_visible = 30;
+  uint32 priority = 31;
 
   JobApplication job_application = 50;
 
@@ -616,6 +634,9 @@ message Memo {
   string content = 2;
   string target_id = 3;
   MemoTargetType target_type = 4;
+
+  bool is_visible = 30;
+  uint32 priority = 31;
 
   uint64 created_at = 98;
   uint64 updated_at = 99;

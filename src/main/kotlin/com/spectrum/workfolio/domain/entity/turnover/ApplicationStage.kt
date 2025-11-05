@@ -26,6 +26,8 @@ class ApplicationStage(
     startedAt: LocalDate? = null, // 진행 일자
     memo: String, // 메모
     jobApplication: JobApplication,
+    isVisible: Boolean = true,
+    priority: Int = 0,
 ) : BaseEntity("JA") {
     @Column(name = "name", length = 1024, nullable = false)
     var name: String = name
@@ -44,6 +46,14 @@ class ApplicationStage(
     var memo: String = memo
         protected set
 
+    @Column(name = "is_visible", nullable = false)
+    var isVisible: Boolean = isVisible
+        protected set
+
+    @Column(name = "priority", nullable = false)
+    var priority: Int = priority
+        protected set
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_application_id", nullable = false)
     var jobApplication: JobApplication = jobApplication
@@ -54,10 +64,14 @@ class ApplicationStage(
         status: ApplicationStageStatus, // 진행 상태
         startedAt: LocalDate? = null, // 진행 일자
         memo: String, // 메모
+        isVisible: Boolean,
+        priority: Int,
     ) {
         this.name = name
         this.status = status
         this.startedAt = startedAt
         this.memo = memo
+        this.isVisible = isVisible
+        this.priority = priority
     }
 }

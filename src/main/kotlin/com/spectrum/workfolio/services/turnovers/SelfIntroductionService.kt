@@ -22,7 +22,7 @@ class SelfIntroductionService(
 
     @Transactional(readOnly = true)
     fun getSelfIntroductions(turnOverGoalId: String): List<SelfIntroduction> {
-        return selfIntroductionRepository.findByTurnOverGoalId(turnOverGoalId)
+        return selfIntroductionRepository.findByTurnOverGoalIdOrderByPriorityAsc(turnOverGoalId)
     }
 
     // Cascade용: 엔티티만 생성 (저장 X)
@@ -34,6 +34,8 @@ class SelfIntroductionService(
             question = request.question,
             content = request.content,
             turnOverGoal = turnOverGoal,
+            isVisible = request.isVisible,
+            priority = request.priority,
         )
     }
 
@@ -53,6 +55,8 @@ class SelfIntroductionService(
                 question = request.question,
                 content = request.content,
                 turnOverGoal = turnOverGoal,
+                isVisible = request.isVisible,
+                priority = request.priority,
             )
         }
 
@@ -66,6 +70,8 @@ class SelfIntroductionService(
         selfIntroduction.changeInfo(
             question = request.question,
             content = request.content,
+            isVisible = request.isVisible,
+            priority = request.priority,
         )
 
         return selfIntroductionRepository.save(selfIntroduction)
@@ -87,6 +93,8 @@ class SelfIntroductionService(
                 entity.changeInfo(
                     question = request.question,
                     content = request.content,
+                    isVisible = request.isVisible,
+                    priority = request.priority,
                 )
                 entity
             }

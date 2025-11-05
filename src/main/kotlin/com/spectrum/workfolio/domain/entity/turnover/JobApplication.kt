@@ -29,6 +29,8 @@ class JobApplication(
     applicationSource: String, // 지원 경로
     memo: String, // 메모
     turnOverChallenge: TurnOverChallenge,
+    isVisible: Boolean = true,
+    priority: Int = 0,
 ) : BaseEntity("JA") {
     @Column(name = "name", length = 1024, nullable = false)
     var name: String = name
@@ -62,6 +64,14 @@ class JobApplication(
     var memo: String = memo
         protected set
 
+    @Column(name = "is_visible", nullable = false)
+    var isVisible: Boolean = isVisible
+        protected set
+
+    @Column(name = "priority", nullable = false)
+    var priority: Int = priority
+        protected set
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "turn_over_challenge_id", nullable = false)
     var turnOverChallenge: TurnOverChallenge = turnOverChallenge
@@ -91,6 +101,8 @@ class JobApplication(
         endedAt: LocalDate? = null, // 모집 마감 기간
         applicationSource: String, // 지원 경로
         memo: String, // 메모
+        isVisible: Boolean,
+        priority: Int,
     ) {
         this.name = name
         this.position = position
@@ -100,5 +112,7 @@ class JobApplication(
         this.endedAt = endedAt
         this.applicationSource = applicationSource
         this.memo = memo
+        this.isVisible = isVisible
+        this.priority = priority
     }
 }

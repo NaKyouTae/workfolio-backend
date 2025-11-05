@@ -20,6 +20,8 @@ class Memo(
     content: String,
     targetType: MemoTargetType,
     targetId: String,
+    isVisible: Boolean = true,
+    priority: Int = 0,
 ) : BaseEntity("ME") {
     @Column(name = "content", columnDefinition = "TEXT", nullable = false)
     var content: String = content
@@ -34,9 +36,21 @@ class Memo(
     var targetId: String = targetId
         protected set
 
+    @Column(name = "is_visible", nullable = false)
+    var isVisible: Boolean = isVisible
+        protected set
+
+    @Column(name = "priority", nullable = false)
+    var priority: Int = priority
+        protected set
+
     fun changeInfo(
         content: String,
+        isVisible: Boolean,
+        priority: Int,
     ) {
         this.content = content
+        this.isVisible = isVisible
+        this.priority = priority
     }
 }

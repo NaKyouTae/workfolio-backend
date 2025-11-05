@@ -14,6 +14,9 @@ fun JobApplication.toProto(): com.spectrum.workfolio.proto.common.JobApplication
     builder.setApplicationSource(this.applicationSource)
     builder.setMemo(this.memo)
 
+    builder.setIsVisible(this.isVisible)
+    builder.setPriority(this.priority)
+
     builder.setTurnOverChallenge(this.turnOverChallenge.toProto())
 
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
@@ -40,7 +43,10 @@ fun JobApplication.toDetailProto(): com.spectrum.workfolio.proto.common.JobAppli
     builder.setApplicationSource(this.applicationSource)
     builder.setMemo(this.memo)
 
-    builder.addAllApplicationStages(applicationStages.map { it.toWithoutJobApplicationProto() })
+    builder.setIsVisible(this.isVisible)
+    builder.setPriority(this.priority)
+
+    builder.addAllApplicationStages(this.applicationStages.map { it.toWithoutJobApplicationProto() }.sortedBy { it.priority })
 
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))

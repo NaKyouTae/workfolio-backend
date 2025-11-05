@@ -20,6 +20,8 @@ class SelfIntroduction(
     question: String,
     content: String,
     turnOverGoal: TurnOverGoal,
+    isVisible: Boolean = true,
+    priority: Int = 0,
 ) : BaseEntity("SI") {
     @Column(name = "question", columnDefinition = "TEXT", nullable = false)
     var question: String = question
@@ -29,13 +31,23 @@ class SelfIntroduction(
     var content: String = content
         protected set
 
+    @Column(name = "is_visible", nullable = false)
+    var isVisible: Boolean = isVisible
+        protected set
+
+    @Column(name = "priority", nullable = false)
+    var priority: Int = priority
+        protected set
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "turn_over_goal_id", nullable = false)
     var turnOverGoal: TurnOverGoal = turnOverGoal
         protected set
 
-    fun changeInfo(question: String, content: String) {
+    fun changeInfo(question: String, content: String, isVisible: Boolean, priority: Int) {
         this.question = question
         this.content = content
+        this.isVisible = isVisible
+        this.priority = priority
     }
 }

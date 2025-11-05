@@ -8,13 +8,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface LanguageTestRepository : JpaRepository<LanguageTest, String> {
-
     fun findByLanguageSkillIdOrderByPriorityAsc(languageSkillId: String): List<LanguageTest>
-
-    @Query(
-        "SELECT lt FROM LanguageTest lt WHERE lt.languageSkill.id = :languageSkillId AND lt.isVisible = true ORDER BY lt.priority ASC",
-    )
-    fun findVisibleByLanguageSkillId(
-        @Param("languageSkillId") languageSkillId: String,
-    ): List<LanguageTest>
 }

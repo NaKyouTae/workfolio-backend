@@ -13,6 +13,8 @@ message TurnOverUpsertRequest {
   message MemoRequest {
     optional string id = 1;
     string content = 2;
+    bool is_visible = 3;
+    uint32 priority = 4;
   }
 
   message TurnOverGoalRequest {
@@ -20,18 +22,24 @@ message TurnOverUpsertRequest {
       optional string id = 1;
       string question = 2;
       string content = 3;
+      bool is_visible = 4;
+      uint32 priority = 5;
     }
 
     message InterviewQuestionRequest {
       optional string id = 1;
       string question = 2;
       string answer = 3;
+      bool is_visible = 4;
+      uint32 priority = 5;
     }
 
     message CheckListRequest {
       optional string id = 1;
       bool checked = 2;
       string content = 3;
+      bool is_visible = 4;
+      uint32 priority = 5;
     }
 
     optional string id = 1;
@@ -52,6 +60,8 @@ message TurnOverUpsertRequest {
         ApplicationStage.ApplicationStageStatus status = 3;
         optional uint64 started_at = 4;
         string memo = 5;
+        bool is_visible = 6;
+        uint32 priority = 7;
       }
 
       optional string id = 1;
@@ -64,6 +74,8 @@ message TurnOverUpsertRequest {
       string application_source = 8;
       string memo = 9;
       repeated ApplicationStageRequest application_stages = 10;
+      bool is_visible = 11;
+      uint32 priority = 12;
     }
 
     optional string id = 1;

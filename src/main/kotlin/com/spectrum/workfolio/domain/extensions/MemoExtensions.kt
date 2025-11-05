@@ -13,6 +13,9 @@ fun Memo.toProto(): com.spectrum.workfolio.proto.common.Memo {
         com.spectrum.workfolio.proto.common.Memo.MemoTargetType.valueOf(this.targetType.name),
     )
 
+    builder.setIsVisible(this.isVisible)
+    builder.setPriority(this.priority)
+
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
 

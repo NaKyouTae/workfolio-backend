@@ -69,8 +69,11 @@ fun Resume.toDetailProto(attachments: List<Attachment>): com.spectrum.workfolio.
     builder.addAllLanguageSkills(this.languageSkills.map { it.toProtoWithoutResume() })
 
     val attachmentsByTargetId = attachments.groupBy { it.targetId }
+    val attachmentsByTarget = attachmentsByTargetId[this.id]
 
-    builder.addAllAttachments(attachmentsByTargetId[this.id]?.map { it.toProto() })
+    if (!attachmentsByTarget.isNullOrEmpty()) {
+        builder.addAllAttachments(attachmentsByTarget.map { it.toProto() })
+    }
 
     return builder.build()
 }

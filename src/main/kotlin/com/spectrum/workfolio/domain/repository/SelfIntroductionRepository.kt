@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface SelfIntroductionRepository : JpaRepository<SelfIntroduction, String> {
-    fun findByTurnOverGoalId(turnOverGoalId: String): List<SelfIntroduction>
+    fun findByTurnOverGoalIdOrderByPriorityAsc(turnOverGoalId: String): List<SelfIntroduction>
 }

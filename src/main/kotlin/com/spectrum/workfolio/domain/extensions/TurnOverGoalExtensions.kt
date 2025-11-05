@@ -25,9 +25,9 @@ fun TurnOverGoal.toDetailProto(memos: List<Memo>, attachments: List<Attachment>)
     builder.setReason(this.reason)
     builder.setGoal(this.goal)
 
-    builder.addAllSelfIntroductions(this.selfIntroductions.map { it.toWithoutTurnOverGoalProto() })
-    builder.addAllInterviewQuestions(this.interviewQuestions.map { it.toWithoutTurnOverGoalProto() })
-    builder.addAllCheckList(this.checkList.map { it.toWithoutTurnOverGoalProto() })
+    builder.addAllSelfIntroductions(this.selfIntroductions.map { it.toWithoutTurnOverGoalProto() }.sortedBy { it.priority })
+    builder.addAllInterviewQuestions(this.interviewQuestions.map { it.toWithoutTurnOverGoalProto() }.sortedBy { it.priority })
+    builder.addAllCheckList(this.checkList.map { it.toWithoutTurnOverGoalProto() }.sortedBy { it.priority })
     builder.addAllMemos(memos.map { it.toProto() })
     builder.addAllAttachments(attachments.map { it.toProto() })
 

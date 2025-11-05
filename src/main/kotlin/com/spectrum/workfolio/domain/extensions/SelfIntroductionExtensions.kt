@@ -10,6 +10,9 @@ fun SelfIntroduction.toProto(): com.spectrum.workfolio.proto.common.SelfIntroduc
     builder.setQuestion(this.question)
     builder.setContent(content)
 
+    builder.setIsVisible(this.isVisible)
+    builder.setPriority(this.priority)
+
     builder.setTurnOverGoal(this.turnOverGoal.toProto())
 
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
@@ -24,6 +27,9 @@ fun SelfIntroduction.toWithoutTurnOverGoalProto(): com.spectrum.workfolio.proto.
     builder.setId(this.id)
     builder.setQuestion(this.question)
     builder.setContent(content)
+
+    builder.setIsVisible(this.isVisible)
+    builder.setPriority(this.priority)
 
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))

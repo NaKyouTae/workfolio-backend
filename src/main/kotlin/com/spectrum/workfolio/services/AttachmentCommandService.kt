@@ -21,26 +21,10 @@ import org.springframework.transaction.annotation.Transactional
 class AttachmentCommandService(
     private val fileUploadService: FileUploadService,
     private val attachmentRepository: AttachmentRepository,
+    private val attachmentQueryService: AttachmentQueryService,
 ) {
 
     private val logger = LoggerFactory.getLogger(AttachmentCommandService::class.java)
-
-    @Transactional(readOnly = true)
-    fun getAttachment(id: String): Attachment {
-        return attachmentRepository.findById(id).orElseThrow {
-            WorkfolioException(MsgKOR.NOT_FOUND_ATTACHMENT.message)
-        }
-    }
-
-    @Transactional(readOnly = true)
-    fun listAttachments(targetId: String): List<Attachment> {
-        return attachmentRepository.findByTargetIdOrderByPriorityAsc(targetId)
-    }
-
-    @Transactional(readOnly = true)
-    fun listAttachments(targetIds: List<String>): List<Attachment> {
-        return attachmentRepository.findByTargetIdInOrderByPriorityAsc(targetIds)
-    }
 
     @Transactional
     fun createAttachment(dto: AttachmentCreateDto): Attachment {
@@ -115,7 +99,7 @@ class AttachmentCommandService(
                     fileUploadService.uploadFileToStorage(
                         fileData = request.fileData,
                         fileName = storageFileName,
-                        storagePath = "${storagePath}/$targetId",
+                        storagePath = "$storagePath/$targetId",
                     )
                 } catch (e: Exception) {
                     attachmentRepository.delete(savedAttachment)
@@ -133,6 +117,7 @@ class AttachmentCommandService(
     @Transactional
     fun createBulkAttachmentFromEntity(
         entity: Any,
+        storagePath: String,
         attachments: List<Attachment>,
     ) {
         val resume = EntityTypeValidator.requireEntityType<Resume>(entity)
@@ -159,11 +144,12 @@ class AttachmentCommandService(
                     val copiedFileUrl = fileUploadService.copyFileInStorage(
                         sourceFileUrl = originalAttachment.fileUrl,
                         destinationFileName = newFileName,
-                        destinationStoragePath = "resumes/attachments/${resume.id}",
+                        destinationStoragePath = "$storagePath/${resume.id}",
                     )
 
                     savedAttachment.changeFileUrl(copiedFileUrl)
                 } catch (e: Exception) {
+                    logger.error("Failed to copy $originalAttachment.$originalAttachment.$originalAttachment ${e.message}")
                     savedAttachment.changeFileUrl(originalAttachment.fileUrl)
                 }
             } else {
@@ -196,7 +182,7 @@ class AttachmentCommandService(
                     val newFileUrl = fileUploadService.uploadFileToStorage(
                         fileData = request.fileData,
                         fileName = storageFileName,
-                        storagePath = "${storagePath}/$targetId",
+                        storagePath = "$storagePath/$targetId",
                     )
 
                     fileUploadService.deleteFileFromStorage(listOf(attachment))
@@ -223,7 +209,7 @@ class AttachmentCommandService(
 
     @Transactional
     fun updateAttachment(dto: AttachmentUpdateDto): Attachment {
-        val attachment = this.getAttachment(dto.id)
+        val attachment = attachmentQueryService.getAttachment(dto.id)
 
         // fileData가 있으면 Supabase Storage에 업로드하고 기존 파일 삭제
         val uploadedFileUrl = if (dto.fileData != null && !dto.fileData.isEmpty) {
@@ -247,7 +233,7 @@ class AttachmentCommandService(
 
         attachment.changeInfo(
             type = dto.type,
-            category = dto.category ?: AttachmentCategory.FILE,
+            category = dto.category,
             fileName = dto.fileName ?: "",
             fileUrl = uploadedFileUrl,
             url = dto.url ?: "",
