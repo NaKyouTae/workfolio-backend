@@ -16,7 +16,7 @@ message Worker {
   string nick_name = 2;
   string phone = 3;
   string email = 4;
-  uint64 brith_date = 5;
+  uint64 birth_date = 5;
   Gender gender = 6;
 
   uint64 created_at = 98;

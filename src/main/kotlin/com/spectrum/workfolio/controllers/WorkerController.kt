@@ -6,11 +6,13 @@ import com.spectrum.workfolio.proto.common.SuccessResponse
 import com.spectrum.workfolio.proto.worker.WorkerGetResponse
 import com.spectrum.workfolio.proto.worker.WorkerListResponse
 import com.spectrum.workfolio.proto.worker.WorkerUpdateNickNameResponse
+import com.spectrum.workfolio.proto.worker.WorkerUpdateRequest
 import com.spectrum.workfolio.services.WorkerService
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -35,6 +37,14 @@ class WorkerController(
     ): WorkerListResponse {
         val workers = workerService.getWorkersByNickName(workerId, nickname)
         return WorkerListResponse.newBuilder().addAllWorkers(workers.map { it.toProto() }).build()
+    }
+
+    @PutMapping
+    fun updateWorker(
+        @RequestBody request: WorkerUpdateRequest
+    ): SuccessResponse {
+        workerService.updateWorker(request)
+        return SuccessResponse.newBuilder().setIsSuccess(true).build()
     }
 
     @PutMapping("/{nickname}")

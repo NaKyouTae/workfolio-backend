@@ -8,6 +8,15 @@ option java_multiple_files = true;
 option java_package = "com.spectrum.workfolio.proto.worker";
 option java_outer_classname = "WorkerProto";
 
+message WorkerUpdateRequest {
+  string id = 1;
+  string nick_name = 2;
+  string phone = 3;
+  string email = 4;
+  uint64 birth_date = 5;
+  Worker.Gender gender = 6;
+}
+
 message WorkerGetResponse {
   Worker worker = 1;
 }

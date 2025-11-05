@@ -78,6 +78,20 @@ class Worker(
     private var mutableAccounts: MutableList<Account> = mutableListOf()
     val accounts: List<Account> get() = mutableAccounts.toList()
 
+    fun changeInfo(
+        nickName: String,
+        phone: String,
+        email: String,
+        birthDate: LocalDate,
+        gender: Gender,
+    ) {
+        this.nickName = nickName
+        this.phone = phone
+        this.email = email
+        this.birthDate = birthDate
+        this.gender = gender
+    }
+
     fun changeNickName(nickName: String) {
         this.nickName = nickName
     }

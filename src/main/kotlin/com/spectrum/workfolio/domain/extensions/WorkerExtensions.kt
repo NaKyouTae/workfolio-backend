@@ -9,7 +9,7 @@ fun Worker.toProto(): com.spectrum.workfolio.proto.common.Worker {
         .setNickName(this.nickName)
         .setEmail(this.email)
         .setPhone(this.phone)
-        .setBrithDate(TimeUtil.toEpochMilli(this.birthDate))
+        .setBirthDate(TimeUtil.toEpochMilli(this.birthDate))
         .setGender(com.spectrum.workfolio.proto.common.Worker.Gender.valueOf(this.gender.name))
         .setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
         .setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))

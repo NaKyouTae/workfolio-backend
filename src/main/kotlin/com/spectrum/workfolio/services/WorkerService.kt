@@ -3,9 +3,12 @@ package com.spectrum.workfolio.services
 import com.spectrum.workfolio.config.service.oauth.KakaoApiProvider
 import com.spectrum.workfolio.domain.entity.Worker
 import com.spectrum.workfolio.domain.enums.AccountType
+import com.spectrum.workfolio.domain.enums.Gender
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.repository.AccountRepository
 import com.spectrum.workfolio.domain.repository.WorkerRepository
+import com.spectrum.workfolio.proto.worker.WorkerUpdateRequest
+import com.spectrum.workfolio.utils.TimeUtil
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -32,6 +35,21 @@ class WorkerService(
 
     @Transactional
     fun createWorker(worker: Worker): Worker {
+        return workerRepository.save(worker)
+    }
+
+    @Transactional
+    fun updateWorker(request: WorkerUpdateRequest): Worker {
+        val worker = this.getWorker(request.id)
+
+        worker.changeInfo(
+            nickName = request.nickName,
+            phone = request.phone,
+            email = request.email,
+            birthDate = TimeUtil.ofEpochMilli(request.birthDate).toLocalDate(),
+            gender = Gender.valueOf(request.gender.name),
+        )
+
         return workerRepository.save(worker)
     }
 
