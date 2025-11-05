@@ -18,9 +18,11 @@ import com.spectrum.workfolio.proto.turn_over.TurnOverListResponse
 import com.spectrum.workfolio.proto.turn_over.TurnOverUpsertRequest
 import com.spectrum.workfolio.services.AttachmentCommandService
 import com.spectrum.workfolio.services.AttachmentQueryService
+import com.spectrum.workfolio.services.FileUploadService
 import com.spectrum.workfolio.services.MemoCommandService
 import com.spectrum.workfolio.services.MemoQueryService
 import com.spectrum.workfolio.services.WorkerService
+import com.spectrum.workfolio.utils.FileUtil
 import com.spectrum.workfolio.utils.TimeUtil
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.stereotype.Service
@@ -32,8 +34,12 @@ class TurnOverService(
     private val checkListService: CheckListService,
     private val memoQueryService: MemoQueryService,
     private val memoCommandService: MemoCommandService,
+    private val fileUploadService: FileUploadService,
     private val turnOverRepository: TurnOverRepository,
     private val turnOverGoalService: TurnOverGoalService,
+    private val attachmentRepository: com.spectrum.workfolio.domain.repository.AttachmentRepository,
+    private val turnOverGoalRepository: com.spectrum.workfolio.domain.repository.TurnOverGoalRepository,
+    private val turnOverChallengeRepository: com.spectrum.workfolio.domain.repository.TurnOverChallengeRepository,
     private val jobApplicationService: JobApplicationService,
     private val attachmentQueryService: AttachmentQueryService,
     private val applicationStageService: ApplicationStageService,
@@ -43,6 +49,8 @@ class TurnOverService(
     private val turnOverChallengeService: TurnOverChallengeService,
     private val turnOverRetrospectiveService: TurnOverRetrospectiveService,
 ) {
+
+    private val logger = org.slf4j.LoggerFactory.getLogger(TurnOverService::class.java)
 
     @Transactional(readOnly = true)
     fun getTurnOver(id: String): TurnOver {
@@ -121,7 +129,7 @@ class TurnOverService(
         upsertInterviewQuestion(turnOverGoal, request.interviewQuestionsList)
         upsertCheckList(turnOverGoal, request.checkListList)
         upsertMemo(MemoTargetType.TURN_OVER_GOAL, turnOverGoal.id, request.memosList)
-        updateAttachments(turnOverGoal.id, request.attachmentsList)
+        updateAttachments(AttachmentTargetType.ENTITY_TURN_OVER_GOAL, turnOverGoal.id, request.attachmentsList)
 
         return turnOverGoal
     }
@@ -216,7 +224,7 @@ class TurnOverService(
 
         upsertJobApplication(turnOverChallenge, request.jobApplicationsList)
         upsertMemo(MemoTargetType.TURN_OVER_CHALLENGE, turnOverChallenge.id, request.memosList)
-        updateAttachments(turnOverChallenge.id, request.attachmentsList)
+        updateAttachments(AttachmentTargetType.ENTITY_TURN_OVER_CHALLENGE, turnOverChallenge.id, request.attachmentsList)
 
         return turnOverChallenge
     }
@@ -297,7 +305,7 @@ class TurnOverService(
         }
 
         upsertMemo(MemoTargetType.TURN_OVER_RETROSPECT, turnOverRetrospective.id, request.memosList)
-        updateAttachments(turnOverRetrospective.id, request.attachmentsList)
+        updateAttachments(AttachmentTargetType.ENTITY_TURN_OVER_RETROSPECTIVE, turnOverRetrospective.id, request.attachmentsList)
 
         return turnOverRetrospective
     }
@@ -321,6 +329,7 @@ class TurnOverService(
     }
 
     private fun updateAttachments(
+        targetType: AttachmentTargetType,
         targetId: String,
         attachmentRequests: List<AttachmentRequest>,
     ) {
@@ -333,13 +342,262 @@ class TurnOverService(
         val updateRequests = attachmentRequests.filter { it.hasId() }
 
         attachmentCommandService.deleteAttachments(toDelete.map { it.id })
-        attachmentCommandService.createBulkAttachment(AttachmentTargetType.ENTITY_RESUME, targetId, createRequests)
-        attachmentCommandService.updateBulkAttachment(targetId, updateRequests)
+        attachmentCommandService.createBulkAttachment(targetType, targetId, "turn-overs/attachments", createRequests)
+        attachmentCommandService.updateBulkAttachment(targetId, "turn-overs/attachments", updateRequests)
     }
 
     @Transactional
-    fun duplicate(id: String) {
-        // TODO duplicate turn over
+    fun duplicate(id: String): TurnOver {
+        // 1. 원본 TurnOver 조회
+        val originalTurnOver = this.getTurnOver(id)
+
+        // 2. TurnOverGoal 복제
+        val duplicatedTurnOverGoal = duplicateTurnOverGoal(originalTurnOver.turnOverGoal)
+
+        // 3. TurnOverChallenge 복제
+        val duplicatedTurnOverChallenge = duplicateTurnOverChallenge(originalTurnOver.turnOverChallenge)
+
+        // 4. TurnOverRetrospective 복제
+        val duplicatedTurnOverRetrospective = duplicateTurnOverRetrospective(originalTurnOver.turnOverRetrospective)
+
+        // 5. 새로운 TurnOver 생성
+        val duplicatedTurnOver = TurnOver(
+            name = "${originalTurnOver.name} (복제본)",
+            turnOverGoal = duplicatedTurnOverGoal,
+            turnOverChallenge = duplicatedTurnOverChallenge,
+            turnOverRetrospective = duplicatedTurnOverRetrospective,
+            worker = originalTurnOver.worker,
+        )
+
+        return turnOverRepository.save(duplicatedTurnOver)
+    }
+
+    private fun duplicateTurnOverGoal(originalTurnOverGoal: TurnOverGoal): TurnOverGoal {
+        // 1. 새로운 TurnOverGoal 생성
+        val duplicatedTurnOverGoal = TurnOverGoal(
+            reason = originalTurnOverGoal.reason,
+            goal = originalTurnOverGoal.goal,
+        )
+        val savedTurnOverGoal = turnOverGoalRepository.save(duplicatedTurnOverGoal)
+
+        // 2. SelfIntroduction 복제
+        originalTurnOverGoal.selfIntroductions.forEach { originalSelfIntroduction ->
+            selfIntroductionService.create(
+                turnOverGoal = savedTurnOverGoal,
+                request = TurnOverUpsertRequest.TurnOverGoalRequest.SelfIntroductionRequest.newBuilder()
+                    .setQuestion(originalSelfIntroduction.question)
+                    .setContent(originalSelfIntroduction.content)
+                    .build(),
+            )
+        }
+
+        // 3. InterviewQuestion 복제
+        originalTurnOverGoal.interviewQuestions.forEach { originalInterviewQuestion ->
+            interviewQuestionService.create(
+                turnOverGoal = savedTurnOverGoal,
+                request = TurnOverUpsertRequest.TurnOverGoalRequest.InterviewQuestionRequest.newBuilder()
+                    .setQuestion(originalInterviewQuestion.question)
+                    .setAnswer(originalInterviewQuestion.answer)
+                    .build(),
+            )
+        }
+
+        // 4. CheckList 복제
+        originalTurnOverGoal.checkList.forEach { originalCheckList ->
+            checkListService.create(
+                turnOverGoal = savedTurnOverGoal,
+                request = TurnOverUpsertRequest.TurnOverGoalRequest.CheckListRequest.newBuilder()
+                    .setChecked(originalCheckList.checked)
+                    .setContent(originalCheckList.content)
+                    .build(),
+            )
+        }
+
+        // 5. Memo 복제
+        val originalMemos = memoQueryService.listMemos(originalTurnOverGoal.id)
+        originalMemos.forEach { originalMemo ->
+            memoCommandService.createMemo(
+                targetType = MemoTargetType.TURN_OVER_GOAL,
+                targetId = savedTurnOverGoal.id,
+                request = TurnOverUpsertRequest.MemoRequest.newBuilder()
+                    .setContent(originalMemo.content)
+                    .build(),
+            )
+        }
+
+        // 6. Attachment 복제
+        val originalAttachments = attachmentQueryService.listAttachments(originalTurnOverGoal.id)
+        duplicateAttachments(
+            originalAttachments = originalAttachments,
+            newTargetId = savedTurnOverGoal.id,
+            newTargetType = AttachmentTargetType.ENTITY_TURN_OVER_GOAL,
+        )
+
+        return savedTurnOverGoal
+    }
+
+    private fun duplicateTurnOverChallenge(originalTurnOverChallenge: TurnOverChallenge): TurnOverChallenge {
+        // 1. 새로운 TurnOverChallenge 생성
+        val duplicatedTurnOverChallenge = TurnOverChallenge()
+        val savedTurnOverChallenge = turnOverChallengeRepository.save(duplicatedTurnOverChallenge)
+
+        // 2. JobApplication 복제 (ApplicationStage 포함)
+        originalTurnOverChallenge.jobApplications.forEach { originalJobApplication ->
+            val startedAtMillis = originalJobApplication.startedAt?.atStartOfDay()
+                ?.let { TimeUtil.toEpochMilli(it) } ?: 0
+            val endedAtMillis = originalJobApplication.endedAt?.atStartOfDay()
+                ?.let { TimeUtil.toEpochMilli(it) } ?: 0
+
+            val savedJobApplication = jobApplicationService.create(
+                turnOverChallenge = savedTurnOverChallenge,
+                request = TurnOverUpsertRequest.TurnOverChallengeRequest.JobApplicationRequest.newBuilder()
+                    .setName(originalJobApplication.name)
+                    .setPosition(originalJobApplication.position)
+                    .setJobPostingTitle(originalJobApplication.jobPostingTitle)
+                    .setJobPostingUrl(originalJobApplication.jobPostingUrl)
+                    .setStartedAt(startedAtMillis)
+                    .setEndedAt(endedAtMillis)
+                    .setApplicationSource(originalJobApplication.applicationSource)
+                    .setMemo(originalJobApplication.memo)
+                    .build(),
+            )
+
+            // ApplicationStage 복제
+            originalJobApplication.applicationStages.forEach { originalStage ->
+                applicationStageService.create(
+                    jobApplication = savedJobApplication,
+                    request = TurnOverUpsertRequest.TurnOverChallengeRequest.JobApplicationRequest.ApplicationStageRequest.newBuilder()
+                        .setName(originalStage.name)
+                        .setStatus(
+                            com.spectrum.workfolio.proto.common.ApplicationStage.ApplicationStageStatus.valueOf(
+                                originalStage.status.name,
+                            ),
+                        )
+                        .setStartedAt(originalStage.startedAt?.atStartOfDay()?.let { TimeUtil.toEpochMilli(it) } ?: 0)
+                        .setMemo(originalStage.memo)
+                        .build(),
+                )
+            }
+        }
+
+        // 3. Memo 복제
+        val originalMemos = memoQueryService.listMemos(originalTurnOverChallenge.id)
+        originalMemos.forEach { originalMemo ->
+            memoCommandService.createMemo(
+                targetType = MemoTargetType.TURN_OVER_CHALLENGE,
+                targetId = savedTurnOverChallenge.id,
+                request = TurnOverUpsertRequest.MemoRequest.newBuilder()
+                    .setContent(originalMemo.content)
+                    .build(),
+            )
+        }
+
+        // 4. Attachment 복제
+        val originalAttachments = attachmentQueryService.listAttachments(originalTurnOverChallenge.id)
+        duplicateAttachments(
+            originalAttachments = originalAttachments,
+            newTargetId = savedTurnOverChallenge.id,
+            newTargetType = AttachmentTargetType.ENTITY_TURN_OVER_CHALLENGE,
+        )
+
+        return savedTurnOverChallenge
+    }
+
+    private fun duplicateTurnOverRetrospective(originalTurnOverRetrospective: TurnOverRetrospective): TurnOverRetrospective {
+        // 1. 새로운 TurnOverRetrospective 생성
+        val joinedAtMillis = originalTurnOverRetrospective.joinedAt?.atStartOfDay()
+            ?.let { TimeUtil.toEpochMilli(it) } ?: 0
+
+        val duplicatedTurnOverRetrospective = turnOverRetrospectiveService.create(
+            request = TurnOverUpsertRequest.TurnOverRetrospectiveRequest.newBuilder()
+                .setName(originalTurnOverRetrospective.name)
+                .setSalary(originalTurnOverRetrospective.salary)
+                .setPosition(originalTurnOverRetrospective.position)
+                .setJobTitle(originalTurnOverRetrospective.jobTitle)
+                .setRank(originalTurnOverRetrospective.rank)
+                .setDepartment(originalTurnOverRetrospective.department)
+                .setReason(originalTurnOverRetrospective.reason)
+                .setScore(originalTurnOverRetrospective.score)
+                .setReviewSummary(originalTurnOverRetrospective.reviewSummary)
+                .setJoinedAt(joinedAtMillis)
+                .setWorkType(originalTurnOverRetrospective.workType)
+                .setEmploymentType(
+                    com.spectrum.workfolio.proto.common.TurnOverRetrospective.EmploymentType.valueOf(
+                        originalTurnOverRetrospective.employmentType?.name ?: "EMPLOYMENT_TYPE_UNKNOWN",
+                    ),
+                )
+                .build(),
+        )
+
+        // 2. Memo 복제
+        val originalMemos = memoQueryService.listMemos(originalTurnOverRetrospective.id)
+        originalMemos.forEach { originalMemo ->
+            memoCommandService.createMemo(
+                targetType = MemoTargetType.TURN_OVER_RETROSPECT,
+                targetId = duplicatedTurnOverRetrospective.id,
+                request = TurnOverUpsertRequest.MemoRequest.newBuilder()
+                    .setContent(originalMemo.content)
+                    .build(),
+            )
+        }
+
+        // 3. Attachment 복제
+        val originalAttachments = attachmentQueryService.listAttachments(originalTurnOverRetrospective.id)
+        duplicateAttachments(
+            originalAttachments = originalAttachments,
+            newTargetId = duplicatedTurnOverRetrospective.id,
+            newTargetType = AttachmentTargetType.ENTITY_TURN_OVER_RETROSPECTIVE,
+        )
+
+        return duplicatedTurnOverRetrospective
+    }
+
+    private fun duplicateAttachments(
+        originalAttachments: List<com.spectrum.workfolio.domain.entity.common.Attachment>,
+        newTargetId: String,
+        newTargetType: AttachmentTargetType,
+    ) {
+        originalAttachments.forEach { originalAttachment ->
+            val newAttachment = com.spectrum.workfolio.domain.entity.common.Attachment(
+                fileName = originalAttachment.fileName,
+                fileUrl = "",
+                url = originalAttachment.url,
+                isVisible = originalAttachment.isVisible,
+                priority = originalAttachment.priority,
+                type = originalAttachment.type,
+                category = originalAttachment.category,
+                targetId = newTargetId,
+                targetType = newTargetType,
+            )
+            val savedAttachment = attachmentRepository.save(newAttachment)
+
+            // 파일이 있으면 복사
+            if (originalAttachment.fileUrl.isNotBlank()) {
+                try {
+                    val extension = FileUtil.extractFileExtension(originalAttachment.fileName)
+                    val newFileName = "${savedAttachment.id}.$extension"
+
+                    val copiedFileUrl = fileUploadService.copyFileInStorage(
+                        sourceFileUrl = originalAttachment.fileUrl,
+                        destinationFileName = newFileName,
+                        destinationStoragePath = getStoragePath(newTargetType, newTargetId),
+                    )
+
+                    savedAttachment.changeFileUrl(copiedFileUrl)
+                } catch (e: Exception) {
+                    logger.warn("Failed to copy file for attachment: ${originalAttachment.id}", e)
+                }
+            }
+        }
+    }
+
+    private fun getStoragePath(targetType: AttachmentTargetType, targetId: String): String {
+        return when (targetType) {
+            AttachmentTargetType.ENTITY_TURN_OVER_GOAL -> "turn_over/goals/$targetId"
+            AttachmentTargetType.ENTITY_TURN_OVER_CHALLENGE -> "turn_over/challenges/$targetId"
+            AttachmentTargetType.ENTITY_TURN_OVER_RETROSPECTIVE -> "turn_over/retrospectives/$targetId"
+            else -> "turn_over/$targetId"
+        }
     }
 
     @Transactional

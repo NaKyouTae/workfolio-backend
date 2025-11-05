@@ -292,8 +292,8 @@ class ResumeCommandService(
         val updateRequests = attachmentRequests.filter { !existingIds.contains(it.id) }
 
         attachmentCommandService.deleteAttachments(toDelete.map { it.id })
-        attachmentCommandService.createBulkAttachment(AttachmentTargetType.ENTITY_RESUME, targetId, createRequests)
-        attachmentCommandService.updateBulkAttachment(targetId, updateRequests)
+        attachmentCommandService.createBulkAttachment(AttachmentTargetType.ENTITY_RESUME, targetId, "resumes/attachments", createRequests)
+        attachmentCommandService.updateBulkAttachment(targetId, "resumes/attachments", updateRequests)
     }
 
     private fun updateLanguageSkills(

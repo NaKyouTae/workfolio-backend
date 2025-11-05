@@ -89,6 +89,7 @@ class AttachmentCommandService(
     fun createBulkAttachment(
         targetType: AttachmentTargetType,
         targetId: String,
+        storagePath: String,
         requests: List<AttachmentRequest>,
     ): List<Attachment> {
         return requests.map { request ->
@@ -114,7 +115,7 @@ class AttachmentCommandService(
                     fileUploadService.uploadFileToStorage(
                         fileData = request.fileData,
                         fileName = storageFileName,
-                        storagePath = "resumes/attachments/$targetId",
+                        storagePath = "${storagePath}/$targetId",
                     )
                 } catch (e: Exception) {
                     attachmentRepository.delete(savedAttachment)
@@ -176,6 +177,7 @@ class AttachmentCommandService(
     @Transactional
     fun updateBulkAttachment(
         targetId: String,
+        storagePath: String,
         requests: List<AttachmentRequest>,
     ): List<Attachment> {
         val existingAttachments = attachmentRepository.findByTargetIdOrderByPriorityAsc(targetId)
@@ -194,7 +196,7 @@ class AttachmentCommandService(
                     val newFileUrl = fileUploadService.uploadFileToStorage(
                         fileData = request.fileData,
                         fileName = storageFileName,
-                        storagePath = "resumes/attachments/$targetId",
+                        storagePath = "${storagePath}/$targetId",
                     )
 
                     fileUploadService.deleteFileFromStorage(listOf(attachment))

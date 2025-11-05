@@ -58,7 +58,7 @@ class RecordCommandService(
                         fileData = it.fileData,
                         type = AttachmentType.ETC,
                         category = AttachmentCategory.FILE,
-                        storagePath = "record/attachments/${createdRecord.id}",
+                        storagePath = "records/attachments/${createdRecord.id}",
                     ),
                 )
             }
@@ -92,7 +92,7 @@ class RecordCommandService(
                         fileData = it.fileData,
                         type = AttachmentType.ETC,
                         category = AttachmentCategory.FILE,
-                        storagePath = "record/attachments/${updatedRecord.id}",
+                        storagePath = "records/attachments/${updatedRecord.id}",
                     ),
                 )
             }
