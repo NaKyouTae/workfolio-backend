@@ -41,7 +41,7 @@ class WorkerController(
 
     @PutMapping
     fun updateWorker(
-        @RequestBody request: WorkerUpdateRequest
+        @RequestBody request: WorkerUpdateRequest,
     ): SuccessResponse {
         workerService.updateWorker(request)
         return SuccessResponse.newBuilder().setIsSuccess(true).build()

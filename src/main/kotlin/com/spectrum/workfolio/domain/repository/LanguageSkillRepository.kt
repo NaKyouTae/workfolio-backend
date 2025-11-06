@@ -1,7 +1,6 @@
 package com.spectrum.workfolio.domain.repository
 
 import com.spectrum.workfolio.domain.entity.resume.LanguageSkill
-import com.spectrum.workfolio.domain.enums.Language
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param

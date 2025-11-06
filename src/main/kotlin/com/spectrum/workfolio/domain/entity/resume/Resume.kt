@@ -135,6 +135,10 @@ class Resume(
         this.birthDate = birthDate
     }
 
+    fun changeDefault(isDefault: Boolean) {
+        this.isDefault = isDefault
+    }
+
     companion object {
         fun generatePublicId(): String {
             return StringUtil.generateRandomString(16)

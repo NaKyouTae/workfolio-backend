@@ -7,12 +7,10 @@ import com.spectrum.workfolio.domain.entity.resume.Resume
 import com.spectrum.workfolio.domain.enums.AttachmentCategory
 import com.spectrum.workfolio.domain.enums.AttachmentTargetType
 import com.spectrum.workfolio.domain.enums.AttachmentType
-import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.repository.AttachmentRepository
 import com.spectrum.workfolio.proto.attachment.AttachmentRequest
 import com.spectrum.workfolio.utils.EntityTypeValidator
 import com.spectrum.workfolio.utils.FileUtil
-import com.spectrum.workfolio.utils.WorkfolioException
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -149,7 +147,7 @@ class AttachmentCommandService(
 
                     savedAttachment.changeFileUrl(copiedFileUrl)
                 } catch (e: Exception) {
-                    logger.error("Failed to copy $originalAttachment.$originalAttachment.$originalAttachment ${e.message}")
+                    logger.error("Failed to copy $originalAttachment ${e.message}")
                     savedAttachment.changeFileUrl(originalAttachment.fileUrl)
                 }
             } else {

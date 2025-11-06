@@ -46,7 +46,8 @@ fun JobApplication.toDetailProto(): com.spectrum.workfolio.proto.common.JobAppli
     builder.setIsVisible(this.isVisible)
     builder.setPriority(this.priority)
 
-    builder.addAllApplicationStages(this.applicationStages.map { it.toWithoutJobApplicationProto() }.sortedBy { it.priority })
+    val applicationStages = this.applicationStages.map { it.toWithoutJobApplicationProto() }.sortedBy { it.priority }
+    builder.addAllApplicationStages(applicationStages)
 
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))

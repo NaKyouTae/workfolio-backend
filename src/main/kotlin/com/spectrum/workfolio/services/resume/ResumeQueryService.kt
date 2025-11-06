@@ -34,6 +34,11 @@ class ResumeQueryService(
     }
 
     @Transactional(readOnly = true)
+    fun getResumes(workerId: String): List<Resume> {
+        return resumeRepository.findByWorkerId(workerId)
+    }
+
+    @Transactional(readOnly = true)
     fun listResumesResult(workerId: String): ResumeListResponse {
         val resumes = resumeRepository.findByWorkerId(workerId)
         return ResumeListResponse.newBuilder()

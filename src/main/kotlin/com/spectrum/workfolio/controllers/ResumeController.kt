@@ -54,6 +54,15 @@ class ResumeController(
         return SuccessResponse.newBuilder().setIsSuccess(true).build()
     }
 
+    @PutMapping("/{id}")
+    fun changeDefaultResume(
+        @AuthenticatedUser workerId: String,
+        @PathVariable id: String,
+    ): SuccessResponse {
+        resumeCommandService.changeDefaultResume(workerId, id)
+        return SuccessResponse.newBuilder().setIsSuccess(true).build()
+    }
+
     @DeleteMapping("/{id}")
     fun deleteResume(
         @PathVariable id: String,

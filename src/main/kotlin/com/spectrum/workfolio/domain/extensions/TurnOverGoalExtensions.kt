@@ -18,16 +18,22 @@ fun TurnOverGoal.toProto(): com.spectrum.workfolio.proto.common.TurnOverGoal {
     return builder.build()
 }
 
-fun TurnOverGoal.toDetailProto(memos: List<Memo>, attachments: List<Attachment>): com.spectrum.workfolio.proto.common.TurnOverGoalDetail {
+fun TurnOverGoal.toDetailProto(
+    memos: List<Memo>,
+    attachments: List<Attachment>,
+): com.spectrum.workfolio.proto.common.TurnOverGoalDetail {
     val builder = com.spectrum.workfolio.proto.common.TurnOverGoalDetail.newBuilder()
+
+    val selfIntroductions = this.selfIntroductions.map { it.toWithoutTurnOverGoalProto() }.sortedBy { it.priority }
+    val interviewQuestions = this.interviewQuestions.map { it.toWithoutTurnOverGoalProto() }.sortedBy { it.priority }
+    val checkLists = this.checkList.map { it.toWithoutTurnOverGoalProto() }.sortedBy { it.priority }
 
     builder.setId(this.id)
     builder.setReason(this.reason)
     builder.setGoal(this.goal)
-
-    builder.addAllSelfIntroductions(this.selfIntroductions.map { it.toWithoutTurnOverGoalProto() }.sortedBy { it.priority })
-    builder.addAllInterviewQuestions(this.interviewQuestions.map { it.toWithoutTurnOverGoalProto() }.sortedBy { it.priority })
-    builder.addAllCheckList(this.checkList.map { it.toWithoutTurnOverGoalProto() }.sortedBy { it.priority })
+    builder.addAllSelfIntroductions(selfIntroductions)
+    builder.addAllInterviewQuestions(interviewQuestions)
+    builder.addAllCheckList(checkLists)
     builder.addAllMemos(memos.map { it.toProto() })
     builder.addAllAttachments(attachments.map { it.toProto() })
 
