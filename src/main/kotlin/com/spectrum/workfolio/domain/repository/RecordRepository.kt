@@ -23,4 +23,42 @@ interface RecordRepository : JpaRepository<Record, String> {
         @Param("startDate") startDate: LocalDateTime,
         @Param("endDate") endDate: LocalDateTime,
     ): List<Record>
+
+    // Full-Text Search - 기본 검색
+    @Query(
+        value = """
+        SELECT * FROM records 
+        WHERE worker_id = :workerId 
+        AND search_vector @@ plainto_tsquery('simple', :keyword)
+        ORDER BY created_at DESC
+    """,
+        nativeQuery = true,
+    )
+    fun searchByFullText(workerId: String, keyword: String): List<Record>
+
+    // Full-Text Search - 관련성 순위로 정렬
+    @Query(
+        value = """
+        SELECT *, ts_rank(search_vector, plainto_tsquery('simple', :keyword)) as rank
+        FROM records 
+        WHERE worker_id = :workerId 
+        AND search_vector @@ plainto_tsquery('simple', :keyword)
+        ORDER BY rank DESC, created_at DESC
+    """,
+        nativeQuery = true,
+    )
+    fun searchByFullTextRanked(workerId: String, keyword: String): List<Record>
+
+    // Full-Text Search - 모든 사용자 (관리자용)
+    @Query(
+        value = """
+        SELECT * FROM records 
+        WHERE search_vector @@ plainto_tsquery('simple', :keyword)
+        AND is_public = true
+        ORDER BY created_at DESC
+        LIMIT :limit
+    """,
+        nativeQuery = true,
+    )
+    fun searchPublicResumes(keyword: String, limit: Int = 20): List<Record>
 }

@@ -50,6 +50,14 @@ class RecordController(
         return recordQueryService.listWeeklyRecord(startDate, endDate, recordGroupIds)
     }
 
+    @GetMapping("/keywords")
+    fun searchMyResumes(
+        @AuthenticatedUser workerId: String,
+        @RequestParam keyword: String,
+    ): ListRecordResponse {
+        return recordQueryService.searchMyResumes(workerId, keyword)
+    }
+
     @PostMapping
     fun createRecord(
         @AuthenticatedUser workerId: String,

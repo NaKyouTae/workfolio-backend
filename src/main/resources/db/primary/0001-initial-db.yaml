@@ -422,7 +422,7 @@ databaseChangeLog:
                   name: started_at
                   type: TIMESTAMP(6)
                   constraints:
-                    nullable: false
+                    nullable: true
               - column:
                   name: ended_at
                   type: TIMESTAMP(6)
@@ -1569,3 +1569,14 @@ databaseChangeLog:
                   name: turn_over_goal_id
             indexName: idx_check_list_turn_over_goal_id
             tableName: check_list
+
+        # records - Full-Text Search 컬럼 및 인덱스 (title, description)
+        - sql:
+            sql: |
+              ALTER TABLE records 
+              ADD COLUMN search_vector tsvector 
+              GENERATED ALWAYS AS (
+                to_tsvector('simple', coalesce(title, '') || ' ' || coalesce(description, ''))
+              ) STORED;
+        - sql:
+            sql: CREATE INDEX idx_records_search_vector ON records USING GIN (search_vector);

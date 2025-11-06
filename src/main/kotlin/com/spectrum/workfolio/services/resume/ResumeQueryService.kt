@@ -17,38 +17,34 @@ import org.springframework.transaction.annotation.Transactional
  * 다른 도메인에서 Resume 정보가 필요할 때 사용
  */
 @Service
+@Transactional(readOnly = true)
 class ResumeQueryService(
     private val resumeRepository: ResumeRepository,
     private val attachmentQueryService: AttachmentQueryService,
 ) {
 
-    @Transactional(readOnly = true)
     fun getResume(id: String): Resume {
         return resumeRepository.findById(id)
             .orElseThrow { WorkfolioException(MsgKOR.NOT_FOUND_RESUME.message) }
     }
 
-    @Transactional(readOnly = true)
     fun getResumeOptional(id: String): Resume? {
         return resumeRepository.findById(id).orElse(null)
     }
 
-    @Transactional(readOnly = true)
     fun getResumes(workerId: String): List<Resume> {
-        return resumeRepository.findByWorkerId(workerId)
+        return resumeRepository.findByWorkerIdOrderByIsDefaultDescUpdatedAtDesc(workerId)
     }
 
-    @Transactional(readOnly = true)
     fun listResumesResult(workerId: String): ResumeListResponse {
-        val resumes = resumeRepository.findByWorkerId(workerId)
+        val resumes = resumeRepository.findByWorkerIdOrderByIsDefaultDescUpdatedAtDesc(workerId)
         return ResumeListResponse.newBuilder()
             .addAllResumes(resumes.map { it.toProto() })
             .build()
     }
 
-    @Transactional(readOnly = true)
     fun listResumeDetailsResult(workerId: String): ResumeDetailListResponse {
-        val resumes = resumeRepository.findByWorkerId(workerId)
+        val resumes = resumeRepository.findByWorkerIdOrderByIsDefaultDescUpdatedAtDesc(workerId)
         val resumeIds = resumes.map { it.id }
         val attachments = attachmentQueryService.listAttachments(resumeIds)
 

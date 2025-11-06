@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
 @Service
+@Transactional(readOnly = true)
 class RecordQueryService(
     private val recordRepository: RecordRepository,
 ) {
@@ -21,13 +22,29 @@ class RecordQueryService(
         return recordRepository.findById(id).orElseThrow { WorkfolioException(MsgKOR.NOT_FOUND_RECORD.name) }
     }
 
-    @Transactional(readOnly = true)
     fun getRecord(id: String): RecordResponse {
         val record = this.getRecordEntity(id)
         return RecordResponse.newBuilder().setRecord(record.toProto()).build()
     }
 
-    @Transactional(readOnly = true)
+    // 내 이력서 검색
+    fun searchMyResumes(workerId: String, keyword: String): ListRecordResponse {
+        val list = recordRepository.searchByFullText(workerId, keyword)
+        return convertListRecordResponse(list)
+    }
+
+    // 관련성 높은 순으로 검색
+    fun searchMyResumesRanked(workerId: String, keyword: String): ListRecordResponse {
+        val list = recordRepository.searchByFullTextRanked(workerId, keyword)
+        return convertListRecordResponse(list)
+    }
+
+    // 공개 이력서 검색 (전체 검색)
+    fun searchPublicResumes(keyword: String, limit: Int = 20): ListRecordResponse {
+        val list = recordRepository.searchPublicResumes(keyword, limit)
+        return convertListRecordResponse(list)
+    }
+
     fun listMonthlyRecord(year: Int, month: Int, recordGroupIds: List<String>): ListRecordResponse {
         val startDate = LocalDateTime.of(year, month, 1, 0, 0, 0)
         val endDate = startDate.plusMonths(1)
@@ -35,7 +52,6 @@ class RecordQueryService(
         return getRecordByDateRange(startDate, endDate, recordGroupIds)
     }
 
-    @Transactional(readOnly = true)
     fun listWeeklyRecord(weekStartDate: String, weekEndDate: String, recordGroupIds: List<String>): ListRecordResponse {
         val startDate = TimeUtil.dateStart(weekStartDate)
         val endDate = TimeUtil.dateEnd(weekEndDate)
@@ -48,6 +64,10 @@ class RecordQueryService(
         recordGroupIds: List<String>,
     ): ListRecordResponse {
         val list = recordRepository.findByDateRange(recordGroupIds, startDate, endDate)
+        return convertListRecordResponse(list)
+    }
+
+    private fun convertListRecordResponse(list: List<Record>): ListRecordResponse {
         val sortedList =
             list.sortedWith(compareBy<Record> { it.startedAt.toLocalDate() }.thenByDescending { it.getDuration() })
         val listResponse = sortedList.map { it.toProto() }

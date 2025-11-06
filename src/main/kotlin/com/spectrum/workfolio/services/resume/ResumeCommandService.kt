@@ -11,7 +11,8 @@ import com.spectrum.workfolio.services.AttachmentQueryService
 import com.spectrum.workfolio.services.WorkerService
 import com.spectrum.workfolio.utils.EnumUtils.convertProtoEnumSafe
 import com.spectrum.workfolio.utils.TimeUtil
-import com.spectrum.workfolio.utils.WorkfolioException
+import jakarta.persistence.EntityManager
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -24,6 +25,8 @@ class ResumeCommandService(
     private val workerService: WorkerService,
     private val careerService: CareerService,
     private val salaryService: SalaryService,
+    @Qualifier("primaryEntityManager")
+    private val entityManager: EntityManager,
     private val projectService: ProjectService,
     private val activityService: ActivityService,
     private val resumeRepository: ResumeRepository,
@@ -113,47 +116,28 @@ class ResumeCommandService(
 
     @Transactional
     fun changeDefaultResume(workerId: String, resumeId: String) {
-        val resumes = resumeQueryService.getResumes(workerId)
+        val resume = resumeQueryService.getResume(resumeId)
 
-        val currentDefault = resumes.find { it.isDefault }
+        resume.changeDefault(true)
 
-        if(currentDefault?.id != resumeId) {
-            currentDefault?.changeDefault(false)
-
-            val newDefault = resumes.find { it.id == resumeId }
-                ?: throw WorkfolioException("Resume not found: $resumeId")
-            newDefault.changeDefault(true)
-
-            val changedResumes = listOfNotNull(currentDefault, newDefault).distinct()
-            resumeRepository.saveAll(changedResumes)
-        }
+        resumeRepository.updateAllDefaultToFalse(workerId, resumeId)
+        resumeRepository.save(resume)
     }
 
     @Transactional
     fun updateResume(workerId: String, request: ResumeUpdateRequest): Resume {
-        val resume = upsertResume(workerId, request)
-
-        if(request.isDefault) {
-            changeDefaultResume(workerId, resume.id)
+        if (request.isDefault) {
+            resumeRepository.updateAllDefaultToFalse(workerId, request.id)
+            entityManager.flush()
         }
 
-        // 학력 처리
-        updateEducations(resume.id, request.educationsList)
-
-        // 경력 처리
-        updateCareers(resume.id, request.careersList)
-
-        // 프로젝트 처리
-        updateProjects(resume.id, request.projectsList)
-
-        // 활동 처리
-        updateActivities(resume.id, request.activitiesList)
-
-        // 첨부파일 처리
-        updateAttachments(resume.id, request.attachmentsList)
-
-        // 언어 능력 처리
-        updateLanguageSkills(resume.id, request.languagesList)
+        val resume = upsertResume(workerId, request)
+        updateEducations(resume.id, request.educationsList) // 학력 처리
+        updateCareers(resume.id, request.careersList) // 경력 처리
+        updateProjects(resume.id, request.projectsList) // 프로젝트 처리
+        updateActivities(resume.id, request.activitiesList) // 활동 처리
+        updateAttachments(resume.id, request.attachmentsList) // 첨부파일 처리
+        updateLanguageSkills(resume.id, request.languagesList) // 언어 능력 처리
 
         return resumeRepository.save(resume)
     }
