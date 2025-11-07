@@ -460,6 +460,14 @@ message TurnOverChallengeDetail {
 }
 
 message JobApplication {
+  enum JobApplicationStatus {
+    UNKNOWN = 0;
+    PENDING = 1;
+    RUNNING = 2;
+    PASSED = 3;
+    FAILED = 4;
+    CANCELLED = 5;
+  }
   string id = 1;
   string name = 2;
   string position = 3;
@@ -470,6 +478,7 @@ message JobApplication {
   string application_source = 8;
   string memo = 9;
 
+  JobApplicationStatus status = 29;
   bool is_visible = 30;
   uint32 priority = 31;
 
@@ -490,6 +499,7 @@ message JobApplicationDetail {
   string application_source = 8;
   string memo = 9;
 
+  JobApplication.JobApplicationStatus status = 29;
   bool is_visible = 30;
   uint32 priority = 31;
 

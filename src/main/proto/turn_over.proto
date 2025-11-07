@@ -76,6 +76,7 @@ message TurnOverUpsertRequest {
       repeated ApplicationStageRequest application_stages = 10;
       bool is_visible = 11;
       uint32 priority = 12;
+      JobApplication.JobApplicationStatus status = 13;
     }
 
     optional string id = 1;

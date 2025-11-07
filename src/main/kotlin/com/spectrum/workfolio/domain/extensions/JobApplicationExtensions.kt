@@ -13,7 +13,7 @@ fun JobApplication.toProto(): com.spectrum.workfolio.proto.common.JobApplication
     builder.setJobPostingTitle(this.jobPostingTitle)
     builder.setApplicationSource(this.applicationSource)
     builder.setMemo(this.memo)
-
+    builder.setStatus(com.spectrum.workfolio.proto.common.JobApplication.JobApplicationStatus.valueOf(this.status.name))
     builder.setIsVisible(this.isVisible)
     builder.setPriority(this.priority)
 
@@ -42,7 +42,7 @@ fun JobApplication.toDetailProto(): com.spectrum.workfolio.proto.common.JobAppli
     builder.setJobPostingTitle(this.jobPostingTitle)
     builder.setApplicationSource(this.applicationSource)
     builder.setMemo(this.memo)
-
+    builder.setStatus(com.spectrum.workfolio.proto.common.JobApplication.JobApplicationStatus.valueOf(this.status.name))
     builder.setIsVisible(this.isVisible)
     builder.setPriority(this.priority)
 

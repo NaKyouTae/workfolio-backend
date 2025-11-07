@@ -7,6 +7,7 @@ import com.spectrum.workfolio.domain.entity.turnover.TurnOverGoal
 import com.spectrum.workfolio.domain.entity.turnover.TurnOverRetrospective
 import com.spectrum.workfolio.domain.enums.ApplicationStageStatus
 import com.spectrum.workfolio.domain.enums.AttachmentTargetType
+import com.spectrum.workfolio.domain.enums.JobApplicationStatus
 import com.spectrum.workfolio.domain.enums.MemoTargetType
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.extensions.toDetailProto
@@ -253,6 +254,7 @@ class TurnOverService(
                 val jobApplication = existingMap[request.id]!!.apply {
                     changeInfo(
                         name = request.name,
+                        status = JobApplicationStatus.valueOf(request.status.name),
                         position = request.position,
                         jobPostingTitle = request.jobPostingTitle,
                         jobPostingUrl = request.jobPostingUrl,

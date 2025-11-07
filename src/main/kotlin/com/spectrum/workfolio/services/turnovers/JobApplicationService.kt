@@ -2,6 +2,7 @@ package com.spectrum.workfolio.services.turnovers
 
 import com.spectrum.workfolio.domain.entity.turnover.JobApplication
 import com.spectrum.workfolio.domain.entity.turnover.TurnOverChallenge
+import com.spectrum.workfolio.domain.enums.JobApplicationStatus
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.repository.JobApplicationRepository
 import com.spectrum.workfolio.proto.turn_over.TurnOverUpsertRequest
@@ -33,6 +34,7 @@ class JobApplicationService(
     ): JobApplication {
         return JobApplication(
             name = request.name,
+            status = JobApplicationStatus.valueOf(request.status.name),
             position = request.position,
             jobPostingTitle = request.jobPostingTitle,
             jobPostingUrl = request.jobPostingUrl,
@@ -63,6 +65,7 @@ class JobApplicationService(
         val entities = requests.map { request ->
             JobApplication(
                 name = request.name,
+                status = JobApplicationStatus.valueOf(request.status.name),
                 position = request.position,
                 jobPostingTitle = request.jobPostingTitle,
                 jobPostingUrl = request.jobPostingUrl,
@@ -85,6 +88,7 @@ class JobApplicationService(
 
         jobApplication.changeInfo(
             name = request.name,
+            status = JobApplicationStatus.valueOf(request.status.name),
             position = request.position,
             jobPostingTitle = request.jobPostingTitle,
             jobPostingUrl = request.jobPostingUrl,
@@ -114,6 +118,7 @@ class JobApplicationService(
             requestMap[entity.id]?.let { request ->
                 entity.changeInfo(
                     name = request.name,
+                    status = JobApplicationStatus.valueOf(request.status.name),
                     position = request.position,
                     jobPostingTitle = request.jobPostingTitle,
                     jobPostingUrl = request.jobPostingUrl,

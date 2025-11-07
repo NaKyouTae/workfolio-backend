@@ -1,9 +1,12 @@
 package com.spectrum.workfolio.domain.entity.turnover
 
 import com.spectrum.workfolio.domain.entity.BaseEntity
+import com.spectrum.workfolio.domain.enums.JobApplicationStatus
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.FetchType
 import jakarta.persistence.Index
 import jakarta.persistence.JoinColumn
@@ -21,6 +24,7 @@ import java.time.LocalDate
 )
 class JobApplication(
     name: String, // 회사명
+    status: JobApplicationStatus, // 지원 상태
     position: String, // 직무
     jobPostingTitle: String, // 공고명
     jobPostingUrl: String, // 공고문 URL
@@ -34,6 +38,11 @@ class JobApplication(
 ) : BaseEntity("JA") {
     @Column(name = "name", length = 1024, nullable = false)
     var name: String = name
+        protected set
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", length = 32, nullable = false)
+    var status: JobApplicationStatus = status
         protected set
 
     @Column(name = "position", length = 512, nullable = false)
@@ -94,6 +103,7 @@ class JobApplication(
 
     fun changeInfo(
         name: String, // 회사명
+        status: JobApplicationStatus,
         position: String, // 직무
         jobPostingTitle: String, // 공고명
         jobPostingUrl: String, // 공고문 URL
@@ -105,6 +115,7 @@ class JobApplication(
         priority: Int,
     ) {
         this.name = name
+        this.status = status
         this.position = position
         this.jobPostingTitle = jobPostingTitle
         this.jobPostingUrl = jobPostingUrl

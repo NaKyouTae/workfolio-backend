@@ -1257,6 +1257,11 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: status
+                  type: VARCHAR(32)
+                  constraints:
+                    nullable: false
+              - column:
                   name: position
                   type: VARCHAR(512)
                   constraints:
