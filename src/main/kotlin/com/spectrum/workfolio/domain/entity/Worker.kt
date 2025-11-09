@@ -63,10 +63,6 @@ class Worker(
     val resumes: List<Resume> get() = mutableResumes.toList()
 
     @OneToMany(mappedBy = "worker", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
-    private var mutableRecords: MutableList<Record> = mutableListOf()
-    val records: List<Record> get() = mutableRecords.toList()
-
-    @OneToMany(mappedBy = "worker", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
     private var mutableWorkerRecordGroups: MutableList<WorkerRecordGroup> = mutableListOf()
     val workerRecordGroups: List<WorkerRecordGroup> get() = mutableWorkerRecordGroups.toList()
 

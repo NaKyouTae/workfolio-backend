@@ -61,6 +61,7 @@ class RecordGroup(
     var priority: Long = priority
         protected set
 
+    // 소유주
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "worker_id", nullable = false)
     var worker: Worker = worker

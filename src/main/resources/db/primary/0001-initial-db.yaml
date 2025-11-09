@@ -957,12 +957,12 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: email
-                  type: VARCHAR(256)
+                  type: VARCHAR(512)
                   constraints:
                     nullable: true
               - column:
                   name: provider_id
-                  type: VARCHAR(518)
+                  type: VARCHAR(512)
                   constraints:
                     nullable: false
                     unique: true

@@ -60,10 +60,9 @@ class RecordController(
 
     @PostMapping
     fun createRecord(
-        @AuthenticatedUser workerId: String,
         @RequestBody request: RecordCreateRequest,
     ): RecordResponse {
-        return recordCommandService.createRecord(workerId, request)
+        return recordCommandService.createRecord(request)
     }
 
     @PutMapping

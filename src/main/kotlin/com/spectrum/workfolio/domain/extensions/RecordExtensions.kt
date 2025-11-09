@@ -12,7 +12,6 @@ fun Record.toProto(): com.spectrum.workfolio.proto.common.Record {
     builder.setDescription(this.description)
     builder.setStartedAt(TimeUtil.toEpochMilli(this.startedAt))
     builder.setRecordGroup(this.recordGroup.toProto())
-    builder.setWorker(this.worker.toProto())
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
 

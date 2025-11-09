@@ -24,7 +24,6 @@ import java.time.LocalDateTime
     name = "records",
     indexes = [
         Index(name = "idx_records_title", columnList = "title"),
-        Index(name = "idx_records_worker_id", columnList = "worker_id"),
         Index(name = "idx_records_record_group_id_started_at", columnList = "record_group_id, started_at"),
     ],
 )
@@ -35,7 +34,6 @@ class Record(
     startedAt: LocalDateTime,
     endedAt: LocalDateTime? = null,
     recordGroup: RecordGroup,
-    worker: Worker,
 ) : BaseEntity("RE") {
     @Column(name = "title", nullable = false)
     var title: String = title
@@ -56,11 +54,6 @@ class Record(
 
     @Column(name = "ended_at", nullable = true)
     var endedAt: LocalDateTime? = endedAt
-        protected set
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "worker_id", nullable = false)
-    var worker: Worker = worker
         protected set
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -52,7 +52,7 @@ class UserRegistrationService(
             val recordGroup = createDefaultRecordGroup(worker.id)
 
             // 3. 기본 Record 생성
-            createDefaultRecord(worker.id, recordGroup.recordGroup.id)
+            createDefaultRecord(recordGroup.recordGroup.id)
 
             // 4. Account 생성
             val account = createAccount(oauthUserInfo, accountType, worker)
@@ -90,7 +90,7 @@ class UserRegistrationService(
         return recordGroupService.createRecordGroup(workerId, true, recordGroupRequest)
     }
 
-    private fun createDefaultRecord(workerId: String, recordGroupId: String) {
+    private fun createDefaultRecord(recordGroupId: String) {
         val now = LocalDateTime.now()
         val startedAt = TimeUtil.toEpochMilli(TimeUtil.dateStart(now))
         val endedAt = TimeUtil.toEpochMilli(TimeUtil.dateEnd(now))
@@ -102,7 +102,7 @@ class UserRegistrationService(
             .setRecordGroupId(recordGroupId)
             .build()
 
-        recordCommandService.createRecord(workerId, recordRequest)
+        recordCommandService.createRecord(recordRequest)
     }
 
     private fun createAccount(

@@ -28,15 +28,15 @@ class Account(
     worker: Worker,
 ) : BaseEntity("AC") {
     @Enumerated(EnumType.STRING)
-    @Column(name = "type", nullable = false)
+    @Column(name = "type", length = 256, nullable = false)
     var type: AccountType = type
         protected set
 
-    @Column(name = "provider_id", nullable = false, unique = true)
+    @Column(name = "provider_id", length = 512, nullable = false, unique = true)
     var providerId: String = providerId
         protected set
 
-    @Column(name = "email", nullable = true)
+    @Column(name = "email", length = 512, nullable = true)
     var email: String? = email
         protected set
 

@@ -28,8 +28,7 @@ class RecordCommandService(
 ) {
 
     @Transactional
-    fun createRecord(workerId: String, request: RecordCreateRequest): RecordResponse {
-        val worker = workerService.getWorker(workerId)
+    fun createRecord(request: RecordCreateRequest): RecordResponse {
         val recordGroup = recordGroupService.getRecordGroup(request.recordGroupId)
         val startedAt = TimeUtil.ofEpochMilli(request.startedAt)
         val endedAt = TimeUtil.ofEpochMilli(request.endedAt)
@@ -43,7 +42,6 @@ class RecordCommandService(
             startedAt = startedAt,
             endedAt = endedAt,
             recordGroup = recordGroup,
-            worker = worker,
         )
 
         val createdRecord = recordRepository.save(record)
