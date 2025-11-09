@@ -1575,13 +1575,46 @@ databaseChangeLog:
             indexName: idx_check_list_turn_over_goal_id
             tableName: check_list
 
-        # records - Full-Text Search 컬럼 및 인덱스 (title, description)
-        - sql:
-            sql: |
-              ALTER TABLE records 
-              ADD COLUMN search_vector tsvector 
-              GENERATED ALWAYS AS (
-                to_tsvector('simple', coalesce(title, '') || ' ' || coalesce(description, ''))
-              ) STORED;
-        - sql:
-            sql: CREATE INDEX idx_records_search_vector ON records USING GIN (search_vector);
+        - createTable:
+            tableName: notices
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: VARCHAR(512)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: content
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_pinned
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+        - createIndex:
+            columns:
+              - column:
+                  name: is_pinned
+              - column:
+                  name: created_at
+            indexName: idx_notices_is_pinned_created_at
+            tableName: notices

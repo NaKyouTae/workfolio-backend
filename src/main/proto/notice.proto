@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package com.spectrum.workfolio.proto;
+
+option java_multiple_files = true;
+option java_package = "com.spectrum.workfolio.proto.notice";
+option java_outer_classname = "NoticeProto";
+
+message NoticeListResponse {
+  repeated Notice notices = 1;
+}
+
+message NoticeGetResponse {
+  Notice notice = 1;
+}
+
+message NoticeCreateRequest {
+  string title = 1;
+  string content = 2;
+  bool is_pinned = 3;
+}
+
+message NoticeUpdateRequest {
+  string id = 1;
+  string title = 2;
+  string content = 3;
+  bool is_pinned = 4;
+}
+

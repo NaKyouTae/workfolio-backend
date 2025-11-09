@@ -1,3 +1,5 @@
 databaseChangeLog:
   - include:
       file: db/primary/0001-initial-db.yaml
+  - include:
+      file: db/primary/0002-add-idx-full-search-text.yaml
