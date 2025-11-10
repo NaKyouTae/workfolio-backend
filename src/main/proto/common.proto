@@ -661,3 +661,154 @@ message Notice {
   uint64 created_at = 98;
   uint64 updated_at = 99;
 }
+
+message Plan {
+  enum PlanType {
+    UNKNOWN = 0;
+    FREE = 1;
+    PREMIUM = 2;
+  }
+
+  string id = 1;
+  string name = 2;
+  PlanType type = 3;
+  uint64 price = 4;
+  string currency = 5;
+  int32 priority = 6;
+  optional string description = 7;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
+}
+
+message PlanSubscription {
+  string id = 1;
+  string duration_months = 2;
+  uint64 total_price = 3;
+  uint64 monthly_equivalent = 4;
+  uint64 savings_amount = 5;
+  uint32 discount_rate = 6;
+  uint32 priority = 7;
+
+  Plan plan = 50;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
+}
+
+message Feature {
+  string id = 1;
+  string name = 2;
+  string domain = 3;
+  string action = 4;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
+}
+
+message WorkerSubscription {
+  enum SubscriptionStatus {
+    UNKNOWN = 0;
+    ACTIVE = 1;
+    EXPIRED = 2;
+    CANCELLED = 3;
+  }
+
+  string id = 1;
+  string plan_name = 2;
+  Plan.PlanType plan_type = 3;
+  SubscriptionStatus status = 4;
+  uint64 started_at = 5;
+  uint64 ended_at = 6;
+  optional uint64 cancelled_at = 7;
+  optional string cancel_reason = 8;
+
+  Worker worker = 50;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
+}
+
+message WorkerFeatureUsage {
+  string id = 1;
+  uint32 current_count = 2;
+  optional uint32 limit_count = 3;
+  uint64 last_used_at = 4;
+
+  Worker worker = 50;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
+}
+
+message PlanFeature {
+  string id = 1;
+
+  Plan plan = 50;
+  Feature feature = 51;
+  int32 limit_count = 52;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
+}
+
+message Payment {
+  enum PaymentStatus {
+    UNKNOWN = 0;
+    PENDING = 1;
+    COMPLETED = 2;
+    FAILED = 3;
+    REFUNDED = 4;
+  }
+
+  enum PaymentMethod {
+    METHOD_UNKNOWN = 0;
+    CARD = 1;
+    CASH = 2;
+  }
+
+  string id = 1;
+  int64 amount = 2;
+  string currency = 3;
+  PaymentStatus status = 4;
+  PaymentMethod payment_method = 5;
+  string payment_provider = 6;
+  string provider_payment_id = 7;
+  optional uint64 paid_at = 8;
+  optional uint64 refunded_at = 9;
+  int64 refund_amount = 10;
+  optional string refund_reason = 11;
+  optional string failure_reason = 12;
+  optional string failure_code = 13;
+  optional string metadata_json = 14;
+
+  Worker worker = 50;
+  repeated PaymentTransaction payment_transactions = 51;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
+}
+
+message PaymentTransaction {
+  enum TransactionType {
+    TYPE_UNKNOWN = 0;
+    PAYMENT = 1;
+    REFUND = 2;
+    PARTIAL_REFUND = 3;
+    CANCEL = 4;
+  }
+
+  string id = 1;
+  TransactionType transaction_type = 2;
+  string status = 3;
+  int64 amount = 4;
+  optional string transaction_id = 5;
+  optional string request_data = 6;
+  optional string response_data = 7;
+  optional string error_message = 8;
+  optional string receipt_url = 9;
+
+  Payment payment = 50;
+
+  uint64 created_at = 98;
+}

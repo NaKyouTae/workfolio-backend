@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package com.spectrum.workfolio.proto;
+
+option java_multiple_files = true;
+option java_package = "com.spectrum.workfolio.proto.paymenttransaction";
+option java_outer_classname = "PaymentTransactionProto";
+
+message PaymentTransactionListResponse {
+  repeated PaymentTransaction payment_transactions = 1;
+}
+
+message PaymentTransactionGetResponse {
+  PaymentTransaction payment_transaction = 1;
+}
+
+message PaymentTransactionCreateRequest {
+  string payment_id = 1;
+  PaymentTransaction.TransactionType transaction_type = 2;
+  string status = 3;
+  int64 amount = 4;
+  optional string transaction_id = 5;
+  optional string request_data = 6;
+  optional string response_data = 7;
+  optional string error_message = 8;
+  optional string receipt_url = 9;
+}
+
+message PaymentTransactionUpdateRequest {
+  string id = 1;
+  PaymentTransaction.TransactionType transaction_type = 2;
+  string status = 3;
+  int64 amount = 4;
+  optional string transaction_id = 5;
+  optional string request_data = 6;
+  optional string response_data = 7;
+  optional string error_message = 8;
+  optional string receipt_url = 9;
+}
+

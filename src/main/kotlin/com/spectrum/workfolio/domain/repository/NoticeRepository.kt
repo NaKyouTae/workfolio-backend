@@ -8,4 +8,3 @@ import org.springframework.stereotype.Repository
 interface NoticeRepository : JpaRepository<Notice, String> {
     fun findAllByOrderByIsPinnedDescCreatedAtDesc(): List<Notice>
 }
-

@@ -65,4 +65,3 @@ class NoticeService(
         noticeRepository.delete(notice)
     }
 }
-

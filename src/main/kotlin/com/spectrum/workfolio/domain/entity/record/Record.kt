@@ -1,7 +1,6 @@
 package com.spectrum.workfolio.domain.entity.record
 
 import com.spectrum.workfolio.domain.entity.BaseEntity
-import com.spectrum.workfolio.domain.entity.Worker
 import com.spectrum.workfolio.domain.enums.RecordType
 import com.spectrum.workfolio.utils.TimeUtil
 import jakarta.persistence.Column

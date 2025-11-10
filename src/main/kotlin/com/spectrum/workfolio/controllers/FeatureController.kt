@@ -1,11 +1,11 @@
 package com.spectrum.workfolio.controllers
 
 import com.spectrum.workfolio.proto.common.SuccessResponse
-import com.spectrum.workfolio.proto.notice.NoticeCreateRequest
-import com.spectrum.workfolio.proto.notice.NoticeGetResponse
-import com.spectrum.workfolio.proto.notice.NoticeListResponse
-import com.spectrum.workfolio.proto.notice.NoticeUpdateRequest
-import com.spectrum.workfolio.services.NoticeService
+import com.spectrum.workfolio.proto.feature.FeatureCreateRequest
+import com.spectrum.workfolio.proto.feature.FeatureGetResponse
+import com.spectrum.workfolio.proto.feature.FeatureListResponse
+import com.spectrum.workfolio.proto.feature.FeatureUpdateRequest
+import com.spectrum.workfolio.services.FeatureService
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -16,44 +16,44 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/notices")
-class NoticeController(
-    private val noticeService: NoticeService,
+@RequestMapping("/api/features")
+class FeatureController(
+    private val featureService: FeatureService,
 ) {
 
     @GetMapping
-    fun getNotices(): NoticeListResponse {
-        return noticeService.getNotices()
+    fun getFeatures(): FeatureListResponse {
+        return featureService.getFeatures()
     }
 
     @GetMapping("/{id}")
-    fun getNotice(
+    fun getFeature(
         @PathVariable id: String,
-    ): NoticeGetResponse {
-        return noticeService.getNotice(id)
+    ): FeatureGetResponse {
+        return featureService.getFeature(id)
     }
 
     @PostMapping
-    fun createNotice(
-        @RequestBody request: NoticeCreateRequest,
+    fun createFeature(
+        @RequestBody request: FeatureCreateRequest,
     ): SuccessResponse {
-        noticeService.createNotice(request)
+        featureService.createFeature(request)
         return SuccessResponse.newBuilder().setIsSuccess(true).build()
     }
 
     @PutMapping
-    fun updateNotice(
-        @RequestBody request: NoticeUpdateRequest,
+    fun updateFeature(
+        @RequestBody request: FeatureUpdateRequest,
     ): SuccessResponse {
-        noticeService.updateNotice(request)
+        featureService.updateFeature(request)
         return SuccessResponse.newBuilder().setIsSuccess(true).build()
     }
 
     @DeleteMapping("/{id}")
-    fun deleteNotice(
+    fun deleteFeature(
         @PathVariable id: String,
     ): SuccessResponse {
-        noticeService.deleteNotice(id)
+        featureService.deleteFeature(id)
         return SuccessResponse.newBuilder().setIsSuccess(true).build()
     }
 }

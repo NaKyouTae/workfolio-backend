@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package com.spectrum.workfolio.proto;
+
+option java_multiple_files = true;
+option java_package = "com.spectrum.workfolio.proto.plan";
+option java_outer_classname = "PlanProto";
+
+message PlanListResponse {
+  repeated Plan plans = 1;
+}
+
+message PlanGetResponse {
+  Plan plan = 1;
+}
+
+message PlanCreateRequest {
+  string name = 1;
+  Plan.PlanType type = 2;
+  uint64 price = 3;
+  string currency = 4;
+  int32 priority = 5;
+  optional string description = 6;
+}
+
+message PlanUpdateRequest {
+  string id = 1;
+  string name = 2;
+  uint64 price = 3;
+  string currency = 4;
+  int32 priority = 5;
+  optional string description = 6;
+}
+

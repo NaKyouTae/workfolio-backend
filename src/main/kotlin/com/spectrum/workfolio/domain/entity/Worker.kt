@@ -1,7 +1,6 @@
 package com.spectrum.workfolio.domain.entity
 
 import com.spectrum.workfolio.domain.entity.primary.Account
-import com.spectrum.workfolio.domain.entity.record.Record
 import com.spectrum.workfolio.domain.entity.record.RecordGroup
 import com.spectrum.workfolio.domain.entity.record.WorkerRecordGroup
 import com.spectrum.workfolio.domain.entity.resume.Resume

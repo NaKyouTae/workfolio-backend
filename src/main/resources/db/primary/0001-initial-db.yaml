@@ -175,11 +175,6 @@ databaseChangeLog:
                   constraints:
                     nullable: true
               - column:
-                  name: worker_id
-                  type: VARCHAR(16)
-                  constraints:
-                    nullable: false
-              - column:
                   name: record_group_id
                   type: VARCHAR(16)
                   constraints:
@@ -1618,3 +1613,539 @@ databaseChangeLog:
                   name: created_at
             indexName: idx_notices_is_pinned_created_at
             tableName: notices
+
+        - createTable:
+            tableName: plans
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: type
+                  type: VARCHAR(64)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: price
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: currency
+                  type: VARCHAR(8)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: priority
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+        - createIndex:
+            columns:
+              - column:
+                  name: type
+            indexName: idx_plans_type
+            tableName: plans
+        - createIndex:
+            columns:
+              - column:
+                  name: priority
+            indexName: idx_plans_priority
+            tableName: plans
+
+        - createTable:
+            tableName: plan_subscriptions
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: duration_months
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: total_price
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: monthly_equivalent
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: savings_amount
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: discount_rate
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: priority
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: plan_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+        - createIndex:
+            columns:
+              - column:
+                  name: priority
+            indexName: idx_plan_subscriptions_priority
+            tableName: plan_subscriptions
+
+        - createTable:
+            tableName: features
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(512)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: domain
+                  type: VARCHAR(32)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: action
+                  type: VARCHAR(512)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+        - createIndex:
+            columns:
+              - column:
+                  name: domain
+            indexName: idx_features_domain
+            tableName: features
+        - createIndex:
+            columns:
+              - column:
+                  name: domain
+              - column:
+                  name: action
+            indexName: idx_features_domain_action
+            tableName: features
+
+        - createTable:
+            tableName: plan_features
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: plan_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: feature_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: limit_count
+                  type: INT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+        - createIndex:
+            columns:
+              - column:
+                  name: plan_id
+            indexName: idx_plan_features_plan_id
+            tableName: plan_features
+        - createIndex:
+            columns:
+              - column:
+                  name: feature_id
+            indexName: idx_plan_features_feature_id
+            tableName: plan_features
+
+        - createTable:
+            tableName: worker_subscriptions
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: status
+                  type: VARCHAR(32)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: started_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: ended_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: cancelled_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: cancel_reason
+                  type: VARCHAR(512)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: plan_option_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: worker_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+        - createIndex:
+            columns:
+              - column:
+                  name: worker_id
+            indexName: idx_worker_subscriptions_worker_id
+            tableName: worker_subscriptions
+        - createIndex:
+            columns:
+              - column:
+                  name: status
+            indexName: idx_worker_subscriptions_status
+            tableName: worker_subscriptions
+        - createIndex:
+            columns:
+              - column:
+                  name: worker_id
+              - column:
+                  name: status
+            indexName: idx_worker_subscriptions_worker_status
+            tableName: worker_subscriptions
+
+        - createTable:
+            tableName: worker_feature_usages
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: current_count
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: limit_count
+                  type: INT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: last_used_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: feature_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: worker_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+        - createIndex:
+            columns:
+              - column:
+                  name: worker_id
+            indexName: idx_worker_feature_usages_worker_id
+            tableName: worker_feature_usages
+
+        - createTable:
+            tableName: payments
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: worker_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: amount
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: currency
+                  type: VARCHAR(8)
+                  defaultValue: 'KRW'
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: VARCHAR(32)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: payment_method
+                  type: VARCHAR(32)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: payment_provider
+                  type: VARCHAR(64)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: provider_payment_id
+                  type: VARCHAR(256)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: paid_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: refunded_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: refund_amount
+                  type: BIGINT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: refund_reason
+                  type: VARCHAR(512)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: failure_reason
+                  type: VARCHAR(512)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: failure_code
+                  type: VARCHAR(64)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: metadata_json
+                  type: JSONB
+                  constraints:
+                    nullable: true
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+        - createIndex:
+            columns:
+              - column:
+                  name: worker_id
+            indexName: idx_payments_worker_id
+            tableName: payments
+        - createIndex:
+            columns:
+              - column:
+                  name: status
+            indexName: idx_payments_status
+            tableName: payments
+        - createIndex:
+            columns:
+              - column:
+                  name: provider_payment_id
+            indexName: idx_payments_provider_payment_id
+            tableName: payments
+
+        - createTable:
+            tableName: payment_transactions
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: payment_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: transaction_type
+                  type: VARCHAR(32)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: VARCHAR(32)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: amount
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: transaction_id
+                  type: VARCHAR(256)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: request_data
+                  type: JSONB
+                  constraints:
+                    nullable: true
+              - column:
+                  name: response_data
+                  type: JSONB
+                  constraints:
+                    nullable: true
+              - column:
+                  name: error_message
+                  type: TEXT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: receipt_url
+                  type: VARCHAR(1024)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+        - createIndex:
+            columns:
+              - column:
+                  name: payment_id
+            indexName: idx_payment_transactions_payment_id
+            tableName: payment_transactions
+        - createIndex:
+            columns:
+              - column:
+                  name: transaction_type
+            indexName: idx_payment_transactions_transaction_type
+            tableName: payment_transactions
+        - createIndex:
+            columns:
+              - column:
+                  name: status
+            indexName: idx_payment_transactions_status
+            tableName: payment_transactions

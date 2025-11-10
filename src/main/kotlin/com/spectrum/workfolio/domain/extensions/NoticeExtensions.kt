@@ -16,4 +16,3 @@ fun Notice.toProto(): com.spectrum.workfolio.proto.common.Notice {
 
     return builder.build()
 }
-

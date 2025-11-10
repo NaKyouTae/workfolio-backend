@@ -40,4 +40,3 @@ class Notice(
         this.isPinned = isPinned
     }
 }
-
