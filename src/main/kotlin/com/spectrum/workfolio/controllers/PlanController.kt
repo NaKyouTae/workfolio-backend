@@ -5,7 +5,8 @@ import com.spectrum.workfolio.proto.plan.PlanCreateRequest
 import com.spectrum.workfolio.proto.plan.PlanGetResponse
 import com.spectrum.workfolio.proto.plan.PlanListResponse
 import com.spectrum.workfolio.proto.plan.PlanUpdateRequest
-import com.spectrum.workfolio.services.PlanService
+import com.spectrum.workfolio.services.plan.PlanCommandService
+import com.spectrum.workfolio.services.plan.PlanQueryService
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -18,26 +19,27 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/plans")
 class PlanController(
-    private val planService: PlanService,
+    private val planQueryService: PlanQueryService,
+    private val planCommandService: PlanCommandService,
 ) {
 
     @GetMapping
-    fun getPlans(): PlanListResponse {
-        return planService.getPlans()
+    fun listPlans(): PlanListResponse {
+        return planQueryService.listPlansResult()
     }
 
     @GetMapping("/{id}")
     fun getPlan(
         @PathVariable id: String,
     ): PlanGetResponse {
-        return planService.getPlan(id)
+        return planQueryService.getPlanResult(id)
     }
 
     @PostMapping
     fun createPlan(
         @RequestBody request: PlanCreateRequest,
     ): SuccessResponse {
-        planService.createPlan(request)
+        planCommandService.createPlan(request)
         return SuccessResponse.newBuilder().setIsSuccess(true).build()
     }
 
@@ -45,7 +47,7 @@ class PlanController(
     fun updatePlan(
         @RequestBody request: PlanUpdateRequest,
     ): SuccessResponse {
-        planService.updatePlan(request)
+        planCommandService.updatePlan(request)
         return SuccessResponse.newBuilder().setIsSuccess(true).build()
     }
 
@@ -53,7 +55,7 @@ class PlanController(
     fun deletePlan(
         @PathVariable id: String,
     ): SuccessResponse {
-        planService.deletePlan(id)
+        planCommandService.deletePlan(id)
         return SuccessResponse.newBuilder().setIsSuccess(true).build()
     }
 }

@@ -812,3 +812,15 @@ message PaymentTransaction {
 
   uint64 created_at = 98;
 }
+
+message Staff {
+  string id = 1;
+  string username = 2;
+  string name = 3;
+  string email = 4;
+  optional string phone = 5;
+  bool is_active = 6;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
+}

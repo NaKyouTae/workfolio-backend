@@ -33,7 +33,6 @@ class Payment(
     paymentMethod: PaymentMethod,
     paymentProvider: String,
     providerPaymentId: String,
-    worker: Worker,
     paidAt: LocalDateTime? = null,
     refundedAt: LocalDateTime? = null,
     refundAmount: Long = 0,
@@ -41,6 +40,7 @@ class Payment(
     failureReason: String? = null,
     failureCode: String? = null,
     metadataJson: String? = null,
+    worker: Worker,
 ) : BaseEntity("PA") {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "worker_id", nullable = false)

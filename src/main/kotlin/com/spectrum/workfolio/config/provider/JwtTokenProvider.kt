@@ -29,11 +29,12 @@ class JwtTokenProvider(
     @Value("\${jwt.access.expiration-hours}") private val accessTokenExpirationHours: Long,
     @Value("\${jwt.refresh.expiration-days}") private val refreshTokenExpirationDays: Long,
     private val workerUserDetailService: WorkerDetailService,
+    private val staffDetailService: com.spectrum.workfolio.config.service.StaffDetailService,
 ) {
 
     fun generateToken(account: Account): WorkfolioToken {
         val workerId = account.worker.id
-        val claims = setClaims(workerId, emptyList())
+        val claims = setClaims(workerId, emptyList(), "WORKER")
         val issuedAt = Instant.now().truncatedTo(ChronoUnit.SECONDS)
         val accessTokenExpiration = issuedAt.plus(accessTokenExpirationHours, ChronoUnit.DAYS)
         val refreshTokenExpiration = issuedAt.plus(refreshTokenExpirationDays, ChronoUnit.DAYS)
@@ -57,11 +58,45 @@ class JwtTokenProvider(
         )
     }
 
+    fun generateTokenForStaff(staffId: String): WorkfolioToken {
+        val claims = mutableMapOf<String, Any>()
+        claims["id"] = staffId
+        claims["type"] = "STAFF"
+        claims["roles"] = emptyList<String>()
+        claims["jit"] = UUID.randomUUID().toString()
+
+        val issuedAt = Instant.now().truncatedTo(ChronoUnit.SECONDS)
+        val accessTokenExpiration = issuedAt.plus(accessTokenExpirationHours, ChronoUnit.HOURS)
+        val refreshTokenExpiration = issuedAt.plus(refreshTokenExpirationDays, ChronoUnit.DAYS)
+
+        val accessToken = createJwtToken(
+            claims = claims,
+            subject = staffId,
+            issuedAt = issuedAt,
+            expiration = accessTokenExpiration,
+        )
+
+        val refreshToken = createJwtToken(
+            claims = claims,
+            subject = staffId,
+            issuedAt = issuedAt,
+            expiration = refreshTokenExpiration,
+        )
+
+        return WorkfolioToken(
+            accessToken = accessToken,
+            refreshToken = refreshToken,
+        )
+    }
+
     fun reissueToken(
         workerId: String,
         originalRefreshToken: String,
     ): WorkfolioToken {
-        val claims = setClaims(workerId, emptyList())
+        val originalClaims = parseClaims(originalRefreshToken)
+        val type = originalClaims["type"]?.toString() ?: "WORKER"
+        
+        val claims = setClaims(workerId, emptyList(), type)
         val issuedAt = Instant.now().truncatedTo(ChronoUnit.SECONDS)
         val accessTokenExpiration = issuedAt.plus(accessTokenExpirationHours, ChronoUnit.DAYS)
 
@@ -72,8 +107,7 @@ class JwtTokenProvider(
             expiration = accessTokenExpiration,
         )
 
-        val originalRefreshTokenClaims = parseClaims(originalRefreshToken)
-        val refreshTokenExpirationDate = originalRefreshTokenClaims.expiration.toInstant()
+        val refreshTokenExpirationDate = originalClaims.expiration.toInstant()
 
         val refreshToken = createJwtToken(
             claims = claims,
@@ -90,7 +124,14 @@ class JwtTokenProvider(
     fun getAuthentication(token: String): Authentication {
         val claims = parseClaims(token)
         val id = claims["id"].toString()
-        val userDetails = workerUserDetailService.loadUserByUsername(id)
+        val type = claims["type"]?.toString() ?: "WORKER"
+        
+        val userDetails = when (type) {
+            "STAFF" -> staffDetailService.loadUserByUsername(id)
+            "WORKER" -> workerUserDetailService.loadUserByUsername(id)
+            else -> workerUserDetailService.loadUserByUsername(id)
+        }
+        
         return UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
     }
 
@@ -156,10 +197,11 @@ class JwtTokenProvider(
         return Keys.hmacShaKeyFor(keyBytes)
     }
 
-    private fun setClaims(id: String, roles: List<String>): Map<String, Any> {
+    private fun setClaims(id: String, roles: List<String>, type: String = "WORKER"): Map<String, Any> {
         val claims = mutableMapOf<String, Any>()
 
         claims["id"] = id
+        claims["type"] = type
         claims["roles"] = roles
         claims["jit"] = UUID.randomUUID().toString()
 

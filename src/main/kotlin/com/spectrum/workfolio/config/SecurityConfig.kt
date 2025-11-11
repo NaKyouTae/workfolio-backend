@@ -60,7 +60,7 @@ class SecurityConfig(
         }
         .authorizeHttpRequests {
             it
-                .requestMatchers("/api/oauth2/**").permitAll()
+                .requestMatchers("/api/oauth2/**", "/api/staffs/login").permitAll()
                 .requestMatchers("/login/**", "/error", "/favicon.ico").permitAll()
                 .anyRequest().authenticated()
         }

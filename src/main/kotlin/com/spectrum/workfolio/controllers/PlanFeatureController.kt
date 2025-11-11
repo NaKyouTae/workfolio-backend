@@ -5,7 +5,8 @@ import com.spectrum.workfolio.proto.planfeature.PlanFeatureCreateRequest
 import com.spectrum.workfolio.proto.planfeature.PlanFeatureGetResponse
 import com.spectrum.workfolio.proto.planfeature.PlanFeatureListResponse
 import com.spectrum.workfolio.proto.planfeature.PlanFeatureUpdateRequest
-import com.spectrum.workfolio.services.PlanFeatureService
+import com.spectrum.workfolio.services.plan.PlanFeatureCommandService
+import com.spectrum.workfolio.services.plan.PlanFeatureQueryService
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -19,17 +20,19 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/plan-features")
 class PlanFeatureController(
-    private val planFeatureService: PlanFeatureService,
+    private val planFeatureQueryService: PlanFeatureQueryService,
+    private val planFeatureCommandService: PlanFeatureCommandService,
 ) {
 
     @GetMapping
-    fun getPlanFeatures(
-        @RequestParam(required = false) planId: String?,
+    fun listPlanFeatures(
+        @RequestParam(name = "plan_id", required = false) planId: String?,
+        @RequestParam(name = "feature_id", required = false) featureId: String?,
     ): PlanFeatureListResponse {
-        return if (planId != null) {
-            planFeatureService.getPlanFeaturesByPlanId(planId)
-        } else {
-            planFeatureService.getPlanFeatures()
+        return when {
+            planId != null -> planFeatureQueryService.listPlanFeaturesByPlanIdResult(planId)
+            featureId != null -> planFeatureQueryService.listPlanFeaturesByFeatureIdResult(featureId)
+            else -> planFeatureQueryService.listPlanFeaturesResult()
         }
     }
 
@@ -37,14 +40,14 @@ class PlanFeatureController(
     fun getPlanFeature(
         @PathVariable id: String,
     ): PlanFeatureGetResponse {
-        return planFeatureService.getPlanFeature(id)
+        return planFeatureQueryService.getPlanFeatureResult(id)
     }
 
     @PostMapping
     fun createPlanFeature(
         @RequestBody request: PlanFeatureCreateRequest,
     ): SuccessResponse {
-        planFeatureService.createPlanFeature(request)
+        planFeatureCommandService.createPlanFeature(request)
         return SuccessResponse.newBuilder().setIsSuccess(true).build()
     }
 
@@ -52,7 +55,7 @@ class PlanFeatureController(
     fun updatePlanFeature(
         @RequestBody request: PlanFeatureUpdateRequest,
     ): SuccessResponse {
-        planFeatureService.updatePlanFeature(request)
+        planFeatureCommandService.updatePlanFeature(request)
         return SuccessResponse.newBuilder().setIsSuccess(true).build()
     }
 
@@ -60,7 +63,7 @@ class PlanFeatureController(
     fun deletePlanFeature(
         @PathVariable id: String,
     ): SuccessResponse {
-        planFeatureService.deletePlanFeature(id)
+        planFeatureCommandService.deletePlanFeature(id)
         return SuccessResponse.newBuilder().setIsSuccess(true).build()
     }
 }

@@ -9,6 +9,7 @@ fun PlanFeature.toProto(): com.spectrum.workfolio.proto.common.PlanFeature {
     builder.setId(this.id)
     builder.setPlan(this.plan.toProto())
     builder.setFeature(this.feature.toProto())
+    builder.setLimitCount(this.limitCount ?: 0)
 
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))

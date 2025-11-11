@@ -20,6 +20,7 @@ class JwtAuthenticationFilter(
     override fun shouldNotFilter(request: HttpServletRequest): Boolean {
         val excludePath = listOf(
             "/api/oauth2",
+            "/api/staffs/login",
             "/login",
             "/logout",
             "/error",
