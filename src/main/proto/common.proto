@@ -747,6 +747,7 @@ message PlanFeature {
   Plan plan = 50;
   Feature feature = 51;
   int32 limit_count = 52;
+  string description = 53;
 
   uint64 created_at = 98;
   uint64 updated_at = 99;

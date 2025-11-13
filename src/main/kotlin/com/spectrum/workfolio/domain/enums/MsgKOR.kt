@@ -29,6 +29,7 @@ enum class MsgKOR(val message: String) {
     NOT_FOUND_SYSTEM_CONFIG("존재하지 않는 설정입니다."),
     NOT_FOUND_NOTICE("존재하지 않는 공지입니다."),
     NOT_FOUND_PLAN("존재하지 않는 플랜입니다."),
+    NOT_FOUND_PLAN_SUBSCRIPTION("존재하지 않는 플랜 구독 옵션입니다."),
     NOT_FOUND_FEATURE("존재하지 않는 기능입니다."),
     NOT_FOUND_PLAN_FEATURE("존재하지 않는 플랜-기능입니다."),
     ALREADY_EXISTS_PLAN_FEATURE("이미 존재하는 플랜-기능입니다."),

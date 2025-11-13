@@ -28,6 +28,7 @@ class PlanFeature(
     plan: Plan,
     feature: Feature,
     limitCount: Int? = null,
+    description: String,
 ) : BaseEntity("PF") {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "plan_id", nullable = false)
@@ -43,13 +44,19 @@ class PlanFeature(
     var limitCount: Int? = limitCount
         protected set
 
+    @Column(name = "description", columnDefinition = "TEXT", nullable = true)
+    var description: String? = description
+        protected set
+
     fun changeInfo(
         plan: Plan,
         feature: Feature,
-        limitCount: Int,
+        limitCount: Int?,
+        description: String,
     ) {
         this.plan = plan
         this.feature = feature
         this.limitCount = limitCount
+        this.description = description
     }
 }

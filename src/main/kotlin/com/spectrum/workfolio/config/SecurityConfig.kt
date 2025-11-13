@@ -61,6 +61,7 @@ class SecurityConfig(
         .authorizeHttpRequests {
             it
                 .requestMatchers("/api/oauth2/**", "/api/staffs/login").permitAll()
+                .requestMatchers("/api/release/**").permitAll()
                 .requestMatchers("/login/**", "/error", "/favicon.ico").permitAll()
                 .anyRequest().authenticated()
         }

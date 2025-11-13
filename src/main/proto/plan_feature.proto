@@ -20,6 +20,7 @@ message PlanFeatureCreateRequest {
   string plan_id = 1;
   string feature_id = 2;
   int32 limit_count = 3;
+  string description = 4;
 }
 
 message PlanFeatureUpdateRequest {
@@ -27,5 +28,6 @@ message PlanFeatureUpdateRequest {
   string plan_id = 2;
   string feature_id = 3;
   int32 limit_count = 4;
+  string description = 5;
 }
 

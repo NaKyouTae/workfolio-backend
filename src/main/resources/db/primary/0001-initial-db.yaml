@@ -1803,15 +1803,20 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: feature_id
-                  type: VARCHAR(16)
-                  constraints:
-                    nullable: false
-              - column:
                   name: limit_count
                   type: INT
                   constraints:
                     nullable: true
+              - column:
+                  name: description
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: feature_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
               - column:
                   name: created_at
                   type: TIMESTAMP(6)

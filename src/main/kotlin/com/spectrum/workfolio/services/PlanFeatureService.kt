@@ -58,7 +58,8 @@ class PlanFeatureService(
         val planFeature = PlanFeature(
             plan = plan,
             feature = feature,
-            limitCount = request.limitCount,
+            limitCount = request.limitCount.takeIf { it > 0 },
+            description = request.description,
         )
 
         planFeatureRepository.save(planFeature)
@@ -76,9 +77,14 @@ class PlanFeatureService(
 
         val plan = planService.getPlanById(request.planId)
         val feature = featureService.getFeatureById(request.featureId)
-        val limitCount = request.limitCount
+        val limitCount = request.limitCount.takeIf { it > 0 }
 
-        planFeature.changeInfo(plan, feature, limitCount)
+        planFeature.changeInfo(
+            plan = plan,
+            feature = feature,
+            limitCount = limitCount,
+            description = request.description,
+        )
 
         planFeatureRepository.save(planFeature)
     }

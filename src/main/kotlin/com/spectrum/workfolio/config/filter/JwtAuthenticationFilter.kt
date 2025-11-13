@@ -21,6 +21,7 @@ class JwtAuthenticationFilter(
         val excludePath = listOf(
             "/api/oauth2",
             "/api/staffs/login",
+            "/api/release",
             "/login",
             "/logout",
             "/error",

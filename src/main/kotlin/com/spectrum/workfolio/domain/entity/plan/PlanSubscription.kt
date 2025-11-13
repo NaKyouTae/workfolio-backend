@@ -8,38 +8,38 @@ import jakarta.persistence.Index
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
-import java.math.BigDecimal
 
 @Entity
 @Table(
     name = "plan_subscriptions",
     indexes = [
         Index(name = "idx_plan_subscriptions_priority", columnList = "priority"),
+        Index(name = "idx_plan_subscriptions_plan_id", columnList = "plan_id"),
     ],
 )
 class PlanSubscription(
     durationMonths: Int,
-    totalPrice: BigDecimal,
-    monthlyEquivalent: BigDecimal,
-    savingsAmount: BigDecimal,
+    totalPrice: Long,
+    monthlyEquivalent: Long,
+    savingsAmount: Long,
     discountRate: Int,
     priority: Int = 0,
     plan: Plan,
-) : BaseEntity("PO") {
+) : BaseEntity("PS") {
     @Column(name = "duration_months", nullable = false)
     var durationMonths: Int = durationMonths
         protected set
 
     @Column(name = "total_price", nullable = false)
-    var totalPrice: BigDecimal = totalPrice
+    var totalPrice: Long = totalPrice
         protected set
 
     @Column(name = "monthly_equivalent", nullable = false)
-    var monthlyEquivalent: BigDecimal = monthlyEquivalent
+    var monthlyEquivalent: Long = monthlyEquivalent
         protected set
 
     @Column(name = "savings_amount", nullable = false)
-    var savingsAmount: BigDecimal = savingsAmount
+    var savingsAmount: Long = savingsAmount
         protected set
 
     @Column(name = "discount_rate", nullable = false)
@@ -57,17 +57,19 @@ class PlanSubscription(
 
     fun changeInfo(
         durationMonths: Int,
-        totalPrice: BigDecimal,
-        monthlyEquivalent: BigDecimal,
-        savingsAmount: BigDecimal,
+        totalPrice: Long,
+        monthlyEquivalent: Long,
+        savingsAmount: Long,
         discountRate: Int,
-        priority: Int = 0,
+        priority: Int,
+        plan: Plan,
     ) {
         this.durationMonths = durationMonths
         this.totalPrice = totalPrice
-        this.discountRate = discountRate
         this.monthlyEquivalent = monthlyEquivalent
         this.savingsAmount = savingsAmount
+        this.discountRate = discountRate
         this.priority = priority
+        this.plan = plan
     }
 }

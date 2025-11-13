@@ -32,6 +32,7 @@ class PlanFeatureCommandService(
             plan = plan,
             feature = feature,
             limitCount = request.limitCount,
+            description = request.description,
         )
         return planFeatureRepository.save(planFeature)
     }
@@ -47,6 +48,7 @@ class PlanFeatureCommandService(
             plan = plan,
             feature = feature,
             limitCount = request.limitCount,
+            description = request.description,
         )
 
         return planFeatureRepository.save(planFeature)

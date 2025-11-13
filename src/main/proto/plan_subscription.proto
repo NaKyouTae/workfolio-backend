@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package com.spectrum.workfolio.proto;
+
+option java_multiple_files = true;
+option java_package = "com.spectrum.workfolio.proto.plansubscription";
+option java_outer_classname = "PlanSubscriptionProto";
+
+message PlanSubscriptionListResponse {
+  repeated PlanSubscription plan_subscriptions = 1;
+}
+
+message PlanSubscriptionGetResponse {
+  PlanSubscription plan_subscription = 1;
+}
+
+message PlanSubscriptionCreateRequest {
+  string plan_id = 1;
+  string duration_months = 2;
+  uint64 total_price = 3;
+  uint64 monthly_equivalent = 4;
+  uint64 savings_amount = 5;
+  uint32 discount_rate = 6;
+  uint32 priority = 7;
+}
+
+message PlanSubscriptionUpdateRequest {
+  string id = 1;
+  string plan_id = 2;
+  string duration_months = 3;
+  uint64 total_price = 4;
+  uint64 monthly_equivalent = 5;
+  uint64 savings_amount = 6;
+  uint32 discount_rate = 7;
+  uint32 priority = 8;
+}
+
