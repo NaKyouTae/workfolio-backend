@@ -36,11 +36,11 @@ data class KakaoAccount(
     val profile: Profile, // 프로필 정보
     val name: String, // 카카오계정 이름
     @JsonProperty("phone_number")
-    val phoneNumber: String, // 전화번호
-    val email: String, // 카카오계정 이메일
-    val birthyear: String, // 출생 연도
-    val birthday: String, // 생일 (MMDD 형식)
-    val gender: String, // 성별 (female, male)
+    val phoneNumber: String? = null, // 전화번호
+    val email: String? = null, // 카카오계정 이메일
+    val birthyear: String? = null, // 출생 연도
+    val birthday: String? = null, // 생일 (MMDD 형식)
+    val gender: String? = null, // 성별 (female, male)
     @JsonProperty("age_range")
     val ageRange: String? = null, // 연령대
     val ci: String? = null, // 연계정보 (CI)
@@ -92,9 +92,20 @@ data class KakaoAccount(
      * birthyear와 birthday를 결합하여 LocalDate로 변환
      * @return birthyear와 birthday가 모두 존재하면 LocalDate, 아니면 null
      */
-    fun getBirthDate(): LocalDate {
+    fun getBirthDate(): LocalDate? {
+        if (birthyear == null || birthday == null) {
+            return null
+        }
+
         val dateString = birthyear + birthday // "19930804" 형식
         return LocalDate.parse(dateString, DateTimeFormatter.ofPattern("yyyyMMdd"))
+    }
+
+    fun getGender(): Gender? {
+        if(this.gender == null) {
+            return null
+        }
+        return Gender.valueOf(gender.uppercase())
     }
 
     /**
@@ -102,6 +113,10 @@ data class KakaoAccount(
      * @return 숫자만 포함된 전화번호 문자열
      */
     fun getNormalizedPhoneNumber(): String {
+        if(phoneNumber == null) {
+            return ""
+        }
+
         return phoneNumber
             .replace("+82 ", "0") // 국가 코드 +82를 0으로 변환
             .replace(Regex("[\\s-]"), "") // 공백과 하이픈 제거

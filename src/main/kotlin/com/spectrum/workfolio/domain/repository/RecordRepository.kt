@@ -28,13 +28,13 @@ interface RecordRepository : JpaRepository<Record, String> {
     @Query(
         value = """
         SELECT * FROM records 
-        WHERE worker_id = :workerId 
+        WHERE record_group_id in (:recordGroupIds) 
         AND search_vector @@ plainto_tsquery('simple', :keyword)
         ORDER BY created_at DESC
     """,
         nativeQuery = true,
     )
-    fun searchByFullText(workerId: String, keyword: String): List<Record>
+    fun searchByFullText(recordGroupIds: List<String>, keyword: String): List<Record>
 
     // Full-Text Search - 관련성 순위로 정렬
     @Query(
@@ -60,5 +60,5 @@ interface RecordRepository : JpaRepository<Record, String> {
     """,
         nativeQuery = true,
     )
-    fun searchPublicResumes(keyword: String, limit: Int = 20): List<Record>
+    fun searchPublicRecords(keyword: String, limit: Int = 20): List<Record>
 }

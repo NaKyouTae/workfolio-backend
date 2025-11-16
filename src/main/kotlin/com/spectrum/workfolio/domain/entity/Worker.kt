@@ -32,8 +32,8 @@ class Worker(
     nickName: String,
     phone: String,
     email: String,
-    birthDate: LocalDate,
-    gender: Gender,
+    birthDate: LocalDate? = null,
+    gender: Gender? = null,
 ) : BaseEntity("WK") {
 
     @Column(name = "nick_name", length = 512, nullable = false, unique = true)
@@ -48,13 +48,13 @@ class Worker(
     var email: String = email
         protected set
 
-    @Column(name = "birth_date", nullable = false)
-    var birthDate: LocalDate = birthDate
+    @Column(name = "birth_date", nullable = true)
+    var birthDate: LocalDate? = birthDate
         protected set
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "gender", length = 24, nullable = false)
-    var gender: Gender = gender
+    @Column(name = "gender", length = 24, nullable = true)
+    var gender: Gender? = gender
         protected set
 
     @OneToMany(mappedBy = "worker", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
@@ -77,8 +77,8 @@ class Worker(
         nickName: String,
         phone: String,
         email: String,
-        birthDate: LocalDate,
-        gender: Gender,
+        birthDate: LocalDate? = null,
+        gender: Gender? = null,
     ) {
         this.nickName = nickName
         this.phone = phone

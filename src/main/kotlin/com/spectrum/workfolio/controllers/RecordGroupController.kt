@@ -44,10 +44,7 @@ class RecordGroupController(
     }
 
     @GetMapping("/details/{id}")
-    fun listWorkerRecordGroupDetail(
-        @AuthenticatedUser workerId: String,
-        @PathVariable id: String,
-    ): RecordGroupDetailResponse {
+    fun listWorkerRecordGroupDetail(@PathVariable id: String): RecordGroupDetailResponse {
         return recordGroupService.listRecordGroupDetailResult(id)
     }
 
@@ -56,7 +53,11 @@ class RecordGroupController(
         @AuthenticatedUser workerId: String,
         @RequestBody request: CreateRecordGroupRequest,
     ): RecordGroupResponse {
-        return recordGroupService.createRecordGroup(workerId, false, request)
+        val result = recordGroupService.createRecordGroup(workerId, false, request)
+        println("========")
+        println(result)
+        println("========")
+        return result
     }
 
     @PostMapping("/join")

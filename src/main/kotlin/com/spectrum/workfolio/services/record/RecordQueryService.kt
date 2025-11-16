@@ -28,20 +28,20 @@ class RecordQueryService(
     }
 
     // 내 이력서 검색
-    fun searchMyResumes(workerId: String, keyword: String): ListRecordResponse {
-        val list = recordRepository.searchByFullText(workerId, keyword)
+    fun searchMyRecords(recordGroupIds: List<String>, keyword: String): ListRecordResponse {
+        val list = recordRepository.searchByFullText(recordGroupIds, keyword)
         return convertListRecordResponse(list)
     }
 
     // 관련성 높은 순으로 검색
-    fun searchMyResumesRanked(workerId: String, keyword: String): ListRecordResponse {
+    fun searchMyRecordsRanked(workerId: String, keyword: String): ListRecordResponse {
         val list = recordRepository.searchByFullTextRanked(workerId, keyword)
         return convertListRecordResponse(list)
     }
 
     // 공개 이력서 검색 (전체 검색)
-    fun searchPublicResumes(keyword: String, limit: Int = 20): ListRecordResponse {
-        val list = recordRepository.searchPublicResumes(keyword, limit)
+    fun searchPublicRecords(keyword: String, limit: Int = 20): ListRecordResponse {
+        val list = recordRepository.searchPublicRecords(keyword, limit)
         return convertListRecordResponse(list)
     }
 

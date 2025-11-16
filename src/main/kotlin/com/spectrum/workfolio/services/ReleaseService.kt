@@ -36,4 +36,3 @@ class ReleaseService(
         return ReleasePlanListResponse.newBuilder().addAllPlans(planDetails).build()
     }
 }
-

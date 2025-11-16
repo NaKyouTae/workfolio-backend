@@ -8,16 +8,17 @@ option java_outer_classname = "CommonProto";
 
 message Worker {
   enum Gender {
-    MALE = 0;
-    FEMALE = 1;
+    UNKNOWN = 0;
+    MALE = 1;
+    FEMALE = 2;
   }
 
   string id = 1;
   string nick_name = 2;
   string phone = 3;
   string email = 4;
-  uint64 birth_date = 5;
-  Gender gender = 6;
+  optional uint64 birth_date = 5;
+  optional Gender gender = 6;
 
   uint64 created_at = 98;
   uint64 updated_at = 99;
@@ -301,6 +302,11 @@ message RecordGroup {
     PRIVATE = 2;
     SHARED = 3;
   }
+  enum RecordGroupRole {
+    ROLE_UNKNOWN = 0;
+    FULL = 1;
+    VIEW = 2;
+  }
 
   string id = 1;
   RecordGroupType type = 2;
@@ -308,6 +314,7 @@ message RecordGroup {
   bool is_default = 4;
   string public_id = 5;
   string color = 6;
+  RecordGroupRole role = 7;
 
   uint64 priority = 30;
 
@@ -318,8 +325,15 @@ message RecordGroup {
 }
 
 message WorkerRecordGroup {
+  enum RecordGroupRole {
+    UNKNOWN = 0;
+    FULL = 1;
+    VIEW = 2;
+  }
+
   string id = 1;
   string public_id = 2;
+  RecordGroupRole role = 3;
 
   Worker worker = 50;
   RecordGroup record_group = 51;

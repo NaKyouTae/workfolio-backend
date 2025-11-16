@@ -2,6 +2,7 @@ package com.spectrum.workfolio.services.record
 
 import com.spectrum.workfolio.domain.entity.record.RecordGroup
 import com.spectrum.workfolio.domain.enums.MsgKOR
+import com.spectrum.workfolio.domain.enums.RecordGroupRole
 import com.spectrum.workfolio.domain.enums.RecordGroupType
 import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.RecordGroupRepository
@@ -44,7 +45,7 @@ class RecordGroupService(
     @Transactional(readOnly = true)
     fun listSharedRecordGroups(workerId: String): List<com.spectrum.workfolio.proto.common.RecordGroup> {
         val workerRecordGroups = workerRecordGroupService.listWorkerRecordGroupByWorkerId(workerId)
-        val recordGroups = workerRecordGroups.map { it -> it.recordGroup }.sortedBy { it.priority }
+        val recordGroups = workerRecordGroups.map { it.recordGroup }.sortedBy { it.priority }
         return recordGroups.map { it.toProto() }
     }
 
@@ -83,16 +84,19 @@ class RecordGroupService(
             isDefault = isDefault,
             publicId = RecordGroup.generateShortPublicId(),
             priority = request.priority,
+            role = RecordGroupRole.VIEW,
             worker = worker,
         )
 
         val createdRecordGroup = recordGroupRepository.save(recordGroup)
 
         if (createdRecordGroup.type == RecordGroupType.SHARED) {
-            workerRecordGroupService.createWorkerRecordGroup(workerId, recordGroup)
+            workerRecordGroupService.createWorkerRecordGroup(workerId, recordGroup, com.spectrum.workfolio.domain.enums.RecordGroupRole.FULL)
         }
 
-        return RecordGroupResponse.newBuilder().setRecordGroup(createdRecordGroup.toProto()).build()
+        val build = RecordGroupResponse.newBuilder().setRecordGroup(createdRecordGroup.toProto()).build()
+
+        return build
     }
 
     @Transactional
@@ -126,7 +130,8 @@ class RecordGroupService(
 
         recordGroup.changeType(RecordGroupType.SHARED)
 
-        workerRecordGroupService.createWorkerRecordGroup(request.workerId, recordGroup)
+        val role = com.spectrum.workfolio.domain.enums.RecordGroupRole.valueOf(request.role.name)
+        workerRecordGroupService.createWorkerRecordGroup(request.workerId, recordGroup, role)
 
         return recordGroup
     }

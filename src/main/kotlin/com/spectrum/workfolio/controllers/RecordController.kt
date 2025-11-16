@@ -52,10 +52,10 @@ class RecordController(
 
     @GetMapping("/keywords")
     fun searchMyResumes(
-        @AuthenticatedUser workerId: String,
         @RequestParam keyword: String,
+        @RequestParam recordGroupIds: List<String>,
     ): ListRecordResponse {
-        return recordQueryService.searchMyResumes(workerId, keyword)
+        return recordQueryService.searchMyRecords(recordGroupIds, keyword)
     }
 
     @PostMapping

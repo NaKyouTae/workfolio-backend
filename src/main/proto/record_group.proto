@@ -27,6 +27,7 @@ message RecordGroupDetailResponse {
 message RecordGroupJoinRequest {
   string record_group_id = 1;
   string worker_id = 2;
+  RecordGroup.RecordGroupRole role = 3;
 }
 
 message RecordGroupUpdateRequest {

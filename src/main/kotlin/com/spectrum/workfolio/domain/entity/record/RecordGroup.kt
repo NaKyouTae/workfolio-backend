@@ -2,6 +2,7 @@ package com.spectrum.workfolio.domain.entity.record
 
 import com.spectrum.workfolio.domain.entity.BaseEntity
 import com.spectrum.workfolio.domain.entity.Worker
+import com.spectrum.workfolio.domain.enums.RecordGroupRole
 import com.spectrum.workfolio.domain.enums.RecordGroupType
 import com.spectrum.workfolio.utils.StringUtil
 import jakarta.persistence.CascadeType
@@ -33,6 +34,7 @@ class RecordGroup(
     isDefault: Boolean,
     publicId: String,
     type: RecordGroupType,
+    role: RecordGroupRole,
     priority: Long,
     worker: Worker,
 ) : BaseEntity("RG") {
@@ -57,6 +59,11 @@ class RecordGroup(
     var type: RecordGroupType = type
         protected set
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    var role: RecordGroupRole = role
+        protected set
+
     @Column(name = "priority", nullable = false)
     var priority: Long = priority
         protected set
@@ -67,11 +74,11 @@ class RecordGroup(
     var worker: Worker = worker
         protected set
 
-    @OneToMany(mappedBy = "recordGroup", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "recordGroup", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     private var mutableRecords: MutableList<Record> = mutableListOf()
     val records: List<Record> get() = mutableRecords.toList()
 
-    @OneToMany(mappedBy = "recordGroup", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "recordGroup", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     private var mutableWorkerRecordGroups: MutableList<WorkerRecordGroup> = mutableListOf()
     val workerRecordGroups: List<WorkerRecordGroup> get() = mutableWorkerRecordGroups.toList()
 

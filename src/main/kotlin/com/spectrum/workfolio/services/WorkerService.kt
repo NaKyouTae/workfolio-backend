@@ -3,11 +3,13 @@ package com.spectrum.workfolio.services
 import com.spectrum.workfolio.config.service.oauth.KakaoApiProvider
 import com.spectrum.workfolio.domain.entity.Worker
 import com.spectrum.workfolio.domain.enums.AccountType
+import com.spectrum.workfolio.domain.enums.ActivityType
 import com.spectrum.workfolio.domain.enums.Gender
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.repository.AccountRepository
 import com.spectrum.workfolio.domain.repository.WorkerRepository
 import com.spectrum.workfolio.proto.worker.WorkerUpdateRequest
+import com.spectrum.workfolio.utils.EnumUtils.convertProtoEnumSafe
 import com.spectrum.workfolio.utils.TimeUtil
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.slf4j.LoggerFactory
@@ -33,6 +35,11 @@ class WorkerService(
         return workerRepository.findWorkersExcludingIdByNickNameStartingWith(workerId, nickName)
     }
 
+    @Transactional(readOnly = true)
+    fun checkNickNameAvailability(nickName: String): Boolean {
+        return workerRepository.findByNickName(nickName) == null
+    }
+
     @Transactional
     fun createWorker(worker: Worker): Worker {
         return workerRepository.save(worker)
@@ -44,10 +51,10 @@ class WorkerService(
 
         worker.changeInfo(
             nickName = request.nickName,
-            phone = request.phone,
-            email = request.email,
-            birthDate = TimeUtil.ofEpochMilli(request.birthDate).toLocalDate(),
-            gender = Gender.valueOf(request.gender.name),
+            phone = request.phone ?: "",
+            email = request.email ?: "",
+            birthDate = TimeUtil.ofEpochMilliNullable(request.birthDate)?.toLocalDate(),
+            gender = convertProtoEnumSafe<Gender>(request.gender),
         )
 
         return workerRepository.save(worker)

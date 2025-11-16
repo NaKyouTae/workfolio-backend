@@ -3,6 +3,7 @@ package com.spectrum.workfolio.services.record
 import com.spectrum.workfolio.domain.entity.record.RecordGroup
 import com.spectrum.workfolio.domain.entity.record.WorkerRecordGroup
 import com.spectrum.workfolio.domain.enums.MsgKOR
+import com.spectrum.workfolio.domain.enums.RecordGroupRole
 import com.spectrum.workfolio.domain.repository.WorkerRecordGroupRepository
 import com.spectrum.workfolio.services.WorkerService
 import com.spectrum.workfolio.utils.StringUtil
@@ -39,7 +40,7 @@ class WorkerRecordGroupService(
     }
 
     @Transactional
-    fun createWorkerRecordGroup(workerId: String, recordGroup: RecordGroup): WorkerRecordGroup {
+    fun createWorkerRecordGroup(workerId: String, recordGroup: RecordGroup, role: RecordGroupRole): WorkerRecordGroup {
         if (workerRecordGroupRepository.existsByWorkerIdAndRecordGroupId(workerId, recordGroup.id)) {
             throw WorkfolioException(MsgKOR.ALREADY_EXIST_WORKER_RECORD_GROUP.message)
         }
@@ -49,6 +50,7 @@ class WorkerRecordGroupService(
             publicId = StringUtil.generateRandomString(16),
             worker = worker,
             recordGroup = recordGroup,
+            role = role,
         )
 
         return workerRecordGroupRepository.save(workerRecordGroup)

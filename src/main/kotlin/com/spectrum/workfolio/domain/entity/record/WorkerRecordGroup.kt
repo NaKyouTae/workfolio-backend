@@ -2,9 +2,12 @@ package com.spectrum.workfolio.domain.entity.record
 
 import com.spectrum.workfolio.domain.entity.BaseEntity
 import com.spectrum.workfolio.domain.entity.Worker
+import com.spectrum.workfolio.domain.enums.RecordGroupRole
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.FetchType
 import jakarta.persistence.Index
 import jakarta.persistence.JoinColumn
@@ -28,6 +31,7 @@ class WorkerRecordGroup(
     publicId: String,
     worker: Worker,
     recordGroup: RecordGroup,
+    role: RecordGroupRole,
 ) : BaseEntity("WR") {
 
     @Column(name = "public_id", length = 16, nullable = false)
@@ -43,4 +47,13 @@ class WorkerRecordGroup(
     @JoinColumn(name = "record_group_id", nullable = false)
     var recordGroup: RecordGroup = recordGroup
         protected set
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", length = 32, nullable = false)
+    var role: RecordGroupRole = role
+        protected set
+
+    fun changeRole(role: RecordGroupRole) {
+        this.role = role
+    }
 }

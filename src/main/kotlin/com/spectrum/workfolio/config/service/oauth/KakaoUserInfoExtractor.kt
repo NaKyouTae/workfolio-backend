@@ -29,9 +29,9 @@ class KakaoUserInfoExtractor : OAuthUserInfoExtractor {
             OAuthUserInfo(
                 providerId = providerId,
                 nickName = profile.nickname,
-                email = kakaoAccount.email,
+                email = kakaoAccount.email ?: "",
                 phoneNumber = kakaoAccount.getNormalizedPhoneNumber(),
-                gender = Gender.valueOf(kakaoAccount.gender.uppercase()),
+                gender = kakaoAccount.getGender(),
                 birthDate = kakaoAccount.getBirthDate(),
                 profileImageUrl = profile.profileImageUrl,
             )

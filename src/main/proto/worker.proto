@@ -11,10 +11,10 @@ option java_outer_classname = "WorkerProto";
 message WorkerUpdateRequest {
   string id = 1;
   string nick_name = 2;
-  string phone = 3;
-  string email = 4;
-  uint64 birth_date = 5;
-  Worker.Gender gender = 6;
+  optional string phone = 3;
+  optional string email = 4;
+  optional uint64 birth_date = 5;
+  optional Worker.Gender gender = 6;
 }
 
 message WorkerGetResponse {
@@ -27,4 +27,8 @@ message WorkerListResponse {
 
 message WorkerUpdateNickNameResponse {
   bool is_success = 1;
+}
+
+message WorkerCheckNickNameResponse {
+  bool is_available = 1;
 }

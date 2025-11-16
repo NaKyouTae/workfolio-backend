@@ -34,12 +34,12 @@ databaseChangeLog:
                   name: birth_date
                   type: TIMESTAMP(6)
                   constraints:
-                    nullable: false
+                    nullable: true
               - column:
                   name: gender
                   type: VARCHAR(24)
                   constraints:
-                    nullable: false
+                    nullable: true
               - column:
                   name: created_at
                   type: TIMESTAMP(6)
@@ -104,6 +104,11 @@ databaseChangeLog:
                     unique: true
               - column:
                   name: type
+                  type: VARCHAR(32)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role
                   type: VARCHAR(32)
                   constraints:
                     nullable: false
@@ -180,11 +185,6 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: career_id
-                  type: VARCHAR(16)
-                  constraints:
-                    nullable: true
-              - column:
                   name: created_at
                   type: TIMESTAMP(6)
                   constraints:
@@ -220,8 +220,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: BIGINT
-                  autoIncrement: true
+                  type: VARCHAR(16)
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -239,6 +238,11 @@ databaseChangeLog:
               - column:
                   name: record_group_id
                   type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role
+                  type: VARCHAR(32)
                   constraints:
                     nullable: false
               - column:
