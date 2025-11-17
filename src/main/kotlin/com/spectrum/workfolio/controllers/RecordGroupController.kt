@@ -53,11 +53,7 @@ class RecordGroupController(
         @AuthenticatedUser workerId: String,
         @RequestBody request: CreateRecordGroupRequest,
     ): RecordGroupResponse {
-        val result = recordGroupService.createRecordGroup(workerId, false, request)
-        println("========")
-        println(result)
-        println("========")
-        return result
+        return recordGroupService.createRecordGroup(workerId, false, request)
     }
 
     @PostMapping("/join")
@@ -65,8 +61,7 @@ class RecordGroupController(
         @AuthenticatedUser workerId: String,
         @RequestBody request: RecordGroupJoinRequest,
     ): RecordGroupResponse {
-        val recordGroup = recordGroupService.joinRecordGroup(workerId, request)
-        return RecordGroupResponse.newBuilder().setRecordGroup(recordGroup.toProto()).build()
+        return recordGroupService.joinRecordGroup(workerId, request)
     }
 
     @PutMapping("/{recordGroupId}")

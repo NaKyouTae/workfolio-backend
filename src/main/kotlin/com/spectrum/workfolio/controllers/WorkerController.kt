@@ -1,7 +1,6 @@
 package com.spectrum.workfolio.controllers
 
 import com.spectrum.workfolio.config.annotation.AuthenticatedUser
-import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.proto.common.SuccessResponse
 import com.spectrum.workfolio.proto.worker.WorkerCheckNickNameResponse
 import com.spectrum.workfolio.proto.worker.WorkerGetResponse
@@ -27,8 +26,7 @@ class WorkerController(
     fun getWorker(
         @AuthenticatedUser workerId: String,
     ): WorkerGetResponse {
-        val worker = workerService.getWorker(workerId)
-        return WorkerGetResponse.newBuilder().setWorker(worker.toProto()).build()
+        return workerService.getWorkerResult(workerId)
     }
 
     @GetMapping("/check/{nickname}")
@@ -44,8 +42,7 @@ class WorkerController(
         @AuthenticatedUser workerId: String,
         @PathVariable nickname: String,
     ): WorkerListResponse {
-        val workers = workerService.getWorkersByNickName(workerId, nickname)
-        return WorkerListResponse.newBuilder().addAllWorkers(workers.map { it.toProto() }).build()
+        return workerService.getWorkersByNickName(workerId, nickname)
     }
 
     @PutMapping

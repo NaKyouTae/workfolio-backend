@@ -92,8 +92,22 @@ class RecordGroup(
         this.priority = priority
     }
 
-    fun changeType(type: RecordGroupType) {
+    fun changeType(
+        title: String,
+        color: String,
+        role: RecordGroupRole,
+        type: RecordGroupType
+    ) {
+        this.title = title
+        this.color = color
+        this.role = role
         this.type = type
+    }
+
+    fun changeWorker(
+        worker: Worker,
+    ) {
+        this.worker = worker
     }
 
     companion object {

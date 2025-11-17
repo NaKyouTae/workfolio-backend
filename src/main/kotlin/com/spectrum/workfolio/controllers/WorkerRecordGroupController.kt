@@ -14,11 +14,11 @@ class WorkerRecordGroupController(
 ) {
 
     @DeleteMapping
-    fun deleteRecordGroup(
+    fun leaveRecordGroup(
         @RequestParam(required = true) recordGroupId: String,
         @RequestParam(required = true) targetWorkerId: String,
     ): SuccessResponse {
-        workerRecordGroupService.deleteWorkerRecordGroup(targetWorkerId, recordGroupId)
+        workerRecordGroupService.leaveWorkerRecordGroup(targetWorkerId, recordGroupId)
         return SuccessResponse.newBuilder().setIsSuccess(true).build()
     }
 }

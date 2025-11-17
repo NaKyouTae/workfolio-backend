@@ -6,8 +6,11 @@ import com.spectrum.workfolio.domain.enums.AccountType
 import com.spectrum.workfolio.domain.enums.ActivityType
 import com.spectrum.workfolio.domain.enums.Gender
 import com.spectrum.workfolio.domain.enums.MsgKOR
+import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.AccountRepository
 import com.spectrum.workfolio.domain.repository.WorkerRepository
+import com.spectrum.workfolio.proto.worker.WorkerGetResponse
+import com.spectrum.workfolio.proto.worker.WorkerListResponse
 import com.spectrum.workfolio.proto.worker.WorkerUpdateRequest
 import com.spectrum.workfolio.utils.EnumUtils.convertProtoEnumSafe
 import com.spectrum.workfolio.utils.TimeUtil
@@ -31,8 +34,15 @@ class WorkerService(
     }
 
     @Transactional(readOnly = true)
-    fun getWorkersByNickName(workerId: String, nickName: String): List<Worker> {
-        return workerRepository.findWorkersExcludingIdByNickNameStartingWith(workerId, nickName)
+    fun getWorkerResult(id: String): WorkerGetResponse {
+        val worker = this.getWorker(id)
+        return WorkerGetResponse.newBuilder().setWorker(worker.toProto()).build()
+    }
+
+    @Transactional(readOnly = true)
+    fun getWorkersByNickName(workerId: String, nickName: String): WorkerListResponse {
+        val workers = workerRepository.findWorkersExcludingIdByNickNameStartingWith(workerId, nickName)
+        return WorkerListResponse.newBuilder().addAllWorkers(workers.map { it.toProto() }).build()
     }
 
     @Transactional(readOnly = true)

@@ -21,13 +21,24 @@ message RecordGroupListResponse {
 
 message RecordGroupDetailResponse {
   RecordGroup groups = 1;
-  repeated Worker workers = 2;
+  repeated WorkerRecordGroup workers = 2;
 }
 
 message RecordGroupJoinRequest {
-  string record_group_id = 1;
-  string worker_id = 2;
-  RecordGroup.RecordGroupRole role = 3;
+  message JoinWorkerRequest {
+    string worker_id = 1;
+    WorkerRecordGroup.RecordGroupRole role = 2;
+  }
+
+  string id = 1;
+  string title = 2;
+  string color = 3;
+
+  RecordGroup.RecordGroupType type = 30;
+  RecordGroup.RecordGroupRole default_role = 31;
+
+  repeated JoinWorkerRequest new_workers = 50;
+  repeated JoinWorkerRequest exist_workers = 51;
 }
 
 message RecordGroupUpdateRequest {

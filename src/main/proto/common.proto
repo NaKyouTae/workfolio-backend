@@ -304,8 +304,9 @@ message RecordGroup {
   }
   enum RecordGroupRole {
     ROLE_UNKNOWN = 0;
-    FULL = 1;
-    VIEW = 2;
+    ADMIN = 1;
+    FULL = 2;
+    VIEW = 3;
   }
 
   string id = 1;
@@ -327,8 +328,9 @@ message RecordGroup {
 message WorkerRecordGroup {
   enum RecordGroupRole {
     UNKNOWN = 0;
-    FULL = 1;
-    VIEW = 2;
+    ADMIN = 1;
+    FULL = 2;
+    VIEW = 3;
   }
 
   string id = 1;

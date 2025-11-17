@@ -53,7 +53,7 @@ class RecordGroupService(
     fun listEditableRecordGroups(workerId: String): List<com.spectrum.workfolio.proto.common.RecordGroup> {
         val ownedRecordGroup = this.listOwnedRecordGroups(workerId)
         val editableWorkerRecordGroup = workerRecordGroupService.listWorkerRecordGroupForEditable(workerId)
-        val editableRecordGroups = editableWorkerRecordGroup.map { it -> it.recordGroup.toProto() }
+        val editableRecordGroups = editableWorkerRecordGroup.map { it.recordGroup.toProto() }
 
         return ownedRecordGroup + editableRecordGroups
     }
@@ -62,7 +62,7 @@ class RecordGroupService(
     fun listRecordGroupDetailResult(id: String): RecordGroupDetailResponse {
         val recordGroup = this.getRecordGroup(id)
         val workerRecordGroups = recordGroup.workerRecordGroups
-        val workers = workerRecordGroups.map { it.worker.toProto() }
+        val workers = workerRecordGroups.map { it.toProto() }
 
         return RecordGroupDetailResponse.newBuilder()
             .setGroups(recordGroup.toProto())
@@ -91,7 +91,11 @@ class RecordGroupService(
         val createdRecordGroup = recordGroupRepository.save(recordGroup)
 
         if (createdRecordGroup.type == RecordGroupType.SHARED) {
-            workerRecordGroupService.createWorkerRecordGroup(workerId, recordGroup, com.spectrum.workfolio.domain.enums.RecordGroupRole.FULL)
+            workerRecordGroupService.createWorkerRecordGroup(
+                workerId,
+                recordGroup,
+                RecordGroupRole.VIEW
+            )
         }
 
         val build = RecordGroupResponse.newBuilder().setRecordGroup(createdRecordGroup.toProto()).build()
@@ -114,26 +118,34 @@ class RecordGroupService(
     }
 
     @Transactional
-    fun joinRecordGroup(workerId: String, request: RecordGroupJoinRequest): RecordGroup {
-        val recordGroup = this.getRecordGroup(request.recordGroupId)
+    fun joinRecordGroup(workerId: String, request: RecordGroupJoinRequest): RecordGroupResponse {
+        val recordGroup = this.getRecordGroup(request.id)
 
         // 소유주만 멤버를 추가할수 있다.
-        // TODO 권한이 생긴다면 권한에 맞게 멤버 추가 권한을 체크하는 로직 필요
         if (recordGroup.worker.id != workerId) {
             throw WorkfolioException(MsgKOR.NOT_MATCH_RECORD_GROUP_OWNER.message)
         }
 
-        // 소유주가 가지고 있는 레코드 그룹에 멤버로 소유주가 들어가는 경우 방지
-        if (recordGroup.worker.id == request.workerId) {
-            throw WorkfolioException(MsgKOR.ALREADY_EXIST_WORKER_RECORD_GROUP.message)
+        val allWorkerList = request.existWorkersList + request.newWorkersList
+        val masterWorker =
+            allWorkerList.find { it.role == com.spectrum.workfolio.proto.common.WorkerRecordGroup.RecordGroupRole.ADMIN }
+
+        if (masterWorker != null && recordGroup.worker.id != masterWorker.workerId) {
+            val newMasterWorker = workerService.getWorker(masterWorker.workerId)
+            recordGroup.changeWorker(newMasterWorker)
         }
 
-        recordGroup.changeType(RecordGroupType.SHARED)
+        recordGroup.changeType(
+            request.title,
+            request.color,
+            RecordGroupRole.valueOf(request.defaultRole.name),
+            RecordGroupType.valueOf(request.type.name),
+        )
 
-        val role = com.spectrum.workfolio.domain.enums.RecordGroupRole.valueOf(request.role.name)
-        workerRecordGroupService.createWorkerRecordGroup(request.workerId, recordGroup, role)
+        workerRecordGroupService.updateBulkWorkerRecordGroup(recordGroup, request.existWorkersList)
+        workerRecordGroupService.createBulkWorkerRecordGroup(recordGroup, request.newWorkersList)
 
-        return recordGroup
+        return RecordGroupResponse.newBuilder().setRecordGroup(recordGroup.toProto()).build()
     }
 
     @Transactional
