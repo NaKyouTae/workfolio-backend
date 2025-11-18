@@ -108,7 +108,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: role
+                  name: default_role
                   type: VARCHAR(32)
                   constraints:
                     nullable: false

@@ -84,7 +84,7 @@ class RecordGroupService(
             isDefault = isDefault,
             publicId = RecordGroup.generateShortPublicId(),
             priority = request.priority,
-            role = RecordGroupRole.VIEW,
+            defaultRole = RecordGroupRole.VIEW,
             worker = worker,
         )
 
@@ -94,7 +94,7 @@ class RecordGroupService(
             workerRecordGroupService.createWorkerRecordGroup(
                 workerId,
                 recordGroup,
-                RecordGroupRole.VIEW
+                RecordGroupRole.ADMIN
             )
         }
 

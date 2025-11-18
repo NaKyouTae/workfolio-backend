@@ -34,7 +34,7 @@ class RecordGroup(
     isDefault: Boolean,
     publicId: String,
     type: RecordGroupType,
-    role: RecordGroupRole,
+    defaultRole: RecordGroupRole,
     priority: Long,
     worker: Worker,
 ) : BaseEntity("RG") {
@@ -60,8 +60,8 @@ class RecordGroup(
         protected set
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false)
-    var role: RecordGroupRole = role
+    @Column(name = "default_role", nullable = false)
+    var defaultRole: RecordGroupRole = defaultRole
         protected set
 
     @Column(name = "priority", nullable = false)
@@ -95,12 +95,12 @@ class RecordGroup(
     fun changeType(
         title: String,
         color: String,
-        role: RecordGroupRole,
+        defaultRole: RecordGroupRole,
         type: RecordGroupType
     ) {
         this.title = title
         this.color = color
-        this.role = role
+        this.defaultRole = defaultRole
         this.type = type
     }
 
