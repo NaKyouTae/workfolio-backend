@@ -22,6 +22,7 @@ class JwtAuthenticationFilter(
             "/api/oauth2",
             "/api/staffs/login",
             "/api/release",
+            "/api/token/reissue",
             "/login",
             "/logout",
             "/error",

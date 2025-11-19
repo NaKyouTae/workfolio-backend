@@ -7,6 +7,7 @@ import com.spectrum.workfolio.redis.model.RedisBlackAccessToken
 import com.spectrum.workfolio.redis.model.RedisRefreshToken
 import com.spectrum.workfolio.redis.service.RedisBlackAccessTokenService
 import com.spectrum.workfolio.redis.service.RedisRefreshTokenService
+import com.spectrum.workfolio.utils.TokenUtil
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.stereotype.Service
 
@@ -42,7 +43,7 @@ class AuthService(
         // 신규 Refresh Token 화이트 리스트 추가
         val claims = jwtTokenProvider.parseClaims(jwtToken.refreshToken)
         val exp = claims["exp"] as Long
-        val ttlSeconds = getTokenTtlSeconds(exp)
+        val ttlSeconds = TokenUtil.getTokenTtlSeconds(exp)
         val newRedisRefreshTokenEntity = RedisRefreshToken(key, ttlSeconds.toInt(), jwtToken.refreshToken)
         redisRefreshTokenService.saveRefreshToken(newRedisRefreshTokenEntity)
 
@@ -50,11 +51,6 @@ class AuthService(
             accessToken = jwtToken.accessToken,
             refreshToken = jwtToken.refreshToken,
         )
-    }
-
-    private fun getTokenTtlSeconds(exp: Long): Long {
-        val now = System.currentTimeMillis() / 1000
-        return maxOf((exp - now), 0)
     }
 
     private fun verifiedRefreshToken(encryptedRefreshToken: String?) {

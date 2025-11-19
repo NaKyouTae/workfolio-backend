@@ -36,7 +36,7 @@ class JwtTokenProvider(
         val workerId = account.worker.id
         val claims = setClaims(workerId, emptyList(), "WORKER")
         val issuedAt = Instant.now().truncatedTo(ChronoUnit.SECONDS)
-        val accessTokenExpiration = issuedAt.plus(accessTokenExpirationHours, ChronoUnit.DAYS)
+        val accessTokenExpiration = issuedAt.plus(accessTokenExpirationHours, ChronoUnit.MINUTES)
         val refreshTokenExpiration = issuedAt.plus(refreshTokenExpirationDays, ChronoUnit.DAYS)
 
         val accessToken = createJwtToken(
@@ -98,7 +98,7 @@ class JwtTokenProvider(
         
         val claims = setClaims(workerId, emptyList(), type)
         val issuedAt = Instant.now().truncatedTo(ChronoUnit.SECONDS)
-        val accessTokenExpiration = issuedAt.plus(accessTokenExpirationHours, ChronoUnit.DAYS)
+        val accessTokenExpiration = issuedAt.plus(accessTokenExpirationHours, ChronoUnit.MINUTES)
 
         val accessToken = createJwtToken(
             claims = claims,

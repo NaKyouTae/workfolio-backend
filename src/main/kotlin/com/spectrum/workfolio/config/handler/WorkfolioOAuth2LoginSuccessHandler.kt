@@ -4,7 +4,10 @@ import com.spectrum.workfolio.config.provider.JwtTokenProvider
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.enums.SNSType
 import com.spectrum.workfolio.domain.enums.WorkfolioToken
+import com.spectrum.workfolio.redis.model.RedisRefreshToken
+import com.spectrum.workfolio.redis.service.RedisRefreshTokenService
 import com.spectrum.workfolio.services.AccountService
+import com.spectrum.workfolio.utils.TokenUtil
 import com.spectrum.workfolio.utils.WorkfolioException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -21,6 +24,7 @@ import org.springframework.web.util.UriComponentsBuilder
 class WorkfolioOAuth2LoginSuccessHandler(
     private val accountService: AccountService,
     private val jwtTokenProvider: JwtTokenProvider,
+    private val redisRefreshTokenService: RedisRefreshTokenService,
 ) : AuthenticationSuccessHandler {
 
     @Value("\${token.httpOnly}")
@@ -41,11 +45,21 @@ class WorkfolioOAuth2LoginSuccessHandler(
                 .orElseThrow { WorkfolioException(MsgKOR.NOT_FOUND_WORKER.message) }
             val token = jwtTokenProvider.generateToken(account)
 
+            saveRefreshToken(token.refreshToken)
             setTokenCookies(response, token)
 
             val redirectUrl = buildRedirectUrl(token) // URL 리디렉션 (쿼리 파라미터 전달 유지)
             response.sendRedirect(redirectUrl)
         }
+    }
+
+    private fun saveRefreshToken(refreshToken: String) {
+        val key = jwtTokenProvider.getDataFromToken(refreshToken, "id") as String
+        val claims = jwtTokenProvider.parseClaims(refreshToken)
+        val exp = claims["exp"] as Long
+        val ttlSeconds = TokenUtil.getTokenTtlSeconds(exp)
+        val newRedisRefreshTokenEntity = RedisRefreshToken(key, ttlSeconds.toInt(), refreshToken)
+        redisRefreshTokenService.saveRefreshToken(newRedisRefreshTokenEntity)
     }
 
     private fun handleProviderLogin(registrationId: String, oauth2User: OAuth2User): String {
