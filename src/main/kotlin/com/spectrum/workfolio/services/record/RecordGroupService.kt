@@ -6,9 +6,11 @@ import com.spectrum.workfolio.domain.enums.RecordGroupRole
 import com.spectrum.workfolio.domain.enums.RecordGroupType
 import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.RecordGroupRepository
+import com.spectrum.workfolio.proto.common.SuccessResponse
 import com.spectrum.workfolio.proto.record_group.CreateRecordGroupRequest
 import com.spectrum.workfolio.proto.record_group.RecordGroupDetailResponse
 import com.spectrum.workfolio.proto.record_group.RecordGroupJoinRequest
+import com.spectrum.workfolio.proto.record_group.RecordGroupPriorityUpdateRequest
 import com.spectrum.workfolio.proto.record_group.RecordGroupResponse
 import com.spectrum.workfolio.proto.record_group.RecordGroupUpdateRequest
 import com.spectrum.workfolio.services.WorkerService
@@ -39,13 +41,15 @@ class RecordGroupService(
     fun listOwnedRecordGroups(workerId: String): List<com.spectrum.workfolio.proto.common.RecordGroup> {
         val recordGroups =
             recordGroupRepository.findByWorkerIdAndTypeOrderByPriorityDesc(workerId, RecordGroupType.PRIVATE)
-        return recordGroups.map { it.toProto() }
+        val sortedRecordGroups = recordGroups.sortedBy { it.priority }
+        return sortedRecordGroups.map { it.toProto() }
     }
 
     @Transactional(readOnly = true)
     fun listSharedRecordGroups(workerId: String): List<com.spectrum.workfolio.proto.common.RecordGroup> {
         val workerRecordGroups = workerRecordGroupService.listWorkerRecordGroupByWorkerId(workerId)
-        val recordGroups = workerRecordGroups.map { it.recordGroup }.sortedBy { it.priority }
+        val sortedWorkerRecordGroups = workerRecordGroups.sortedBy { it.priority }
+        val recordGroups = sortedWorkerRecordGroups.map { it.recordGroup }
         return recordGroups.map { it.toProto() }
     }
 
@@ -164,5 +168,45 @@ class RecordGroupService(
         }
 
         recordGroupRepository.delete(recordGroup)
+    }
+
+    @Transactional
+    fun updatePriorities(
+        workerId: String,
+        request: RecordGroupPriorityUpdateRequest,
+    ): SuccessResponse {
+        val type = RecordGroupType.valueOf(request.type.name)
+        val prioritiesMap = request.prioritiesList.associateBy { it.recordGroupId }
+
+        when (type) {
+            RecordGroupType.PRIVATE -> {
+                // PRIVATE 타입: 소유주만 우선순위 변경 가능
+                val recordGroups = recordGroupRepository.findByWorkerIdAndTypeOrderByPriorityDesc(workerId, type)
+                val toUpdate = mutableListOf<RecordGroup>()
+
+                recordGroups.forEach { recordGroup ->
+                    val priorityItem = prioritiesMap[recordGroup.id]
+                    if (priorityItem != null) {
+                        // 소유주 확인
+                        if (recordGroup.worker.id != workerId) {
+                            throw WorkfolioException(MsgKOR.NOT_OWNER_RECORD_GROUP.message)
+                        }
+                        recordGroup.changePriority(priorityItem.priority)
+                        toUpdate.add(recordGroup)
+                    }
+                }
+
+                if (toUpdate.isNotEmpty()) {
+                    recordGroupRepository.saveAll(toUpdate)
+                }
+            }
+            RecordGroupType.SHARED -> {
+                // SHARED 타입은 WorkerRecordGroupController의 API를 사용
+                throw WorkfolioException(MsgKOR.NOT_FOUND_RECORD_GROUP.message)
+            }
+            else -> return SuccessResponse.newBuilder().setIsSuccess(false).build()
+        }
+
+        return SuccessResponse.newBuilder().setIsSuccess(true).build()
     }
 }

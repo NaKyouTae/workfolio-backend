@@ -336,6 +336,7 @@ message WorkerRecordGroup {
   string id = 1;
   string public_id = 2;
   RecordGroupRole role = 3;
+  uint64 priority = 4;
 
   Worker worker = 50;
   RecordGroup record_group = 51;

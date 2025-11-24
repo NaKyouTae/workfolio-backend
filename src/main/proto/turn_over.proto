@@ -127,3 +127,12 @@ message TurnOverResponse {
 message TurnOverDetailResponse {
   TurnOverDetail turn_over = 1;
 }
+
+message CheckListCheckedUpdateRequest {
+  string id = 1;
+  bool checked = 2;
+}
+
+message CheckListResponse {
+  CheckList check_list = 1;
+}

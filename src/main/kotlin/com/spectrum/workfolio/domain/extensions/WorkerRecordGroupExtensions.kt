@@ -8,6 +8,7 @@ fun WorkerRecordGroup.toProto(): com.spectrum.workfolio.proto.common.WorkerRecor
         .setId(this.id)
         .setPublicId(this.publicId)
         .setRole(com.spectrum.workfolio.proto.common.WorkerRecordGroup.RecordGroupRole.valueOf(this.role.name))
+        .setPriority(this.priority)
         .setWorker(this.worker.toProto())
         .setRecordGroup(this.recordGroup.toProto())
         .setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))

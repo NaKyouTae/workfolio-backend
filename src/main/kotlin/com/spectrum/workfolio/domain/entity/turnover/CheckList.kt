@@ -55,4 +55,8 @@ class CheckList(
         this.isVisible = isVisible
         this.priority = priority
     }
+
+    fun changeChecked(checked: Boolean) {
+        this.checked = checked
+    }
 }

@@ -32,6 +32,7 @@ class WorkerRecordGroup(
     worker: Worker,
     recordGroup: RecordGroup,
     role: RecordGroupRole,
+    priority: Long = 0,
 ) : BaseEntity("WR") {
 
     @Column(name = "public_id", length = 16, nullable = false)
@@ -53,7 +54,15 @@ class WorkerRecordGroup(
     var role: RecordGroupRole = role
         protected set
 
+    @Column(name = "priority", nullable = false)
+    var priority: Long = priority
+        protected set
+
     fun changeRole(role: RecordGroupRole) {
         this.role = role
+    }
+
+    fun changePriority(priority: Long) {
+        this.priority = priority
     }
 }

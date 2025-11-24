@@ -3,7 +3,10 @@ package com.spectrum.workfolio.services.turnovers
 import com.spectrum.workfolio.domain.entity.turnover.CheckList
 import com.spectrum.workfolio.domain.entity.turnover.TurnOverGoal
 import com.spectrum.workfolio.domain.enums.MsgKOR
+import com.spectrum.workfolio.domain.extensions.toWithoutTurnOverGoalProto
 import com.spectrum.workfolio.domain.repository.CheckListRepository
+import com.spectrum.workfolio.proto.turn_over.CheckListCheckedUpdateRequest
+import com.spectrum.workfolio.proto.turn_over.CheckListResponse
 import com.spectrum.workfolio.proto.turn_over.TurnOverUpsertRequest
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.stereotype.Service
@@ -105,5 +108,15 @@ class CheckListService(
         if (ids.isNotEmpty()) {
             checkListRepository.deleteAllById(ids)
         }
+    }
+
+    @Transactional
+    fun updateChecked(request: CheckListCheckedUpdateRequest): CheckListResponse {
+        val checkList = this.getCheckList(request.id)
+        checkList.changeChecked(request.checked)
+        val updatedCheckList = checkListRepository.save(checkList)
+        return CheckListResponse.newBuilder()
+            .setCheckList(updatedCheckList.toWithoutTurnOverGoalProto())
+            .build()
     }
 }

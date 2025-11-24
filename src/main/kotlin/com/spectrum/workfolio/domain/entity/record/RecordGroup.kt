@@ -110,6 +110,10 @@ class RecordGroup(
         this.worker = worker
     }
 
+    fun changePriority(priority: Long) {
+        this.priority = priority
+    }
+
     companion object {
         fun generateShortPublicId(): String {
             return StringUtil.generateRandomString(16)

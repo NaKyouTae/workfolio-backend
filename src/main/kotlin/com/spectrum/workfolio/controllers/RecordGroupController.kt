@@ -7,6 +7,7 @@ import com.spectrum.workfolio.proto.record_group.CreateRecordGroupRequest
 import com.spectrum.workfolio.proto.record_group.RecordGroupDetailResponse
 import com.spectrum.workfolio.proto.record_group.RecordGroupJoinRequest
 import com.spectrum.workfolio.proto.record_group.RecordGroupListResponse
+import com.spectrum.workfolio.proto.record_group.RecordGroupPriorityUpdateRequest
 import com.spectrum.workfolio.proto.record_group.RecordGroupResponse
 import com.spectrum.workfolio.proto.record_group.RecordGroupUpdateRequest
 import com.spectrum.workfolio.services.record.RecordGroupService
@@ -70,6 +71,14 @@ class RecordGroupController(
         @RequestBody request: RecordGroupUpdateRequest,
     ): RecordGroupResponse {
         return recordGroupService.updateRecordGroup(recordGroupId, request)
+    }
+
+    @PutMapping("/priorities")
+    fun updatePriorities(
+        @AuthenticatedUser workerId: String,
+        @RequestBody request: RecordGroupPriorityUpdateRequest,
+    ): SuccessResponse {
+        return recordGroupService.updatePriorities(workerId, request)
     }
 
     @DeleteMapping("/{recordGroupId}")

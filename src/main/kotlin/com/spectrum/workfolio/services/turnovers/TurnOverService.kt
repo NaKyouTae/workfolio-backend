@@ -14,6 +14,7 @@ import com.spectrum.workfolio.domain.extensions.toDetailProto
 import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.TurnOverRepository
 import com.spectrum.workfolio.proto.attachment.AttachmentRequest
+import com.spectrum.workfolio.proto.turn_over.TurnOverDetailListResponse
 import com.spectrum.workfolio.proto.turn_over.TurnOverDetailResponse
 import com.spectrum.workfolio.proto.turn_over.TurnOverListResponse
 import com.spectrum.workfolio.proto.turn_over.TurnOverUpsertRequest
@@ -88,6 +89,22 @@ class TurnOverService(
         val turnOvers = turnOverRepository.findByWorkerId(workerId)
         return TurnOverListResponse.newBuilder()
             .addAllTurnOvers(turnOvers.map { it.toProto() })
+            .build()
+    }
+
+    @Transactional(readOnly = true)
+    fun listTurnOverDetailsResult(workerId: String): TurnOverDetailListResponse {
+        val turnOvers = turnOverRepository.findByWorkerId(workerId)
+        val turnOversResult = turnOvers.map {
+            val turnOverGoal = turnOverGoalService.getTurnOverGoalDetail(it.turnOverGoal.id)
+            val turnOverChallenge = turnOverChallengeService.getTurnOverChallengeDetail(it.turnOverChallenge.id)
+            val turnOverRetrospective = turnOverRetrospectiveService.getTurnOverRetrospectiveDetail(it.turnOverRetrospective.id)
+
+            it.toDetailProto(turnOverGoal, turnOverChallenge, turnOverRetrospective)
+        }
+
+        return TurnOverDetailListResponse.newBuilder()
+            .addAllTurnOvers(turnOversResult)
             .build()
     }
 

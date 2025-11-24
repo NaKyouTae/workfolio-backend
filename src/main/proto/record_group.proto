@@ -50,3 +50,31 @@ message RecordGroupUpdateRequest {
 message RecordGroupResponse {
   RecordGroup record_group = 1;
 }
+
+message RecordGroupPriorityUpdateRequest {
+  message PriorityItem {
+    string record_group_id = 1;
+    uint64 priority = 2;
+  }
+  
+  RecordGroup.RecordGroupType type = 1;
+  repeated PriorityItem priorities = 2;
+}
+
+message WorkerRecordGroupPriorityUpdateRequest {
+  message PriorityItem {
+    string worker_record_group_id = 1;
+    uint64 priority = 2;
+  }
+  
+  repeated PriorityItem priorities = 1;
+}
+
+message SharedRecordGroupPriorityUpdateRequest {
+  message PriorityItem {
+    string record_group_id = 1;
+    uint64 priority = 2;
+  }
+  
+  repeated PriorityItem priorities = 1;
+}

@@ -241,6 +241,12 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: priority
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
                   name: role
                   type: VARCHAR(32)
                   constraints:

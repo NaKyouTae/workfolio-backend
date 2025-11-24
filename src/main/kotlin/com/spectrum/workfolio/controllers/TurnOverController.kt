@@ -2,6 +2,7 @@ package com.spectrum.workfolio.controllers
 
 import com.spectrum.workfolio.config.annotation.AuthenticatedUser
 import com.spectrum.workfolio.proto.common.SuccessResponse
+import com.spectrum.workfolio.proto.turn_over.TurnOverDetailListResponse
 import com.spectrum.workfolio.proto.turn_over.TurnOverDetailResponse
 import com.spectrum.workfolio.proto.turn_over.TurnOverListResponse
 import com.spectrum.workfolio.proto.turn_over.TurnOverUpsertRequest
@@ -26,6 +27,14 @@ class TurnOverController(
     ): TurnOverListResponse {
         return turnOverService.listTurnOversResult(workerId)
     }
+
+    @GetMapping("/details")
+    fun listTurnOverDetails(
+        @AuthenticatedUser workerId: String,
+    ): TurnOverDetailListResponse {
+        return turnOverService.listTurnOverDetailsResult(workerId)
+    }
+
 
     @GetMapping("/details/{id}")
     fun getTurnOverDetail(
