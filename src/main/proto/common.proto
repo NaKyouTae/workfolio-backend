@@ -426,7 +426,7 @@ message SelfIntroduction {
   bool is_visible = 30;
   uint32 priority = 31;
 
-  TurnOverGoal turn_over_goal = 50;
+  TurnOver turn_over = 50;
 
   uint64 created_at = 98;
   uint64 updated_at = 99;
@@ -440,7 +440,7 @@ message InterviewQuestion {
   bool is_visible = 30;
   uint32 priority = 31;
 
-  TurnOverGoal turn_over_goal = 50;
+  TurnOver turn_over = 50;
 
   uint64 created_at = 98;
   uint64 updated_at = 99;
@@ -454,7 +454,7 @@ message CheckList {
   bool is_visible = 30;
   uint32 priority = 31;
 
-  TurnOverGoal turn_over_goal = 50;
+  TurnOver turn_over = 50;
 
   uint64 created_at = 98;
   uint64 updated_at = 99;
@@ -503,7 +503,7 @@ message JobApplication {
   bool is_visible = 30;
   uint32 priority = 31;
 
-  TurnOverChallenge turn_over_challenge = 50;
+  TurnOver turn_over = 50;
 
   uint64 created_at = 98;
   uint64 updated_at = 99;

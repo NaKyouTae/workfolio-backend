@@ -3,7 +3,6 @@ package com.spectrum.workfolio.domain.entity.record
 import com.spectrum.workfolio.domain.entity.BaseEntity
 import com.spectrum.workfolio.domain.entity.Worker
 import com.spectrum.workfolio.domain.enums.RecordGroupRole
-import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType

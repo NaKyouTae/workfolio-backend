@@ -1,7 +1,7 @@
 package com.spectrum.workfolio.services.turnovers
 
 import com.spectrum.workfolio.domain.entity.turnover.InterviewQuestion
-import com.spectrum.workfolio.domain.entity.turnover.TurnOverGoal
+import com.spectrum.workfolio.domain.entity.turnover.TurnOver
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.repository.InterviewQuestionRepository
 import com.spectrum.workfolio.proto.turn_over.TurnOverUpsertRequest
@@ -21,40 +21,40 @@ class InterviewQuestionService(
     }
 
     @Transactional(readOnly = true)
-    fun getInterviewQuestions(turnOverGoalId: String): List<InterviewQuestion> {
-        return interviewQuestionRepository.findByTurnOverGoalIdOrderByPriorityAsc(turnOverGoalId)
+    fun getInterviewQuestions(turnOverId: String): List<InterviewQuestion> {
+        return interviewQuestionRepository.findByTurnOverIdOrderByPriorityAsc(turnOverId)
     }
 
     // Cascade용: 엔티티만 생성 (저장 X)
     fun createEntity(
-        turnOverGoal: TurnOverGoal,
+        turnOver: TurnOver,
         request: TurnOverUpsertRequest.TurnOverGoalRequest.InterviewQuestionRequest,
     ): InterviewQuestion {
         return InterviewQuestion(
             question = request.question,
             answer = request.answer,
-            turnOverGoal = turnOverGoal,
+            turnOver = turnOver,
             isVisible = request.isVisible,
             priority = request.priority,
         )
     }
 
     @Transactional
-    fun create(turnOverGoal: TurnOverGoal, request: TurnOverUpsertRequest.TurnOverGoalRequest.InterviewQuestionRequest): InterviewQuestion {
-        val interviewQuestion = createEntity(turnOverGoal, request)
+    fun create(turnOver: TurnOver, request: TurnOverUpsertRequest.TurnOverGoalRequest.InterviewQuestionRequest): InterviewQuestion {
+        val interviewQuestion = createEntity(turnOver, request)
         return interviewQuestionRepository.save(interviewQuestion)
     }
 
     @Transactional
     fun createBulk(
-        turnOverGoal: TurnOverGoal,
+        turnOver: TurnOver,
         requests: List<TurnOverUpsertRequest.TurnOverGoalRequest.InterviewQuestionRequest>,
     ) {
         val entities = requests.map { request ->
             InterviewQuestion(
                 question = request.question,
                 answer = request.answer,
-                turnOverGoal = turnOverGoal,
+                turnOver = turnOver,
                 isVisible = request.isVisible,
                 priority = request.priority,
             )

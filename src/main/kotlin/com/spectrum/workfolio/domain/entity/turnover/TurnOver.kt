@@ -4,12 +4,13 @@ import com.spectrum.workfolio.domain.entity.BaseEntity
 import com.spectrum.workfolio.domain.entity.Worker
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
+import jakarta.persistence.Embedded
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
 import jakarta.persistence.Index
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
-import jakarta.persistence.OneToOne
+import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import java.time.LocalDate
 
@@ -38,20 +39,33 @@ class TurnOver(
     var worker: Worker = worker
         protected set
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
-    @JoinColumn(name = "turn_over_goal_id", nullable = false)
+    @Embedded
     var turnOverGoal: TurnOverGoal = turnOverGoal
         protected set
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
-    @JoinColumn(name = "turn_over_challenge_id", nullable = false)
+    @Embedded
     var turnOverChallenge: TurnOverChallenge = turnOverChallenge
         protected set
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
-    @JoinColumn(name = "turn_over_retrospective_id", nullable = false)
+    @Embedded
     var turnOverRetrospective: TurnOverRetrospective = turnOverRetrospective
         protected set
+
+    @OneToMany(mappedBy = "turnOver", cascade = [CascadeType.ALL], fetch = FetchType.LAZY, orphanRemoval = true)
+    private var mutableSelfIntroductions: MutableList<SelfIntroduction> = mutableListOf()
+    val selfIntroductions: List<SelfIntroduction> get() = mutableSelfIntroductions.toList()
+
+    @OneToMany(mappedBy = "turnOver", cascade = [CascadeType.ALL], fetch = FetchType.LAZY, orphanRemoval = true)
+    private var mutableInterviewQuestions: MutableList<InterviewQuestion> = mutableListOf()
+    val interviewQuestions: List<InterviewQuestion> get() = mutableInterviewQuestions.toList()
+
+    @OneToMany(mappedBy = "turnOver", cascade = [CascadeType.ALL], fetch = FetchType.LAZY, orphanRemoval = true)
+    private var mutableCheckList: MutableList<CheckList> = mutableListOf()
+    val checkList: List<CheckList> get() = mutableCheckList.toList()
+
+    @OneToMany(mappedBy = "turnOver", cascade = [CascadeType.ALL], fetch = FetchType.LAZY, orphanRemoval = true)
+    private var mutableJobApplications: MutableList<JobApplication> = mutableListOf()
+    val jobApplications: List<JobApplication> get() = mutableJobApplications.toList()
 
     @Column(name = "started_at", nullable = true)
     var startedAt: LocalDate? = startedAt
@@ -60,6 +74,30 @@ class TurnOver(
     @Column(name = "ended_at", nullable = true)
     var endedAt: LocalDate? = endedAt
         protected set
+
+    fun addCheckList(checkList: CheckList) {
+        mutableCheckList.add(checkList)
+    }
+
+    fun syncSelfIntroductions(newSelfIntroductions: List<SelfIntroduction>) {
+        mutableSelfIntroductions.clear()
+        mutableSelfIntroductions.addAll(newSelfIntroductions)
+    }
+
+    fun syncInterviewQuestions(newInterviewQuestions: List<InterviewQuestion>) {
+        mutableInterviewQuestions.clear()
+        mutableInterviewQuestions.addAll(newInterviewQuestions)
+    }
+
+    fun syncCheckLists(newCheckLists: List<CheckList>) {
+        mutableCheckList.clear()
+        mutableCheckList.addAll(newCheckLists)
+    }
+
+    fun syncJobApplications(newJobApplications: List<JobApplication>) {
+        mutableJobApplications.clear()
+        mutableJobApplications.addAll(newJobApplications)
+    }
 
     fun changeInfo(
         name: String,

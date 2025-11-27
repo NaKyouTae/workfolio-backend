@@ -1,7 +1,7 @@
 package com.spectrum.workfolio.services.turnovers
 
 import com.spectrum.workfolio.domain.entity.turnover.CheckList
-import com.spectrum.workfolio.domain.entity.turnover.TurnOverGoal
+import com.spectrum.workfolio.domain.entity.turnover.TurnOver
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.extensions.toWithoutTurnOverGoalProto
 import com.spectrum.workfolio.domain.repository.CheckListRepository
@@ -25,36 +25,36 @@ class CheckListService(
 
     @Transactional(readOnly = true)
     fun getCheckLists(id: String): List<CheckList> {
-        return checkListRepository.findByTurnOverGoalIdOrderByPriorityAsc(id)
+        return checkListRepository.findByTurnOverIdOrderByPriorityAsc(id)
     }
 
     // Cascade용: 엔티티만 생성 (저장 X)
     fun createEntity(
-        turnOverGoal: TurnOverGoal,
+        turnOver: TurnOver,
         request: TurnOverUpsertRequest.TurnOverGoalRequest.CheckListRequest,
     ): CheckList {
         return CheckList(
             checked = request.checked,
             content = request.content,
-            turnOverGoal = turnOverGoal,
+            turnOver = turnOver,
             isVisible = request.isVisible,
             priority = request.priority,
         )
     }
 
     @Transactional
-    fun create(turnOverGoal: TurnOverGoal, request: TurnOverUpsertRequest.TurnOverGoalRequest.CheckListRequest): CheckList {
-        val checkList = createEntity(turnOverGoal, request)
+    fun create(turnOver: TurnOver, request: TurnOverUpsertRequest.TurnOverGoalRequest.CheckListRequest): CheckList {
+        val checkList = createEntity(turnOver, request)
         return checkListRepository.save(checkList)
     }
 
     @Transactional
-    fun create(turnOverGoal: TurnOverGoal, requests: List<TurnOverUpsertRequest.TurnOverGoalRequest.CheckListRequest>) {
+    fun create(turnOver: TurnOver, requests: List<TurnOverUpsertRequest.TurnOverGoalRequest.CheckListRequest>) {
         val checkLists = requests.map {
             CheckList(
                 checked = it.checked,
                 content = it.content,
-                turnOverGoal = turnOverGoal,
+                turnOver = turnOver,
                 isVisible = it.isVisible,
                 priority = it.priority,
             )

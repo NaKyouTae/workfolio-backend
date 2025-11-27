@@ -38,18 +38,13 @@ class TurnOverService(
     private val memoCommandService: MemoCommandService,
     private val fileUploadService: FileUploadService,
     private val turnOverRepository: TurnOverRepository,
-    private val turnOverGoalService: TurnOverGoalService,
     private val attachmentRepository: com.spectrum.workfolio.domain.repository.AttachmentRepository,
-    private val turnOverGoalRepository: com.spectrum.workfolio.domain.repository.TurnOverGoalRepository,
-    private val turnOverChallengeRepository: com.spectrum.workfolio.domain.repository.TurnOverChallengeRepository,
     private val jobApplicationService: JobApplicationService,
     private val attachmentQueryService: AttachmentQueryService,
     private val applicationStageService: ApplicationStageService,
     private val selfIntroductionService: SelfIntroductionService,
     private val attachmentCommandService: AttachmentCommandService,
     private val interviewQuestionService: InterviewQuestionService,
-    private val turnOverChallengeService: TurnOverChallengeService,
-    private val turnOverRetrospectiveService: TurnOverRetrospectiveService,
 ) {
 
     private val logger = org.slf4j.LoggerFactory.getLogger(TurnOverService::class.java)
@@ -65,13 +60,30 @@ class TurnOverService(
     fun getTurnOverDetailResult(id: String): TurnOverDetailResponse {
         val turnOver = this.getTurnOver(id)
 
-        val turnOverGoal = turnOverGoalService.getTurnOverGoalDetail(turnOver.turnOverGoal.id)
-        val turnOverChallenge = turnOverChallengeService.getTurnOverChallengeDetail(
-            turnOver.turnOverChallenge.id,
+        val memosGoal = memoQueryService.listMemos(turnOver.id)
+        val attachmentsGoal = attachmentQueryService.listAttachments(turnOver.id)
+        val turnOverGoal = turnOver.turnOverGoal.toDetailProto(
+            turnOver.selfIntroductions,
+            turnOver.interviewQuestions,
+            turnOver.checkList,
+            memosGoal,
+            attachmentsGoal,
+            turnOver.id,
         )
-        val turnOverRetrospective = turnOverRetrospectiveService.getTurnOverRetrospectiveDetail(
-            turnOver.turnOverRetrospective.id,
+
+        val memosChallenge = memoQueryService.listMemos(turnOver.id)
+        val attachmentsChallenge = attachmentQueryService.listAttachments(turnOver.id)
+        val turnOverChallenge = turnOver.turnOverChallenge.toDetailProto(
+            turnOver.jobApplications,
+            memosChallenge,
+            attachmentsChallenge,
+            turnOver.id,
         )
+
+        val memosRetrospective = memoQueryService.listMemos(turnOver.id)
+        val attachmentsRetrospective = attachmentQueryService.listAttachments(turnOver.id)
+        val turnOverRetrospective =
+            turnOver.turnOverRetrospective.toDetailProto(memosRetrospective, attachmentsRetrospective, turnOver.id)
 
         return TurnOverDetailResponse.newBuilder()
             .setTurnOver(
@@ -96,9 +108,26 @@ class TurnOverService(
     fun listTurnOverDetailsResult(workerId: String): TurnOverDetailListResponse {
         val turnOvers = turnOverRepository.findByWorkerId(workerId)
         val turnOversResult = turnOvers.map {
-            val turnOverGoal = turnOverGoalService.getTurnOverGoalDetail(it.turnOverGoal.id)
-            val turnOverChallenge = turnOverChallengeService.getTurnOverChallengeDetail(it.turnOverChallenge.id)
-            val turnOverRetrospective = turnOverRetrospectiveService.getTurnOverRetrospectiveDetail(it.turnOverRetrospective.id)
+            val memosGoal = memoQueryService.listMemos(it.id)
+            val attachmentsGoal = attachmentQueryService.listAttachments(it.id)
+            val turnOverGoal = it.turnOverGoal.toDetailProto(
+                it.selfIntroductions,
+                it.interviewQuestions,
+                it.checkList,
+                memosGoal,
+                attachmentsGoal,
+                it.id,
+            )
+
+            val memosChallenge = memoQueryService.listMemos(it.id)
+            val attachmentsChallenge = attachmentQueryService.listAttachments(it.id)
+            val turnOverChallenge =
+                it.turnOverChallenge.toDetailProto(it.jobApplications, memosChallenge, attachmentsChallenge, it.id)
+
+            val memosRetrospective = memoQueryService.listMemos(it.id)
+            val attachmentsRetrospective = attachmentQueryService.listAttachments(it.id)
+            val turnOverRetrospective =
+                it.turnOverRetrospective.toDetailProto(memosRetrospective, attachmentsRetrospective, it.id)
 
             it.toDetailProto(turnOverGoal, turnOverChallenge, turnOverRetrospective)
         }
@@ -110,9 +139,6 @@ class TurnOverService(
 
     @Transactional
     fun upsertTurnOver(workerId: String, request: TurnOverUpsertRequest) {
-        val turnOverGoal = upsertTurnOverGoal(request.turnOverGoal)
-        val turnOverChallenge = upsertTurnOverChallenge(request.turnOverChallenge)
-        val turnOverRetrospective = upsertTurnOverRetrospective(request.turnOverRetrospective)
         val worker = workerService.getWorker(workerId)
 
         val turnOverEntity = if (request.hasId()) {
@@ -124,9 +150,88 @@ class TurnOverService(
                 endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
             )
 
+            // Update embedded objects
+            turnOver.turnOverGoal.changeInfo(
+                reason = request.turnOverGoal.reason,
+                goal = request.turnOverGoal.goal,
+            )
+
+            turnOver.turnOverRetrospective.changeInfo(
+                name = request.turnOverRetrospective.name,
+                salary = request.turnOverRetrospective.salary,
+                position = request.turnOverRetrospective.position,
+                jobTitle = request.turnOverRetrospective.jobTitle,
+                rank = request.turnOverRetrospective.rank,
+                department = request.turnOverRetrospective.department,
+                reason = request.turnOverRetrospective.reason,
+                score = request.turnOverRetrospective.score,
+                reviewSummary = request.turnOverRetrospective.reviewSummary,
+                joinedAt = TimeUtil.ofEpochMilliNullable(request.turnOverRetrospective.joinedAt)?.toLocalDate(),
+                workType = request.turnOverRetrospective.workType,
+                employmentType = if (request.turnOverRetrospective.employmentType != null) {
+                    com.spectrum.workfolio.domain.enums.EmploymentType.valueOf(
+                        request.turnOverRetrospective.employmentType.name,
+                    )
+                } else {
+                    null
+                },
+            )
+
+            // Upsert collections
+            upsertSelfIntroduction(turnOver, request.turnOverGoal.selfIntroductionsList)
+            upsertInterviewQuestion(turnOver, request.turnOverGoal.interviewQuestionsList)
+            upsertCheckList(turnOver, request.turnOverGoal.checkListList)
+            upsertJobApplication(turnOver, request.turnOverChallenge.jobApplicationsList)
+            upsertMemo(MemoTargetType.TURN_OVER_GOAL, turnOver.id, request.turnOverGoal.memosList)
+            upsertMemo(MemoTargetType.TURN_OVER_CHALLENGE, turnOver.id, request.turnOverChallenge.memosList)
+            upsertMemo(MemoTargetType.TURN_OVER_RETROSPECT, turnOver.id, request.turnOverRetrospective.memosList)
+            updateAttachments(
+                AttachmentTargetType.ENTITY_TURN_OVER_GOAL,
+                turnOver.id,
+                request.turnOverGoal.attachmentsList,
+            )
+            updateAttachments(
+                AttachmentTargetType.ENTITY_TURN_OVER_CHALLENGE,
+                turnOver.id,
+                request.turnOverChallenge.attachmentsList,
+            )
+            updateAttachments(
+                AttachmentTargetType.ENTITY_TURN_OVER_RETROSPECTIVE,
+                turnOver.id,
+                request.turnOverRetrospective.attachmentsList,
+            )
+
             turnOver
         } else {
-            TurnOver(
+            val turnOverGoal = TurnOverGoal(
+                reason = request.turnOverGoal.reason,
+                goal = request.turnOverGoal.goal,
+            )
+
+            val turnOverChallenge = TurnOverChallenge()
+
+            val turnOverRetrospective = TurnOverRetrospective(
+                name = request.turnOverRetrospective.name,
+                salary = request.turnOverRetrospective.salary.toInt(),
+                position = request.turnOverRetrospective.position,
+                jobTitle = request.turnOverRetrospective.jobTitle,
+                rank = request.turnOverRetrospective.rank,
+                department = request.turnOverRetrospective.department,
+                reason = request.turnOverRetrospective.reason,
+                score = request.turnOverRetrospective.score,
+                reviewSummary = request.turnOverRetrospective.reviewSummary,
+                joinedAt = TimeUtil.ofEpochMilliNullable(request.turnOverRetrospective.joinedAt)?.toLocalDate(),
+                workType = request.turnOverRetrospective.workType,
+                employmentType = if (request.turnOverRetrospective.employmentType != null) {
+                    com.spectrum.workfolio.domain.enums.EmploymentType.valueOf(
+                        request.turnOverRetrospective.employmentType.name,
+                    )
+                } else {
+                    null
+                },
+            )
+
+            val turnOver = TurnOver(
                 name = request.name,
                 turnOverGoal = turnOverGoal,
                 turnOverChallenge = turnOverChallenge,
@@ -135,33 +240,45 @@ class TurnOverService(
                 startedAt = TimeUtil.ofEpochMilliNullable(request.startedAt)?.toLocalDate(),
                 endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
             )
+
+            val savedTurnOver = turnOverRepository.save(turnOver)
+
+            // Upsert collections
+            upsertSelfIntroduction(savedTurnOver, request.turnOverGoal.selfIntroductionsList)
+            upsertInterviewQuestion(savedTurnOver, request.turnOverGoal.interviewQuestionsList)
+            upsertCheckList(savedTurnOver, request.turnOverGoal.checkListList)
+            upsertJobApplication(savedTurnOver, request.turnOverChallenge.jobApplicationsList)
+            upsertMemo(MemoTargetType.TURN_OVER_GOAL, savedTurnOver.id, request.turnOverGoal.memosList)
+            upsertMemo(MemoTargetType.TURN_OVER_CHALLENGE, savedTurnOver.id, request.turnOverChallenge.memosList)
+            upsertMemo(MemoTargetType.TURN_OVER_RETROSPECT, savedTurnOver.id, request.turnOverRetrospective.memosList)
+            updateAttachments(
+                AttachmentTargetType.ENTITY_TURN_OVER_GOAL,
+                savedTurnOver.id,
+                request.turnOverGoal.attachmentsList,
+            )
+            updateAttachments(
+                AttachmentTargetType.ENTITY_TURN_OVER_CHALLENGE,
+                savedTurnOver.id,
+                request.turnOverChallenge.attachmentsList,
+            )
+            updateAttachments(
+                AttachmentTargetType.ENTITY_TURN_OVER_RETROSPECTIVE,
+                savedTurnOver.id,
+                request.turnOverRetrospective.attachmentsList,
+            )
+
+            savedTurnOver
         }
 
         turnOverRepository.save(turnOverEntity)
     }
 
-    private fun upsertTurnOverGoal(request: TurnOverUpsertRequest.TurnOverGoalRequest): TurnOverGoal {
-        val turnOverGoal = if (request.hasId()) {
-            turnOverGoalService.update(request)
-        } else {
-            turnOverGoalService.create(request)
-        }
-
-        upsertSelfIntroduction(turnOverGoal, request.selfIntroductionsList)
-        upsertInterviewQuestion(turnOverGoal, request.interviewQuestionsList)
-        upsertCheckList(turnOverGoal, request.checkListList)
-        upsertMemo(MemoTargetType.TURN_OVER_GOAL, turnOverGoal.id, request.memosList)
-        updateAttachments(AttachmentTargetType.ENTITY_TURN_OVER_GOAL, turnOverGoal.id, request.attachmentsList)
-
-        return turnOverGoal
-    }
-
     private fun upsertSelfIntroduction(
-        turnOverGoal: TurnOverGoal,
+        turnOver: TurnOver,
         requests: List<TurnOverUpsertRequest.TurnOverGoalRequest.SelfIntroductionRequest>,
     ) {
         // 기존 엔티티 Map (ID로 빠른 조회)
-        val existingMap = turnOverGoal.selfIntroductions.associateBy { it.id }
+        val existingMap = turnOver.selfIntroductions.associateBy { it.id }
 
         // 새로운 엔티티 리스트 생성
         val updatedEntities = requests.map { request ->
@@ -177,20 +294,20 @@ class TurnOverService(
                 }
             } else {
                 // 새 엔티티 생성
-                selfIntroductionService.createEntity(turnOverGoal, request)
+                selfIntroductionService.createEntity(turnOver, request)
             }
         }
 
         // Cascade를 통한 자동 처리 (삭제/추가)
-        turnOverGoal.syncSelfIntroductions(updatedEntities)
+        turnOver.syncSelfIntroductions(updatedEntities)
     }
 
     private fun upsertInterviewQuestion(
-        turnOverGoal: TurnOverGoal,
+        turnOver: TurnOver,
         requests: List<TurnOverUpsertRequest.TurnOverGoalRequest.InterviewQuestionRequest>,
     ) {
         // 기존 엔티티 Map (ID로 빠른 조회)
-        val existingMap = turnOverGoal.interviewQuestions.associateBy { it.id }
+        val existingMap = turnOver.interviewQuestions.associateBy { it.id }
 
         // 새로운 엔티티 리스트 생성
         val updatedEntities = requests.map { request ->
@@ -206,20 +323,20 @@ class TurnOverService(
                 }
             } else {
                 // 새 엔티티 생성
-                interviewQuestionService.createEntity(turnOverGoal, request)
+                interviewQuestionService.createEntity(turnOver, request)
             }
         }
 
         // Cascade를 통한 자동 처리 (삭제/추가)
-        turnOverGoal.syncInterviewQuestions(updatedEntities)
+        turnOver.syncInterviewQuestions(updatedEntities)
     }
 
     private fun upsertCheckList(
-        turnOverGoal: TurnOverGoal,
+        turnOver: TurnOver,
         requests: List<TurnOverUpsertRequest.TurnOverGoalRequest.CheckListRequest>,
     ) {
         // 기존 엔티티 Map (ID로 빠른 조회)
-        val existingMap = turnOverGoal.checkList.associateBy { it.id }
+        val existingMap = turnOver.checkList.associateBy { it.id }
 
         // 새로운 엔티티 리스트 생성
         val updatedEntities = requests.map { request ->
@@ -235,38 +352,20 @@ class TurnOverService(
                 }
             } else {
                 // 새 엔티티 생성
-                checkListService.createEntity(turnOverGoal, request)
+                checkListService.createEntity(turnOver, request)
             }
         }
 
         // Cascade를 통한 자동 처리 (삭제/추가)
-        turnOverGoal.syncCheckLists(updatedEntities)
-    }
-
-    private fun upsertTurnOverChallenge(request: TurnOverUpsertRequest.TurnOverChallengeRequest): TurnOverChallenge {
-        val turnOverChallenge = if (request.hasId()) {
-            turnOverChallengeService.update(request)
-        } else {
-            turnOverChallengeService.create(request)
-        }
-
-        upsertJobApplication(turnOverChallenge, request.jobApplicationsList)
-        upsertMemo(MemoTargetType.TURN_OVER_CHALLENGE, turnOverChallenge.id, request.memosList)
-        updateAttachments(
-            AttachmentTargetType.ENTITY_TURN_OVER_CHALLENGE,
-            turnOverChallenge.id,
-            request.attachmentsList,
-        )
-
-        return turnOverChallenge
+        turnOver.syncCheckLists(updatedEntities)
     }
 
     private fun upsertJobApplication(
-        turnOverChallenge: TurnOverChallenge,
+        turnOver: TurnOver,
         requests: List<TurnOverUpsertRequest.TurnOverChallengeRequest.JobApplicationRequest>,
     ) {
         // 기존 엔티티 Map (ID로 빠른 조회)
-        val existingMap = turnOverChallenge.jobApplications.associateBy { it.id }
+        val existingMap = turnOver.jobApplications.associateBy { it.id }
 
         // 새로운 엔티티 리스트 생성
         val updatedEntities = requests.map { request ->
@@ -292,7 +391,7 @@ class TurnOverService(
                 jobApplication
             } else {
                 // 새 엔티티 생성
-                val jobApplication = jobApplicationService.createEntity(turnOverChallenge, request)
+                val jobApplication = jobApplicationService.createEntity(turnOver, request)
                 // ApplicationStage도 Cascade로 처리
                 upsertApplicationStage(jobApplication, request.applicationStagesList)
                 jobApplication
@@ -300,7 +399,7 @@ class TurnOverService(
         }
 
         // Cascade를 통한 자동 처리 (삭제/추가)
-        turnOverChallenge.syncJobApplications(updatedEntities)
+        turnOver.syncJobApplications(updatedEntities)
     }
 
     private fun upsertApplicationStage(
@@ -332,23 +431,6 @@ class TurnOverService(
 
         // Cascade를 통한 자동 처리 (삭제/추가)
         jobApplication.syncApplicationStages(updatedEntities)
-    }
-
-    private fun upsertTurnOverRetrospective(request: TurnOverUpsertRequest.TurnOverRetrospectiveRequest): TurnOverRetrospective {
-        val turnOverRetrospective = if (request.hasId()) {
-            turnOverRetrospectiveService.update(request)
-        } else {
-            turnOverRetrospectiveService.create(request)
-        }
-
-        upsertMemo(MemoTargetType.TURN_OVER_RETROSPECT, turnOverRetrospective.id, request.memosList)
-        updateAttachments(
-            AttachmentTargetType.ENTITY_TURN_OVER_RETROSPECTIVE,
-            turnOverRetrospective.id,
-            request.attachmentsList,
-        )
-
-        return turnOverRetrospective
     }
 
     private fun upsertMemo(
@@ -393,16 +475,30 @@ class TurnOverService(
         // 1. 원본 TurnOver 조회
         val originalTurnOver = this.getTurnOver(id)
 
-        // 2. TurnOverGoal 복제
-        val duplicatedTurnOverGoal = duplicateTurnOverGoal(originalTurnOver.turnOverGoal)
+        // 2. Embedded 객체 복제
+        val duplicatedTurnOverGoal = TurnOverGoal(
+            reason = originalTurnOver.turnOverGoal.reason,
+            goal = originalTurnOver.turnOverGoal.goal,
+        )
 
-        // 3. TurnOverChallenge 복제
-        val duplicatedTurnOverChallenge = duplicateTurnOverChallenge(originalTurnOver.turnOverChallenge)
+        val duplicatedTurnOverChallenge = TurnOverChallenge()
 
-        // 4. TurnOverRetrospective 복제
-        val duplicatedTurnOverRetrospective = duplicateTurnOverRetrospective(originalTurnOver.turnOverRetrospective)
+        val duplicatedTurnOverRetrospective = TurnOverRetrospective(
+            name = originalTurnOver.turnOverRetrospective.name,
+            salary = originalTurnOver.turnOverRetrospective.salary,
+            position = originalTurnOver.turnOverRetrospective.position,
+            jobTitle = originalTurnOver.turnOverRetrospective.jobTitle,
+            rank = originalTurnOver.turnOverRetrospective.rank,
+            department = originalTurnOver.turnOverRetrospective.department,
+            reason = originalTurnOver.turnOverRetrospective.reason,
+            score = originalTurnOver.turnOverRetrospective.score,
+            reviewSummary = originalTurnOver.turnOverRetrospective.reviewSummary,
+            joinedAt = originalTurnOver.turnOverRetrospective.joinedAt,
+            workType = originalTurnOver.turnOverRetrospective.workType,
+            employmentType = originalTurnOver.turnOverRetrospective.employmentType,
+        )
 
-        // 5. 새로운 TurnOver 생성
+        // 3. 새로운 TurnOver 생성
         val duplicatedTurnOver = TurnOver(
             name = "${originalTurnOver.name} (복제본)",
             turnOverGoal = duplicatedTurnOverGoal,
@@ -413,87 +509,56 @@ class TurnOverService(
             endedAt = originalTurnOver.endedAt,
         )
 
-        return turnOverRepository.save(duplicatedTurnOver)
-    }
+        val savedTurnOver = turnOverRepository.save(duplicatedTurnOver)
 
-    private fun duplicateTurnOverGoal(originalTurnOverGoal: TurnOverGoal): TurnOverGoal {
-        // 1. 새로운 TurnOverGoal 생성
-        val duplicatedTurnOverGoal = TurnOverGoal(
-            reason = originalTurnOverGoal.reason,
-            goal = originalTurnOverGoal.goal,
-        )
-        val savedTurnOverGoal = turnOverGoalRepository.save(duplicatedTurnOverGoal)
-
-        // 2. SelfIntroduction 복제
-        originalTurnOverGoal.selfIntroductions.forEach { originalSelfIntroduction ->
+        // 4. SelfIntroduction 복제
+        originalTurnOver.selfIntroductions.forEach { originalSelfIntroduction ->
             selfIntroductionService.create(
-                turnOverGoal = savedTurnOverGoal,
+                turnOver = savedTurnOver,
                 request = TurnOverUpsertRequest.TurnOverGoalRequest.SelfIntroductionRequest.newBuilder()
                     .setQuestion(originalSelfIntroduction.question)
                     .setContent(originalSelfIntroduction.content)
+                    .setIsVisible(originalSelfIntroduction.isVisible)
+                    .setPriority(originalSelfIntroduction.priority)
                     .build(),
             )
         }
 
-        // 3. InterviewQuestion 복제
-        originalTurnOverGoal.interviewQuestions.forEach { originalInterviewQuestion ->
+        // 5. InterviewQuestion 복제
+        originalTurnOver.interviewQuestions.forEach { originalInterviewQuestion ->
             interviewQuestionService.create(
-                turnOverGoal = savedTurnOverGoal,
+                turnOver = savedTurnOver,
                 request = TurnOverUpsertRequest.TurnOverGoalRequest.InterviewQuestionRequest.newBuilder()
                     .setQuestion(originalInterviewQuestion.question)
                     .setAnswer(originalInterviewQuestion.answer)
+                    .setIsVisible(originalInterviewQuestion.isVisible)
+                    .setPriority(originalInterviewQuestion.priority)
                     .build(),
             )
         }
 
-        // 4. CheckList 복제
-        originalTurnOverGoal.checkList.forEach { originalCheckList ->
+        // 6. CheckList 복제
+        originalTurnOver.checkList.forEach { originalCheckList ->
             checkListService.create(
-                turnOverGoal = savedTurnOverGoal,
+                turnOver = savedTurnOver,
                 request = TurnOverUpsertRequest.TurnOverGoalRequest.CheckListRequest.newBuilder()
                     .setChecked(originalCheckList.checked)
                     .setContent(originalCheckList.content)
+                    .setIsVisible(originalCheckList.isVisible)
+                    .setPriority(originalCheckList.priority)
                     .build(),
             )
         }
 
-        // 5. Memo 복제
-        val originalMemos = memoQueryService.listMemos(originalTurnOverGoal.id)
-        originalMemos.forEach { originalMemo ->
-            memoCommandService.createMemo(
-                targetType = MemoTargetType.TURN_OVER_GOAL,
-                targetId = savedTurnOverGoal.id,
-                request = TurnOverUpsertRequest.MemoRequest.newBuilder()
-                    .setContent(originalMemo.content)
-                    .build(),
-            )
-        }
-
-        // 6. Attachment 복제
-        val originalAttachments = attachmentQueryService.listAttachments(originalTurnOverGoal.id)
-        duplicateAttachments(
-            originalAttachments = originalAttachments,
-            newTargetId = savedTurnOverGoal.id,
-            newTargetType = AttachmentTargetType.ENTITY_TURN_OVER_GOAL,
-        )
-
-        return savedTurnOverGoal
-    }
-
-    private fun duplicateTurnOverChallenge(originalTurnOverChallenge: TurnOverChallenge): TurnOverChallenge {
-        // 1. 새로운 TurnOverChallenge 생성
-        val duplicatedTurnOverChallenge = TurnOverChallenge()
-        val savedTurnOverChallenge = turnOverChallengeRepository.save(duplicatedTurnOverChallenge)
-
-        // 2. JobApplication 복제 (ApplicationStage 포함)
-        originalTurnOverChallenge.jobApplications.forEach { originalJobApplication ->
+        // 7. JobApplication 복제 (ApplicationStage 포함)
+        originalTurnOver.jobApplications.forEach { originalJobApplication ->
             val startedAtMillis = originalJobApplication.startedAt?.atStartOfDay()
                 ?.let { TimeUtil.toEpochMilli(it) } ?: 0
             val endedAtMillis = originalJobApplication.endedAt?.atStartOfDay()
                 ?.let { TimeUtil.toEpochMilli(it) } ?: 0
 
             val savedJobApplication = jobApplicationService.create(
-                turnOverChallenge = savedTurnOverChallenge,
+                turnOver = savedTurnOver,
                 request = TurnOverUpsertRequest.TurnOverChallengeRequest.JobApplicationRequest.newBuilder()
                     .setName(originalJobApplication.name)
                     .setPosition(originalJobApplication.position)
@@ -503,6 +568,13 @@ class TurnOverService(
                     .setEndedAt(endedAtMillis)
                     .setApplicationSource(originalJobApplication.applicationSource)
                     .setMemo(originalJobApplication.memo)
+                    .setStatus(
+                        com.spectrum.workfolio.proto.common.JobApplication.JobApplicationStatus.valueOf(
+                            originalJobApplication.status.name,
+                        ),
+                    )
+                    .setIsVisible(originalJobApplication.isVisible)
+                    .setPriority(originalJobApplication.priority)
                     .build(),
             )
 
@@ -519,81 +591,36 @@ class TurnOverService(
                         )
                         .setStartedAt(originalStage.startedAt?.atStartOfDay()?.let { TimeUtil.toEpochMilli(it) } ?: 0)
                         .setMemo(originalStage.memo)
+                        .setIsVisible(originalStage.isVisible)
+                        .setPriority(originalStage.priority)
                         .build(),
                 )
             }
         }
 
-        // 3. Memo 복제
-        val originalMemos = memoQueryService.listMemos(originalTurnOverChallenge.id)
+        // 8. Memo 복제
+        val originalMemos = memoQueryService.listMemos(originalTurnOver.id)
         originalMemos.forEach { originalMemo ->
             memoCommandService.createMemo(
-                targetType = MemoTargetType.TURN_OVER_CHALLENGE,
-                targetId = savedTurnOverChallenge.id,
+                targetType = MemoTargetType.TURN_OVER_GOAL,
+                targetId = savedTurnOver.id,
                 request = TurnOverUpsertRequest.MemoRequest.newBuilder()
                     .setContent(originalMemo.content)
+                    .setIsVisible(originalMemo.isVisible)
+                    .setPriority(originalMemo.priority)
                     .build(),
             )
         }
 
-        // 4. Attachment 복제
-        val originalAttachments = attachmentQueryService.listAttachments(originalTurnOverChallenge.id)
+        // 9. Attachment 복제
+        val originalAttachments = attachmentQueryService.listAttachments(originalTurnOver.id)
         duplicateAttachments(
             originalAttachments = originalAttachments,
-            newTargetId = savedTurnOverChallenge.id,
-            newTargetType = AttachmentTargetType.ENTITY_TURN_OVER_CHALLENGE,
+            newTargetId = savedTurnOver.id,
+            newTargetType = AttachmentTargetType.ENTITY_TURN_OVER_GOAL,
         )
 
-        return savedTurnOverChallenge
-    }
-
-    private fun duplicateTurnOverRetrospective(originalTurnOverRetrospective: TurnOverRetrospective): TurnOverRetrospective {
-        // 1. 새로운 TurnOverRetrospective 생성
-        val joinedAtMillis = originalTurnOverRetrospective.joinedAt?.atStartOfDay()
-            ?.let { TimeUtil.toEpochMilli(it) } ?: 0
-
-        val duplicatedTurnOverRetrospective = turnOverRetrospectiveService.create(
-            request = TurnOverUpsertRequest.TurnOverRetrospectiveRequest.newBuilder()
-                .setName(originalTurnOverRetrospective.name)
-                .setSalary(originalTurnOverRetrospective.salary)
-                .setPosition(originalTurnOverRetrospective.position)
-                .setJobTitle(originalTurnOverRetrospective.jobTitle)
-                .setRank(originalTurnOverRetrospective.rank)
-                .setDepartment(originalTurnOverRetrospective.department)
-                .setReason(originalTurnOverRetrospective.reason)
-                .setScore(originalTurnOverRetrospective.score)
-                .setReviewSummary(originalTurnOverRetrospective.reviewSummary)
-                .setJoinedAt(joinedAtMillis)
-                .setWorkType(originalTurnOverRetrospective.workType)
-                .setEmploymentType(
-                    com.spectrum.workfolio.proto.common.TurnOverRetrospective.EmploymentType.valueOf(
-                        originalTurnOverRetrospective.employmentType?.name ?: "EMPLOYMENT_TYPE_UNKNOWN",
-                    ),
-                )
-                .build(),
-        )
-
-        // 2. Memo 복제
-        val originalMemos = memoQueryService.listMemos(originalTurnOverRetrospective.id)
-        originalMemos.forEach { originalMemo ->
-            memoCommandService.createMemo(
-                targetType = MemoTargetType.TURN_OVER_RETROSPECT,
-                targetId = duplicatedTurnOverRetrospective.id,
-                request = TurnOverUpsertRequest.MemoRequest.newBuilder()
-                    .setContent(originalMemo.content)
-                    .build(),
-            )
-        }
-
-        // 3. Attachment 복제
-        val originalAttachments = attachmentQueryService.listAttachments(originalTurnOverRetrospective.id)
-        duplicateAttachments(
-            originalAttachments = originalAttachments,
-            newTargetId = duplicatedTurnOverRetrospective.id,
-            newTargetType = AttachmentTargetType.ENTITY_TURN_OVER_RETROSPECTIVE,
-        )
-
-        return duplicatedTurnOverRetrospective
+        return savedTurnOver
     }
 
     private fun duplicateAttachments(

@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface InterviewQuestionRepository : JpaRepository<InterviewQuestion, String> {
-    fun findByTurnOverGoalIdOrderByPriorityAsc(turnOverGoalId: String): List<InterviewQuestion>
+    fun findByTurnOverIdOrderByPriorityAsc(turnOverId: String): List<InterviewQuestion>
 }

@@ -19,7 +19,7 @@ import java.time.LocalDate
 @Table(
     name = "job_applications",
     indexes = [
-        Index(name = "idx_job_applications_turn_over_challenge_id", columnList = "turn_over_challenge_id"),
+        Index(name = "idx_job_applications_turn_over_id", columnList = "turn_over_id"),
     ],
 )
 class JobApplication(
@@ -32,7 +32,7 @@ class JobApplication(
     endedAt: LocalDate? = null, // 모집 마감 기간
     applicationSource: String, // 지원 경로
     memo: String, // 메모
-    turnOverChallenge: TurnOverChallenge,
+    turnOver: TurnOver,
     isVisible: Boolean = true,
     priority: Int = 0,
 ) : BaseEntity("JA") {
@@ -82,8 +82,8 @@ class JobApplication(
         protected set
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "turn_over_challenge_id", nullable = false)
-    var turnOverChallenge: TurnOverChallenge = turnOverChallenge
+    @JoinColumn(name = "turn_over_id", nullable = false)
+    var turnOver: TurnOver = turnOver
         protected set
 
     @OneToMany(

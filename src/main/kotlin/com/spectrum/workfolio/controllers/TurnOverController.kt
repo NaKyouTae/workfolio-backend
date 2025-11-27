@@ -35,7 +35,6 @@ class TurnOverController(
         return turnOverService.listTurnOverDetailsResult(workerId)
     }
 
-
     @GetMapping("/details/{id}")
     fun getTurnOverDetail(
         @PathVariable id: String,

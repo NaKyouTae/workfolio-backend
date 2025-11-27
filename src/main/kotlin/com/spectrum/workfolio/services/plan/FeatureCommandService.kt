@@ -47,4 +47,3 @@ class FeatureCommandService(
         featureRepository.delete(feature)
     }
 }
-

@@ -20,4 +20,3 @@ fun Staff.toProto(): com.spectrum.workfolio.proto.common.Staff {
 
     return builder.build()
 }
-

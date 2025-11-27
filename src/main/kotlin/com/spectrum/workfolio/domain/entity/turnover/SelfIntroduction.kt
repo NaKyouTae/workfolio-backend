@@ -13,13 +13,13 @@ import jakarta.persistence.Table
 @Table(
     name = "self_introductions",
     indexes = [
-        Index(name = "idx_self_introductions_turn_over_goal_id", columnList = "turn_over_goal_id"),
+        Index(name = "idx_self_introductions_turn_over_id", columnList = "turn_over_id"),
     ],
 )
 class SelfIntroduction(
     question: String,
     content: String,
-    turnOverGoal: TurnOverGoal,
+    turnOver: TurnOver,
     isVisible: Boolean = true,
     priority: Int = 0,
 ) : BaseEntity("SI") {
@@ -40,8 +40,8 @@ class SelfIntroduction(
         protected set
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "turn_over_goal_id", nullable = false)
-    var turnOverGoal: TurnOverGoal = turnOverGoal
+    @JoinColumn(name = "turn_over_id", nullable = false)
+    var turnOver: TurnOver = turnOver
         protected set
 
     fun changeInfo(question: String, content: String, isVisible: Boolean, priority: Int) {

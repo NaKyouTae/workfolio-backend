@@ -17,7 +17,7 @@ fun JobApplication.toProto(): com.spectrum.workfolio.proto.common.JobApplication
     builder.setIsVisible(this.isVisible)
     builder.setPriority(this.priority)
 
-    builder.setTurnOverChallenge(this.turnOverChallenge.toProto())
+    builder.setTurnOver(this.turnOver.toProto())
 
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))

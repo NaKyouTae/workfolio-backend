@@ -96,7 +96,7 @@ class RecordGroup(
         title: String,
         color: String,
         defaultRole: RecordGroupRole,
-        type: RecordGroupType
+        type: RecordGroupType,
     ) {
         this.title = title
         this.color = color

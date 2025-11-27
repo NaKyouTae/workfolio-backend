@@ -1057,18 +1057,73 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: turn_over_goal_id
-                  type: VARCHAR(16)
+                  name: goal_reason
+                  type: TEXT
                   constraints:
                     nullable: false
               - column:
-                  name: turn_over_challenge_id
-                  type: VARCHAR(16)
+                  name: goal_goal
+                  type: TEXT
                   constraints:
                     nullable: false
               - column:
-                  name: turn_over_retrospective_id
-                  type: VARCHAR(16)
+                  name: retrospective_name
+                  type: VARCHAR(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: retrospective_salary
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: retrospective_position
+                  type: VARCHAR(512)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: retrospective_job_title
+                  type: VARCHAR(512)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: retrospective_rank
+                  type: VARCHAR(512)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: retrospective_department
+                  type: VARCHAR(512)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: retrospective_reason
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: retrospective_score
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: retrospective_review_summary
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: retrospective_joined_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: retrospective_employment_type
+                  type: VARCHAR(32)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: retrospective_work_type
+                  type: VARCHAR(512)
                   constraints:
                     nullable: false
               - column:
@@ -1104,36 +1159,6 @@ databaseChangeLog:
             tableName: turn_overs
 
         - createTable:
-            tableName: turn_over_goals
-            columns:
-              - column:
-                  name: id
-                  type: VARCHAR(16)
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: reason
-                  type: TEXT
-                  constraints:
-                    nullable: false
-              - column:
-                  name: goal
-                  type: TEXT
-                  constraints:
-                    nullable: false
-              - column:
-                  name: created_at
-                  type: TIMESTAMP(6)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: updated_at
-                  type: TIMESTAMP(6)
-                  constraints:
-                    nullable: false
-
-        - createTable:
             tableName: self_introductions
             columns:
               - column:
@@ -1164,7 +1189,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: turn_over_goal_id
+                  name: turn_over_id
                   type: VARCHAR(16)
                   constraints:
                     nullable: false
@@ -1181,8 +1206,8 @@ databaseChangeLog:
         - createIndex:
             columns:
               - column:
-                  name: turn_over_goal_id
-            indexName: idx_self_introductions_turn_over_goal_id
+                  name: turn_over_id
+            indexName: idx_self_introductions_turn_over_id
             tableName: self_introductions
 
         - createTable:
@@ -1216,7 +1241,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: turn_over_goal_id
+                  name: turn_over_id
                   type: VARCHAR(16)
                   constraints:
                     nullable: false
@@ -1233,29 +1258,9 @@ databaseChangeLog:
         - createIndex:
             columns:
               - column:
-                  name: turn_over_goal_id
-            indexName: idx_interview_questions_turn_over_goal_id
+                  name: turn_over_id
+            indexName: idx_interview_questions_turn_over_id
             tableName: interview_questions
-
-        - createTable:
-            tableName: turn_over_challenges
-            columns:
-              - column:
-                  name: id
-                  type: VARCHAR(16)
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: created_at
-                  type: TIMESTAMP(6)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: updated_at
-                  type: TIMESTAMP(6)
-                  constraints:
-                    nullable: false
 
         - createTable:
             tableName: job_applications
@@ -1323,7 +1328,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: turn_over_challenge_id
+                  name: turn_over_id
                   type: VARCHAR(16)
                   constraints:
                     nullable: false
@@ -1340,8 +1345,8 @@ databaseChangeLog:
         - createIndex:
             columns:
               - column:
-                  name: turn_over_challenge_id
-            indexName: idx_job_applications_turn_over_challenge_id
+                  name: turn_over_id
+            indexName: idx_job_applications_turn_over_id
             tableName: job_applications
 
         - createTable:
@@ -1405,86 +1410,6 @@ databaseChangeLog:
                   name: job_application_id
             indexName: idx_application_stages_job_application_id
             tableName: application_stages
-
-        - createTable:
-            tableName: turn_over_retrospectives
-            columns:
-              - column:
-                  name: id
-                  type: VARCHAR(16)
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: name
-                  type: VARCHAR(1024)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: salary
-                  type: INT
-                  constraints:
-                    nullable: false
-              - column:
-                  name: position
-                  type: VARCHAR(512)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: job_title
-                  type: VARCHAR(512)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: rank
-                  type: VARCHAR(512)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: department
-                  type: VARCHAR(512)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: reason
-                  type: TEXT
-                  constraints:
-                    nullable: false
-              - column:
-                  name: score
-                  type: INT
-                  constraints:
-                    nullable: false
-              - column:
-                  name: review_summary
-                  type: TEXT
-                  constraints:
-                    nullable: false
-              - column:
-                  name: joined_at
-                  type: TIMESTAMP(6)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: employment_type
-                  type: VARCHAR(32)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: work_type
-                  type: VARCHAR(512)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: created_at
-                  type: TIMESTAMP(6)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: updated_at
-                  type: TIMESTAMP(6)
-                  constraints:
-                    nullable: false
 
         - createTable:
             tableName: memos
@@ -1569,7 +1494,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: turn_over_goal_id
+                  name: turn_over_id
                   type: VARCHAR(16)
                   constraints:
                     nullable: false
@@ -1586,8 +1511,8 @@ databaseChangeLog:
         - createIndex:
             columns:
               - column:
-                  name: turn_over_goal_id
-            indexName: idx_check_list_turn_over_goal_id
+                  name: turn_over_id
+            indexName: idx_check_list_turn_over_id
             tableName: check_list
 
         - createTable:

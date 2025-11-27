@@ -22,7 +22,7 @@ fun PlanSubscription.toReleaseProto(): ReleasePlanSubscription {
 
 fun Plan.toReleaseDetailProto(planSubscriptions: List<PlanSubscription>): ReleasePlanDetail {
     val planSubscriptionProtos = planSubscriptions.map { it.toReleaseProto() }
-    
+
     return ReleasePlanDetail.newBuilder()
         .setId(this.id)
         .setName(this.name)
@@ -40,4 +40,3 @@ fun Plan.toReleaseDetailProto(planSubscriptions: List<PlanSubscription>): Releas
         .setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
         .build()
 }
-

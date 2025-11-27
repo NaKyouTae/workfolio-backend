@@ -9,4 +9,3 @@ interface PlanSubscriptionRepository : JpaRepository<PlanSubscription, String> {
     fun findByPlanIdOrderByPriorityAsc(planId: String): List<PlanSubscription>
     fun findAllByOrderByPriorityAsc(): List<PlanSubscription>
 }
-

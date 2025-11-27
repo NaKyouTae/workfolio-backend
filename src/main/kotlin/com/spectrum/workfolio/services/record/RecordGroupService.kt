@@ -98,7 +98,7 @@ class RecordGroupService(
             workerRecordGroupService.createWorkerRecordGroup(
                 workerId,
                 recordGroup,
-                RecordGroupRole.ADMIN
+                RecordGroupRole.ADMIN,
             )
         }
 

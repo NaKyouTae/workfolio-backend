@@ -13,7 +13,7 @@ fun InterviewQuestion.toProto(): com.spectrum.workfolio.proto.common.InterviewQu
     builder.setIsVisible(this.isVisible)
     builder.setPriority(this.priority)
 
-    builder.setTurnOverGoal(this.turnOverGoal.toProto())
+    builder.setTurnOver(this.turnOver.toProto())
 
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))

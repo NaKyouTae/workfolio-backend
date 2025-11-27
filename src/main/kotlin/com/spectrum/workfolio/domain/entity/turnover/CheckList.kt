@@ -13,13 +13,13 @@ import jakarta.persistence.Table
 @Table(
     name = "check_list",
     indexes = [
-        Index(name = "idx_check_list_turn_over_goal_id", columnList = "turn_over_goal_id"),
+        Index(name = "idx_check_list_turn_over_id", columnList = "turn_over_id"),
     ],
 )
 class CheckList(
     checked: Boolean,
     content: String,
-    turnOverGoal: TurnOverGoal,
+    turnOver: TurnOver,
     isVisible: Boolean = true,
     priority: Int = 0,
 ) : BaseEntity("CL") {
@@ -40,8 +40,8 @@ class CheckList(
         protected set
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "turn_over_goal_id", nullable = false)
-    var turnOverGoal: TurnOverGoal = turnOverGoal
+    @JoinColumn(name = "turn_over_id", nullable = false)
+    var turnOver: TurnOver = turnOver
         protected set
 
     fun changeInfo(

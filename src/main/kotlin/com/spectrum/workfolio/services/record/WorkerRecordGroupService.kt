@@ -72,7 +72,7 @@ class WorkerRecordGroupService(
     @Transactional
     fun createBulkWorkerRecordGroup(
         recordGroup: RecordGroup,
-        workers: List<RecordGroupJoinRequest.JoinWorkerRequest>
+        workers: List<RecordGroupJoinRequest.JoinWorkerRequest>,
     ) {
         val workerRecordGroups = workers.map {
             if (workerRecordGroupRepository.existsByWorkerIdAndRecordGroupId(it.workerId, recordGroup.id)) {
@@ -96,22 +96,22 @@ class WorkerRecordGroupService(
     @Transactional
     fun updateBulkWorkerRecordGroup(
         recordGroup: RecordGroup,
-        workers: List<RecordGroupJoinRequest.JoinWorkerRequest>
+        workers: List<RecordGroupJoinRequest.JoinWorkerRequest>,
     ) {
         // 기존 worker record group 조회
         val existingWorkerRecordGroups = listWorkerRecordGroupByRecordGroupId(recordGroup.id)
-        
+
         // workers 리스트를 workerId를 키로 하는 맵으로 변환
         val workersMap = workers.associateBy { it.workerId }
-        
+
         // 삭제할 항목과 업데이트할 항목을 분리
         val toDelete = mutableListOf<WorkerRecordGroup>()
         val toUpdate = mutableListOf<WorkerRecordGroup>()
-        
+
         existingWorkerRecordGroups.forEach { existingWorkerRecordGroup ->
             val workerId = existingWorkerRecordGroup.worker.id
             val workerRequest = workersMap[workerId]
-            
+
             if (workerRequest == null) {
                 // workers 리스트에 없는 경우 제거 대상에 추가
                 toDelete.add(existingWorkerRecordGroup)
@@ -124,7 +124,7 @@ class WorkerRecordGroupService(
                 }
             }
         }
-        
+
         // 일괄 삭제 및 업데이트
         if (toDelete.isNotEmpty()) {
             workerRecordGroupRepository.deleteAll(toDelete)
@@ -148,38 +148,38 @@ class WorkerRecordGroupService(
         // 현재 worker가 보유한 SHARED 타입의 WorkerRecordGroup만 조회
         val myWorkerRecordGroups = listWorkerRecordGroupByWorkerId(workerId)
             .filter { it.recordGroup.type == RecordGroupType.SHARED }
-        
+
         val myWorkerRecordGroupIds = myWorkerRecordGroups.map { it.id }.toSet()
         val prioritiesMap = request.prioritiesList.associateBy { it.workerRecordGroupId }
-        
+
         val toUpdate = mutableListOf<WorkerRecordGroup>()
-        
+
         prioritiesMap.forEach { (workerRecordGroupId, priorityItem) ->
             // 내가 보유한 WorkerRecordGroup인지 확인
             if (!myWorkerRecordGroupIds.contains(workerRecordGroupId)) {
                 throw WorkfolioException(MsgKOR.NOT_FOUND_WORKER_RECORD_GROUP.message)
             }
-            
+
             val workerRecordGroup = this.getWorkerRecordGroup(workerRecordGroupId)
-            
+
             // SHARED 타입인지 확인
             if (workerRecordGroup.recordGroup.type != RecordGroupType.SHARED) {
                 throw WorkfolioException(MsgKOR.NOT_FOUND_WORKER_RECORD_GROUP.message)
             }
-            
+
             // 내 WorkerRecordGroup인지 확인
             if (workerRecordGroup.worker.id != workerId) {
                 throw WorkfolioException(MsgKOR.NOT_FOUND_WORKER_RECORD_GROUP.message)
             }
-            
+
             workerRecordGroup.changePriority(priorityItem.priority)
             toUpdate.add(workerRecordGroup)
         }
-        
+
         if (toUpdate.isNotEmpty()) {
             workerRecordGroupRepository.saveAll(toUpdate)
         }
-        
+
         return com.spectrum.workfolio.proto.common.SuccessResponse.newBuilder().setIsSuccess(true).build()
     }
 
@@ -192,10 +192,10 @@ class WorkerRecordGroupService(
         // JOIN FETCH를 사용하여 recordGroup을 함께 조회하여 lazy loading 문제 방지
         val myWorkerRecordGroups = workerRecordGroupRepository.findByWorkerIdWithRecordGroup(workerId)
             .filter { it.recordGroup.type == RecordGroupType.SHARED }
-        
+
         val myWorkerRecordGroupsByRecordGroupId = myWorkerRecordGroups
             .associateBy { it.recordGroup.id }
-        
+
         val prioritiesMap = request.prioritiesList.associateBy { it.recordGroupId }
         val toUpdate = mutableListOf<WorkerRecordGroup>()
 

@@ -102,7 +102,7 @@ data class KakaoAccount(
     }
 
     fun getGender(): Gender? {
-        if(this.gender == null) {
+        if (this.gender == null) {
             return null
         }
         return Gender.valueOf(gender.uppercase())
@@ -113,7 +113,7 @@ data class KakaoAccount(
      * @return 숫자만 포함된 전화번호 문자열
      */
     fun getNormalizedPhoneNumber(): String {
-        if(phoneNumber == null) {
+        if (phoneNumber == null) {
             return ""
         }
 

@@ -23,4 +23,3 @@ class ReleaseController(
         return releaseService.getPlans()
     }
 }
-

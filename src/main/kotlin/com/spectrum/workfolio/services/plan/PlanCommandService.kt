@@ -55,4 +55,3 @@ class PlanCommandService(
         planRepository.delete(plan)
     }
 }
-

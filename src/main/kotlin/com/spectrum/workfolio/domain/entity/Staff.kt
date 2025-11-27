@@ -67,4 +67,3 @@ class Staff(
         this.isActive = isActive
     }
 }
-

@@ -1,7 +1,6 @@
 package com.spectrum.workfolio.controllers
 
 import com.spectrum.workfolio.config.annotation.AuthenticatedUser
-import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.proto.common.SuccessResponse
 import com.spectrum.workfolio.proto.record_group.CreateRecordGroupRequest
 import com.spectrum.workfolio.proto.record_group.RecordGroupDetailResponse

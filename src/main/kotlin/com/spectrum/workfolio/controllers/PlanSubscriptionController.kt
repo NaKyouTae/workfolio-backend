@@ -64,4 +64,3 @@ class PlanSubscriptionController(
         return SuccessResponse.newBuilder().setIsSuccess(true).build()
     }
 }
-

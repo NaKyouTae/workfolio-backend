@@ -95,7 +95,7 @@ class JwtTokenProvider(
     ): WorkfolioToken {
         val originalClaims = parseClaims(originalRefreshToken)
         val type = originalClaims["type"]?.toString() ?: "WORKER"
-        
+
         val claims = setClaims(workerId, emptyList(), type)
         val issuedAt = Instant.now().truncatedTo(ChronoUnit.SECONDS)
         val accessTokenExpiration = issuedAt.plus(accessTokenExpirationHours, ChronoUnit.HOURS)
@@ -125,13 +125,13 @@ class JwtTokenProvider(
         val claims = parseClaims(token)
         val id = claims["id"].toString()
         val type = claims["type"]?.toString() ?: "WORKER"
-        
+
         val userDetails = when (type) {
             "STAFF" -> staffDetailService.loadUserByUsername(id)
             "WORKER" -> workerUserDetailService.loadUserByUsername(id)
             else -> workerUserDetailService.loadUserByUsername(id)
         }
-        
+
         return UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
     }
 

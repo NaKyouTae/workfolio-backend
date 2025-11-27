@@ -1,7 +1,7 @@
 package com.spectrum.workfolio.services.turnovers
 
 import com.spectrum.workfolio.domain.entity.turnover.SelfIntroduction
-import com.spectrum.workfolio.domain.entity.turnover.TurnOverGoal
+import com.spectrum.workfolio.domain.entity.turnover.TurnOver
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.repository.SelfIntroductionRepository
 import com.spectrum.workfolio.proto.turn_over.TurnOverUpsertRequest
@@ -21,40 +21,40 @@ class SelfIntroductionService(
     }
 
     @Transactional(readOnly = true)
-    fun getSelfIntroductions(turnOverGoalId: String): List<SelfIntroduction> {
-        return selfIntroductionRepository.findByTurnOverGoalIdOrderByPriorityAsc(turnOverGoalId)
+    fun getSelfIntroductions(turnOverId: String): List<SelfIntroduction> {
+        return selfIntroductionRepository.findByTurnOverIdOrderByPriorityAsc(turnOverId)
     }
 
     // Cascade용: 엔티티만 생성 (저장 X)
     fun createEntity(
-        turnOverGoal: TurnOverGoal,
+        turnOver: TurnOver,
         request: TurnOverUpsertRequest.TurnOverGoalRequest.SelfIntroductionRequest,
     ): SelfIntroduction {
         return SelfIntroduction(
             question = request.question,
             content = request.content,
-            turnOverGoal = turnOverGoal,
+            turnOver = turnOver,
             isVisible = request.isVisible,
             priority = request.priority,
         )
     }
 
     @Transactional
-    fun create(turnOverGoal: TurnOverGoal, request: TurnOverUpsertRequest.TurnOverGoalRequest.SelfIntroductionRequest): SelfIntroduction {
-        val selfIntroduction = createEntity(turnOverGoal, request)
+    fun create(turnOver: TurnOver, request: TurnOverUpsertRequest.TurnOverGoalRequest.SelfIntroductionRequest): SelfIntroduction {
+        val selfIntroduction = createEntity(turnOver, request)
         return selfIntroductionRepository.save(selfIntroduction)
     }
 
     @Transactional
     fun createBulk(
-        turnOverGoal: TurnOverGoal,
+        turnOver: TurnOver,
         requests: List<TurnOverUpsertRequest.TurnOverGoalRequest.SelfIntroductionRequest>,
     ) {
         val entities = requests.map { request ->
             SelfIntroduction(
                 question = request.question,
                 content = request.content,
-                turnOverGoal = turnOverGoal,
+                turnOver = turnOver,
                 isVisible = request.isVisible,
                 priority = request.priority,
             )

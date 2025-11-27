@@ -11,4 +11,3 @@ interface StaffRepository : JpaRepository<Staff, String> {
     fun existsByUsername(username: String): Boolean
     fun existsByEmail(email: String): Boolean
 }
-

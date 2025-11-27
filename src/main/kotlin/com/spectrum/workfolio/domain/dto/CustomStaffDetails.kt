@@ -37,4 +37,3 @@ data class CustomStaffDetails(
         return staff.isActive
     }
 }
-

@@ -64,4 +64,3 @@ class PlanFeatureQueryService(
             .build()
     }
 }
-

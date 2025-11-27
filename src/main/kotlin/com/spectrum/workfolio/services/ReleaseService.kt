@@ -27,12 +27,12 @@ class ReleaseService(
     @Transactional(readOnly = true)
     fun getPlans(): ReleasePlanListResponse {
         val plans = planRepository.findAllByOrderByPriorityAsc()
-        
+
         val planDetails = plans.map { plan ->
             val planSubscriptions = planSubscriptionRepository.findByPlanIdOrderByPriorityAsc(plan.id)
             plan.toReleaseDetailProto(planSubscriptions)
         }
-        
+
         return ReleasePlanListResponse.newBuilder().addAllPlans(planDetails).build()
     }
 }

@@ -3,7 +3,6 @@ package com.spectrum.workfolio.services
 import com.spectrum.workfolio.config.service.oauth.KakaoApiProvider
 import com.spectrum.workfolio.domain.entity.Worker
 import com.spectrum.workfolio.domain.enums.AccountType
-import com.spectrum.workfolio.domain.enums.ActivityType
 import com.spectrum.workfolio.domain.enums.Gender
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.extensions.toProto

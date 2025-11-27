@@ -20,4 +20,3 @@ fun PlanSubscription.toProto(): com.spectrum.workfolio.proto.common.PlanSubscrip
 
     return builder.build()
 }
-

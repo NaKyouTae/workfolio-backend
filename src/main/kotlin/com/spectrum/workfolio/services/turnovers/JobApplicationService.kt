@@ -1,7 +1,7 @@
 package com.spectrum.workfolio.services.turnovers
 
 import com.spectrum.workfolio.domain.entity.turnover.JobApplication
-import com.spectrum.workfolio.domain.entity.turnover.TurnOverChallenge
+import com.spectrum.workfolio.domain.entity.turnover.TurnOver
 import com.spectrum.workfolio.domain.enums.JobApplicationStatus
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.repository.JobApplicationRepository
@@ -23,13 +23,13 @@ class JobApplicationService(
     }
 
     @Transactional(readOnly = true)
-    fun getJobApplications(turnOverChallengeId: String): List<JobApplication> {
-        return jobApplicationRepository.findByTurnOverChallengeIdOrderByPriorityAsc(turnOverChallengeId)
+    fun getJobApplications(turnOverId: String): List<JobApplication> {
+        return jobApplicationRepository.findByTurnOverIdOrderByPriorityAsc(turnOverId)
     }
 
     // Cascade용: 엔티티만 생성 (저장 X)
     fun createEntity(
-        turnOverChallenge: TurnOverChallenge,
+        turnOver: TurnOver,
         request: TurnOverUpsertRequest.TurnOverChallengeRequest.JobApplicationRequest,
     ): JobApplication {
         return JobApplication(
@@ -42,7 +42,7 @@ class JobApplicationService(
             endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
             applicationSource = request.applicationSource,
             memo = request.memo,
-            turnOverChallenge = turnOverChallenge,
+            turnOver = turnOver,
             isVisible = request.isVisible,
             priority = request.priority,
         )
@@ -50,16 +50,16 @@ class JobApplicationService(
 
     @Transactional
     fun create(
-        turnOverChallenge: TurnOverChallenge,
+        turnOver: TurnOver,
         request: TurnOverUpsertRequest.TurnOverChallengeRequest.JobApplicationRequest,
     ): JobApplication {
-        val jobApplication = createEntity(turnOverChallenge, request)
+        val jobApplication = createEntity(turnOver, request)
         return jobApplicationRepository.save(jobApplication)
     }
 
     @Transactional
     fun createBulk(
-        turnOverChallenge: TurnOverChallenge,
+        turnOver: TurnOver,
         requests: List<TurnOverUpsertRequest.TurnOverChallengeRequest.JobApplicationRequest>,
     ): List<JobApplication> {
         val entities = requests.map { request ->
@@ -73,7 +73,7 @@ class JobApplicationService(
                 endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
                 applicationSource = request.applicationSource,
                 memo = request.memo,
-                turnOverChallenge = turnOverChallenge,
+                turnOver = turnOver,
                 isVisible = request.isVisible,
                 priority = request.priority,
             )
