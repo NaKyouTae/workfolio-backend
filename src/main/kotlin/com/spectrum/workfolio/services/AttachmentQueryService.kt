@@ -1,6 +1,7 @@
 package com.spectrum.workfolio.services
 
 import com.spectrum.workfolio.domain.entity.common.Attachment
+import com.spectrum.workfolio.domain.enums.AttachmentTargetType
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.repository.AttachmentRepository
 import com.spectrum.workfolio.utils.WorkfolioException
@@ -16,6 +17,11 @@ class AttachmentQueryService(
         return attachmentRepository.findById(id).orElseThrow {
             WorkfolioException(MsgKOR.NOT_FOUND_ATTACHMENT.message)
         }
+    }
+
+    @Transactional(readOnly = true)
+    fun listAttachments(targetId: String, targetType: AttachmentTargetType): List<Attachment> {
+        return attachmentRepository.findByTargetIdAndTargetTypeOrderByPriorityAsc(targetId, targetType)
     }
 
     @Transactional(readOnly = true)

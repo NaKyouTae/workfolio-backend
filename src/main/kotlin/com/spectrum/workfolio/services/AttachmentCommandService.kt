@@ -160,11 +160,12 @@ class AttachmentCommandService(
 
     @Transactional
     fun updateBulkAttachment(
+        targetType: AttachmentTargetType,
         targetId: String,
         storagePath: String,
         requests: List<AttachmentRequest>,
     ): List<Attachment> {
-        val existingAttachments = attachmentRepository.findByTargetIdOrderByPriorityAsc(targetId)
+        val existingAttachments = attachmentRepository.findByTargetIdAndTargetTypeOrderByPriorityAsc(targetId, targetType)
 
         val requestMap = requests
             .filter { it.id.isNotBlank() }

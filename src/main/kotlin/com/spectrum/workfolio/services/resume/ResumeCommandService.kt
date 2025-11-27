@@ -136,7 +136,7 @@ class ResumeCommandService(
         updateCareers(resume.id, request.careersList) // 경력 처리
         updateProjects(resume.id, request.projectsList) // 프로젝트 처리
         updateActivities(resume.id, request.activitiesList) // 활동 처리
-        updateAttachments(resume.id, request.attachmentsList) // 첨부파일 처리
+        updateAttachments(AttachmentTargetType.ENTITY_RESUME, resume.id, request.attachmentsList) // 첨부파일 처리
         updateLanguageSkills(resume.id, request.languagesList) // 언어 능력 처리
 
         return resumeRepository.save(resume)
@@ -288,11 +288,12 @@ class ResumeCommandService(
     }
 
     private fun updateAttachments(
+        targetType: AttachmentTargetType,
         targetId: String,
         attachmentRequests: List<AttachmentRequest>,
     ) {
         val storagePath = "resumes/attachments"
-        val existingAttachments = attachmentQueryService.listAttachments(targetId)
+        val existingAttachments = attachmentQueryService.listAttachments(targetId, targetType)
         val existingIds = existingAttachments.map { it.id }.toSet()
         val requestIds = attachmentRequests.mapNotNull { it.id }.toSet()
 
@@ -307,7 +308,7 @@ class ResumeCommandService(
             storagePath,
             createRequests,
         )
-        attachmentCommandService.updateBulkAttachment(targetId, storagePath, updateRequests)
+        attachmentCommandService.updateBulkAttachment(targetType, targetId, storagePath, updateRequests)
     }
 
     private fun updateLanguageSkills(

@@ -59,9 +59,13 @@ class MemoCommandService(
     }
 
     @Transactional
-    fun updateBulkMemo(targetId: String, requests: List<TurnOverUpsertRequest.MemoRequest>): List<Memo> {
+    fun updateBulkMemo(
+        targetType: MemoTargetType,
+        targetId: String,
+        requests: List<TurnOverUpsertRequest.MemoRequest>,
+    ): List<Memo> {
         // 1. targetId로 기존 memos 조회
-        val existingMemos = memoQueryService.listMemos(targetId)
+        val existingMemos = memoQueryService.listMemos(targetId, targetType)
 
         // 2. 파라미터로 받은 requests를 ID로 Map 구조로 변환 (빠른 조회를 위해)
         val requestMap = requests

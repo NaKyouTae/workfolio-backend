@@ -8,7 +8,6 @@ import com.spectrum.workfolio.domain.entity.turnover.TurnOverRetrospective
 import com.spectrum.workfolio.domain.enums.ApplicationStageStatus
 import com.spectrum.workfolio.domain.enums.AttachmentTargetType
 import com.spectrum.workfolio.domain.enums.EmploymentType
-import com.spectrum.workfolio.domain.enums.Gender
 import com.spectrum.workfolio.domain.enums.JobApplicationStatus
 import com.spectrum.workfolio.domain.enums.MemoTargetType
 import com.spectrum.workfolio.domain.enums.MsgKOR
@@ -16,6 +15,7 @@ import com.spectrum.workfolio.domain.extensions.toDetailProto
 import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.TurnOverRepository
 import com.spectrum.workfolio.proto.attachment.AttachmentRequest
+import com.spectrum.workfolio.proto.common.Attachment
 import com.spectrum.workfolio.proto.turn_over.TurnOverDetailListResponse
 import com.spectrum.workfolio.proto.turn_over.TurnOverDetailResponse
 import com.spectrum.workfolio.proto.turn_over.TurnOverListResponse
@@ -62,9 +62,11 @@ class TurnOverService(
     @Transactional(readOnly = true)
     fun getTurnOverDetailResult(id: String): TurnOverDetailResponse {
         val turnOver = this.getTurnOver(id)
+        val allMemos = memoQueryService.listMemos(turnOver.id)
+        val allAttachments = attachmentQueryService.listAttachments(turnOver.id)
 
-        val memosGoal = memoQueryService.listMemos(turnOver.id)
-        val attachmentsGoal = attachmentQueryService.listAttachments(turnOver.id)
+        val memosGoal = allMemos.filter { it.targetType == MemoTargetType.TURN_OVER_GOAL }
+        val attachmentsGoal = allAttachments.filter { it.targetType == AttachmentTargetType.ENTITY_TURN_OVER_GOAL }
         val turnOverGoal = turnOver.turnOverGoal.toDetailProto(
             turnOver.selfIntroductions,
             turnOver.interviewQuestions,
@@ -74,8 +76,8 @@ class TurnOverService(
             turnOver.id,
         )
 
-        val memosChallenge = memoQueryService.listMemos(turnOver.id)
-        val attachmentsChallenge = attachmentQueryService.listAttachments(turnOver.id)
+        val memosChallenge = allMemos.filter { it.targetType == MemoTargetType.TURN_OVER_CHALLENGE }
+        val attachmentsChallenge = allAttachments.filter { it.targetType == AttachmentTargetType.ENTITY_TURN_OVER_CHALLENGE }
         val turnOverChallenge = (turnOver.turnOverChallenge ?: TurnOverChallenge()).toDetailProto(
             turnOver.jobApplications,
             memosChallenge,
@@ -83,8 +85,8 @@ class TurnOverService(
             turnOver.id,
         )
 
-        val memosRetrospective = memoQueryService.listMemos(turnOver.id)
-        val attachmentsRetrospective = attachmentQueryService.listAttachments(turnOver.id)
+        val memosRetrospective = allMemos.filter { it.targetType == MemoTargetType.TURN_OVER_RETROSPECT }
+        val attachmentsRetrospective = allAttachments.filter { it.targetType == AttachmentTargetType.ENTITY_TURN_OVER_RETROSPECTIVE }
         val turnOverRetrospective =
             turnOver.turnOverRetrospective.toDetailProto(memosRetrospective, attachmentsRetrospective, turnOver.id)
 
@@ -111,8 +113,11 @@ class TurnOverService(
     fun listTurnOverDetailsResult(workerId: String): TurnOverDetailListResponse {
         val turnOvers = turnOverRepository.findByWorkerId(workerId)
         val turnOversResult = turnOvers.map {
-            val memosGoal = memoQueryService.listMemos(it.id)
-            val attachmentsGoal = attachmentQueryService.listAttachments(it.id)
+            val allMemos = memoQueryService.listMemos(it.id)
+            val allAttachments = attachmentQueryService.listAttachments(it.id)
+
+            val memosGoal = allMemos.filter { memo -> memo.targetType == MemoTargetType.TURN_OVER_GOAL }
+            val attachmentsGoal = allAttachments.filter { attachment -> attachment.targetType == AttachmentTargetType.ENTITY_TURN_OVER_GOAL }
             val turnOverGoal = it.turnOverGoal.toDetailProto(
                 it.selfIntroductions,
                 it.interviewQuestions,
@@ -122,8 +127,8 @@ class TurnOverService(
                 it.id,
             )
 
-            val memosChallenge = memoQueryService.listMemos(it.id)
-            val attachmentsChallenge = attachmentQueryService.listAttachments(it.id)
+            val memosChallenge = allMemos.filter { memo -> memo.targetType == MemoTargetType.TURN_OVER_CHALLENGE }
+            val attachmentsChallenge = allAttachments.filter { attachment -> attachment.targetType == AttachmentTargetType.ENTITY_TURN_OVER_CHALLENGE }
             val turnOverChallenge = (it.turnOverChallenge ?: TurnOverChallenge()).toDetailProto(
                 it.jobApplications,
                 memosChallenge,
@@ -131,8 +136,8 @@ class TurnOverService(
                 it.id,
             )
 
-            val memosRetrospective = memoQueryService.listMemos(it.id)
-            val attachmentsRetrospective = attachmentQueryService.listAttachments(it.id)
+            val memosRetrospective = allMemos.filter { memo -> memo.targetType == MemoTargetType.TURN_OVER_RETROSPECT }
+            val attachmentsRetrospective = allAttachments.filter { attachment -> attachment.targetType == AttachmentTargetType.ENTITY_TURN_OVER_RETROSPECTIVE }
             val turnOverRetrospective =
                 it.turnOverRetrospective.toDetailProto(memosRetrospective, attachmentsRetrospective, it.id)
 
@@ -211,7 +216,9 @@ class TurnOverService(
             // TurnOverChallenge는 필드가 없으므로 항상 새로 생성
             val turnOverChallenge = if (turnOver.turnOverChallenge == null) {
                 TurnOverChallenge()
-            } else null
+            } else {
+                null
+            }
 
             val turnOverRetrospective = TurnOverRetrospective(
                 name = request.turnOverRetrospective.name,
@@ -435,7 +442,7 @@ class TurnOverService(
         targetId: String,
         requests: List<TurnOverUpsertRequest.MemoRequest>,
     ) {
-        val existingEntities = memoQueryService.listMemos(targetId)
+        val existingEntities = memoQueryService.listMemos(targetId, targetType)
         val existingIds = existingEntities.map { it.id }.toSet()
         val requestIds = requests.mapNotNull { it.id }.toSet()
 
@@ -445,7 +452,7 @@ class TurnOverService(
 
         memoCommandService.deleteMemos(toDelete.map { it.id })
         memoCommandService.createBulkMemo(targetType, targetId, createMemos)
-        memoCommandService.updateBulkMemo(targetId, updateMemos)
+        memoCommandService.updateBulkMemo(targetType, targetId, updateMemos)
     }
 
     private fun updateAttachments(
@@ -454,7 +461,7 @@ class TurnOverService(
         attachmentRequests: List<AttachmentRequest>,
     ) {
         val storagePath = "turn-overs/attachments"
-        val existingAttachments = attachmentQueryService.listAttachments(targetId)
+        val existingAttachments = attachmentQueryService.listAttachments(targetId, targetType)
         val existingIds = existingAttachments.map { it.id }.toSet()
         val requestIds = attachmentRequests.mapNotNull { it.id }.toSet()
 
@@ -464,7 +471,7 @@ class TurnOverService(
 
         attachmentCommandService.deleteAttachments(toDelete.map { it.id })
         attachmentCommandService.createBulkAttachment(targetType, targetId, storagePath, createRequests)
-        attachmentCommandService.updateBulkAttachment(targetId, storagePath, updateRequests)
+        attachmentCommandService.updateBulkAttachment(targetType, targetId, storagePath, updateRequests)
     }
 
     @Transactional
@@ -595,9 +602,10 @@ class TurnOverService(
             }
         }
 
-        // 8. Memo 복제
-        val originalMemos = memoQueryService.listMemos(originalTurnOver.id)
-        originalMemos.forEach { originalMemo ->
+        // 8. Memo 복제 (Goal, Challenge, Retrospective 각각)
+        // 8-1. TurnOverGoal Memo 복제
+        val originalMemosGoal = memoQueryService.listMemos(originalTurnOver.id, MemoTargetType.TURN_OVER_GOAL)
+        originalMemosGoal.forEach { originalMemo ->
             memoCommandService.createMemo(
                 targetType = MemoTargetType.TURN_OVER_GOAL,
                 targetId = savedTurnOver.id,
@@ -609,12 +617,66 @@ class TurnOverService(
             )
         }
 
-        // 9. Attachment 복제
-        val originalAttachments = attachmentQueryService.listAttachments(originalTurnOver.id)
+        // 8-2. TurnOverChallenge Memo 복제
+        val originalMemosChallenge = memoQueryService.listMemos(originalTurnOver.id, MemoTargetType.TURN_OVER_CHALLENGE)
+        originalMemosChallenge.forEach { originalMemo ->
+            memoCommandService.createMemo(
+                targetType = MemoTargetType.TURN_OVER_CHALLENGE,
+                targetId = savedTurnOver.id,
+                request = TurnOverUpsertRequest.MemoRequest.newBuilder()
+                    .setContent(originalMemo.content)
+                    .setIsVisible(originalMemo.isVisible)
+                    .setPriority(originalMemo.priority)
+                    .build(),
+            )
+        }
+
+        // 8-3. TurnOverRetrospective Memo 복제
+        val originalMemosRetrospective =
+            memoQueryService.listMemos(originalTurnOver.id, MemoTargetType.TURN_OVER_RETROSPECT)
+        originalMemosRetrospective.forEach { originalMemo ->
+            memoCommandService.createMemo(
+                targetType = MemoTargetType.TURN_OVER_RETROSPECT,
+                targetId = savedTurnOver.id,
+                request = TurnOverUpsertRequest.MemoRequest.newBuilder()
+                    .setContent(originalMemo.content)
+                    .setIsVisible(originalMemo.isVisible)
+                    .setPriority(originalMemo.priority)
+                    .build(),
+            )
+        }
+
+        // 9. Attachment 복제 (Goal, Challenge, Retrospective 각각)
+        val allOriginalAttachments = attachmentQueryService.listAttachments(originalTurnOver.id)
+
+        // 9-1. TurnOverGoal Attachment 복제
+        val originalAttachmentsGoal = allOriginalAttachments.filter {
+            it.targetType == AttachmentTargetType.ENTITY_TURN_OVER_GOAL
+        }
         duplicateAttachments(
-            originalAttachments = originalAttachments,
+            originalAttachments = originalAttachmentsGoal,
             newTargetId = savedTurnOver.id,
             newTargetType = AttachmentTargetType.ENTITY_TURN_OVER_GOAL,
+        )
+
+        // 9-2. TurnOverChallenge Attachment 복제
+        val originalAttachmentsChallenge = allOriginalAttachments.filter {
+            it.targetType == AttachmentTargetType.ENTITY_TURN_OVER_CHALLENGE
+        }
+        duplicateAttachments(
+            originalAttachments = originalAttachmentsChallenge,
+            newTargetId = savedTurnOver.id,
+            newTargetType = AttachmentTargetType.ENTITY_TURN_OVER_CHALLENGE,
+        )
+
+        // 9-3. TurnOverRetrospective Attachment 복제
+        val originalAttachmentsRetrospective = allOriginalAttachments.filter {
+            it.targetType == AttachmentTargetType.ENTITY_TURN_OVER_RETROSPECTIVE
+        }
+        duplicateAttachments(
+            originalAttachments = originalAttachmentsRetrospective,
+            newTargetId = savedTurnOver.id,
+            newTargetType = AttachmentTargetType.ENTITY_TURN_OVER_RETROSPECTIVE,
         )
 
         return savedTurnOver

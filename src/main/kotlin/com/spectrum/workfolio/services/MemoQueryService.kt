@@ -1,6 +1,7 @@
 package com.spectrum.workfolio.services
 
 import com.spectrum.workfolio.domain.entity.common.Memo
+import com.spectrum.workfolio.domain.enums.MemoTargetType
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.repository.MemoRepository
 import com.spectrum.workfolio.utils.WorkfolioException
@@ -16,6 +17,11 @@ class MemoQueryService(
         return memoRepository.findById(id).orElseThrow {
             WorkfolioException(MsgKOR.NOT_FOUND_MEMO.message)
         }
+    }
+
+    @Transactional(readOnly = true)
+    fun listMemos(targetId: String, targetType: MemoTargetType): List<Memo> {
+        return memoRepository.findByTargetIdAndTargetTypeOrderByPriorityAsc(targetId, targetType)
     }
 
     @Transactional(readOnly = true)
