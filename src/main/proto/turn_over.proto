@@ -109,6 +109,8 @@ message TurnOverUpsertRequest {
   TurnOverGoalRequest turn_over_goal = 3;
   TurnOverChallengeRequest turn_over_challenge = 4;
   TurnOverRetrospectiveRequest turn_over_retrospective = 5;
+  optional uint64 started_at = 6;
+  optional uint64 ended_at = 7;
 }
 
 message TurnOverListResponse {

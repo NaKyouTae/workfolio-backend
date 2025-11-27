@@ -1072,6 +1072,16 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: started_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: ended_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: true
+              - column:
                   name: worker_id
                   type: VARCHAR(16)
                   constraints:

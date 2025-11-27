@@ -120,6 +120,8 @@ class TurnOverService(
 
             turnOver.changeInfo(
                 name = request.name,
+                startedAt = TimeUtil.ofEpochMilliNullable(request.startedAt)?.toLocalDate(),
+                endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
             )
 
             turnOver
@@ -130,6 +132,8 @@ class TurnOverService(
                 turnOverChallenge = turnOverChallenge,
                 turnOverRetrospective = turnOverRetrospective,
                 worker = worker,
+                startedAt = TimeUtil.ofEpochMilliNullable(request.startedAt)?.toLocalDate(),
+                endedAt = TimeUtil.ofEpochMilliNullable(request.endedAt)?.toLocalDate(),
             )
         }
 
@@ -405,6 +409,8 @@ class TurnOverService(
             turnOverChallenge = duplicatedTurnOverChallenge,
             turnOverRetrospective = duplicatedTurnOverRetrospective,
             worker = originalTurnOver.worker,
+            startedAt = originalTurnOver.startedAt,
+            endedAt = originalTurnOver.endedAt,
         )
 
         return turnOverRepository.save(duplicatedTurnOver)

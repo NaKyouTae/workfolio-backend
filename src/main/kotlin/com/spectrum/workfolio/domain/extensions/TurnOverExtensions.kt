@@ -8,6 +8,13 @@ fun TurnOver.toProto(): com.spectrum.workfolio.proto.common.TurnOver {
 
     builder.setId(this.id)
     builder.setName(this.name)
+    
+    if (this.startedAt != null) {
+        builder.setStartedAt(TimeUtil.toEpochMilli(this.startedAt))
+    }
+    if (this.endedAt != null) {
+        builder.setEndedAt(TimeUtil.toEpochMilli(this.endedAt))
+    }
 
     builder.setWorker(this.worker.toProto())
 
@@ -26,6 +33,13 @@ fun TurnOver.toDetailProto(
 
     builder.setId(this.id)
     builder.setName(this.name)
+    
+    if (this.startedAt != null) {
+        builder.setStartedAt(TimeUtil.toEpochMilli(this.startedAt))
+    }
+    if (this.endedAt != null) {
+        builder.setEndedAt(TimeUtil.toEpochMilli(this.endedAt))
+    }
 
     builder.setWorker(this.worker.toProto())
     builder.setTurnOverGoal(turnOverGoal)

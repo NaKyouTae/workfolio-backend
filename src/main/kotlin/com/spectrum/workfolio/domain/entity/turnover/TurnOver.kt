@@ -11,6 +11,7 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
+import java.time.LocalDate
 
 @Entity
 @Table(
@@ -25,6 +26,8 @@ class TurnOver(
     turnOverChallenge: TurnOverChallenge,
     turnOverRetrospective: TurnOverRetrospective,
     worker: Worker,
+    startedAt: LocalDate? = null,
+    endedAt: LocalDate? = null,
 ) : BaseEntity("TO") {
     @Column(name = "name", length = 1024, nullable = false)
     var name: String = name
@@ -50,7 +53,21 @@ class TurnOver(
     var turnOverRetrospective: TurnOverRetrospective = turnOverRetrospective
         protected set
 
-    fun changeInfo(name: String) {
+    @Column(name = "started_at", nullable = true)
+    var startedAt: LocalDate? = startedAt
+        protected set
+
+    @Column(name = "ended_at", nullable = true)
+    var endedAt: LocalDate? = endedAt
+        protected set
+
+    fun changeInfo(
+        name: String,
+        startedAt: LocalDate? = null,
+        endedAt: LocalDate? = null,
+    ) {
         this.name = name
+        this.startedAt = startedAt
+        this.endedAt = endedAt
     }
 }
