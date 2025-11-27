@@ -7,6 +7,8 @@ import com.spectrum.workfolio.domain.entity.turnover.TurnOverGoal
 import com.spectrum.workfolio.domain.entity.turnover.TurnOverRetrospective
 import com.spectrum.workfolio.domain.enums.ApplicationStageStatus
 import com.spectrum.workfolio.domain.enums.AttachmentTargetType
+import com.spectrum.workfolio.domain.enums.EmploymentType
+import com.spectrum.workfolio.domain.enums.Gender
 import com.spectrum.workfolio.domain.enums.JobApplicationStatus
 import com.spectrum.workfolio.domain.enums.MemoTargetType
 import com.spectrum.workfolio.domain.enums.MsgKOR
@@ -24,6 +26,7 @@ import com.spectrum.workfolio.services.FileUploadService
 import com.spectrum.workfolio.services.MemoCommandService
 import com.spectrum.workfolio.services.MemoQueryService
 import com.spectrum.workfolio.services.WorkerService
+import com.spectrum.workfolio.utils.EnumUtils.convertProtoEnumSafe
 import com.spectrum.workfolio.utils.FileUtil
 import com.spectrum.workfolio.utils.TimeUtil
 import com.spectrum.workfolio.utils.WorkfolioException
@@ -73,7 +76,7 @@ class TurnOverService(
 
         val memosChallenge = memoQueryService.listMemos(turnOver.id)
         val attachmentsChallenge = attachmentQueryService.listAttachments(turnOver.id)
-        val turnOverChallenge = turnOver.turnOverChallenge.toDetailProto(
+        val turnOverChallenge = (turnOver.turnOverChallenge ?: TurnOverChallenge()).toDetailProto(
             turnOver.jobApplications,
             memosChallenge,
             attachmentsChallenge,
@@ -121,8 +124,12 @@ class TurnOverService(
 
             val memosChallenge = memoQueryService.listMemos(it.id)
             val attachmentsChallenge = attachmentQueryService.listAttachments(it.id)
-            val turnOverChallenge =
-                it.turnOverChallenge.toDetailProto(it.jobApplications, memosChallenge, attachmentsChallenge, it.id)
+            val turnOverChallenge = (it.turnOverChallenge ?: TurnOverChallenge()).toDetailProto(
+                it.jobApplications,
+                memosChallenge,
+                attachmentsChallenge,
+                it.id,
+            )
 
             val memosRetrospective = memoQueryService.listMemos(it.id)
             val attachmentsRetrospective = attachmentQueryService.listAttachments(it.id)
@@ -140,10 +147,9 @@ class TurnOverService(
     @Transactional
     fun upsertTurnOver(workerId: String, request: TurnOverUpsertRequest) {
         val worker = workerService.getWorker(workerId)
+        val turnOver = this.getTurnOver(request.id)
 
         val turnOverEntity = if (request.hasId()) {
-            val turnOver = this.getTurnOver(request.id)
-
             turnOver.changeInfo(
                 name = request.name,
                 startedAt = TimeUtil.ofEpochMilliNullable(request.startedAt)?.toLocalDate(),
@@ -168,13 +174,7 @@ class TurnOverService(
                 reviewSummary = request.turnOverRetrospective.reviewSummary,
                 joinedAt = TimeUtil.ofEpochMilliNullable(request.turnOverRetrospective.joinedAt)?.toLocalDate(),
                 workType = request.turnOverRetrospective.workType,
-                employmentType = if (request.turnOverRetrospective.employmentType != null) {
-                    com.spectrum.workfolio.domain.enums.EmploymentType.valueOf(
-                        request.turnOverRetrospective.employmentType.name,
-                    )
-                } else {
-                    null
-                },
+                employmentType = convertProtoEnumSafe<EmploymentType>(request.turnOverRetrospective.employmentType),
             )
 
             // Upsert collections
@@ -208,7 +208,10 @@ class TurnOverService(
                 goal = request.turnOverGoal.goal,
             )
 
-            val turnOverChallenge = TurnOverChallenge()
+            // TurnOverChallenge는 필드가 없으므로 항상 새로 생성
+            val turnOverChallenge = if (turnOver.turnOverChallenge == null) {
+                TurnOverChallenge()
+            } else null
 
             val turnOverRetrospective = TurnOverRetrospective(
                 name = request.turnOverRetrospective.name,
@@ -222,13 +225,7 @@ class TurnOverService(
                 reviewSummary = request.turnOverRetrospective.reviewSummary,
                 joinedAt = TimeUtil.ofEpochMilliNullable(request.turnOverRetrospective.joinedAt)?.toLocalDate(),
                 workType = request.turnOverRetrospective.workType,
-                employmentType = if (request.turnOverRetrospective.employmentType != null) {
-                    com.spectrum.workfolio.domain.enums.EmploymentType.valueOf(
-                        request.turnOverRetrospective.employmentType.name,
-                    )
-                } else {
-                    null
-                },
+                employmentType = convertProtoEnumSafe<EmploymentType>(request.turnOverRetrospective.employmentType),
             )
 
             val turnOver = TurnOver(
@@ -481,7 +478,7 @@ class TurnOverService(
             goal = originalTurnOver.turnOverGoal.goal,
         )
 
-        val duplicatedTurnOverChallenge = TurnOverChallenge()
+        val duplicatedTurnOverChallenge = originalTurnOver.turnOverChallenge ?: TurnOverChallenge()
 
         val duplicatedTurnOverRetrospective = TurnOverRetrospective(
             name = originalTurnOver.turnOverRetrospective.name,

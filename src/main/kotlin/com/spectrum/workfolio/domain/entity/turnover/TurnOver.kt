@@ -24,7 +24,7 @@ import java.time.LocalDate
 class TurnOver(
     name: String,
     turnOverGoal: TurnOverGoal,
-    turnOverChallenge: TurnOverChallenge,
+    turnOverChallenge: TurnOverChallenge? = null,
     turnOverRetrospective: TurnOverRetrospective,
     worker: Worker,
     startedAt: LocalDate? = null,
@@ -44,7 +44,7 @@ class TurnOver(
         protected set
 
     @Embedded
-    var turnOverChallenge: TurnOverChallenge = turnOverChallenge
+    var turnOverChallenge: TurnOverChallenge? = turnOverChallenge
         protected set
 
     @Embedded
@@ -74,6 +74,10 @@ class TurnOver(
     @Column(name = "ended_at", nullable = true)
     var endedAt: LocalDate? = endedAt
         protected set
+
+    fun addTurnOverChallenge(turnOverChallenge: TurnOverChallenge) {
+        this.turnOverChallenge = turnOverChallenge
+    }
 
     fun addCheckList(checkList: CheckList) {
         mutableCheckList.add(checkList)

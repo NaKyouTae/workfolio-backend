@@ -98,7 +98,7 @@ message TurnOverUpsertRequest {
     string review_summary = 10;
     optional uint64 joined_at = 11;
     string work_type = 12;
-    TurnOverRetrospective.EmploymentType employment_type = 13;
+    optional TurnOverRetrospective.EmploymentType employment_type = 13;
 
     repeated MemoRequest memos = 14;
     repeated AttachmentRequest attachments = 15;
