@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface CheckListRepository : JpaRepository<CheckList, String> {
     fun findByTurnOverIdOrderByPriorityAsc(turnOverId: String): List<CheckList>
+    fun findByTurnOverIdInOrderByTurnOverIdAscPriorityAsc(turnOverIds: List<String>): List<CheckList>
 }

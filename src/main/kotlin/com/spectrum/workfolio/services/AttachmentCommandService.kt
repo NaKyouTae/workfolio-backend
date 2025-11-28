@@ -24,7 +24,7 @@ class AttachmentCommandService(
 
     private val logger = LoggerFactory.getLogger(AttachmentCommandService::class.java)
 
-    @Transactional
+    @Transactional  // 전역 타임아웃(30초) 적용
     fun createAttachment(dto: AttachmentCreateDto): Attachment {
         // 먼저 Attachment 생성하여 ID 획득
         val attachment = Attachment(
@@ -69,7 +69,7 @@ class AttachmentCommandService(
         return savedAttachment
     }
 
-    @Transactional
+    @Transactional(timeout = 60)  // Bulk 작업은 더 긴 타임아웃 필요
     fun createBulkAttachment(
         targetType: AttachmentTargetType,
         targetId: String,
@@ -114,7 +114,7 @@ class AttachmentCommandService(
         }
     }
 
-    @Transactional
+    @Transactional(timeout = 60)  // Bulk 작업은 더 긴 타임아웃 필요
     fun createBulkAttachmentFromEntity(
         entity: Any,
         storagePath: String,
@@ -160,7 +160,7 @@ class AttachmentCommandService(
         }
     }
 
-    @Transactional
+    @Transactional(timeout = 60)  // Bulk 작업은 더 긴 타임아웃 필요
     fun updateBulkAttachment(
         targetType: AttachmentTargetType,
         targetId: String,
@@ -208,7 +208,7 @@ class AttachmentCommandService(
         return attachmentRepository.saveAll(updatedEntities)
     }
 
-    @Transactional
+    @Transactional  // 전역 타임아웃(30초) 적용
     fun updateAttachment(dto: AttachmentUpdateDto): Attachment {
         val attachment = attachmentQueryService.getAttachment(dto.id)
 
@@ -245,7 +245,7 @@ class AttachmentCommandService(
         return attachment
     }
 
-    @Transactional
+    @Transactional  // 전역 타임아웃(30초) 적용
     fun deleteAttachments(attachmentIds: List<String>) {
         if (attachmentIds.isEmpty()) {
             return

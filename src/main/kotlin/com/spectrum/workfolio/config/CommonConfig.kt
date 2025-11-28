@@ -10,12 +10,14 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
+import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter
 import org.springframework.http.converter.protobuf.ProtobufJsonFormatHttpMessageConverter
 import java.io.IOException
 
 @Configuration
 @EnableJpaAuditing
+@EnableScheduling
 class CommonConfig {
     @Bean
     fun protobufHttpMessageConverter(): ProtobufHttpMessageConverter {

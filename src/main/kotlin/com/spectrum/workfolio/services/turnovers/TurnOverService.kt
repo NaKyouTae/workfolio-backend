@@ -14,6 +14,10 @@ import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.extensions.toDetailProto
 import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.TurnOverRepository
+import com.spectrum.workfolio.domain.repository.SelfIntroductionRepository
+import com.spectrum.workfolio.domain.repository.InterviewQuestionRepository
+import com.spectrum.workfolio.domain.repository.CheckListRepository
+import com.spectrum.workfolio.domain.repository.JobApplicationRepository
 import com.spectrum.workfolio.proto.attachment.AttachmentRequest
 import com.spectrum.workfolio.proto.common.Attachment
 import com.spectrum.workfolio.proto.turn_over.TurnOverDetailListResponse
@@ -48,6 +52,10 @@ class TurnOverService(
     private val selfIntroductionService: SelfIntroductionService,
     private val attachmentCommandService: AttachmentCommandService,
     private val interviewQuestionService: InterviewQuestionService,
+    private val selfIntroductionRepository: SelfIntroductionRepository,
+    private val interviewQuestionRepository: InterviewQuestionRepository,
+    private val checkListRepository: CheckListRepository,
+    private val jobApplicationRepository: JobApplicationRepository,
 ) {
 
     private val logger = org.slf4j.LoggerFactory.getLogger(TurnOverService::class.java)
@@ -111,24 +119,42 @@ class TurnOverService(
 
     @Transactional(readOnly = true)
     fun listTurnOverDetailsResult(workerId: String): TurnOverDetailListResponse {
-        // Lazy Loading 방지를 위해 JOIN FETCH로 한 번에 로드
+        // MultipleBagFetchException 방지: JOIN FETCH 없이 기본 조회만 수행
         val turnOvers = turnOverRepository.findByWorkerIdWithCollections(workerId)
         
         // N+1 문제 해결: 모든 turnOver ID를 모아서 한 번에 조회
         val turnOverIds = turnOvers.map { it.id }
+        
+        // 컬렉션들을 별도 쿼리로 한 번에 가져오기
+        val allSelfIntroductionsMap = selfIntroductionRepository
+            .findByTurnOverIdInOrderByTurnOverIdAscPriorityAsc(turnOverIds)
+            .groupBy { it.turnOver.id }
+        val allInterviewQuestionsMap = interviewQuestionRepository
+            .findByTurnOverIdInOrderByTurnOverIdAscPriorityAsc(turnOverIds)
+            .groupBy { it.turnOver.id }
+        val allCheckListMap = checkListRepository
+            .findByTurnOverIdInOrderByTurnOverIdAscPriorityAsc(turnOverIds)
+            .groupBy { it.turnOver.id }
+        val allJobApplicationsMap = jobApplicationRepository
+            .findByTurnOverIdInOrderByTurnOverIdAscPriorityAsc(turnOverIds)
+            .groupBy { it.turnOver.id }
         val allMemosMap = memoQueryService.listMemos(turnOverIds).groupBy { it.targetId }
         val allAttachmentsMap = attachmentQueryService.listAttachments(turnOverIds).groupBy { it.targetId }
         
         val turnOversResult = turnOvers.map {
+            val selfIntroductions = allSelfIntroductionsMap[it.id] ?: emptyList()
+            val interviewQuestions = allInterviewQuestionsMap[it.id] ?: emptyList()
+            val checkList = allCheckListMap[it.id] ?: emptyList()
+            val jobApplications = allJobApplicationsMap[it.id] ?: emptyList()
             val allMemos = allMemosMap[it.id] ?: emptyList()
             val allAttachments = allAttachmentsMap[it.id] ?: emptyList()
 
             val memosGoal = allMemos.filter { memo -> memo.targetType == MemoTargetType.TURN_OVER_GOAL }
             val attachmentsGoal = allAttachments.filter { attachment -> attachment.targetType == AttachmentTargetType.ENTITY_TURN_OVER_GOAL }
             val turnOverGoal = it.turnOverGoal.toDetailProto(
-                it.selfIntroductions,
-                it.interviewQuestions,
-                it.checkList,
+                selfIntroductions,
+                interviewQuestions,
+                checkList,
                 memosGoal,
                 attachmentsGoal,
                 it.id,
@@ -137,7 +163,7 @@ class TurnOverService(
             val memosChallenge = allMemos.filter { memo -> memo.targetType == MemoTargetType.TURN_OVER_CHALLENGE }
             val attachmentsChallenge = allAttachments.filter { attachment -> attachment.targetType == AttachmentTargetType.ENTITY_TURN_OVER_CHALLENGE }
             val turnOverChallenge = (it.turnOverChallenge ?: TurnOverChallenge()).toDetailProto(
-                it.jobApplications,
+                jobApplications,
                 memosChallenge,
                 attachmentsChallenge,
                 it.id,
@@ -156,7 +182,7 @@ class TurnOverService(
             .build()
     }
 
-    @Transactional
+    @Transactional(timeout = 60)  // 복잡한 작업이므로 더 긴 타임아웃 필요
     fun upsertTurnOver(workerId: String, request: TurnOverUpsertRequest) {
         val worker = workerService.getWorker(workerId)
         val turnOver = this.getTurnOver(request.id)
@@ -229,7 +255,7 @@ class TurnOverService(
 
             val turnOverRetrospective = TurnOverRetrospective(
                 name = request.turnOverRetrospective.name,
-                salary = request.turnOverRetrospective.salary.toInt(),
+                salary = request.turnOverRetrospective.salary,
                 position = request.turnOverRetrospective.position,
                 jobTitle = request.turnOverRetrospective.jobTitle,
                 rank = request.turnOverRetrospective.rank,
@@ -481,7 +507,7 @@ class TurnOverService(
         attachmentCommandService.updateBulkAttachment(targetType, targetId, storagePath, updateRequests)
     }
 
-    @Transactional
+    @Transactional(timeout = 60)  // 복제 작업은 여러 작업을 수행하므로 더 긴 타임아웃
     fun duplicate(id: String): TurnOver {
         // 1. 원본 TurnOver 조회
         val originalTurnOver = this.getTurnOver(id)
@@ -737,7 +763,7 @@ class TurnOverService(
         }
     }
 
-    @Transactional
+    @Transactional  // 전역 타임아웃(30초) 적용
     fun delete(id: String) {
         turnOverRepository.deleteById(id)
     }
