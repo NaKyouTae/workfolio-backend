@@ -41,6 +41,8 @@ class AttachmentCommandService(
         val savedAttachment = attachmentRepository.save(attachment)
 
         // fileData가 있으면 Supabase Storage에 업로드
+        // ⚠️ 외부 API 호출은 트랜잭션 안에서 실행되므로 Connection이 오래 점유될 수 있음
+        // 하지만 업로드 실패 시 롤백이 필요하므로 트랜잭션 안에서 처리
         val uploadedFileUrl = if (dto.fileData != null && !dto.fileData.isEmpty) {
             try {
                 // 파일 확장자 추출
@@ -53,7 +55,7 @@ class AttachmentCommandService(
                     storagePath = dto.storagePath,
                 )
             } catch (e: Exception) {
-                // 업로드 실패 시 생성된 Attachment 삭제 (롤백)
+                // 업로드 실패 시 생성된 Attachment 삭제 (트랜잭션 롤백)
                 attachmentRepository.delete(savedAttachment)
                 throw e
             }

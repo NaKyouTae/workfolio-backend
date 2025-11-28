@@ -111,10 +111,17 @@ class TurnOverService(
 
     @Transactional(readOnly = true)
     fun listTurnOverDetailsResult(workerId: String): TurnOverDetailListResponse {
-        val turnOvers = turnOverRepository.findByWorkerId(workerId)
+        // Lazy Loading 방지를 위해 JOIN FETCH로 한 번에 로드
+        val turnOvers = turnOverRepository.findByWorkerIdWithCollections(workerId)
+        
+        // N+1 문제 해결: 모든 turnOver ID를 모아서 한 번에 조회
+        val turnOverIds = turnOvers.map { it.id }
+        val allMemosMap = memoQueryService.listMemos(turnOverIds).groupBy { it.targetId }
+        val allAttachmentsMap = attachmentQueryService.listAttachments(turnOverIds).groupBy { it.targetId }
+        
         val turnOversResult = turnOvers.map {
-            val allMemos = memoQueryService.listMemos(it.id)
-            val allAttachments = attachmentQueryService.listAttachments(it.id)
+            val allMemos = allMemosMap[it.id] ?: emptyList()
+            val allAttachments = allAttachmentsMap[it.id] ?: emptyList()
 
             val memosGoal = allMemos.filter { memo -> memo.targetType == MemoTargetType.TURN_OVER_GOAL }
             val attachmentsGoal = allAttachments.filter { attachment -> attachment.targetType == AttachmentTargetType.ENTITY_TURN_OVER_GOAL }
