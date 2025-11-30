@@ -185,9 +185,10 @@ class TurnOverService(
     @Transactional(timeout = 60)  // 복잡한 작업이므로 더 긴 타임아웃 필요
     fun upsertTurnOver(workerId: String, request: TurnOverUpsertRequest) {
         val worker = workerService.getWorker(workerId)
-        val turnOver = this.getTurnOver(request.id)
 
         val turnOverEntity = if (request.hasId()) {
+            val turnOver = this.getTurnOver(request.id)
+
             turnOver.changeInfo(
                 name = request.name,
                 startedAt = TimeUtil.ofEpochMilliNullable(request.startedAt)?.toLocalDate(),
@@ -247,11 +248,7 @@ class TurnOverService(
             )
 
             // TurnOverChallenge는 필드가 없으므로 항상 새로 생성
-            val turnOverChallenge = if (turnOver.turnOverChallenge == null) {
-                TurnOverChallenge()
-            } else {
-                null
-            }
+            val turnOverChallenge = TurnOverChallenge()
 
             val turnOverRetrospective = TurnOverRetrospective(
                 name = request.turnOverRetrospective.name,
