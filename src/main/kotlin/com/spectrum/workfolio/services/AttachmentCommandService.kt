@@ -31,14 +31,14 @@ class AttachmentCommandService(
      * 3. 업로드 성공 시 fileUrl 업데이트
      * 4. 업로드 실패 시 Attachment 삭제
      */
-    @Transactional  // 전역 타임아웃(30초) 적용
+    @Transactional // 전역 타임아웃(30초) 적용
     fun createAttachment(dto: AttachmentCreateDto): Attachment {
         // 먼저 Attachment 생성하여 ID 획득 (fileUrl은 빈 문자열로 저장)
         val attachment = Attachment(
             type = dto.type,
             category = dto.category,
             fileName = dto.fileName ?: "",
-            fileUrl = "",  // 파일 업로드는 트랜잭션 밖에서 처리
+            fileUrl = "", // 파일 업로드는 트랜잭션 밖에서 처리
             url = dto.url ?: "",
             isVisible = dto.isVisible,
             priority = dto.priority,
@@ -88,19 +88,22 @@ class AttachmentCommandService(
             // 업로드 성공 시 fileUrl 업데이트 (새로운 트랜잭션)
             attachment.changeFileUrl(uploadedFileUrl)
             attachmentRepository.save(attachment)
-            
+
             logger.info("✅ 파일 업로드 완료: attachmentId=${attachment.id}, fileUrl=$uploadedFileUrl")
         } catch (e: Exception) {
             logger.error("❌ 파일 업로드 실패: attachmentId=${attachment.id}, error=${e.message}", e)
-            
+
             // 업로드 실패 시 Attachment 삭제 (새로운 트랜잭션)
             try {
                 attachmentRepository.delete(attachment)
                 logger.info("✅ 업로드 실패로 인한 Attachment 삭제 완료: attachmentId=${attachment.id}")
             } catch (deleteException: Exception) {
-                logger.error("❌ Attachment 삭제 실패: attachmentId=${attachment.id}, error=${deleteException.message}", deleteException)
+                logger.error(
+                    "❌ Attachment 삭제 실패: attachmentId=${attachment.id}, error=${deleteException.message}",
+                    deleteException
+                )
             }
-            
+
             throw e
         }
     }
@@ -110,7 +113,7 @@ class AttachmentCommandService(
      * 1. 먼저 트랜잭션 안에서 모든 Attachment 엔티티 저장
      * 2. 트랜잭션 커밋 후 각 파일 업로드 실행
      */
-    @Transactional(timeout = 30)  // DB 저장만 하므로 짧은 타임아웃
+    @Transactional(timeout = 30) // DB 저장만 하므로 짧은 타임아웃
     fun createBulkAttachment(
         targetType: AttachmentTargetType,
         targetId: String,
@@ -123,7 +126,7 @@ class AttachmentCommandService(
                 type = AttachmentType.valueOf(request.type.name),
                 category = AttachmentCategory.valueOf(request.category.name),
                 fileName = request.fileName,
-                fileUrl = request.fileUrl,  // fileUrl이 제공된 경우 사용
+                fileUrl = request.fileUrl, // fileUrl이 제공된 경우 사용
                 url = request.url,
                 isVisible = request.isVisible,
                 priority = request.priority,
@@ -155,7 +158,7 @@ class AttachmentCommandService(
      * 1. 먼저 트랜잭션 안에서 모든 Attachment 엔티티 저장
      * 2. 트랜잭션 커밋 후 각 파일 복사 실행
      */
-    @Transactional(timeout = 30)  // DB 저장만 하므로 짧은 타임아웃
+    @Transactional(timeout = 30) // DB 저장만 하므로 짧은 타임아웃
     fun createBulkAttachmentFromEntity(
         entity: Any,
         storagePath: String,
@@ -166,7 +169,7 @@ class AttachmentCommandService(
         val savedAttachments = attachments.map { originalAttachment ->
             val newAttachment = Attachment(
                 fileName = originalAttachment.fileName,
-                fileUrl = "",  // 파일 복사는 트랜잭션 밖에서 처리
+                fileUrl = "", // 파일 복사는 트랜잭션 밖에서 처리
                 url = originalAttachment.url,
                 isVisible = originalAttachment.isVisible,
                 priority = originalAttachment.priority,
@@ -215,7 +218,7 @@ class AttachmentCommandService(
             // 복사 성공 시 fileUrl 업데이트 (새로운 트랜잭션)
             attachment.changeFileUrl(copiedFileUrl)
             attachmentRepository.save(attachment)
-            
+
             logger.info("✅ 파일 복사 완료: attachmentId=${attachment.id}, fileUrl=$copiedFileUrl")
         } catch (e: Exception) {
             logger.error("❌ 파일 복사 실패: attachmentId=${attachment.id}, error=${e.message}", e)
@@ -230,14 +233,15 @@ class AttachmentCommandService(
      * 1. 먼저 트랜잭션 안에서 Attachment 정보만 업데이트
      * 2. 트랜잭션 커밋 후 파일 업로드/삭제 실행
      */
-    @Transactional(timeout = 30)  // DB 업데이트만 하므로 짧은 타임아웃
+    @Transactional(timeout = 30) // DB 업데이트만 하므로 짧은 타임아웃
     fun updateBulkAttachment(
         targetType: AttachmentTargetType,
         targetId: String,
         storagePath: String,
         requests: List<AttachmentRequest>,
     ): List<Attachment> {
-        val existingAttachments = attachmentRepository.findByTargetIdAndTargetTypeOrderByPriorityAsc(targetId, targetType)
+        val existingAttachments =
+            attachmentRepository.findByTargetIdAndTargetTypeOrderByPriorityAsc(targetId, targetType)
 
         val requestMap = requests
             .filter { it.id.isNotBlank() }
@@ -312,7 +316,7 @@ class AttachmentCommandService(
             // 업로드 성공 시 fileUrl 업데이트 (새로운 트랜잭션)
             attachment.changeFileUrl(newFileUrl)
             attachmentRepository.save(attachment)
-            
+
             logger.info("✅ 파일 업데이트 완료: attachmentId=${attachment.id}, fileUrl=$newFileUrl")
         } catch (e: Exception) {
             logger.error("❌ 파일 업데이트 실패: attachmentId=${attachment.id}, error=${e.message}", e)
@@ -325,7 +329,7 @@ class AttachmentCommandService(
      * 1. 먼저 트랜잭션 안에서 Attachment 정보만 업데이트
      * 2. 트랜잭션 커밋 후 파일 업로드/삭제 실행
      */
-    @Transactional  // 전역 타임아웃(30초) 적용
+    @Transactional // 전역 타임아웃(30초) 적용
     fun updateAttachment(dto: AttachmentUpdateDto): Attachment {
         val attachment = attachmentQueryService.getAttachment(dto.id)
 
@@ -360,7 +364,7 @@ class AttachmentCommandService(
         return attachment
     }
 
-    @Transactional  // 전역 타임아웃(30초) 적용
+    @Transactional // 전역 타임아웃(30초) 적용
     fun deleteAttachments(attachmentIds: List<String>) {
         if (attachmentIds.isEmpty()) {
             return
