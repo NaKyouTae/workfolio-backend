@@ -21,6 +21,8 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter
 import org.springframework.transaction.PlatformTransactionManager
 import org.slf4j.LoggerFactory
 import org.springframework.jdbc.core.JdbcTemplate
+import jakarta.annotation.PostConstruct
+import java.util.UUID
 import javax.sql.DataSource
 
 @Configuration
@@ -64,6 +66,29 @@ class PrimaryDataSourceConfig {
     private lateinit var password: String
 
     private val logger = LoggerFactory.getLogger(PrimaryDataSourceConfig::class.java)
+    
+    /**
+     * 서버 시작 시 생성되는 고유 식별자
+     * 형식: workfolio-server-{UUID}
+     * 이 식별자는 로그와 PostgreSQL Connection의 application_name에 사용됩니다.
+     */
+    companion object {
+        @JvmStatic
+        val serverInstanceId: String = run {
+            val appName = "workfolio-server"
+            val randomId = UUID.randomUUID().toString().substring(0, 8) // 8자리 짧은 UUID
+            "$appName-$randomId"
+        }
+        
+        init {
+            val logger = LoggerFactory.getLogger(PrimaryDataSourceConfig::class.java)
+            logger.info("=".repeat(80))
+            logger.info("🚀 서버 인스턴스 시작")
+            logger.info("📌 Server Instance ID: $serverInstanceId")
+            logger.info("📌 이 ID는 PostgreSQL Connection의 application_name으로 사용됩니다.")
+            logger.info("=".repeat(80))
+        }
+    }
 
     /**
      * 애플리케이션 시작 시 PostgreSQL 설정 자동 적용
@@ -107,14 +132,46 @@ class PrimaryDataSourceConfig {
         val properties = DataSourceProperties()
 
         properties.driverClassName = driverClassName
-        properties.url = jdbcUrl
+        
+        // JDBC URL에 ApplicationName 파라미터 추가
+        // PostgreSQL Connection의 application_name을 서버 인스턴스 ID로 설정
+        val jdbcUrlWithAppName = if (jdbcUrl.contains("ApplicationName=")) {
+            // 이미 ApplicationName이 있으면 교체
+            jdbcUrl.replace(Regex("ApplicationName=[^&]*"), "ApplicationName=$serverInstanceId")
+        } else {
+            // ApplicationName이 없으면 추가
+            val separator = if (jdbcUrl.contains("?")) "&" else "?"
+            "$jdbcUrl${separator}ApplicationName=$serverInstanceId"
+        }
+        
+        properties.url = jdbcUrlWithAppName
         properties.username = username
         properties.password = password
 
-        return properties
+        val dataSource = properties
             .initializeDataSourceBuilder()
             .type(HikariDataSource::class.java)
-            .build()
+            .build() as HikariDataSource
+        
+        // connection-init-sql에 application_name 설정 추가
+        // JDBC URL의 ApplicationName 파라미터가 작동하지 않는 경우를 대비
+        val currentInitSql = dataSource.connectionInitSql
+        val newInitSql = if (currentInitSql != null && currentInitSql.isNotBlank()) {
+            "$currentInitSql; SET application_name = '$serverInstanceId'"
+        } else {
+            "SET application_name = '$serverInstanceId'"
+        }
+        dataSource.connectionInitSql = newInitSql
+        
+        // Connection 재사용을 촉진하기 위한 설정
+        // Connection validation을 더 엄격하게 설정하여 죽은 Connection을 빠르게 감지
+        dataSource.connectionTestQuery = "SELECT 1"
+        dataSource.validationTimeout = 5000L
+        
+        logger.info("✅ PostgreSQL Connection application_name 설정: $serverInstanceId")
+        logger.info("✅ Connection 재사용 최적화: minimum-idle=${dataSource.minimumIdle}, validation-timeout=${dataSource.validationTimeout}ms")
+        
+        return dataSource
     }
 
     @Bean

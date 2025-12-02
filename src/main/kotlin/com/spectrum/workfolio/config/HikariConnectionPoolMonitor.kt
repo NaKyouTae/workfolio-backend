@@ -143,12 +143,41 @@ class HikariConnectionPoolMonitor(
     
     /**
      * Idle Connection 분석
+     * 
+     * ⚠️ 주의: minimum-idle 설정에 따라 idle Connection이 유지되는 것은 정상입니다.
+     * - minimum-idle=2: 최소 2개 Connection 유지 (정상)
+     * - maximum-pool-size=10: 최대 10개 Connection
+     * 
+     * idle Connection이 많다고 해서 문제가 되는 것은 아닙니다.
+     * 문제는 "idle in transaction" 상태이거나 Connection이 반환되지 않는 경우입니다.
      */
     private fun analyzeIdleConnections(idleCount: Int) {
-        if (idleCount >= 5) {
+        // Active Connection이 0이고 Idle Connection만 있는 경우는 정상 상태입니다.
+        // minimum-idle 설정에 따라 Connection이 유지되는 것이므로 경고를 출력하지 않습니다.
+        val active = if (dataSource is HikariDataSource) {
+            dataSource.hikariPoolMXBean.activeConnections
+        } else {
+            0
+        }
+        
+        // Active Connection이 없고 Idle만 있는 경우는 정상 상태
+        if (active == 0 && idleCount > 0) {
+            logger.debug(
+                """
+                |✅ Connection Pool 정상 상태
+                |Active: 0, Idle: $idleCount
+                |minimum-idle 설정에 따라 Connection이 유지되고 있습니다. (정상)
+                """.trimMargin()
+            )
+            return
+        }
+        
+        // Active Connection이 있는데 Idle도 많은 경우만 경고
+        // (Connection이 제대로 반환되지 않을 수 있음)
+        if (idleCount >= 5 && active > 0) {
             logger.warn(
                 """
-                |⚠️ Idle Connection이 ${idleCount}개 유지되고 있습니다.
+                |⚠️ Idle Connection이 ${idleCount}개 유지되고 있습니다. (Active: $active)
                 |가능한 원인:
                 |1. 트랜잭션이 완료되지 않아 Connection이 반환되지 않음
                 |2. 외부 API 호출 등으로 인한 긴 트랜잭션
@@ -192,6 +221,133 @@ class HikariConnectionPoolMonitor(
             } catch (e: Exception) {
                 logger.debug("Connection 상세 정보 조회 실패: ${e.message}")
             }
+        }
+    }
+    
+    /**
+     * 오래된 Idle Connection 강제 정리
+     * 
+     * ⚠️ 중요: HikariCP Housekeeper와의 차이점
+     * - Housekeeper: HikariCP Pool 레벨에서 Connection 제거 (약 30초마다)
+     *   → Connection.close() 호출하지만, PostgreSQL 레벨에서는 닫히지 않을 수 있음
+     * - 이 스케줄러: PostgreSQL 레벨에서 Connection 종료 (2분마다)
+     *   → pg_terminate_backend()로 실제로 종료
+     * 
+     * 따라서 겹치지 않으며, Housekeeper가 제거한 Connection이 PostgreSQL에서
+     * 여전히 idle 상태로 유지되는 경우를 처리합니다.
+     */
+    @Scheduled(fixedRate = 120000, initialDelay = 60000) // 2분마다 실행, 시작 후 1분 대기
+    fun evictIdleConnections() {
+        if (dataSource is HikariDataSource) {
+            try {
+                val pool = dataSource.hikariPoolMXBean
+                val idle = pool.idleConnections
+                val total = pool.totalConnections
+                val maxPoolSize = dataSource.maximumPoolSize
+                
+                // HikariCP의 Connection 수와 PostgreSQL의 Connection 수 비교
+                val postgresConnectionCount = getPostgreSQLConnectionCount()
+                
+                if (postgresConnectionCount > total) {
+                    val diff = postgresConnectionCount - total
+                    logger.warn(
+                        """
+                        |⚠️ Connection 불일치 감지!
+                        |HikariCP Connection 수: $total
+                        |PostgreSQL Connection 수: $postgresConnectionCount
+                        |차이: ${diff}개
+                        |
+                        |원인: HikariCP가 Connection을 제거했다고 판단했지만,
+                        |PostgreSQL 레벨에서는 Connection이 여전히 idle 상태로 유지되고 있습니다.
+                        |이는 Supabase Transaction Pooler의 동작 방식 때문입니다.
+                        """.trimMargin()
+                    )
+                }
+                
+                // PostgreSQL Connection 수가 HikariCP보다 많은 경우만 정리
+                // (Housekeeper가 이미 처리한 경우는 제외)
+                if (postgresConnectionCount > total) {
+                    val diff = postgresConnectionCount - total
+                    logger.warn(
+                        """
+                        |🧹 오래된 Idle Connection 강제 정리 시작
+                        |현재 상태: HikariCP Idle=$idle, Total=$total, Max=$maxPoolSize
+                        |PostgreSQL Connection 수: $postgresConnectionCount (차이: ${diff}개)
+                        |
+                        |💡 Housekeeper가 Connection을 제거했다고 판단했지만,
+                        |PostgreSQL 레벨에서는 여전히 idle 상태로 유지되고 있습니다.
+                        |PostgreSQL에서 직접 Connection 종료 시도
+                        """.trimMargin()
+                    )
+                    
+                    // PostgreSQL에서 직접 Connection 종료 시도
+                    try {
+                        val jdbcTemplate = org.springframework.jdbc.core.JdbcTemplate(dataSource)
+                        
+                        // HikariCP가 제거했다고 판단한 Connection만 종료
+                        // (idle-timeout=3분보다 약간 긴 4분 이상 idle 상태인 Connection)
+                        // 이렇게 하면 Housekeeper가 방금 제거한 Connection은 제외하고,
+                        // 실제로 닫히지 않은 오래된 Connection만 종료
+                        val terminatedCount = jdbcTemplate.queryForList(
+                            """
+                            SELECT pg_terminate_backend(pid) as terminated
+                            FROM pg_stat_activity
+                            WHERE datname = 'postgres'
+                              AND state = 'idle'
+                              AND application_name LIKE 'workfolio-server-%'
+                              AND NOW() - query_start > INTERVAL '4 minutes'
+                              AND pid != pg_backend_pid()
+                            """.trimIndent(),
+                            Map::class.java
+                        ).size
+                        
+                        if (terminatedCount > 0) {
+                            logger.info("✅ ${terminatedCount}개의 오래된 Idle Connection을 PostgreSQL에서 종료했습니다.")
+                            logger.info("💡 HikariCP Connection 수와 PostgreSQL Connection 수를 동기화했습니다.")
+                        } else {
+                            logger.debug("종료할 Connection이 없습니다. (Housekeeper가 이미 처리했을 수 있음)")
+                        }
+                    } catch (e: Exception) {
+                        logger.error(
+                            "⚠️ PostgreSQL에서 Connection 종료 실패: ${e.message}. " +
+                            "Supabase에서 권한이 제한되어 있을 수 있습니다.",
+                            e
+                        )
+                    }
+                } else if (idle > 3 || total >= maxPoolSize * 0.8) {
+                    // HikariCP Pool이 거의 가득 찬 경우만 경고 (Housekeeper가 처리할 것)
+                    logger.debug(
+                        """
+                        |HikariCP Pool 상태: Idle=$idle, Total=$total, Max=$maxPoolSize
+                        |Housekeeper가 자동으로 정리할 예정입니다.
+                        """.trimMargin()
+                    )
+                }
+            } catch (e: Exception) {
+                logger.error("Idle Connection 정리 중 오류: ${e.message}", e)
+            }
+        }
+    }
+    
+    /**
+     * PostgreSQL에서 현재 애플리케이션의 Connection 수 조회
+     */
+    private fun getPostgreSQLConnectionCount(): Int {
+        return try {
+            val jdbcTemplate = org.springframework.jdbc.core.JdbcTemplate(dataSource)
+            jdbcTemplate.queryForObject(
+                """
+                SELECT COUNT(*)
+                FROM pg_stat_activity
+                WHERE datname = 'postgres'
+                  AND application_name LIKE 'workfolio-server-%'
+                  AND state = 'idle'
+                """.trimIndent(),
+                Int::class.java
+            ) ?: 0
+        } catch (e: Exception) {
+            logger.debug("PostgreSQL Connection 수 조회 실패: ${e.message}")
+            0
         }
     }
     
