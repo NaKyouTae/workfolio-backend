@@ -15,7 +15,7 @@ RUN addgroup -g 1001 -S appgroup && \
 WORKDIR /app
 
 # Copy the built JAR from builder stage
-COPY projects/api/build/libs/workfolio-server-boot.jar /app/app.jar
+COPY build/libs/workfolio-server-boot.jar /app/app.jar
 
 RUN echo "[Dockerfile] /app/app.jar 파일 정보:" && ls -lh /app/app.jar
 

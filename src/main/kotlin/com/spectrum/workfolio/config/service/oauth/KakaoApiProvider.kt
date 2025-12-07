@@ -1,6 +1,5 @@
 package com.spectrum.workfolio.config.service.oauth
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpEntity
@@ -9,7 +8,6 @@ import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.util.LinkedMultiValueMap
-import org.springframework.util.MultiValueMap
 import org.springframework.web.client.RestTemplate
 
 /**
@@ -18,7 +16,6 @@ import org.springframework.web.client.RestTemplate
 @Component
 class KakaoApiProvider(
     private val restTemplate: RestTemplate,
-    private val objectMapper: ObjectMapper,
 ) {
 
     private val logger = LoggerFactory.getLogger(KakaoApiProvider::class.java)
@@ -64,39 +61,6 @@ class KakaoApiProvider(
         } catch (e: Exception) {
             logger.error("카카오 연결 해제 실패: userId={}", kakaoUserId, e)
             false
-        }
-    }
-
-    /**
-     * 카카오 사용자 정보 조회
-     * @param accessToken 카카오 액세스 토큰
-     * @return 사용자 정보
-     */
-    fun getUserInfo(accessToken: String): Map<String, Any>? {
-        return try {
-            logger.info("카카오 사용자 정보 조회 시작")
-
-            val url = "$kakaoApiBaseUrl/v2/user/me"
-
-            val headers = HttpHeaders().apply {
-                set("Authorization", "Bearer $accessToken")
-                contentType = MediaType.APPLICATION_FORM_URLENCODED
-            }
-
-            val request = HttpEntity<MultiValueMap<String, String>>(headers)
-
-            val response = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                request,
-                Map::class.java,
-            )
-
-            logger.info("카카오 사용자 정보 조회 성공: {}", response.statusCode)
-            response.body as? Map<String, Any>
-        } catch (e: Exception) {
-            logger.error("카카오 사용자 정보 조회 실패", e)
-            null
         }
     }
 

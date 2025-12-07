@@ -100,7 +100,7 @@ class AttachmentCommandService(
             } catch (deleteException: Exception) {
                 logger.error(
                     "❌ Attachment 삭제 실패: attachmentId=${attachment.id}, error=${deleteException.message}",
-                    deleteException
+                    deleteException,
                 )
             }
 

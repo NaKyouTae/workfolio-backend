@@ -1,18 +1,18 @@
 services:
-#  workfolio-service:
-#    image: workfolio-server:local
-#    container_name: workfolio-server
-#    ports:
-#      - "8080:8080"
-#    env_file:
-#      - docker-compose.env
-#    depends_on:
-#      postgres:
-#        condition: service_healthy
-#      redis:
-#        condition: service_healthy
-#    networks:
-#      - workfolio-network
+  workfolio-service:
+    image: workfolio-server:local
+    container_name: workfolio-server
+    ports:
+      - "8080:8080"
+    env_file:
+      - docker-compose.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - workfolio-network
 
   postgres:
     image: postgres:16-alpine
@@ -22,7 +22,7 @@ services:
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: "123456789a"
+      POSTGRES_PASSWORD: "Skrbxo123!@#"
     ports:
       - "5432:5432"
     volumes:

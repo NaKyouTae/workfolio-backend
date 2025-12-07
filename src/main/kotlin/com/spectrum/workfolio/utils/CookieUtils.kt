@@ -1,13 +1,17 @@
 package com.spectrum.workfolio.utils
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.type.TypeFactory
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.springframework.util.SerializationUtils
 import java.util.*
 
 // 예시로 CookieUtil에 대한 직렬화 및 역직렬화 구현
 object CookieUtils {
+    private val objectMapper: ObjectMapper = jacksonObjectMapper()
+
     fun getCookie(request: HttpServletRequest, name: String): Optional<Cookie> {
         val cookies = request.cookies ?: return Optional.empty()
         return cookies.firstOrNull { it.name == name }?.let { Optional.of(it) } ?: Optional.empty()
@@ -34,10 +38,14 @@ object CookieUtils {
     }
 
     fun serialize(obj: Any): String {
-        return Base64.getUrlEncoder().encodeToString(SerializationUtils.serialize(obj))
+        val jsonBytes = objectMapper.writeValueAsBytes(obj)
+        return Base64.getUrlEncoder().encodeToString(jsonBytes)
     }
 
     fun <T> deserialize(cookie: Cookie, cls: Class<T>): T {
-        return cls.cast(SerializationUtils.deserialize(Base64.getUrlDecoder().decode(cookie.value)))
+        val decodedBytes = Base64.getUrlDecoder().decode(cookie.value)
+        val typeFactory = TypeFactory.defaultInstance()
+        val javaType = typeFactory.constructType(cls)
+        return objectMapper.readValue(decodedBytes, javaType)
     }
 }
