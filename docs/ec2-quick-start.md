@@ -142,3 +142,10 @@ docker system df
 - 배포 스크립트: `scripts/ec2-deploy.sh`
 - EC2용 compose: `docker-compose.ec2.yml`
 
+
+
+# 1. 디렉토리 생성
+ssh -i workfolio-server.pem ec2-user@ec2-3-27-94-86.ap-southeast-2.compute.amazonaws.com "mkdir -p ~/workfolio-backend/build/libs"
+
+# 2. 파일 전송
+scp -i workfolio-server.pem /Users/nakyutae/personal/git/workfolio-backend/build/libs/workfolio-server.jar ec2-user@ec2-3-27-94-86.ap-southeast-2.compute.amazonaws.com:~/workfolio-backend/build/libs/

@@ -158,6 +158,9 @@ tasks.withType<Test> {
 
 tasks {
     getByPath("bootJar").enabled = true
+    named<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
+        archiveFileName.set("workfolio-server.jar")
+    }
     jar {
         archiveFileName.set("workfolio-server.jar")
         enabled = true
