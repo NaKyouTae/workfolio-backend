@@ -1,5 +1,5 @@
 services:
-  workfolio-service:
+  workfolio-server:
     image: workfolio-server:local
     container_name: workfolio-server
     ports:

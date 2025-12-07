@@ -111,7 +111,7 @@ cd workfolio-backend
 ls -lh projects/api/build/libs/workfolio-server-boot.jar
 
 # EC2로 전송
-scp -i your-key.pem projects/api/build/libs/workfolio-server-boot.jar ec2-user@your-ec2-ip:~/workfolio-backend/projects/api/build/libs/
+scp -i workfolio-server.pem /Users/nakyutae/personal/git/workfolio-backend/build/libs/workfolio-server.jar ec2-user@ec2-3-27-94-86.ap-southeast-2.compute.amazonaws.com:~/workfolio-backend/build/libs/
 ```
 
 ### 5.3 EC2에서 직접 빌드 (대안)
@@ -255,7 +255,7 @@ ENV JAVA_OPTIONS="-Xmx512m -Xms256m -Djava.security.egd=file:/dev/./urandom"
 ```bash
 # docker-compose.yml에 추가
 services:
-  workfolio-service:
+  workfolio-server:
     mem_limit: 768m
     mem_reservation: 512m
 ```
@@ -313,7 +313,7 @@ sudo systemctl status workfolio
 
 ```bash
 # 컨테이너 로그 확인
-docker-compose logs -f workfolio-service
+docker-compose logs -f workfolio-server
 
 # 특정 컨테이너 로그
 docker logs -f workfolio-server
@@ -352,7 +352,7 @@ docker build -t workfolio-server:latest -f Dockerfile .
 docker-compose up -d
 
 # 로그 확인
-docker-compose logs -f workfolio-service
+docker-compose logs -f workfolio-server
 
 echo "✅ 배포 완료"
 ```
@@ -414,13 +414,13 @@ find /var/log -type f -name "*.log" -mtime +7 -delete
 ### 14.3 컨테이너가 시작되지 않을 때
 ```bash
 # 로그 확인
-docker-compose logs workfolio-service
+docker-compose logs workfolio-server
 
 # 컨테이너 상태 확인
 docker-compose ps
 
 # 컨테이너 재시작
-docker-compose restart workfolio-service
+docker-compose restart workfolio-server
 ```
 
 ## 15. 보안 설정
@@ -439,6 +439,97 @@ sudo firewall-cmd --reload
 groups
 ```
 
+## 15. HTTPS 설정 (Let's Encrypt)
+
+도메인 `api.workfolio.kr`에 Let's Encrypt 인증서를 설정하는 방법입니다.
+
+### 15.1 사전 준비
+
+1. **DNS 설정**: `api.workfolio.kr`의 A 레코드가 EC2 퍼블릭 IP를 가리키도록 설정
+   - 호스팅케이알 관리 페이지 → 도메인 선택 → "네임서버/DNS" 탭
+   - "DNS 레코드 관리"에서 "+ 새 레코드 추가"
+   - 유형: `A`, 호스트 이름: `api`, 값: EC2 퍼블릭 IP, TTL: `180`
+2. **보안 그룹**: HTTP(80), HTTPS(443) 포트 열기
+
+### 15.2 Nginx 및 Certbot 설치
+
+```bash
+# Nginx 설치
+sudo yum install -y nginx
+sudo systemctl start nginx
+sudo systemctl enable nginx
+
+# Certbot 설치
+sudo yum install -y certbot python3-certbot-nginx
+```
+
+### 15.3 초기 Nginx 설정
+
+```bash
+# Nginx 설정 파일 생성
+sudo nano /etc/nginx/conf.d/workfolio.conf
+```
+
+다음 내용 추가:
+
+```nginx
+server {
+    listen 80;
+    server_name api.workfolio.kr;
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        proxy_pass http://localhost:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+```bash
+# Nginx 재시작
+sudo nginx -t
+sudo systemctl restart nginx
+```
+
+### 15.4 Let's Encrypt 인증서 발급
+
+```bash
+# 인증서 발급
+sudo certbot --nginx -d api.workfolio.kr
+
+# 질문에 답변:
+# - Email: 이메일 주소 입력
+# - Terms: Y
+# - Redirect HTTP to HTTPS: Y (권장)
+```
+
+### 15.5 자동 갱신 설정
+
+```bash
+# 갱신 테스트
+sudo certbot renew --dry-run
+
+# 자동 갱신은 Certbot이 자동으로 설정합니다
+```
+
+### 15.6 확인
+
+```bash
+# HTTPS 접속 테스트
+curl -I https://api.workfolio.kr
+
+# 인증서 정보 확인
+sudo certbot certificates
+```
+
+**상세 가이드**: [lets-encrypt-https-setup.md](./lets-encrypt-https-setup.md) 참고
+
 ## 참고사항
 
 - **메모리**: t3.micro는 1GB 메모리만 있으므로 JVM 힙을 512MB 이하로 제한 권장
@@ -446,4 +537,5 @@ groups
 - **성능**: t3.micro는 버스트 가능한 인스턴스이므로 CPU 크레딧 관리 필요
 - **데이터베이스**: 프로덕션 환경에서는 RDS 사용 권장
 - **Redis**: 프로덕션 환경에서는 ElastiCache 사용 권장
+- **HTTPS**: Let's Encrypt로 무료 SSL 인증서 설정 가능 (상세 가이드 참고)
 

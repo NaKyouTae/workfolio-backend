@@ -4,7 +4,7 @@
 version: '3.8'
 
 services:
-  workfolio-service:
+  workfolio-server:
     # build 섹션 제거: buildx가 필요하므로 docker build로 먼저 빌드 필요
     # 빌드 명령: docker build -t workfolio-server:latest -f Dockerfile .
     image: workfolio-server:latest

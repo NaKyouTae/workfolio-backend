@@ -78,13 +78,13 @@ docker-compose -f docker-compose.ec2.yml ps
 # 로그 확인
 echo ""
 echo "📋 최근 로그 (마지막 50줄):"
-docker-compose -f docker-compose.ec2.yml logs --tail=50 workfolio-service || echo "⚠️  로그를 가져올 수 없습니다"
+docker-compose -f docker-compose.ec2.yml logs --tail=50 workfolio-server || echo "⚠️  로그를 가져올 수 없습니다"
 
 echo ""
 echo "✅ 배포 완료!"
 echo ""
 echo "다음 명령어로 로그 확인:"
-echo "  docker-compose -f docker-compose.ec2.yml logs -f workfolio-service"
+echo "  docker-compose -f docker-compose.ec2.yml logs -f workfolio-server"
 echo ""
 echo "서비스 상태 확인:"
 echo "  docker-compose -f docker-compose.ec2.yml ps"

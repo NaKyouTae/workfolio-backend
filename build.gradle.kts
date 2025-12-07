@@ -161,9 +161,9 @@ tasks {
     named<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
         archiveFileName.set("workfolio-server.jar")
     }
+    // jar 태스크 비활성화: bootJar만 사용 (실행 가능한 JAR)
     jar {
-        archiveFileName.set("workfolio-server.jar")
-        enabled = true
+        enabled = false
     }
 }
 
