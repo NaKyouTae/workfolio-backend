@@ -172,18 +172,34 @@ newgrp docker
 이 오류는 Docker가 이미지를 레지스트리에서 pull하려고 할 때 발생합니다:
 
 ```bash
-# 해결 방법 1: docker-compose에서 자동 빌드 (권장)
-docker-compose -f docker-compose.ec2.yml up -d --build
-
-# 해결 방법 2: 이미지를 먼저 빌드
+# 해결 방법 1: 이미지를 먼저 빌드 (권장)
 docker build -t workfolio-server:latest -f Dockerfile .
 docker-compose -f docker-compose.ec2.yml up -d
 
-# 해결 방법 3: 배포 스크립트 사용
+# 해결 방법 2: 배포 스크립트 사용
 ./scripts/ec2-deploy.sh
 ```
 
-**참고:** `docker-compose.ec2.yml`에는 `build` 섹션이 포함되어 있어, 이미지가 없어도 자동으로 빌드됩니다.
+### "compose build requires buildx" 오류 해결
+
+이 오류는 Docker Compose가 buildx를 요구하지만 설치되지 않았을 때 발생합니다:
+
+```bash
+# 해결 방법 1: 먼저 docker build로 이미지 빌드 (권장)
+docker build -t workfolio-server:latest -f Dockerfile .
+docker-compose -f docker-compose.ec2.yml up -d
+
+# 해결 방법 2: 배포 스크립트 사용 (자동으로 처리)
+./scripts/ec2-deploy.sh
+
+# 해결 방법 3: buildx 설치 (선택사항)
+mkdir -p ~/.docker/cli-plugins/
+curl -SL https://github.com/docker/buildx/releases/latest/download/buildx-v0.17.0.linux-amd64 -o ~/.docker/cli-plugins/docker-buildx
+chmod +x ~/.docker/cli-plugins/docker-buildx
+docker buildx version
+```
+
+**참고:** `docker-compose.ec2.yml`의 `build` 섹션은 제거되었습니다. 먼저 `docker build`로 이미지를 빌드한 후 `docker-compose up`을 실행하세요.
 
 ## 🔗 관련 문서
 

@@ -166,21 +166,22 @@ nano ~/workfolio-backend/docker-compose.env
 ## 8. Docker Compose로 서비스 실행
 
 ### 8.1 EC2 환경용 Docker Compose 사용 (권장)
-EC2 환경에서는 `docker-compose.ec2.yml`을 사용합니다. 이 파일은 이미지가 없을 때 자동으로 빌드합니다:
+EC2 환경에서는 `docker-compose.ec2.yml`을 사용합니다:
 
 ```bash
 # 프로젝트 디렉토리로 이동
 cd ~/workfolio-backend
 
-# Docker Compose 실행 (이미지가 없으면 자동으로 빌드)
-docker-compose -f docker-compose.ec2.yml up -d
-
-# 또는 배포 스크립트 사용
+# 방법 1: 배포 스크립트 사용 (권장 - 자동으로 이미지 빌드)
 chmod +x scripts/ec2-deploy.sh
 ./scripts/ec2-deploy.sh
+
+# 방법 2: 수동으로 이미지 빌드 후 실행
+docker build -t workfolio-server:latest -f Dockerfile .
+docker-compose -f docker-compose.ec2.yml up -d
 ```
 
-**참고:** `docker-compose.ec2.yml`에는 `build` 섹션이 포함되어 있어, 이미지가 없어도 자동으로 빌드됩니다.
+**참고:** buildx가 설치되지 않은 경우를 대비해, `docker-compose.ec2.yml`의 `build` 섹션은 제거되었습니다. 먼저 `docker build`로 이미지를 빌드한 후 `docker-compose up`을 실행하거나, 배포 스크립트를 사용하세요.
 
 ### 8.2 외부 DB/Redis 사용 시
 외부 데이터베이스(예: RDS, ElastiCache)를 사용하는 경우:
@@ -208,14 +209,30 @@ docker-compose ps
 ```
 
 ### 8.4 이미지 빌드 오류 해결
-만약 "pull access denied" 오류가 발생하면:
 
+#### "pull access denied" 오류
 ```bash
 # 방법 1: 이미지를 먼저 빌드
 docker build -t workfolio-server:latest -f Dockerfile .
+docker-compose -f docker-compose.ec2.yml up -d
+```
 
-# 방법 2: docker-compose에서 자동 빌드 (권장)
-docker-compose -f docker-compose.ec2.yml up -d --build
+#### "compose build requires buildx" 오류
+이 오류는 Docker Compose가 buildx를 요구하지만 설치되지 않았을 때 발생합니다:
+
+```bash
+# 방법 1: 먼저 docker build로 이미지 빌드 (권장)
+docker build -t workfolio-server:latest -f Dockerfile .
+docker-compose -f docker-compose.ec2.yml up -d
+
+# 방법 2: 배포 스크립트 사용 (자동으로 처리)
+./scripts/ec2-deploy.sh
+
+# 방법 3: buildx 설치 (선택사항)
+mkdir -p ~/.docker/cli-plugins/
+curl -SL https://github.com/docker/buildx/releases/latest/download/buildx-v0.17.0.linux-amd64 -o ~/.docker/cli-plugins/docker-buildx
+chmod +x ~/.docker/cli-plugins/docker-buildx
+docker buildx version
 ```
 
 ## 9. 메모리 최적화 (t3.micro 1GB 메모리)
