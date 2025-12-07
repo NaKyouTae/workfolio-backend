@@ -12,6 +12,7 @@ import com.spectrum.workfolio.config.repository.OAuth2AuthorizationRequestBasedO
 import com.spectrum.workfolio.config.resolver.CustomAuthorizationRequestResolver
 import com.spectrum.workfolio.config.service.WorkfolioOAuth2UserService
 import com.spectrum.workfolio.redis.service.RedisBlackAccessTokenService
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
@@ -39,6 +40,7 @@ class SecurityConfig(
     private val workfolioOAuth2LoginSuccessHandler: WorkfolioOAuth2LoginSuccessHandler,
     private val workfolioOAuth2LogoutSuccessHandler: WorkfolioOAuth2LogoutSuccessHandler,
     private val oAuth2AuthorizationRequestBasedOnCookieRepository: OAuth2AuthorizationRequestBasedOnCookieRepository,
+    @Value("\${app.frontend.url}") private val frontendUrl: String,
 ) {
 
     @Bean
@@ -106,7 +108,8 @@ class SecurityConfig(
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration()
 
-        configuration.allowedOrigins = listOf("http://localhost:3000", "http://127.0.0.1:3000")
+        // 프로덕션에서는 https://www.workfolio.kr, 로컬에서는 http://localhost:3000
+        configuration.allowedOrigins = listOf(frontendUrl, "http://127.0.0.1:3000")
         configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
         configuration.allowedHeaders = listOf("*")
         configuration.allowCredentials = true

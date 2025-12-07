@@ -33,6 +33,12 @@ class WorkfolioOAuth2LoginSuccessHandler(
     @Value("\${token.secure}")
     private lateinit var secure: String
 
+    @Value("\${app.frontend.url}")
+    private lateinit var frontendUrl: String
+
+    @Value("\${app.frontend.domain}")
+    private lateinit var frontendDomain: String
+
     override fun onAuthenticationSuccess(
         request: HttpServletRequest,
         response: HttpServletResponse,
@@ -70,7 +76,7 @@ class WorkfolioOAuth2LoginSuccessHandler(
     }
 
     private fun buildRedirectUrl(token: WorkfolioToken): String {
-        return UriComponentsBuilder.fromUriString("http://localhost:3000")
+        return UriComponentsBuilder.fromUriString(frontendUrl)
             .queryParam("access_token", token.accessToken)
             .queryParam("refresh_token", token.refreshToken)
             .toUriString()
@@ -81,8 +87,8 @@ class WorkfolioOAuth2LoginSuccessHandler(
             .httpOnly(httpOnly.toBoolean())
             .secure(secure.toBoolean())
             .path("/")
-            .domain("localhost") // ❗️로그아웃과 동일하게 맞춤 (필요 시 제거 가능)
-            .sameSite("Lax") // ❗️동일하게 지정
+            .domain(frontendDomain)
+            .sameSite("Lax")
             .maxAge(60 * 60 * 2) // 2시간
             .build()
 
@@ -90,7 +96,7 @@ class WorkfolioOAuth2LoginSuccessHandler(
             .httpOnly(httpOnly.toBoolean())
             .secure(secure.toBoolean())
             .path("/")
-            .domain("localhost")
+            .domain(frontendDomain)
             .sameSite("Lax")
             .maxAge(60 * 60 * 24 * 7) // 7일
             .build()

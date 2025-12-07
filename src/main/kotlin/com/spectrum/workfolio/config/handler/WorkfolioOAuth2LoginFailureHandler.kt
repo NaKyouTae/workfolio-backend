@@ -2,6 +2,7 @@ package com.spectrum.workfolio.config.handler
 
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.web.authentication.AuthenticationFailureHandler
 import org.springframework.stereotype.Component
@@ -9,6 +10,8 @@ import org.springframework.web.util.UriComponentsBuilder
 
 @Component
 class WorkfolioOAuth2LoginFailureHandler : AuthenticationFailureHandler {
+    @Value("\${app.frontend.url}")
+    private lateinit var frontendUrl: String
     override fun onAuthenticationFailure(
         request: HttpServletRequest,
         response: HttpServletResponse,
@@ -23,6 +26,6 @@ class WorkfolioOAuth2LoginFailureHandler : AuthenticationFailureHandler {
     }
 
     private fun buildRedirectUrl(): String {
-        return UriComponentsBuilder.fromUriString("http://localhost:3000/error").toUriString()
+        return UriComponentsBuilder.fromUriString("$frontendUrl/error").toUriString()
     }
 }

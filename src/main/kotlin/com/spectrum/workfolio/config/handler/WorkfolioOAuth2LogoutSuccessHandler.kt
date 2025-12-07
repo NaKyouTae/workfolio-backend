@@ -19,6 +19,12 @@ class WorkfolioOAuth2LogoutSuccessHandler : LogoutSuccessHandler {
     @Value("\${token.secure}")
     private lateinit var tokenSecure: String
 
+    @Value("\${app.frontend.url}")
+    private lateinit var frontendUrl: String
+
+    @Value("\${app.frontend.domain}")
+    private lateinit var frontendDomain: String
+
     @Throws(IOException::class)
     override fun onLogoutSuccess(
         request: HttpServletRequest,
@@ -42,16 +48,16 @@ class WorkfolioOAuth2LogoutSuccessHandler : LogoutSuccessHandler {
             .httpOnly(httpOnly.toBoolean())
             .secure(tokenSecure.toBoolean())
             .path("/")
-            .domain("localhost") // 로컬 개발 환경일 경우 생략해도 OK
+            .domain(frontendDomain)
             .maxAge(0)
-            .sameSite("Lax") // optional
+            .sameSite("Lax")
             .build()
 
         val refreshTokenCookie = ResponseCookie.from("refreshToken", "")
             .httpOnly(httpOnly.toBoolean())
             .secure(tokenSecure.toBoolean())
             .path("/")
-            .domain("localhost")
+            .domain(frontendDomain)
             .maxAge(0)
             .sameSite("Lax")
             .build()
@@ -61,6 +67,6 @@ class WorkfolioOAuth2LogoutSuccessHandler : LogoutSuccessHandler {
     }
 
     private fun buildRedirectUrl(): String {
-        return UriComponentsBuilder.fromUriString("http://localhost:3000/login").toUriString()
+        return UriComponentsBuilder.fromUriString("$frontendUrl/login").toUriString()
     }
 }

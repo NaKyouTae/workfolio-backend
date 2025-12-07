@@ -22,6 +22,9 @@ class KakaoAuthController(
     @Value("\${token.secure}")
     private lateinit var tokenSecure: String
 
+    @Value("\${app.frontend.domain}")
+    private lateinit var frontendDomain: String
+
     @GetMapping("/oauth2/kakao")
     fun redirectToKakao(response: HttpServletResponse) {
         response.sendRedirect("/oauth2/authorization/kakao")
@@ -52,7 +55,7 @@ class KakaoAuthController(
                 cookie.apply {
                     maxAge = 0 // 쿠키 만료
                     path = "/" // 모든 경로에서 유효
-                    domain = "localhost" // 도메인 설정 (프론트엔드와 서버가 같은 도메인에 있어야 함)
+                    domain = frontendDomain // 도메인 설정 (프론트엔드와 서버가 같은 도메인에 있어야 함)
                     isHttpOnly = tokenHttpOnly.toBoolean() // 클라이언트 측 스크립트에서 접근할 수 없도록
                     secure = tokenSecure.toBoolean() // HTTPS가 아니라면 false 설정
                 }

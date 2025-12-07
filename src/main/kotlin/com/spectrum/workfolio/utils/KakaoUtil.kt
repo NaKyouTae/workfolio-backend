@@ -32,6 +32,9 @@ class KakaoUtil(
     @Value("\${kakao.api.admin-key}")
     private lateinit var adminKey: String
 
+    @Value("\${app.frontend.url}")
+    private lateinit var frontendUrl: String
+
     val objectMapper = jacksonObjectMapper()
 
     fun getKakaoToken(authCode: String): KakaoTokenResponse? {
@@ -79,7 +82,7 @@ class KakaoUtil(
     fun logout(logoutRedirectUri: String, state: String? = null): Boolean {
         val params = LinkedMultiValueMap<String, String>().apply {
             add("client_id", clientId)
-            add("logout_redirect_uri", "http://localhost:3000")
+            add("logout_redirect_uri", frontendUrl)
         }
 
         val headers = HttpHeaders().apply {
