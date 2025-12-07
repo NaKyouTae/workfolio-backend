@@ -5,6 +5,9 @@ version: '3.8'
 
 services:
   workfolio-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: workfolio-server:latest
     container_name: workfolio-server
     ports:

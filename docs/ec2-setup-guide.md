@@ -46,6 +46,36 @@ newgrp docker
 docker ps
 ```
 
+## 3.5 Docker Compose 설치
+
+```bash
+# Docker Compose 설치 확인
+docker-compose --version
+
+# Docker Compose가 없다면 설치
+# 방법 1: 최신 버전 설치 (권장)
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+# 방법 2: 심볼릭 링크 생성 (선택사항, /usr/bin에서도 사용 가능하도록)
+if [ ! -f /usr/bin/docker-compose ]; then
+    sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+fi
+
+# 설치 확인
+docker-compose --version
+
+# 또는 Docker Compose V2 사용 (최신 방식)
+# Docker Compose V2는 docker compose (하이픈 없음)로 사용
+docker compose version
+```
+
+**참고:**
+- Docker Compose V1: `docker-compose` (하이픈 있음)
+- Docker Compose V2: `docker compose` (하이픈 없음, Docker CLI 플러그인)
+- 최신 Docker 설치에는 Compose V2가 포함되어 있을 수 있습니다
+- 두 버전 모두 사용 가능하지만, V2 사용을 권장합니다
+
 ## 4. Git 설정
 
 ```bash
@@ -135,19 +165,36 @@ nano ~/workfolio-backend/docker-compose.env
 
 ## 8. Docker Compose로 서비스 실행
 
-### 8.1 외부 DB/Redis 사용 시
+### 8.1 EC2 환경용 Docker Compose 사용 (권장)
+EC2 환경에서는 `docker-compose.ec2.yml`을 사용합니다. 이 파일은 이미지가 없을 때 자동으로 빌드합니다:
+
+```bash
+# 프로젝트 디렉토리로 이동
+cd ~/workfolio-backend
+
+# Docker Compose 실행 (이미지가 없으면 자동으로 빌드)
+docker-compose -f docker-compose.ec2.yml up -d
+
+# 또는 배포 스크립트 사용
+chmod +x scripts/ec2-deploy.sh
+./scripts/ec2-deploy.sh
+```
+
+**참고:** `docker-compose.ec2.yml`에는 `build` 섹션이 포함되어 있어, 이미지가 없어도 자동으로 빌드됩니다.
+
+### 8.2 외부 DB/Redis 사용 시
 외부 데이터베이스(예: RDS, ElastiCache)를 사용하는 경우:
 
 ```bash
-# docker-compose.yml 수정 필요
-# workfolio-service만 실행하도록 수정
+# docker-compose.ec2.yml은 이미 외부 DB/Redis를 사용하도록 설정됨
+# 환경 변수만 설정하면 됨
 
 # Docker Compose 실행
-docker-compose up -d workfolio-service
+docker-compose -f docker-compose.ec2.yml up -d
 ```
 
-### 8.2 로컬 DB/Redis 사용 시
-EC2에서 PostgreSQL과 Redis도 함께 실행:
+### 8.3 로컬 DB/Redis 사용 시
+EC2에서 PostgreSQL과 Redis도 함께 실행하려면 `docker-compose.yml` 사용:
 
 ```bash
 # 모든 서비스 실행
@@ -158,6 +205,17 @@ docker-compose logs -f
 
 # 서비스 상태 확인
 docker-compose ps
+```
+
+### 8.4 이미지 빌드 오류 해결
+만약 "pull access denied" 오류가 발생하면:
+
+```bash
+# 방법 1: 이미지를 먼저 빌드
+docker build -t workfolio-server:latest -f Dockerfile .
+
+# 방법 2: docker-compose에서 자동 빌드 (권장)
+docker-compose -f docker-compose.ec2.yml up -d --build
 ```
 
 ## 9. 메모리 최적화 (t3.micro 1GB 메모리)
