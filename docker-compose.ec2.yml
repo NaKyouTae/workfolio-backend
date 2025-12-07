@@ -18,6 +18,9 @@ services:
       - JAVA_OPTIONS=-Xmx512m -Xms256m -Djava.security.egd=file:/dev/./urandom
       # Spring Boot 프로파일
       - SPRING_PROFILES_ACTIVE=prod
+      # Redis 설정 (Docker Compose 네트워크에서 컨테이너 이름 사용)
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     restart: unless-stopped
     mem_reservation: 512m
     healthcheck:
