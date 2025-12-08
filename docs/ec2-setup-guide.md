@@ -83,8 +83,8 @@ docker compose version
 git --version
 
 # Git 설정 (선택사항)
-git config --global user.name "Your Name"
-git config --global user.email "your.email@example.com"
+git config --global user.name "NaKyouTae"
+git config --global user.email "qppk@naver.com"
 ```
 
 ## 5. 프로젝트 클론 및 빌드
@@ -95,7 +95,7 @@ git config --global user.email "your.email@example.com"
 cd ~
 
 # 프로젝트 클론
-git clone https://github.com/your-username/workfolio-backend.git
+git clone https://github.com/NaKyouTae/workfolio-backend.git
 cd workfolio-backend
 ```
 
@@ -111,7 +111,7 @@ cd workfolio-backend
 ls -lh projects/api/build/libs/workfolio-server-boot.jar
 
 # EC2로 전송
-scp -i workfolio-server.pem /Users/nakyutae/personal/git/workfolio-backend/build/libs/workfolio-server.jar ec2-user@ec2-3-27-94-86.ap-southeast-2.compute.amazonaws.com:~/workfolio-backend/build/libs/
+scp -i workfolio-server.pem /Users/nakyutae/personal/git/workfolio-backend/build/libs/workfolio-server.jar ec2-user@54.180.147.53:~/workfolio-backend/build/libs/
 ```
 
 ### 5.3 EC2에서 직접 빌드 (대안)
@@ -221,7 +221,7 @@ docker-compose -f docker-compose.ec2.yml up -d
 이 오류는 Docker Compose가 buildx를 요구하지만 설치되지 않았을 때 발생합니다:
 
 ```bash
-# 방법 1: 먼저 docker build로 이미지 빌드 (권장)
+# 방법 1: 먼저 docker build로 이미지 빌드 (권장, buildx 불필요)
 docker build -t workfolio-server:latest -f Dockerfile .
 docker-compose -f docker-compose.ec2.yml up -d
 
@@ -229,10 +229,29 @@ docker-compose -f docker-compose.ec2.yml up -d
 ./scripts/ec2-deploy.sh
 
 # 방법 3: buildx 설치 (선택사항)
+# 아키텍처 확인
+uname -m
+# x86_64 또는 aarch64
+
+# 플러그인 디렉토리 생성
 mkdir -p ~/.docker/cli-plugins/
+
+# buildx 다운로드 (x86_64인 경우)
 curl -SL https://github.com/docker/buildx/releases/latest/download/buildx-v0.17.0.linux-amd64 -o ~/.docker/cli-plugins/docker-buildx
+
+# 또는 aarch64인 경우
+# curl -SL https://github.com/docker/buildx/releases/latest/download/buildx-v0.17.0.linux-arm64 -o ~/.docker/cli-plugins/docker-buildx
+
+# 실행 권한 부여
 chmod +x ~/.docker/cli-plugins/docker-buildx
+
+# buildx 빌더 생성 및 활성화
+docker buildx create --name builder --use
+docker buildx inspect --bootstrap
+
+# 확인
 docker buildx version
+docker buildx ls
 ```
 
 ## 9. 메모리 최적화 (t3.micro 1GB 메모리)

@@ -9,9 +9,11 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.redis.connection.RedisConnectionFactory
+import org.springframework.data.redis.repository.configuration.EnableRedisRepositories
 
 @Configuration
 @ConfigurationProperties(prefix = "spring.data.redis")
+@EnableRedisRepositories(basePackages = ["com.spectrum.workfolio.redis.repository"])
 class RedisConfig {
     @Value("\${spring.data.redis.host}")
     private lateinit var host: String

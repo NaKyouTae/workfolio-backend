@@ -212,22 +212,114 @@ Let's Encrypt 인증서는 90일마다 갱신이 필요합니다. 자동 갱신�
 ```bash
 # Certbot 자동 갱신 테스트
 sudo certbot renew --dry-run
+```
 
-# 자동 갱신 cron 작업 확인 (Certbot이 자동으로 설정)
+### 7.1 자동 갱신 설정 확인
+
+```bash
+# systemd timer 확인 (Amazon Linux 2023)
+sudo systemctl list-timers --all | grep certbot
+
+# 또는 모든 timer 확인
+sudo systemctl list-timers --all
+
+# certbot.timer 서비스 확인
+sudo systemctl status certbot.timer
+```
+
+### 7.2 자동 갱신이 없는 경우 수동 설정
+
+자동 갱신이 설정되지 않았다면 다음 중 하나를 사용하세요:
+
+#### 방법 1: systemd timer 사용 (권장, Amazon Linux 2023)
+
+```bash
+# certbot.timer 서비스 파일 생성
+sudo nano /etc/systemd/system/certbot.timer
+```
+
+다음 내용 추가:
+```ini
+[Unit]
+Description=Certbot Renewal Timer
+
+[Timer]
+OnCalendar=daily
+RandomizedDelaySec=3600
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+```
+
+```bash
+# certbot.service 파일 생성
+sudo nano /etc/systemd/system/certbot.service
+```
+
+다음 내용 추가:
+```ini
+[Unit]
+Description=Certbot Renewal
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/certbot renew --quiet --deploy-hook "systemctl reload nginx"
+```
+
+```bash
+# timer 활성화
+sudo systemctl daemon-reload
+sudo systemctl enable certbot.timer
+sudo systemctl start certbot.timer
+
+# 상태 확인
+sudo systemctl status certbot.timer
 sudo systemctl list-timers | grep certbot
+```
 
-# 또는 cron 작업 확인
+#### 방법 2: cron 사용 (전통적인 방법)
+
+```bash
+# cron 설치 (없다면)
+sudo yum install -y cronie
+
+# cron 서비스 시작
+sudo systemctl start crond
+sudo systemctl enable crond
+
+# root crontab 편집
+sudo crontab -e
+```
+
+다음 줄 추가:
+```
+0 3 * * * /usr/bin/certbot renew --quiet --deploy-hook "systemctl reload nginx"
+```
+
+또는 더 안전한 방법:
+```
+0 3 * * * /usr/bin/certbot renew --quiet --deploy-hook "/bin/systemctl reload nginx" >> /var/log/certbot-renew.log 2>&1
+```
+
+```bash
+# cron 작업 확인
 sudo crontab -l
 ```
 
-**수동으로 cron 작업 추가 (필요한 경우):**
+### 7.3 자동 갱신 확인
 
 ```bash
-# Crontab 편집
-sudo crontab -e
+# systemd timer 사용 시
+sudo systemctl list-timers | grep certbot
 
-# 다음 줄 추가 (매일 새벽 3시에 갱신 확인)
-0 3 * * * certbot renew --quiet --deploy-hook "systemctl reload nginx"
+# cron 사용 시
+sudo crontab -l
+
+# 다음 실행 시간 확인 (systemd timer)
+sudo systemctl list-timers certbot.timer
 ```
 
 ## 8. 방화벽 설정
