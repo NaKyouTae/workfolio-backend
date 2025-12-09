@@ -43,7 +43,7 @@ class OAuth2AuthorizationRequestBasedOnCookieRepository : AuthorizationRequestRe
         }
 
         val cookie = cookieOpt.get()
-        
+
         // DTO로 역직렬화 후 OAuth2AuthorizationRequest로 복원
         return try {
             val dto = CookieUtils.deserialize(cookie, OAuth2AuthorizationRequestDTO::class.java)

@@ -16,4 +16,3 @@ data class OAuth2AuthorizationRequestDTO(
     @JsonProperty("authorizationRequestUri") val authorizationRequestUri: String? = null,
     @JsonProperty("attributes") val attributes: Map<String, Any> = emptyMap(),
 )
-
