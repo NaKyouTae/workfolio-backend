@@ -8,7 +8,6 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateProperties
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateSettings
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties
-import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
@@ -59,9 +58,17 @@ class PrimaryDataSourceConfig {
     @Value("\${spring.datasource.password}")
     private lateinit var password: String
 
+    @Value("\${spring.datasource.hikari.minimum-idle:2}")
+    private var minimumIdle: Int = 2
+
+    @Value("\${spring.datasource.hikari.maximum-pool-size:10}")
+    private var maximumPoolSize: Int = 10
+
+    @Value("\${spring.datasource.hikari.idle-timeout:0}")
+    private var idleTimeout: Long = 0
+
     @Bean
     @Primary
-    @ConfigurationProperties(prefix = "spring.datasource")
     fun primaryDataSource(): DataSource {
         val properties = DataSourceProperties()
 
@@ -70,10 +77,27 @@ class PrimaryDataSourceConfig {
         properties.username = username
         properties.password = password
 
-        return properties
+        val dataSource = properties
             .initializeDataSourceBuilder()
             .type(HikariDataSource::class.java)
-            .build()
+            .build() as HikariDataSource
+
+        // HikariCP 설정 명시적으로 적용 (application.properties의 설정이 제대로 적용되도록 보장)
+        // initializeDataSourceBuilder()가 자동으로 읽지만, 명시적으로 설정하여 확실히 적용
+        dataSource.poolName = "WorkfolioHikariPool"
+        dataSource.minimumIdle = minimumIdle
+        dataSource.maximumPoolSize = maximumPoolSize
+        dataSource.idleTimeout = idleTimeout
+        
+        // 설정 확인 로그 (디버깅용)
+        println("=== HikariCP 설정 확인 ===")
+        println("Pool Name: ${dataSource.poolName}")
+        println("Minimum Idle: ${dataSource.minimumIdle}")
+        println("Maximum Pool Size: ${dataSource.maximumPoolSize}")
+        println("Idle Timeout: ${dataSource.idleTimeout} (0 = 무제한)")
+        println("=========================")
+        
+        return dataSource
     }
 
     @Bean
