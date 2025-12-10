@@ -10,7 +10,7 @@
 
 ### 1.2 SSH 접속
 ```bash
-ssh -i your-key.pem ec2-user@your-ec2-ip
+ssh -i workfolio-server.pem ec2-user@54.180.147.53
 ```
 
 ## 2. 시스템 업데이트 및 필수 패키지 설치
@@ -111,6 +111,7 @@ cd workfolio-backend
 ls -lh projects/api/build/libs/workfolio-server-boot.jar
 
 # EC2로 전송
+scp -i workfolio-server.pem /Users/nakyoutae/TMR/git/workfolio-backend/build/libs/workfolio-server.jar ec2-user@54.180.147.53:~/workfolio-backend/build/libs/
 scp -i workfolio-server.pem /Users/nakyutae/personal/git/workfolio-backend/build/libs/workfolio-server.jar ec2-user@54.180.147.53:~/workfolio-backend/build/libs/
 ```
 

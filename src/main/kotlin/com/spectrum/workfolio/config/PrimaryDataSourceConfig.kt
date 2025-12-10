@@ -88,7 +88,7 @@ class PrimaryDataSourceConfig {
         dataSource.minimumIdle = minimumIdle
         dataSource.maximumPoolSize = maximumPoolSize
         dataSource.idleTimeout = idleTimeout
-        
+
         // 설정 확인 로그 (디버깅용)
         println("=== HikariCP 설정 확인 ===")
         println("Pool Name: ${dataSource.poolName}")
@@ -96,7 +96,7 @@ class PrimaryDataSourceConfig {
         println("Maximum Pool Size: ${dataSource.maximumPoolSize}")
         println("Idle Timeout: ${dataSource.idleTimeout} (0 = 무제한)")
         println("=========================")
-        
+
         return dataSource
     }
 

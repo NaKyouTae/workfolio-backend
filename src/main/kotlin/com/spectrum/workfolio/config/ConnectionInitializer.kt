@@ -39,7 +39,7 @@ class ConnectionInitializer(
                     val totalConnections = pool.totalConnections
 
                     logger.info(
-                        "📊 연결 풀 상태 - Active: $activeConnections, Idle: $idleConnections, Total: $totalConnections"
+                        "📊 연결 풀 상태 - Active: $activeConnections, Idle: $idleConnections, Total: $totalConnections",
                     )
 
                     // PostgreSQL에서 현재 사용자의 오래된 연결 종료
@@ -64,7 +64,7 @@ class ConnectionInitializer(
                 // 최종 연결 풀 상태
                 hikariDataSource.hikariPoolMXBean?.let { pool ->
                     logger.info(
-                        "📊 최종 연결 풀 상태 - Active: ${pool.activeConnections}, Idle: ${pool.idleConnections}, Total: ${pool.totalConnections}"
+                        "📊 최종 연결 풀 상태 - Active: ${pool.activeConnections}, Idle: ${pool.idleConnections}, Total: ${pool.totalConnections}",
                     )
                 }
 
