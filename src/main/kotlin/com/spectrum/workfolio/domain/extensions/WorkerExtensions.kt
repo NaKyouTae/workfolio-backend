@@ -7,6 +7,7 @@ fun Worker.toProto(): com.spectrum.workfolio.proto.common.Worker {
     val builder = com.spectrum.workfolio.proto.common.Worker.newBuilder()
 
     builder.setId(this.id)
+    builder.setStatus(com.spectrum.workfolio.proto.common.Worker.WorkerStatus.valueOf(this.status.name))
     builder.setNickName(this.nickName)
     builder.setEmail(this.email)
     builder.setPhone(this.phone)

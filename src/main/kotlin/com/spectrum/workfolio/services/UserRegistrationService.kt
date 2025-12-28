@@ -5,6 +5,7 @@ import com.spectrum.workfolio.config.service.oauth.UserRegistrationException
 import com.spectrum.workfolio.domain.entity.Worker
 import com.spectrum.workfolio.domain.entity.primary.Account
 import com.spectrum.workfolio.domain.enums.AccountType
+import com.spectrum.workfolio.domain.enums.WorkerStatus
 import com.spectrum.workfolio.proto.common.RecordGroup
 import com.spectrum.workfolio.proto.common.SystemConfig
 import com.spectrum.workfolio.proto.record.RecordCreateRequest
@@ -70,6 +71,7 @@ class UserRegistrationService(
 
     private fun createWorker(oauthUserInfo: OAuthUserInfo): Worker {
         val worker = Worker(
+            status = WorkerStatus.ACTIVE,
             nickName = oauthUserInfo.nickName,
             phone = oauthUserInfo.phoneNumber,
             email = oauthUserInfo.email,

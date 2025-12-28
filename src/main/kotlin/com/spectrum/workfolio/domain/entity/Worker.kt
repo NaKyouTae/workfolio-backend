@@ -5,6 +5,7 @@ import com.spectrum.workfolio.domain.entity.record.RecordGroup
 import com.spectrum.workfolio.domain.entity.record.WorkerRecordGroup
 import com.spectrum.workfolio.domain.entity.resume.Resume
 import com.spectrum.workfolio.domain.enums.Gender
+import com.spectrum.workfolio.domain.enums.WorkerStatus
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -26,15 +27,21 @@ import java.time.LocalDate
         Index(name = "idx_workers_nick_name", columnList = "nick_name"),
         Index(name = "idx_workers_phone", columnList = "phone"),
         Index(name = "idx_workers_email", columnList = "email"),
+        Index(name = "idx_workers_status", columnList = "status"),
     ],
 )
 class Worker(
+    status: WorkerStatus,
     nickName: String,
     phone: String,
     email: String,
     birthDate: LocalDate? = null,
     gender: Gender? = null,
 ) : BaseEntity("WK") {
+
+    @Column(name = "status", length = 32, nullable = false)
+    var status: WorkerStatus = status
+        protected set
 
     @Column(name = "nick_name", length = 512, nullable = false, unique = true)
     var nickName: String = nickName

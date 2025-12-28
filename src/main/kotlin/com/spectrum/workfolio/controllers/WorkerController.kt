@@ -1,6 +1,7 @@
 package com.spectrum.workfolio.controllers
 
 import com.spectrum.workfolio.config.annotation.AuthenticatedUser
+import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.proto.common.SuccessResponse
 import com.spectrum.workfolio.proto.worker.WorkerCheckNickNameResponse
 import com.spectrum.workfolio.proto.worker.WorkerGetResponse
@@ -21,6 +22,12 @@ import org.springframework.web.bind.annotation.RestController
 class WorkerController(
     private val workerService: WorkerService,
 ) {
+
+    @GetMapping
+    fun getWorkers(): WorkerListResponse {
+        val workers = workerService.getWorkersAll()
+        return WorkerListResponse.newBuilder().addAllWorkers(workers.map { it.toProto() }).build()
+    }
 
     @GetMapping("/me")
     fun getWorker(

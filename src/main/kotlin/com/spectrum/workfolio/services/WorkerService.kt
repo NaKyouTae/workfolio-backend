@@ -28,6 +28,11 @@ class WorkerService(
     private val logger = LoggerFactory.getLogger(WorkerService::class.java)
 
     @Transactional(readOnly = true)
+    fun getWorkersAll(): List<Worker> {
+        return workerRepository.findAll()
+    }
+
+    @Transactional(readOnly = true)
     fun getWorker(id: String): Worker {
         return workerRepository.findById(id).orElseThrow { WorkfolioException(MsgKOR.NOT_FOUND_WORKER.message) }
     }

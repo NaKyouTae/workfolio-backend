@@ -13,6 +13,11 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
+                  name: status
+                  type: VARCHAR(32)
+                  constraints:
+                    nullable: false
+              - column:
                   name: nick_name
                   type: VARCHAR(512)
                   constraints:
@@ -71,6 +76,12 @@ databaseChangeLog:
             indexName: idx_workers_phone
             tableName: workers
             unique: true
+        - createIndex:
+            columns:
+              - column:
+                  name: status
+            indexName: idx_workers_status
+            tableName: workers
 
         - createTable:
             tableName: record_groups
