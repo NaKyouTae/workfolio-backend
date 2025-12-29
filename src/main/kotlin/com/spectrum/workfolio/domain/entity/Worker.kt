@@ -39,6 +39,7 @@ class Worker(
     gender: Gender? = null,
 ) : BaseEntity("WK") {
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 32, nullable = false)
     var status: WorkerStatus = status
         protected set
