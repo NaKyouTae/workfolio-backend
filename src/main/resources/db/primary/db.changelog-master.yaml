@@ -9,3 +9,5 @@ databaseChangeLog:
       file: db/primary/0004-ui-templates-url-sample-data.yaml
   - include:
       file: db/primary/0005-ui-templates-pdf-sample-data.yaml
+  - include:
+      file: db/primary/0006-ui-template-plans.yaml

@@ -898,6 +898,13 @@ message CreditHistory {
   uint64 created_at = 98;
 }
 
+message UiTemplatePlan {
+  string id = 1;
+  int32 duration_days = 2;
+  int32 price = 3;
+  int32 display_order = 4;
+}
+
 message UITemplate {
   enum UITemplateType {
     UNKNOWN = 0;
@@ -917,6 +924,7 @@ message UITemplate {
   bool is_active = 10;
   bool is_popular = 11;
   int32 display_order = 12;
+  repeated UiTemplatePlan plans = 13;
 
   uint64 created_at = 98;
   uint64 updated_at = 99;

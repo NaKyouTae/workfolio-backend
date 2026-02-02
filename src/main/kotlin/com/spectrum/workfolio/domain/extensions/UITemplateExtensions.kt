@@ -1,11 +1,21 @@
 package com.spectrum.workfolio.domain.extensions
 
+import com.spectrum.workfolio.domain.entity.uitemplate.UiTemplatePlan
 import com.spectrum.workfolio.domain.entity.uitemplate.UITemplate
 import com.spectrum.workfolio.domain.entity.uitemplate.WorkerUITemplate
 import com.spectrum.workfolio.domain.enums.UITemplateType
 import com.spectrum.workfolio.utils.TimeUtil
 
-fun UITemplate.toProto(): com.spectrum.workfolio.proto.common.UITemplate {
+fun UiTemplatePlan.toProto(): com.spectrum.workfolio.proto.common.UiTemplatePlan {
+    return com.spectrum.workfolio.proto.common.UiTemplatePlan.newBuilder()
+        .setId(this.id)
+        .setDurationDays(this.durationDays)
+        .setPrice(this.price)
+        .setDisplayOrder(this.displayOrder)
+        .build()
+}
+
+fun UITemplate.toProto(plans: List<UiTemplatePlan>? = null): com.spectrum.workfolio.proto.common.UITemplate {
     val builder = com.spectrum.workfolio.proto.common.UITemplate.newBuilder()
 
     builder.setId(this.id)
@@ -28,6 +38,9 @@ fun UITemplate.toProto(): com.spectrum.workfolio.proto.common.UITemplate {
     builder.setIsActive(this.isActive)
     builder.setIsPopular(this.isPopular)
     builder.setDisplayOrder(this.displayOrder)
+    if (!plans.isNullOrEmpty()) {
+        builder.addAllPlans(plans.map { it.toProto() })
+    }
 
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))

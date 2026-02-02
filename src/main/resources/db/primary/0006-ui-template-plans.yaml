@@ -1,0 +1,130 @@
+databaseChangeLog:
+  - changeSet:
+      id: 6
+      author: kyutae
+      comment: "템플릿 이용 기간 옵션 테이블 (1/3/6/9/12개월) 및 샘플 데이터"
+      changes:
+        - createTable:
+            tableName: ui_template_plans
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: ui_template_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: duration_days
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: price
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: display_order
+                  type: INTEGER
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: ui_template_plans
+            baseColumnNames: ui_template_id
+            constraintName: fk_ui_template_plans_template
+            referencedTableName: ui_templates
+            referencedColumnNames: id
+        - createIndex:
+            indexName: idx_ui_template_plans_template_order
+            tableName: ui_template_plans
+            columns:
+              - column:
+                  name: ui_template_id
+              - column:
+                  name: display_order
+
+  - changeSet:
+      id: 6-1
+      author: kyutae
+      comment: "URL/PDF 템플릿별 1/3/6/9/12개월 플랜 샘플 데이터"
+      changes:
+        - sql:
+            sql: |
+              INSERT INTO ui_template_plans (id, ui_template_id, duration_days, price, display_order, created_at, updated_at)
+              SELECT 'UP58D41926001', id, 30, 10, 0, now(), now() FROM ui_templates WHERE id = 'UT58D41926B6V001'
+              UNION ALL SELECT 'UP58D41926002', id, 90, 25, 1, now(), now() FROM ui_templates WHERE id = 'UT58D41926B6V001'
+              UNION ALL SELECT 'UP58D41926003', id, 180, 45, 2, now(), now() FROM ui_templates WHERE id = 'UT58D41926B6V001'
+              UNION ALL SELECT 'UP58D41926004', id, 270, 62, 3, now(), now() FROM ui_templates WHERE id = 'UT58D41926B6V001'
+              UNION ALL SELECT 'UP58D41926005', id, 365, 80, 4, now(), now() FROM ui_templates WHERE id = 'UT58D41926B6V001';
+        - sql:
+            sql: |
+              INSERT INTO ui_template_plans (id, ui_template_id, duration_days, price, display_order, created_at, updated_at)
+              SELECT 'UP58D41926006', id, 30, 10, 0, now(), now() FROM ui_templates WHERE id = 'UT58D41926B6V002'
+              UNION ALL SELECT 'UP58D41926007', id, 90, 25, 1, now(), now() FROM ui_templates WHERE id = 'UT58D41926B6V002'
+              UNION ALL SELECT 'UP58D41926008', id, 180, 45, 2, now(), now() FROM ui_templates WHERE id = 'UT58D41926B6V002'
+              UNION ALL SELECT 'UP58D41926009', id, 270, 62, 3, now(), now() FROM ui_templates WHERE id = 'UT58D41926B6V002'
+              UNION ALL SELECT 'UP58D41926010', id, 365, 80, 4, now(), now() FROM ui_templates WHERE id = 'UT58D41926B6V002';
+        - sql:
+            sql: |
+              INSERT INTO ui_template_plans (id, ui_template_id, duration_days, price, display_order, created_at, updated_at)
+              SELECT 'UP58D41926011', id, 30, 12, 0, now(), now() FROM ui_templates WHERE id = 'UT58D41926B6H001'
+              UNION ALL SELECT 'UP58D41926012', id, 90, 30, 1, now(), now() FROM ui_templates WHERE id = 'UT58D41926B6H001'
+              UNION ALL SELECT 'UP58D41926013', id, 180, 55, 2, now(), now() FROM ui_templates WHERE id = 'UT58D41926B6H001'
+              UNION ALL SELECT 'UP58D41926014', id, 270, 75, 3, now(), now() FROM ui_templates WHERE id = 'UT58D41926B6H001'
+              UNION ALL SELECT 'UP58D41926015', id, 365, 95, 4, now(), now() FROM ui_templates WHERE id = 'UT58D41926B6H001';
+        - sql:
+            sql: |
+              INSERT INTO ui_template_plans (id, ui_template_id, duration_days, price, display_order, created_at, updated_at)
+              SELECT 'UP58D41926016', id, 30, 12, 0, now(), now() FROM ui_templates WHERE id = 'UT58D41926B6H002'
+              UNION ALL SELECT 'UP58D41926017', id, 90, 30, 1, now(), now() FROM ui_templates WHERE id = 'UT58D41926B6H002'
+              UNION ALL SELECT 'UP58D41926018', id, 180, 55, 2, now(), now() FROM ui_templates WHERE id = 'UT58D41926B6H002'
+              UNION ALL SELECT 'UP58D41926019', id, 270, 75, 3, now(), now() FROM ui_templates WHERE id = 'UT58D41926B6H002'
+              UNION ALL SELECT 'UP58D41926020', id, 365, 95, 4, now(), now() FROM ui_templates WHERE id = 'UT58D41926B6H002';
+        - sql:
+            sql: |
+              INSERT INTO ui_template_plans (id, ui_template_id, duration_days, price, display_order, created_at, updated_at)
+              SELECT 'UP58D41926021', id, 30, 10, 0, now(), now() FROM ui_templates WHERE id = 'UT58D41926P001'
+              UNION ALL SELECT 'UP58D41926022', id, 90, 25, 1, now(), now() FROM ui_templates WHERE id = 'UT58D41926P001'
+              UNION ALL SELECT 'UP58D41926023', id, 180, 45, 2, now(), now() FROM ui_templates WHERE id = 'UT58D41926P001'
+              UNION ALL SELECT 'UP58D41926024', id, 270, 62, 3, now(), now() FROM ui_templates WHERE id = 'UT58D41926P001'
+              UNION ALL SELECT 'UP58D41926025', id, 365, 80, 4, now(), now() FROM ui_templates WHERE id = 'UT58D41926P001';
+        - sql:
+            sql: |
+              INSERT INTO ui_template_plans (id, ui_template_id, duration_days, price, display_order, created_at, updated_at)
+              SELECT 'UP58D41926026', id, 30, 10, 0, now(), now() FROM ui_templates WHERE id = 'UT58D41926P002'
+              UNION ALL SELECT 'UP58D41926027', id, 90, 25, 1, now(), now() FROM ui_templates WHERE id = 'UT58D41926P002'
+              UNION ALL SELECT 'UP58D41926028', id, 180, 45, 2, now(), now() FROM ui_templates WHERE id = 'UT58D41926P002'
+              UNION ALL SELECT 'UP58D41926029', id, 270, 62, 3, now(), now() FROM ui_templates WHERE id = 'UT58D41926P002'
+              UNION ALL SELECT 'UP58D41926030', id, 365, 80, 4, now(), now() FROM ui_templates WHERE id = 'UT58D41926P002';
+        - sql:
+            sql: |
+              INSERT INTO ui_template_plans (id, ui_template_id, duration_days, price, display_order, created_at, updated_at)
+              SELECT 'UP58D41926031', id, 30, 12, 0, now(), now() FROM ui_templates WHERE id = 'UT58D41926P003'
+              UNION ALL SELECT 'UP58D41926032', id, 90, 30, 1, now(), now() FROM ui_templates WHERE id = 'UT58D41926P003'
+              UNION ALL SELECT 'UP58D41926033', id, 180, 55, 2, now(), now() FROM ui_templates WHERE id = 'UT58D41926P003'
+              UNION ALL SELECT 'UP58D41926034', id, 270, 75, 3, now(), now() FROM ui_templates WHERE id = 'UT58D41926P003'
+              UNION ALL SELECT 'UP58D41926035', id, 365, 95, 4, now(), now() FROM ui_templates WHERE id = 'UT58D41926P003';
+        - sql:
+            sql: |
+              INSERT INTO ui_template_plans (id, ui_template_id, duration_days, price, display_order, created_at, updated_at)
+              SELECT 'UP58D41926036', id, 30, 12, 0, now(), now() FROM ui_templates WHERE id = 'UT58D41926P004'
+              UNION ALL SELECT 'UP58D41926037', id, 90, 30, 1, now(), now() FROM ui_templates WHERE id = 'UT58D41926P004'
+              UNION ALL SELECT 'UP58D41926038', id, 180, 55, 2, now(), now() FROM ui_templates WHERE id = 'UT58D41926P004'
+              UNION ALL SELECT 'UP58D41926039', id, 270, 75, 3, now(), now() FROM ui_templates WHERE id = 'UT58D41926P004'
+              UNION ALL SELECT 'UP58D41926040', id, 365, 95, 4, now(), now() FROM ui_templates WHERE id = 'UT58D41926P004';

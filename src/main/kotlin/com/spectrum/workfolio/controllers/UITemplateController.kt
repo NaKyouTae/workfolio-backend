@@ -22,7 +22,8 @@ class UITemplateController(
         @AuthenticatedUser workerId: String,
         @RequestBody request: UITemplatePurchaseRequest,
     ): UITemplatePurchaseResponse {
-        val workerUITemplate = uiTemplateService.purchaseUITemplate(workerId, request.uiTemplateId)
+        val planId = if (request.hasPlanId()) request.planId else null
+        val workerUITemplate = uiTemplateService.purchaseUITemplate(workerId, request.uiTemplateId, planId)
         val balanceAfter = creditService.getBalance(workerId)
 
         return UITemplatePurchaseResponse.newBuilder()

@@ -32,6 +32,7 @@ message WorkerUITemplateGetResponse {
 // Purchase request/response
 message UITemplatePurchaseRequest {
   string ui_template_id = 1;
+  optional string plan_id = 2;
 }
 
 message UITemplatePurchaseResponse {

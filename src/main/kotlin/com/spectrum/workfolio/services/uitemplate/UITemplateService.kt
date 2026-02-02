@@ -1,9 +1,11 @@
 package com.spectrum.workfolio.services.uitemplate
 
 import com.spectrum.workfolio.domain.entity.Worker
+import com.spectrum.workfolio.domain.entity.uitemplate.UiTemplatePlan
 import com.spectrum.workfolio.domain.entity.uitemplate.UITemplate
 import com.spectrum.workfolio.domain.entity.uitemplate.WorkerUITemplate
 import com.spectrum.workfolio.domain.enums.UITemplateType
+import com.spectrum.workfolio.domain.repository.UiTemplatePlanRepository
 import com.spectrum.workfolio.domain.repository.UITemplateRepository
 import com.spectrum.workfolio.domain.repository.WorkerRepository
 import com.spectrum.workfolio.domain.repository.WorkerUITemplateRepository
@@ -18,6 +20,7 @@ import java.time.LocalDateTime
 @Service
 class UITemplateService(
     private val uiTemplateRepository: UITemplateRepository,
+    private val uiTemplatePlanRepository: UiTemplatePlanRepository,
     private val workerUITemplateRepository: WorkerUITemplateRepository,
     private val workerRepository: WorkerRepository,
     private val creditService: CreditService,
@@ -47,12 +50,25 @@ class UITemplateService(
             ?: throw WorkfolioException("템플릿을 찾을 수 없습니다.")
     }
 
+    @Transactional(readOnly = true)
+    fun getPlansByUiTemplateId(uiTemplateId: String): List<UiTemplatePlan> {
+        return uiTemplatePlanRepository.findByUiTemplateIdOrderByDisplayOrderAsc(uiTemplateId)
+    }
+
     // ==================== Authenticated API ====================
 
     @Transactional
-    fun purchaseUITemplate(workerId: String, uiTemplateId: String): WorkerUITemplate {
+    fun purchaseUITemplate(workerId: String, uiTemplateId: String, planId: String? = null): WorkerUITemplate {
         val worker = getWorkerById(workerId)
         val uiTemplate = getUITemplateById(uiTemplateId)
+
+        val (price: Int, durationDays: Int) = if (planId != null) {
+            val plan = uiTemplatePlanRepository.findByIdAndUiTemplateId(planId, uiTemplateId)
+                ?: throw WorkfolioException("선택한 이용 기간 옵션을 찾을 수 없습니다.")
+            Pair(plan.price, plan.durationDays)
+        } else {
+            Pair(uiTemplate.price, uiTemplate.durationDays)
+        }
 
         // Check if already owns valid template
         val existingTemplate = workerUITemplateRepository.findValidByWorkerAndUITemplate(
@@ -63,14 +79,14 @@ class UITemplateService(
         }
 
         // Check and use credits
-        if (!worker.hasEnoughCredits(uiTemplate.price)) {
+        if (!worker.hasEnoughCredits(price)) {
             throw WorkfolioException("크레딧이 부족합니다.")
         }
 
         // Use credits
         creditService.useCredits(
             workerId = workerId,
-            amount = uiTemplate.price,
+            amount = price,
             referenceType = "UI_TEMPLATE",
             referenceId = uiTemplateId,
             description = "${uiTemplate.name} 템플릿 구매"
@@ -82,8 +98,8 @@ class UITemplateService(
             worker = worker,
             uiTemplate = uiTemplate,
             purchasedAt = now,
-            expiredAt = now.plusDays(uiTemplate.durationDays.toLong()),
-            creditsUsed = uiTemplate.price,
+            expiredAt = now.plusDays(durationDays.toLong()),
+            creditsUsed = price,
             isActive = true
         )
 
