@@ -163,6 +163,8 @@ class ResumeCommandService(
                 gender = convertProtoEnumSafe<Gender>(request.gender),
                 isPublic = request.isPublic,
                 isDefault = request.isDefault,
+                publicStartDate = null,
+                publicEndDate = null,
             )
 
             resume

@@ -64,6 +64,7 @@ class SecurityConfig(
             it
                 .requestMatchers("/api/oauth2/**", "/api/staffs/login", "/api/token/reissue").permitAll()
                 .requestMatchers("/api/release/**").permitAll()
+                .requestMatchers("/api/anonymous/**").permitAll()
                 .requestMatchers("/login/**", "/error", "/favicon.ico").permitAll()
                 .anyRequest().authenticated()
         }
@@ -108,8 +109,8 @@ class SecurityConfig(
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration()
 
-        // 프로덕션에서는 https://www.workfolio.kr, 로컬에서는 http://localhost:3000
-        configuration.allowedOrigins = listOf(frontendUrl, "http://127.0.0.1:3000")
+        // 프로덕션에서는 https://www.workfolio.kr, 로컬에서는 http://localhost:4000
+        configuration.allowedOrigins = listOf(frontendUrl, "http://127.0.0.1:4000")
         configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
         configuration.allowedHeaders = listOf("*")
         configuration.allowCredentials = true

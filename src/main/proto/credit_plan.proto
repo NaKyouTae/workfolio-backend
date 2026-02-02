@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package com.spectrum.workfolio.proto;
+
+option java_multiple_files = true;
+option java_package = "com.spectrum.workfolio.proto.creditplan";
+option java_outer_classname = "CreditPlanProto";
+
+message CreditPlanListResponse {
+  repeated CreditPlan credit_plans = 1;
+}
+
+message CreditPlanGetResponse {
+  CreditPlan credit_plan = 1;
+}
+
+message CreditPlanCreateRequest {
+  string name = 1;
+  optional string description = 2;
+  int32 price = 3;
+  int32 base_credits = 4;
+  int32 bonus_credits = 5;
+  int32 display_order = 6;
+  bool is_popular = 7;
+}
+
+message CreditPlanUpdateRequest {
+  string id = 1;
+  string name = 2;
+  optional string description = 3;
+  int32 price = 4;
+  int32 base_credits = 5;
+  int32 bonus_credits = 6;
+  int32 display_order = 7;
+  bool is_popular = 8;
+  bool is_active = 9;
+}

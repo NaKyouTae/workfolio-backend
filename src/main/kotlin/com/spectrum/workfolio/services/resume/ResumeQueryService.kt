@@ -8,6 +8,7 @@ import com.spectrum.workfolio.domain.repository.ResumeRepository
 import com.spectrum.workfolio.proto.resume.ResumeDetailListResponse
 import com.spectrum.workfolio.proto.resume.ResumeListResponse
 import com.spectrum.workfolio.services.AttachmentQueryService
+import com.spectrum.workfolio.utils.TimeUtil
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -51,5 +52,13 @@ class ResumeQueryService(
         return ResumeDetailListResponse.newBuilder()
             .addAllResumes(resumes.map { it.toDetailProto(attachments) })
             .build()
+    }
+
+    fun getPublicResumeDetailByPublicId(publicId: String): com.spectrum.workfolio.proto.common.ResumeDetail? {
+        val today = TimeUtil.now().toLocalDate()
+        val resume = resumeRepository.findByPublicIdAndIsPublicTrue(publicId, today) ?: return null
+
+        val attachments = attachmentQueryService.listAttachments(listOf(resume.id))
+        return resume.toDetailProto(attachments)
     }
 }

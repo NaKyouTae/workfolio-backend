@@ -6,7 +6,7 @@
 - 인스턴스 타입: t3.micro
 - AMI: Amazon Linux 2023
 - 스토리지: 8GB (무료 티어는 30GB까지)
-- 보안 그룹: SSH(22), HTTP(80), HTTPS(443), 애플리케이션 포트(8080) 열기
+- 보안 그룹: SSH(22), HTTP(80), HTTPS(443), 애플리케이션 포트(9000) 열기
 
 ### 1.2 SSH 접속
 ```bash
@@ -448,7 +448,7 @@ docker-compose restart workfolio-server
 ### 15.1 방화벽 설정
 ```bash
 # 필요한 포트만 열기
-sudo firewall-cmd --permanent --add-port=8080/tcp
+sudo firewall-cmd --permanent --add-port=9000/tcp
 sudo firewall-cmd --reload
 ```
 
@@ -502,7 +502,7 @@ server {
     }
 
     location / {
-        proxy_pass http://localhost:8080;
+        proxy_pass http://localhost:9000;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;

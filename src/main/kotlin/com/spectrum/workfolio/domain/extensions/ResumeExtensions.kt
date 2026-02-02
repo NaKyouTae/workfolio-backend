@@ -32,6 +32,8 @@ fun Resume.toProto(): com.spectrum.workfolio.proto.common.Resume {
             com.spectrum.workfolio.proto.common.Resume.Gender.valueOf(this.gender!!.name),
         )
     }
+    if (this.publicStartDate != null) builder.setPublicStartDate(TimeUtil.toEpochMilli(this.publicStartDate!!))
+    if (this.publicEndDate != null) builder.setPublicEndDate(TimeUtil.toEpochMilli(this.publicEndDate!!))
 
     return builder.build()
 }
@@ -61,6 +63,8 @@ fun Resume.toDetailProto(attachments: List<Attachment>): com.spectrum.workfolio.
             com.spectrum.workfolio.proto.common.Resume.Gender.valueOf(this.gender!!.name),
         )
     }
+    if (this.publicStartDate != null) builder.setPublicStartDate(TimeUtil.toEpochMilli(this.publicStartDate!!))
+    if (this.publicEndDate != null) builder.setPublicEndDate(TimeUtil.toEpochMilli(this.publicEndDate!!))
 
     builder.addAllEducations(this.educations.map { it.toProtoWithoutResume() })
     builder.addAllCareers(this.careers.map { it.toProtoWithoutResume() })

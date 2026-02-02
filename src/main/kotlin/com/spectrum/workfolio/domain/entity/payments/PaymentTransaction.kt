@@ -7,25 +7,22 @@ import jakarta.persistence.Entity
 import jakarta.persistence.EntityListeners
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
-import jakarta.persistence.FetchType
 import jakarta.persistence.Index
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 
 @Entity
 @Table(
-    name = "payment_transactions",
+    name = "payment_tx",
     indexes = [
-        Index(name = "idx_payment_transactions_payment_id", columnList = "payment_id"),
-        Index(name = "idx_payment_transactions_transaction_type", columnList = "transaction_type"),
-        Index(name = "idx_payment_transactions_status", columnList = "status"),
+        Index(name = "idx_payment_tx_payment_id", columnList = "payment_id"),
+        Index(name = "idx_payment_tx_transaction_type", columnList = "transaction_type"),
+        Index(name = "idx_payment_tx_status", columnList = "status"),
     ],
 )
 @EntityListeners(AuditingEntityListener::class)
 class PaymentTransaction(
-    payment: Payment,
+    paymentId: String,
     transactionType: TransactionType,
     status: String,
     amount: Long,
@@ -36,9 +33,8 @@ class PaymentTransaction(
     receiptUrl: String? = null,
 ) : BaseEntity("PT") {
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "payment_id", nullable = false)
-    var payment: Payment = payment
+    @Column(name = "payment_id", length = 16, nullable = false)
+    var paymentId: String = paymentId
         protected set
 
     @Enumerated(EnumType.STRING)

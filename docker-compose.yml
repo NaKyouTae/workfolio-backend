@@ -3,7 +3,7 @@ services:
     image: workfolio-server:local
     container_name: workfolio-server
     ports:
-      - "8080:8080"
+      - "9000:9000"
     env_file:
       - docker-compose.env
     depends_on:

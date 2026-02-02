@@ -13,7 +13,6 @@ import jakarta.persistence.FetchType
 import jakarta.persistence.Index
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
-import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import java.time.LocalDateTime
 
@@ -102,9 +101,13 @@ class Payment(
     var metadataJson: String? = metadataJson
         protected set
 
-    @OneToMany(mappedBy = "payment", fetch = FetchType.LAZY)
-    private var mutablePaymentTransactions: MutableList<PaymentTransaction> = mutableListOf()
-    val paymentTransactions: List<PaymentTransaction> get() = mutablePaymentTransactions.toList()
+    @Column(name = "credit_plan_id", length = 16, nullable = true)
+    var creditPlanId: String? = null
+        protected set
+
+    @Column(name = "credits_to_add", nullable = false)
+    var creditsToAdd: Int = 0
+        protected set
 
     fun changeInfo(
         amount: Long,
@@ -120,5 +123,26 @@ class Payment(
         this.paymentMethod = paymentMethod
         this.paymentProvider = paymentProvider
         this.providerPaymentId = providerPaymentId
+    }
+
+    fun setCreditPlanInfo(creditPlanId: String, creditsToAdd: Int) {
+        this.creditPlanId = creditPlanId
+        this.creditsToAdd = creditsToAdd
+    }
+
+    fun changeStatus(status: PaymentStatus) {
+        this.status = status
+    }
+
+    fun markAsPaid(paidAt: LocalDateTime = LocalDateTime.now()) {
+        this.status = PaymentStatus.COMPLETED
+        this.paidAt = paidAt
+    }
+
+    fun markAsRefunded(refundAmount: Long, refundReason: String?, refundedAt: LocalDateTime = LocalDateTime.now()) {
+        this.status = PaymentStatus.REFUNDED
+        this.refundAmount = refundAmount
+        this.refundReason = refundReason
+        this.refundedAt = refundedAt
     }
 }

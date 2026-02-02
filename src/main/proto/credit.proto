@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package com.spectrum.workfolio.proto;
+
+option java_multiple_files = true;
+option java_package = "com.spectrum.workfolio.proto.credit";
+option java_outer_classname = "CreditProto";
+
+message CreditBalanceResponse {
+  int32 balance = 1;
+}
+
+message CreditHistoryListResponse {
+  repeated CreditHistory credit_histories = 1;
+  int32 total_elements = 2;
+  int32 total_pages = 3;
+  int32 current_page = 4;
+}
+
+message CreditUseRequest {
+  int32 amount = 1;
+  optional string reference_type = 2;
+  optional string reference_id = 3;
+  optional string description = 4;
+}
+
+message CreditUseResponse {
+  int32 balance_before = 1;
+  int32 balance_after = 2;
+  int32 amount_used = 3;
+  CreditHistory credit_history = 4;
+}

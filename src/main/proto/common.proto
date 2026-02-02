@@ -71,6 +71,8 @@ message Resume {
 
   Worker worker = 50;
 
+  uint64 public_start_date = 96;
+  uint64 public_end_date = 97;
   uint64 created_at = 98;
   uint64 updated_at = 99;
 }
@@ -98,6 +100,8 @@ message ResumeDetail {
   repeated LanguageSkill language_skills = 55;
   repeated Attachment attachments = 56;
 
+  uint64 public_start_date = 96;
+  uint64 public_end_date = 97;
   uint64 created_at = 98;
   uint64 updated_at = 99;
 }
@@ -812,7 +816,6 @@ message Payment {
   optional string metadata_json = 14;
 
   Worker worker = 50;
-  repeated PaymentTransaction payment_transactions = 51;
 
   uint64 created_at = 98;
   uint64 updated_at = 99;
@@ -837,7 +840,7 @@ message PaymentTransaction {
   optional string error_message = 8;
   optional string receipt_url = 9;
 
-  Payment payment = 50;
+  string payment_id = 50;
 
   uint64 created_at = 98;
 }
@@ -849,6 +852,87 @@ message Staff {
   string email = 4;
   optional string phone = 5;
   bool is_active = 6;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
+}
+
+message CreditPlan {
+  string id = 1;
+  string name = 2;
+  optional string description = 3;
+  int32 price = 4;
+  int32 base_credits = 5;
+  int32 bonus_credits = 6;
+  int32 total_credits = 7;
+  bool is_active = 8;
+  int32 display_order = 9;
+  bool is_popular = 10;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
+}
+
+message CreditHistory {
+  enum CreditTxType {
+    UNKNOWN = 0;
+    CHARGE = 1;
+    BONUS = 2;
+    USE = 3;
+    REFUND = 4;
+    ADMIN_ADD = 5;
+    ADMIN_DEDUCT = 6;
+  }
+
+  string id = 1;
+  CreditTxType tx_type = 2;
+  int32 amount = 3;
+  int32 balance_before = 4;
+  int32 balance_after = 5;
+  optional string reference_type = 6;
+  optional string reference_id = 7;
+  optional string description = 8;
+
+  Worker worker = 50;
+
+  uint64 created_at = 98;
+}
+
+message UITemplate {
+  enum UITemplateType {
+    UNKNOWN = 0;
+    URL = 1;
+    PDF = 2;
+  }
+
+  string id = 1;
+  string name = 2;
+  optional string description = 3;
+  UITemplateType type = 4;
+  int32 price = 5;
+  int32 duration_days = 6;
+  optional string url_path = 7;
+  optional string preview_image_url = 8;
+  optional string thumbnail_url = 9;
+  bool is_active = 10;
+  bool is_popular = 11;
+  int32 display_order = 12;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
+}
+
+message WorkerUITemplate {
+  string id = 1;
+  uint64 purchased_at = 2;
+  uint64 expired_at = 3;
+  int32 credits_used = 4;
+  bool is_active = 5;
+  bool is_expired = 6;
+  bool is_valid = 7;
+
+  Worker worker = 50;
+  UITemplate ui_template = 51;
 
   uint64 created_at = 98;
   uint64 updated_at = 99;

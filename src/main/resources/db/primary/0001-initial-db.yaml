@@ -51,6 +51,18 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: credit
+                  type: INTEGER
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: credit_version
+                  type: BIGINT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
                   name: updated_at
                   type: TIMESTAMP(6)
                   constraints:
@@ -363,6 +375,16 @@ databaseChangeLog:
                   type: BOOLEAN
                   constraints:
                     nullable: false
+              - column:
+                  name: public_start_date
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: public_end_date
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: true
               - column:
                   name: worker_id
                   type: VARCHAR(16)
@@ -1923,6 +1945,78 @@ databaseChangeLog:
             tableName: worker_feature_usages
 
         - createTable:
+            tableName: credit_plans
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: price
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: base_credits
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: bonus_credits
+                  type: INTEGER
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_active
+                  type: BOOLEAN
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+              - column:
+                  name: display_order
+                  type: INTEGER
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_popular
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+        - createIndex:
+            columns:
+              - column:
+                  name: is_active
+              - column:
+                  name: display_order
+            indexName: idx_credit_plans_active_order
+            tableName: credit_plans
+
+        - createTable:
             tableName: payments
             columns:
               - column:
@@ -2005,6 +2099,17 @@ databaseChangeLog:
                   constraints:
                     nullable: true
               - column:
+                  name: credit_plan_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: credits_to_add
+                  type: INTEGER
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
                   name: created_at
                   type: TIMESTAMP(6)
                   constraints:
@@ -2034,7 +2139,7 @@ databaseChangeLog:
             tableName: payments
 
         - createTable:
-            tableName: payment_transactions
+            tableName: payment_tx
             columns:
               - column:
                   name: id
@@ -2096,20 +2201,100 @@ databaseChangeLog:
             columns:
               - column:
                   name: payment_id
-            indexName: idx_payment_transactions_payment_id
-            tableName: payment_transactions
+            indexName: idx_payment_tx_payment_id
+            tableName: payment_tx
         - createIndex:
             columns:
               - column:
                   name: transaction_type
-            indexName: idx_payment_transactions_transaction_type
-            tableName: payment_transactions
+            indexName: idx_payment_tx_transaction_type
+            tableName: payment_tx
         - createIndex:
             columns:
               - column:
                   name: status
-            indexName: idx_payment_transactions_status
-            tableName: payment_transactions
+            indexName: idx_payment_tx_status
+            tableName: payment_tx
+
+        - createTable:
+            tableName: credit_histories
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: worker_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: tx_type
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: amount
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: balance_before
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: balance_after
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: reference_type
+                  type: VARCHAR(30)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: reference_id
+                  type: VARCHAR(64)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: description
+                  type: VARCHAR(500)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: metadata
+                  type: JSONB
+                  constraints:
+                    nullable: true
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: credit_histories
+            baseColumnNames: worker_id
+            constraintName: fk_credit_histories_worker
+            referencedTableName: workers
+            referencedColumnNames: id
+        - createIndex:
+            columns:
+              - column:
+                  name: worker_id
+              - column:
+                  name: created_at
+            indexName: idx_credit_histories_worker_created
+            tableName: credit_histories
+        - createIndex:
+            columns:
+              - column:
+                  name: tx_type
+            indexName: idx_credit_histories_tx_type
+            tableName: credit_histories
 
         - createTable:
             tableName: staffs
@@ -2175,3 +2360,185 @@ databaseChangeLog:
                   name: email
             indexName: idx_staffs_email
             tableName: staffs
+
+        - createTable:
+            tableName: templates
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(256)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: type
+                  type: VARCHAR(32)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: price
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: duration_days
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: url_path
+                  type: VARCHAR(256)
+                  constraints:
+                    nullable: true
+                    unique: true
+              - column:
+                  name: preview_image_url
+                  type: TEXT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: thumbnail_url
+                  type: TEXT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: is_active
+                  type: BOOLEAN
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_popular
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: display_order
+                  type: INTEGER
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+        - createIndex:
+            columns:
+              - column:
+                  name: type
+              - column:
+                  name: is_active
+              - column:
+                  name: display_order
+            indexName: idx_templates_type_active_order
+            tableName: templates
+        - createIndex:
+            columns:
+              - column:
+                  name: url_path
+            indexName: idx_templates_url_path
+            tableName: templates
+
+        - createTable:
+            tableName: worker_templates
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: worker_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: template_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: purchased_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: expired_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: credits_used
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_active
+                  type: BOOLEAN
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: worker_templates
+            baseColumnNames: worker_id
+            constraintName: fk_worker_templates_worker
+            referencedTableName: workers
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: worker_templates
+            baseColumnNames: template_id
+            constraintName: fk_worker_templates_template
+            referencedTableName: templates
+            referencedColumnNames: id
+        - createIndex:
+            columns:
+              - column:
+                  name: worker_id
+              - column:
+                  name: is_active
+            indexName: idx_worker_templates_worker_active
+            tableName: worker_templates
+        - createIndex:
+            columns:
+              - column:
+                  name: worker_id
+              - column:
+                  name: template_id
+              - column:
+                  name: expired_at
+            indexName: idx_worker_templates_worker_template_expired
+            tableName: worker_templates
+        - createIndex:
+            columns:
+              - column:
+                  name: expired_at
+            indexName: idx_worker_templates_expired
+            tableName: worker_templates

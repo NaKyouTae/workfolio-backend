@@ -148,3 +148,7 @@ message ResumeDetailListResponse {
 message ResumeResponse {
   Resume resume = 1;
 }
+
+message PublicResumeDetailResponse {
+  ResumeDetail resume = 1;
+}

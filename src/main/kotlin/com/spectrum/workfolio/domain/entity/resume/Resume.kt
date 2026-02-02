@@ -86,6 +86,14 @@ class Resume(
     var isDefault: Boolean = isDefault
         protected set
 
+    @Column(name = "public_start_date", nullable = true)
+    var publicStartDate: LocalDate? = null
+        protected set
+
+    @Column(name = "public_end_date", nullable = true)
+    var publicEndDate: LocalDate? = null
+        protected set
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "worker_id", nullable = false)
     var worker: Worker = worker
@@ -122,6 +130,8 @@ class Resume(
         description: String,
         gender: Gender? = null,
         birthDate: LocalDate? = null,
+        publicStartDate: LocalDate? = null,
+        publicEndDate: LocalDate? = null,
     ) {
         this.title = title
         this.name = name
@@ -133,6 +143,8 @@ class Resume(
         this.description = description
         this.gender = gender
         this.birthDate = birthDate
+        this.publicStartDate = publicStartDate
+        this.publicEndDate = publicEndDate
     }
 
     fun changeDefault(isDefault: Boolean) {

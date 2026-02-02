@@ -72,7 +72,7 @@ done
 echo "7. Grafana 기동 확인 (10초)"
 sleep 10
 for i in {1..5}; do
-    if curl -f http://localhost:3000/login >/dev/null 2>&1; then
+    if curl -f http://localhost:4000/login >/dev/null 2>&1; then
         echo "✅ Grafana 기동 성공"
         break
     else
@@ -93,7 +93,7 @@ sleep 10
 # Health Check
 echo "9. Health Check"
 for i in {1..5}; do
-    if curl -f http://localhost:8080/api/order/health >/dev/null 2>&1; then
+    if curl -f http://localhost:9000/api/order/health >/dev/null 2>&1; then
         echo "✅ Health Check 성공"
         break
     else
@@ -109,7 +109,7 @@ done
 
 # API 테스트
 echo "10. API 테스트"
-curl -X POST http://localhost:8080/api/sample \
+curl -X POST http://localhost:9000/api/sample \
   -H "Content-Type: application/json" \
   -d '{"name": "Docker"}' \
   -w "\nHTTP Status: %{http_code}\n"
@@ -122,11 +122,11 @@ echo "=== 네트워크 정보 ==="
 docker network ls | grep crimson
 
 echo "✅ 실행 완료!"
-echo "🌐 애플리케이션 접속: http://localhost:8080"
-echo "📊 Health Check: http://localhost:8080/api/order/health"
+echo "🌐 애플리케이션 접속: http://localhost:9000"
+echo "📊 Health Check: http://localhost:9000/api/order/health"
 echo "🗄️ MySQL 접속: localhost:3306"
 echo "🔴 Redis 접속: localhost:6379"
 echo "📈 Prometheus 접속: http://localhost:9090"
-echo "📊 Grafana 접속: http://localhost:3000 (기본 계정: admin/admin)"
+echo "📊 Grafana 접속: http://localhost:4000 (기본 계정: admin/admin)"
 echo "📝 로그 확인: docker-compose logs -f"
 echo "🛑 중지: docker-compose down"

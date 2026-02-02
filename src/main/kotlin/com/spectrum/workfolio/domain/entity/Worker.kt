@@ -15,6 +15,7 @@ import jakarta.persistence.FetchType
 import jakarta.persistence.Index
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
+import jakarta.persistence.Version
 import java.time.LocalDate
 
 /**
@@ -65,6 +66,15 @@ class Worker(
     var gender: Gender? = gender
         protected set
 
+    @Column(name = "credit", nullable = false)
+    var credit: Int = 0
+        protected set
+
+    @Version
+    @Column(name = "credit_version", nullable = false)
+    var creditVersion: Long = 0
+        protected set
+
     @OneToMany(mappedBy = "worker", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
     private var mutableResumes: MutableList<Resume> = mutableListOf()
     val resumes: List<Resume> get() = mutableResumes.toList()
@@ -98,4 +108,17 @@ class Worker(
     fun changeNickName(nickName: String) {
         this.nickName = nickName
     }
+
+    fun addCredits(amount: Int) {
+        require(amount >= 0) { "Amount must be non-negative" }
+        this.credit += amount
+    }
+
+    fun useCredits(amount: Int) {
+        require(amount > 0) { "Amount must be positive" }
+        require(this.credit >= amount) { "Insufficient credits" }
+        this.credit -= amount
+    }
+
+    fun hasEnoughCredits(amount: Int): Boolean = this.credit >= amount
 }

@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package com.spectrum.workfolio.proto;
+
+option java_multiple_files = true;
+option java_package = "com.spectrum.workfolio.proto.uitemplate";
+option java_outer_classname = "UITemplateProto";
+
+// Public API responses
+message UITemplateListResponse {
+  repeated UITemplate ui_templates = 1;
+}
+
+message UITemplateGetResponse {
+  UITemplate ui_template = 1;
+}
+
+// Authenticated API responses
+message WorkerUITemplateListResponse {
+  repeated WorkerUITemplate worker_ui_templates = 1;
+  int32 total_elements = 2;
+  int32 total_pages = 3;
+  int32 current_page = 4;
+}
+
+message WorkerUITemplateGetResponse {
+  WorkerUITemplate worker_ui_template = 1;
+}
+
+// Purchase request/response
+message UITemplatePurchaseRequest {
+  string ui_template_id = 1;
+}
+
+message UITemplatePurchaseResponse {
+  WorkerUITemplate worker_ui_template = 1;
+  int32 credits_used = 2;
+  int32 balance_after = 3;
+}
+
+// Check template ownership
+message UITemplateOwnershipResponse {
+  bool owns_ui_template = 1;
+  optional WorkerUITemplate worker_ui_template = 2;
+}
+
+// Active templates for a specific type
+message ActiveUITemplatesResponse {
+  repeated WorkerUITemplate worker_ui_templates = 1;
+}

@@ -10,7 +10,7 @@ services:
     image: workfolio-server:latest
     container_name: workfolio-server
     ports:
-      - "8080:8080"
+      - "9000:9000"
     env_file:
       - docker-compose.env
     environment:
@@ -24,7 +24,7 @@ services:
     restart: unless-stopped
     mem_reservation: 512m
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:9000/actuator/health"]
       interval: 30s
       timeout: 10s
       retries: 3

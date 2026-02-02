@@ -100,7 +100,7 @@ server {
 
     # 애플리케이션 프록시
     location / {
-        proxy_pass http://localhost:8080;
+        proxy_pass http://localhost:9000;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -164,7 +164,7 @@ server {
 
     # 애플리케이션 프록시
     location / {
-        proxy_pass http://localhost:8080;
+        proxy_pass http://localhost:9000;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -185,7 +185,7 @@ server {
 
     # Health check
     location /actuator/health {
-        proxy_pass http://localhost:8080/actuator/health;
+        proxy_pass http://localhost:9000/actuator/health;
         proxy_set_header Host $host;
         access_log off;
     }
@@ -338,14 +338,14 @@ sudo firewall-cmd --reload
 
 ## 9. Docker 컨테이너와 연동
 
-Docker 컨테이너는 localhost:8080에서 실행되므로, Nginx가 프록시로 동작합니다.
+Docker 컨테이너는 localhost:9000에서 실행되므로, Nginx가 프록시로 동작합니다.
 
 ```bash
 # Docker 컨테이너 확인
 docker ps
 
 # 컨테이너가 실행 중인지 확인
-curl http://localhost:8080/actuator/health
+curl http://localhost:9000/actuator/health
 ```
 
 ## 10. SSL 보안 강화 (선택사항)
