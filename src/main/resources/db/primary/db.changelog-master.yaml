@@ -5,3 +5,7 @@ databaseChangeLog:
       file: db/primary/0002-add-idx-full-search-text.yaml
   - include:
       file: db/primary/0003-initial-data.yaml
+  - include:
+      file: db/primary/0004-ui-templates-url-sample-data.yaml
+  - include:
+      file: db/primary/0005-ui-templates-pdf-sample-data.yaml

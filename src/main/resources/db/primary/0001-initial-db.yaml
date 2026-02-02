@@ -2362,7 +2362,7 @@ databaseChangeLog:
             tableName: staffs
 
         - createTable:
-            tableName: templates
+            tableName: ui_templates
             columns:
               - column:
                   name: id
@@ -2447,17 +2447,17 @@ databaseChangeLog:
                   name: is_active
               - column:
                   name: display_order
-            indexName: idx_templates_type_active_order
-            tableName: templates
+            indexName: idx_ui_templates_type_active_order
+            tableName: ui_templates
         - createIndex:
             columns:
               - column:
                   name: url_path
-            indexName: idx_templates_url_path
-            tableName: templates
+            indexName: idx_ui_templates_url_path
+            tableName: ui_templates
 
         - createTable:
-            tableName: worker_templates
+            tableName: worker_ui_templates
             columns:
               - column:
                   name: id
@@ -2507,16 +2507,16 @@ databaseChangeLog:
                   constraints:
                     nullable: false
         - addForeignKeyConstraint:
-            baseTableName: worker_templates
+            baseTableName: worker_ui_templates
             baseColumnNames: worker_id
-            constraintName: fk_worker_templates_worker
+            constraintName: fk_worker_ui_templates_worker
             referencedTableName: workers
             referencedColumnNames: id
         - addForeignKeyConstraint:
-            baseTableName: worker_templates
+            baseTableName: worker_ui_templates
             baseColumnNames: template_id
-            constraintName: fk_worker_templates_template
-            referencedTableName: templates
+            constraintName: fk_worker_ui_templates_template
+            referencedTableName: ui_templates
             referencedColumnNames: id
         - createIndex:
             columns:
@@ -2524,8 +2524,8 @@ databaseChangeLog:
                   name: worker_id
               - column:
                   name: is_active
-            indexName: idx_worker_templates_worker_active
-            tableName: worker_templates
+            indexName: idx_worker_ui_templates_worker_active
+            tableName: worker_ui_templates
         - createIndex:
             columns:
               - column:
@@ -2534,11 +2534,11 @@ databaseChangeLog:
                   name: template_id
               - column:
                   name: expired_at
-            indexName: idx_worker_templates_worker_template_expired
-            tableName: worker_templates
+            indexName: idx_worker_ui_templates_worker_template_expired
+            tableName: worker_ui_templates
         - createIndex:
             columns:
               - column:
                   name: expired_at
-            indexName: idx_worker_templates_expired
-            tableName: worker_templates
+            indexName: idx_worker_ui_templates_expired
+            tableName: worker_ui_templates

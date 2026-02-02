@@ -1,0 +1,190 @@
+databaseChangeLog:
+  - changeSet:
+      id: 4
+      author: kyutae
+      comment: "URL 공개 이력서 템플릿 4종 샘플 데이터 (urlPath: 기본, vertical-2, horizontal-1, horizontal-2)"
+      changes:
+        # 세로형 1 (기본) - url_path 빈 문자열
+        - insert:
+            tableName: ui_templates
+            columns:
+              - column:
+                  name: id
+                  value: UT58D41926B6V001
+              - column:
+                  name: name
+                  value: 무료 템플릿
+              - column:
+                  name: description
+                  value: 공개 이력서 기본 세로 레이아웃입니다. 깔끔한 블루 악센트.
+              - column:
+                  name: type
+                  value: URL
+              - column:
+                  name: price
+                  valueNumeric: 50
+              - column:
+                  name: duration_days
+                  valueNumeric: 365
+              - column:
+                  name: url_path
+                  value: ''
+              - column:
+                  name: preview_image_url
+                  value: null
+              - column:
+                  name: thumbnail_url
+                  value: null
+              - column:
+                  name: is_active
+                  valueBoolean: true
+              - column:
+                  name: is_popular
+                  valueBoolean: true
+              - column:
+                  name: display_order
+                  valueNumeric: 0
+              - column:
+                  name: created_at
+                  valueComputed: now()
+              - column:
+                  name: updated_at
+                  valueComputed: now()
+        # 세로형 2
+        - insert:
+            tableName: ui_templates
+            columns:
+              - column:
+                  name: id
+                  value: UT58D41926B6V002
+              - column:
+                  name: name
+                  value: 세로형 2
+              - column:
+                  name: description
+                  value: 따뜻한 톤의 세로 레이아웃. 오렌지 악센트.
+              - column:
+                  name: type
+                  value: URL
+              - column:
+                  name: price
+                  valueNumeric: 50
+              - column:
+                  name: duration_days
+                  valueNumeric: 365
+              - column:
+                  name: url_path
+                  value: vertical-2
+              - column:
+                  name: preview_image_url
+                  value: null
+              - column:
+                  name: thumbnail_url
+                  value: null
+              - column:
+                  name: is_active
+                  valueBoolean: true
+              - column:
+                  name: is_popular
+                  valueBoolean: false
+              - column:
+                  name: display_order
+                  valueNumeric: 1
+              - column:
+                  name: created_at
+                  valueComputed: now()
+              - column:
+                  name: updated_at
+                  valueComputed: now()
+        # 가로형 1
+        - insert:
+            tableName: ui_templates
+            columns:
+              - column:
+                  name: id
+                  value: UT58D41926B6H001
+              - column:
+                  name: name
+                  value: 가로형 1
+              - column:
+                  name: description
+                  value: 좌측 프로필, 우측 경력/학력. 다크 헤더 스타일.
+              - column:
+                  name: type
+                  value: URL
+              - column:
+                  name: price
+                  valueNumeric: 80
+              - column:
+                  name: duration_days
+                  valueNumeric: 365
+              - column:
+                  name: url_path
+                  value: horizontal-1
+              - column:
+                  name: preview_image_url
+                  value: null
+              - column:
+                  name: thumbnail_url
+                  value: null
+              - column:
+                  name: is_active
+                  valueBoolean: true
+              - column:
+                  name: is_popular
+                  valueBoolean: false
+              - column:
+                  name: display_order
+                  valueNumeric: 2
+              - column:
+                  name: created_at
+                  valueComputed: now()
+              - column:
+                  name: updated_at
+                  valueComputed: now()
+        # 가로형 2
+        - insert:
+            tableName: ui_templates
+            columns:
+              - column:
+                  name: id
+                  value: UT58D41926B6H002
+              - column:
+                  name: name
+                  value: 가로형 2
+              - column:
+                  name: description
+                  value: 다크 그린 사이드바. 그린 악센트 가로 레이아웃.
+              - column:
+                  name: type
+                  value: URL
+              - column:
+                  name: price
+                  valueNumeric: 80
+              - column:
+                  name: duration_days
+                  valueNumeric: 365
+              - column:
+                  name: url_path
+                  value: horizontal-2
+              - column:
+                  name: preview_image_url
+                  value: null
+              - column:
+                  name: thumbnail_url
+                  value: null
+              - column:
+                  name: is_active
+                  valueBoolean: true
+              - column:
+                  name: is_popular
+                  valueBoolean: false
+              - column:
+                  name: display_order
+                  valueNumeric: 3
+              - column:
+                  name: created_at
+                  valueComputed: now()
+              - column:
+                  name: updated_at
+                  valueComputed: now()

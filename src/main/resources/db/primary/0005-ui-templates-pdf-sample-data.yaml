@@ -1,0 +1,190 @@
+databaseChangeLog:
+  - changeSet:
+      id: 5
+      author: kyutae
+      comment: "PDF 다운로드 템플릿 4종 샘플 데이터 (urlPath: pdf-vertical-1, pdf-vertical-2, pdf-horizontal-1, pdf-horizontal-2)"
+      changes:
+        # PDF 세로형 1
+        - insert:
+            tableName: ui_templates
+            columns:
+              - column:
+                  name: id
+                  value: UT58D41926P001
+              - column:
+                  name: name
+                  value: PDF 세로형 1
+              - column:
+                  name: description
+                  value: 이력서 PDF 다운로드용 기본 세로 레이아웃. 깔끔한 블루 악센트.
+              - column:
+                  name: type
+                  value: PDF
+              - column:
+                  name: price
+                  valueNumeric: 50
+              - column:
+                  name: duration_days
+                  valueNumeric: 365
+              - column:
+                  name: url_path
+                  value: pdf-vertical-1
+              - column:
+                  name: preview_image_url
+                  value: null
+              - column:
+                  name: thumbnail_url
+                  value: null
+              - column:
+                  name: is_active
+                  valueBoolean: true
+              - column:
+                  name: is_popular
+                  valueBoolean: true
+              - column:
+                  name: display_order
+                  valueNumeric: 10
+              - column:
+                  name: created_at
+                  valueComputed: now()
+              - column:
+                  name: updated_at
+                  valueComputed: now()
+        # PDF 세로형 2
+        - insert:
+            tableName: ui_templates
+            columns:
+              - column:
+                  name: id
+                  value: UT58D41926P002
+              - column:
+                  name: name
+                  value: PDF 세로형 2
+              - column:
+                  name: description
+                  value: PDF용 따뜻한 톤의 세로 레이아웃. 오렌지 악센트.
+              - column:
+                  name: type
+                  value: PDF
+              - column:
+                  name: price
+                  valueNumeric: 50
+              - column:
+                  name: duration_days
+                  valueNumeric: 365
+              - column:
+                  name: url_path
+                  value: pdf-vertical-2
+              - column:
+                  name: preview_image_url
+                  value: null
+              - column:
+                  name: thumbnail_url
+                  value: null
+              - column:
+                  name: is_active
+                  valueBoolean: true
+              - column:
+                  name: is_popular
+                  valueBoolean: false
+              - column:
+                  name: display_order
+                  valueNumeric: 11
+              - column:
+                  name: created_at
+                  valueComputed: now()
+              - column:
+                  name: updated_at
+                  valueComputed: now()
+        # PDF 가로형 1
+        - insert:
+            tableName: ui_templates
+            columns:
+              - column:
+                  name: id
+                  value: UT58D41926P003
+              - column:
+                  name: name
+                  value: PDF 가로형 1
+              - column:
+                  name: description
+                  value: PDF용 좌측 프로필, 우측 경력/학력. 다크 헤더 스타일.
+              - column:
+                  name: type
+                  value: PDF
+              - column:
+                  name: price
+                  valueNumeric: 80
+              - column:
+                  name: duration_days
+                  valueNumeric: 365
+              - column:
+                  name: url_path
+                  value: pdf-horizontal-1
+              - column:
+                  name: preview_image_url
+                  value: null
+              - column:
+                  name: thumbnail_url
+                  value: null
+              - column:
+                  name: is_active
+                  valueBoolean: true
+              - column:
+                  name: is_popular
+                  valueBoolean: false
+              - column:
+                  name: display_order
+                  valueNumeric: 12
+              - column:
+                  name: created_at
+                  valueComputed: now()
+              - column:
+                  name: updated_at
+                  valueComputed: now()
+        # PDF 가로형 2
+        - insert:
+            tableName: ui_templates
+            columns:
+              - column:
+                  name: id
+                  value: UT58D41926P004
+              - column:
+                  name: name
+                  value: PDF 가로형 2
+              - column:
+                  name: description
+                  value: PDF용 다크 그린 사이드바. 그린 악센트 가로 레이아웃.
+              - column:
+                  name: type
+                  value: PDF
+              - column:
+                  name: price
+                  valueNumeric: 80
+              - column:
+                  name: duration_days
+                  valueNumeric: 365
+              - column:
+                  name: url_path
+                  value: pdf-horizontal-2
+              - column:
+                  name: preview_image_url
+                  value: null
+              - column:
+                  name: thumbnail_url
+                  value: null
+              - column:
+                  name: is_active
+                  valueBoolean: true
+              - column:
+                  name: is_popular
+                  valueBoolean: false
+              - column:
+                  name: display_order
+                  valueNumeric: 13
+              - column:
+                  name: created_at
+                  valueComputed: now()
+              - column:
+                  name: updated_at
+                  valueComputed: now()
