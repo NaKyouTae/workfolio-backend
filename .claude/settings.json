@@ -1,0 +1,12 @@
+{
+  "projectDocuments": [
+    "../claude-settings/.claude/AGENTS.md",
+    "../claude-settings/.claude/README.md",
+    "../claude-settings/.claude/SETUP.md",
+    "../claude-settings/.claude/agents/backend-developer.md",
+    "../claude-settings/.claude/agents/frontend-developer.md",
+    "../claude-settings/.claude/agents/planner.md",
+    "../claude-settings/.claude/rules/backend-pattern.mdc",
+    "../claude-settings/.claude/rules/frontend-pattern.mdc"
+  ]
+}
