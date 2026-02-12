@@ -3,10 +3,13 @@ package com.spectrum.workfolio.services.uitemplate
 import com.spectrum.workfolio.domain.entity.Worker
 import com.spectrum.workfolio.domain.entity.uitemplate.UiTemplatePlan
 import com.spectrum.workfolio.domain.entity.uitemplate.UITemplate
+import com.spectrum.workfolio.domain.entity.uitemplate.UITemplateImage
 import com.spectrum.workfolio.domain.entity.uitemplate.WorkerUITemplate
+import com.spectrum.workfolio.domain.enums.UITemplateImageType
 import com.spectrum.workfolio.domain.enums.UITemplateType
 import com.spectrum.workfolio.domain.repository.UiTemplatePlanRepository
 import com.spectrum.workfolio.domain.repository.UITemplateRepository
+import com.spectrum.workfolio.domain.repository.UITemplateImageRepository
 import com.spectrum.workfolio.domain.repository.WorkerRepository
 import com.spectrum.workfolio.domain.repository.WorkerUITemplateRepository
 import com.spectrum.workfolio.services.CreditService
@@ -21,6 +24,7 @@ import java.time.LocalDateTime
 class UITemplateService(
     private val uiTemplateRepository: UITemplateRepository,
     private val uiTemplatePlanRepository: UiTemplatePlanRepository,
+    private val uiTemplateImageRepository: UITemplateImageRepository,
     private val workerUITemplateRepository: WorkerUITemplateRepository,
     private val workerRepository: WorkerRepository,
     private val creditService: CreditService,
@@ -45,14 +49,18 @@ class UITemplateService(
     }
 
     @Transactional(readOnly = true)
-    fun getUITemplateByUrlPath(urlPath: String): UITemplate {
-        return uiTemplateRepository.findByUrlPathAndIsActiveTrue(urlPath)
-            ?: throw WorkfolioException("템플릿을 찾을 수 없습니다.")
+    fun getPlansByUiTemplateId(uiTemplateId: String): List<UiTemplatePlan> {
+        return uiTemplatePlanRepository.findByUiTemplateIdOrderByDisplayOrderAsc(uiTemplateId)
     }
 
     @Transactional(readOnly = true)
-    fun getPlansByUiTemplateId(uiTemplateId: String): List<UiTemplatePlan> {
-        return uiTemplatePlanRepository.findByUiTemplateIdOrderByDisplayOrderAsc(uiTemplateId)
+    fun getImagesByUiTemplateId(uiTemplateId: String): List<UITemplateImage> {
+        return uiTemplateImageRepository.findByUiTemplateIdOrderByDisplayOrderAsc(uiTemplateId)
+    }
+
+    @Transactional(readOnly = true)
+    fun getImagesByUiTemplateIdAndType(uiTemplateId: String, imageType: UITemplateImageType): List<UITemplateImage> {
+        return uiTemplateImageRepository.findByUiTemplateIdAndImageTypeOrderByDisplayOrderAsc(uiTemplateId, imageType)
     }
 
     // ==================== Authenticated API ====================
@@ -128,13 +136,6 @@ class UITemplateService(
     fun hasValidUITemplate(workerId: String, uiTemplateId: String): Boolean {
         val worker = getWorkerById(workerId)
         val uiTemplate = uiTemplateRepository.findById(uiTemplateId).orElse(null) ?: return false
-        return workerUITemplateRepository.hasValidUITemplate(worker, uiTemplate, LocalDateTime.now())
-    }
-
-    @Transactional(readOnly = true)
-    fun hasValidUITemplateByUrlPath(workerId: String, urlPath: String): Boolean {
-        val worker = getWorkerById(workerId)
-        val uiTemplate = uiTemplateRepository.findByUrlPathAndIsActiveTrue(urlPath) ?: return false
         return workerUITemplateRepository.hasValidUITemplate(worker, uiTemplate, LocalDateTime.now())
     }
 

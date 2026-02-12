@@ -905,6 +905,22 @@ message UiTemplatePlan {
   int32 display_order = 4;
 }
 
+message UITemplateImage {
+  enum UITemplateImageType {
+    IMAGE_TYPE_UNKNOWN = 0;
+    THUMBNAIL = 1;
+    DETAIL = 2;
+  }
+
+  string id = 1;
+  UITemplateImageType image_type = 2;
+  string image_url = 3;
+  int32 display_order = 4;
+
+  uint64 created_at = 98;
+  uint64 updated_at = 99;
+}
+
 message UITemplate {
   enum UITemplateType {
     UNKNOWN = 0;
@@ -918,13 +934,11 @@ message UITemplate {
   UITemplateType type = 4;
   int32 price = 5;
   int32 duration_days = 6;
-  optional string url_path = 7;
-  optional string preview_image_url = 8;
-  optional string thumbnail_url = 9;
   bool is_active = 10;
   bool is_popular = 11;
   int32 display_order = 12;
   repeated UiTemplatePlan plans = 13;
+  repeated UITemplateImage images = 14;
 
   uint64 created_at = 98;
   uint64 updated_at = 99;

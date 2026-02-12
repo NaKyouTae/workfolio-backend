@@ -10,7 +10,7 @@ import java.time.LocalDateTime
     name = "worker_ui_templates",
     indexes = [
         Index(name = "idx_worker_ui_templates_worker_active", columnList = "worker_id, is_active"),
-        Index(name = "idx_worker_ui_templates_worker_template_expired", columnList = "worker_id, ui_template_id, expired_at"),
+        Index(name = "idx_worker_ui_templates_worker_template_expired", columnList = "worker_id, template_id, expired_at"),
         Index(name = "idx_worker_ui_templates_expired", columnList = "expired_at"),
     ],
 )
@@ -29,7 +29,7 @@ class WorkerUITemplate(
         protected set
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ui_template_id", nullable = false)
+    @JoinColumn(name = "template_id", nullable = false)
     var uiTemplate: UITemplate = uiTemplate
         protected set
 

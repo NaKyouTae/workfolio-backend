@@ -95,15 +95,4 @@ class UITemplateController(
         return builder.build()
     }
 
-    @GetMapping("/check/url-path/{urlPath}")
-    fun checkUITemplateOwnershipByUrlPath(
-        @AuthenticatedUser workerId: String,
-        @PathVariable urlPath: String,
-    ): UITemplateOwnershipResponse {
-        val hasUITemplate = uiTemplateService.hasValidUITemplateByUrlPath(workerId, urlPath)
-
-        return UITemplateOwnershipResponse.newBuilder()
-            .setOwnsUiTemplate(hasUITemplate)
-            .build()
-    }
 }

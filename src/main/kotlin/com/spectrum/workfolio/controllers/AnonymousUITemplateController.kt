@@ -31,7 +31,8 @@ class AnonymousUITemplateController(
         return UITemplateListResponse.newBuilder()
             .addAllUiTemplates(uiTemplates.map { t ->
                 val plans = uiTemplateService.getPlansByUiTemplateId(t.id)
-                t.toProto(plans)
+                val images = uiTemplateService.getImagesByUiTemplateId(t.id)
+                t.toProto(plans, images)
             })
             .build()
     }
@@ -42,19 +43,9 @@ class AnonymousUITemplateController(
     ): UITemplateGetResponse {
         val uiTemplate = uiTemplateService.getUITemplateById(uiTemplateId)
         val plans = uiTemplateService.getPlansByUiTemplateId(uiTemplateId)
+        val images = uiTemplateService.getImagesByUiTemplateId(uiTemplateId)
         return UITemplateGetResponse.newBuilder()
-            .setUiTemplate(uiTemplate.toProto(plans))
-            .build()
-    }
-
-    @GetMapping("/url-path/{urlPath}")
-    fun getUITemplateByUrlPath(
-        @PathVariable urlPath: String,
-    ): UITemplateGetResponse {
-        val uiTemplate = uiTemplateService.getUITemplateByUrlPath(urlPath)
-        val plans = uiTemplateService.getPlansByUiTemplateId(uiTemplate.id)
-        return UITemplateGetResponse.newBuilder()
-            .setUiTemplate(uiTemplate.toProto(plans))
+            .setUiTemplate(uiTemplate.toProto(plans, images))
             .build()
     }
 }

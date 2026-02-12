@@ -2,7 +2,9 @@ package com.spectrum.workfolio.domain.extensions
 
 import com.spectrum.workfolio.domain.entity.uitemplate.UiTemplatePlan
 import com.spectrum.workfolio.domain.entity.uitemplate.UITemplate
+import com.spectrum.workfolio.domain.entity.uitemplate.UITemplateImage
 import com.spectrum.workfolio.domain.entity.uitemplate.WorkerUITemplate
+import com.spectrum.workfolio.domain.enums.UITemplateImageType
 import com.spectrum.workfolio.domain.enums.UITemplateType
 import com.spectrum.workfolio.utils.TimeUtil
 
@@ -15,7 +17,25 @@ fun UiTemplatePlan.toProto(): com.spectrum.workfolio.proto.common.UiTemplatePlan
         .build()
 }
 
-fun UITemplate.toProto(plans: List<UiTemplatePlan>? = null): com.spectrum.workfolio.proto.common.UITemplate {
+fun UITemplateImage.toProto(): com.spectrum.workfolio.proto.common.UITemplateImage {
+    val builder = com.spectrum.workfolio.proto.common.UITemplateImage.newBuilder()
+    builder.setId(this.id)
+    builder.setImageType(this.imageType.toProtoImageType())
+    builder.setImageUrl(this.imageUrl)
+    builder.setDisplayOrder(this.displayOrder)
+    builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
+    builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
+    return builder.build()
+}
+
+fun UITemplateImageType.toProtoImageType(): com.spectrum.workfolio.proto.common.UITemplateImage.UITemplateImageType {
+    return when (this) {
+        UITemplateImageType.THUMBNAIL -> com.spectrum.workfolio.proto.common.UITemplateImage.UITemplateImageType.THUMBNAIL
+        UITemplateImageType.DETAIL -> com.spectrum.workfolio.proto.common.UITemplateImage.UITemplateImageType.DETAIL
+    }
+}
+
+fun UITemplate.toProto(plans: List<UiTemplatePlan>? = null, images: List<UITemplateImage>? = null): com.spectrum.workfolio.proto.common.UITemplate {
     val builder = com.spectrum.workfolio.proto.common.UITemplate.newBuilder()
 
     builder.setId(this.id)
@@ -26,20 +46,14 @@ fun UITemplate.toProto(plans: List<UiTemplatePlan>? = null): com.spectrum.workfo
     builder.setType(this.type.toProtoType())
     builder.setPrice(this.price)
     builder.setDurationDays(this.durationDays)
-    if (this.urlPath != null) {
-        builder.setUrlPath(this.urlPath)
-    }
-    if (this.previewImageUrl != null) {
-        builder.setPreviewImageUrl(this.previewImageUrl)
-    }
-    if (this.thumbnailUrl != null) {
-        builder.setThumbnailUrl(this.thumbnailUrl)
-    }
     builder.setIsActive(this.isActive)
     builder.setIsPopular(this.isPopular)
     builder.setDisplayOrder(this.displayOrder)
     if (!plans.isNullOrEmpty()) {
         builder.addAllPlans(plans.map { it.toProto() })
+    }
+    if (!images.isNullOrEmpty()) {
+        builder.addAllImages(images.map { it.toProto() })
     }
 
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))

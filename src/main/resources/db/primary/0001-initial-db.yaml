@@ -2390,22 +2390,6 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: url_path
-                  type: VARCHAR(256)
-                  constraints:
-                    nullable: true
-                    unique: true
-              - column:
-                  name: preview_image_url
-                  type: TEXT
-                  constraints:
-                    nullable: true
-              - column:
-                  name: thumbnail_url
-                  type: TEXT
-                  constraints:
-                    nullable: true
-              - column:
                   name: is_active
                   type: BOOLEAN
                   defaultValueBoolean: true
@@ -2443,13 +2427,6 @@ databaseChangeLog:
                   name: display_order
             indexName: idx_ui_templates_type_active_order
             tableName: ui_templates
-        - createIndex:
-            columns:
-              - column:
-                  name: url_path
-            indexName: idx_ui_templates_url_path
-            tableName: ui_templates
-
         - createTable:
             tableName: ui_template_plans
             columns:
@@ -2496,6 +2473,57 @@ databaseChangeLog:
             columns:
               - column:
                   name: ui_template_id
+              - column:
+                  name: display_order
+
+        - createTable:
+            tableName: ui_template_images
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: ui_template_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: image_type
+                  type: VARCHAR(32)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: image_url
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: display_order
+                  type: INTEGER
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+        - createIndex:
+            indexName: idx_ui_template_images_template_type_order
+            tableName: ui_template_images
+            columns:
+              - column:
+                  name: ui_template_id
+              - column:
+                  name: image_type
               - column:
                   name: display_order
 

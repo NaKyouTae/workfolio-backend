@@ -2,7 +2,7 @@ databaseChangeLog:
   - changeSet:
       id: 5
       author: kyutae
-      comment: "PDF 다운로드 템플릿 4종 샘플 데이터 (urlPath: pdf-vertical-1, pdf-vertical-2, pdf-horizontal-1, pdf-horizontal-2)"
+      comment: "PDF 다운로드 템플릿 4종 샘플 데이터"
       changes:
         # PDF 세로형 1
         - insert:
@@ -26,15 +26,6 @@ databaseChangeLog:
               - column:
                   name: duration_days
                   valueNumeric: 365
-              - column:
-                  name: url_path
-                  value: pdf-vertical-1
-              - column:
-                  name: preview_image_url
-                  value: null
-              - column:
-                  name: thumbnail_url
-                  value: null
               - column:
                   name: is_active
                   valueBoolean: true
@@ -73,15 +64,6 @@ databaseChangeLog:
                   name: duration_days
                   valueNumeric: 365
               - column:
-                  name: url_path
-                  value: pdf-vertical-2
-              - column:
-                  name: preview_image_url
-                  value: null
-              - column:
-                  name: thumbnail_url
-                  value: null
-              - column:
                   name: is_active
                   valueBoolean: true
               - column:
@@ -119,15 +101,6 @@ databaseChangeLog:
                   name: duration_days
                   valueNumeric: 365
               - column:
-                  name: url_path
-                  value: pdf-horizontal-1
-              - column:
-                  name: preview_image_url
-                  value: null
-              - column:
-                  name: thumbnail_url
-                  value: null
-              - column:
                   name: is_active
                   valueBoolean: true
               - column:
@@ -164,15 +137,6 @@ databaseChangeLog:
               - column:
                   name: duration_days
                   valueNumeric: 365
-              - column:
-                  name: url_path
-                  value: pdf-horizontal-2
-              - column:
-                  name: preview_image_url
-                  value: null
-              - column:
-                  name: thumbnail_url
-                  value: null
               - column:
                   name: is_active
                   valueBoolean: true

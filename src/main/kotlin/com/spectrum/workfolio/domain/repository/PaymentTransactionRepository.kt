@@ -1,12 +1,14 @@
 package com.spectrum.workfolio.domain.repository
 
-import com.spectrum.workfolio.domain.entity.payments.PaymentTransaction
-import com.spectrum.workfolio.domain.enums.TransactionType
+import com.spectrum.workfolio.domain.entity.payments.PaymentTx
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface PaymentTransactionRepository : JpaRepository<PaymentTransaction, String> {
-    fun findByPaymentIdOrderByCreatedAtDesc(paymentId: String): List<PaymentTransaction>
-    fun findByPaymentIdAndTransactionType(paymentId: String, transactionType: TransactionType): List<PaymentTransaction>
+interface PaymentTxRepository : JpaRepository<PaymentTx, String> {
+    fun findByPaymentIdOrderByCreatedAtDesc(paymentId: String): List<PaymentTx>
+    fun findByPaymentIdAndStatus(paymentId: String, status: String): List<PaymentTx>
+    fun findByPgTxId(pgTxId: String): PaymentTx?
+    fun findByParentTxId(parentTxId: String): List<PaymentTx>
+    fun findByCustomerId(customerId: String): List<PaymentTx>
 }
