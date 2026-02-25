@@ -3,6 +3,7 @@ package com.spectrum.workfolio.controllers
 import com.spectrum.workfolio.config.annotation.AuthenticatedUser
 import com.spectrum.workfolio.domain.enums.UITemplateType
 import com.spectrum.workfolio.domain.extensions.toProto
+import com.spectrum.workfolio.proto.common.SuccessResponse
 import com.spectrum.workfolio.proto.uitemplate.*
 import com.spectrum.workfolio.services.CreditService
 import com.spectrum.workfolio.services.uitemplate.UITemplateService
@@ -93,6 +94,38 @@ class UITemplateController(
         }
 
         return builder.build()
+    }
+
+    @PutMapping("/my/default/{uiTemplateId}")
+    fun setDefaultUITemplate(
+        @AuthenticatedUser workerId: String,
+        @PathVariable uiTemplateId: String,
+    ): DefaultUITemplateResponse {
+        val (urlTemplate, pdfTemplate) = uiTemplateService.setDefaultUITemplate(workerId, uiTemplateId)
+        val builder = DefaultUITemplateResponse.newBuilder()
+        urlTemplate?.let { builder.setDefaultUrlUiTemplate(it.toProto()) }
+        pdfTemplate?.let { builder.setDefaultPdfUiTemplate(it.toProto()) }
+        return builder.build()
+    }
+
+    @GetMapping("/my/default")
+    fun getDefaultUITemplates(
+        @AuthenticatedUser workerId: String,
+    ): DefaultUITemplateResponse {
+        val (urlTemplate, pdfTemplate) = uiTemplateService.getDefaultUITemplates(workerId)
+        val builder = DefaultUITemplateResponse.newBuilder()
+        urlTemplate?.let { builder.setDefaultUrlUiTemplate(it.toProto()) }
+        pdfTemplate?.let { builder.setDefaultPdfUiTemplate(it.toProto()) }
+        return builder.build()
+    }
+
+    @DeleteMapping("/my/{workerUITemplateId}")
+    fun deleteMyUITemplate(
+        @AuthenticatedUser workerId: String,
+        @PathVariable workerUITemplateId: String,
+    ): SuccessResponse {
+        uiTemplateService.deleteMyUITemplate(workerId, workerUITemplateId)
+        return SuccessResponse.newBuilder().setIsSuccess(true).build()
     }
 
 }

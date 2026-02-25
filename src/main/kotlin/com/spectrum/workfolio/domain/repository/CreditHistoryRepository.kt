@@ -11,4 +11,6 @@ import org.springframework.stereotype.Repository
 interface CreditHistoryRepository : JpaRepository<CreditHistory, String> {
     fun findByWorkerIdOrderByCreatedAtDesc(workerId: String, pageable: Pageable): Page<CreditHistory>
     fun findByWorkerIdAndTxTypeOrderByCreatedAtDesc(workerId: String, txType: CreditTxType, pageable: Pageable): Page<CreditHistory>
+    fun findAllByOrderByCreatedAtDesc(pageable: Pageable): Page<CreditHistory>
+    fun findByTxTypeOrderByCreatedAtDesc(txType: CreditTxType, pageable: Pageable): Page<CreditHistory>
 }

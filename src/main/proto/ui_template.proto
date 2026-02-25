@@ -51,3 +51,41 @@ message UITemplateOwnershipResponse {
 message ActiveUITemplatesResponse {
   repeated WorkerUITemplate worker_ui_templates = 1;
 }
+
+// Default UI template
+message DefaultUITemplateResponse {
+  optional UITemplate default_url_ui_template = 1;
+  optional UITemplate default_pdf_ui_template = 2;
+}
+
+// Admin API
+message AdminUITemplateCreateRequest {
+  string name = 1;
+  optional string description = 2;
+  string type = 3;
+  optional string label = 4;
+  int32 price = 5;
+  int32 duration_days = 6;
+  optional string url_path = 7;
+  bool is_active = 8;
+  bool is_popular = 9;
+  int32 display_order = 10;
+}
+
+message AdminUITemplateUpdateRequest {
+  string id = 1;
+  string name = 2;
+  optional string description = 3;
+  string type = 4;
+  optional string label = 5;
+  int32 price = 6;
+  int32 duration_days = 7;
+  optional string url_path = 8;
+  bool is_active = 9;
+  bool is_popular = 10;
+  int32 display_order = 11;
+}
+
+message AdminUITemplateImageListResponse {
+  repeated UITemplateImage images = 1;
+}

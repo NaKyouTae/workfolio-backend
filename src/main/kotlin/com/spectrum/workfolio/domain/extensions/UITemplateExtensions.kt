@@ -46,6 +46,12 @@ fun UITemplate.toProto(plans: List<UiTemplatePlan>? = null, images: List<UITempl
     builder.setType(this.type.toProtoType())
     builder.setPrice(this.price)
     builder.setDurationDays(this.durationDays)
+    if (this.urlPath != null) {
+        builder.setUrlPath(this.urlPath)
+    }
+    if (this.label != null) {
+        builder.setLabel(this.label)
+    }
     builder.setIsActive(this.isActive)
     builder.setIsPopular(this.isPopular)
     builder.setDisplayOrder(this.displayOrder)

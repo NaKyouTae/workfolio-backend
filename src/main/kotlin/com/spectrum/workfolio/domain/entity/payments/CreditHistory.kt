@@ -13,6 +13,8 @@ import jakarta.persistence.Index
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
+import org.hibernate.annotations.JdbcTypeCode
+import org.hibernate.type.SqlTypes
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.domain.Persistable
 import java.time.LocalDateTime
@@ -75,6 +77,7 @@ class CreditHistory(
     var description: String? = description
         protected set
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "metadata", columnDefinition = "jsonb", nullable = true)
     var metadata: String? = metadata
         protected set

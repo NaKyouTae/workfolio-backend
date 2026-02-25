@@ -5,69 +5,112 @@ import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Index
 import jakarta.persistence.Table
-import org.hibernate.annotations.Generated
-import org.hibernate.generator.EventType
 import java.math.BigDecimal
+import java.time.LocalDateTime
 
 @Entity
 @Table(
     name = "payments",
-    schema = "payment",
     indexes = [
-        Index(name = "idx_payments_order_id", columnList = "order_id"),
-        Index(name = "idx_payments_status", columnList = "status, created_at"),
-        Index(name = "idx_payments_created_at", columnList = "created_at"),
-        Index(name = "idx_payments_order_status", columnList = "order_id, status, created_at"),
+        Index(name = "idx_payments_worker_id", columnList = "worker_id"),
+        Index(name = "idx_payments_status", columnList = "status"),
+        Index(name = "idx_payments_provider_payment_id", columnList = "provider_payment_id"),
     ],
 )
 class Payment(
-    status: String,
-    type: String,
-    totalAmount: BigDecimal,
-    paidAmount: BigDecimal = BigDecimal.ZERO,
+    workerId: String,
+    amount: BigDecimal,
+    status: String = "PENDING",
+    paymentMethod: String,
+    paymentProvider: String = "",
+    providerPaymentId: String = "",
     currency: String = "KRW",
-    metadata: String? = null,
-    orderId: String,
+    metadataJson: String? = null,
+    creditPlanId: String? = null,
+    creditsToAdd: Int = 0,
 ) : BaseEntity("PA") {
 
-    @Generated(event = [EventType.INSERT])
-    @Column(name = "idx", nullable = false, unique = true, insertable = false, updatable = false)
-    var idx: Long = 0
+    @Column(name = "worker_id", length = 16, nullable = false)
+    var workerId: String = workerId
         protected set
 
-    @Column(name = "status", length = 32, nullable = false)
-    var status: String = status
-        protected set
-
-    @Column(name = "type", length = 32, nullable = false)
-    var type: String = type
-        protected set
-
-    @Column(name = "total_amount", precision = 19, scale = 0, nullable = false)
-    var totalAmount: BigDecimal = totalAmount
-        protected set
-
-    @Column(name = "paid_amount", precision = 19, scale = 0, nullable = false)
-    var paidAmount: BigDecimal = paidAmount
+    @Column(name = "amount", nullable = false)
+    var amount: BigDecimal = amount
         protected set
 
     @Column(name = "currency", length = 8, nullable = false)
     var currency: String = currency
         protected set
 
-    @Column(name = "metadata", columnDefinition = "JSON", nullable = true)
-    var metadata: String? = metadata
+    @Column(name = "status", length = 32, nullable = false)
+    var status: String = status
         protected set
 
-    @Column(name = "order_id", length = 28, nullable = false)
-    var orderId: String = orderId
+    @Column(name = "payment_method", length = 32, nullable = false)
+    var paymentMethod: String = paymentMethod
         protected set
 
-    fun changeStatus(status: String) {
-        this.status = status
+    @Column(name = "payment_provider", length = 64, nullable = false)
+    var paymentProvider: String = paymentProvider
+        protected set
+
+    @Column(name = "provider_payment_id", length = 256, nullable = false, unique = true)
+    var providerPaymentId: String = providerPaymentId
+        protected set
+
+    @Column(name = "paid_at", nullable = true)
+    var paidAt: LocalDateTime? = null
+        protected set
+
+    @Column(name = "refunded_at", nullable = true)
+    var refundedAt: LocalDateTime? = null
+        protected set
+
+    @Column(name = "refund_amount", nullable = false)
+    var refundAmount: BigDecimal = BigDecimal.ZERO
+        protected set
+
+    @Column(name = "refund_reason", length = 512, nullable = true)
+    var refundReason: String? = null
+        protected set
+
+    @Column(name = "failure_reason", length = 512, nullable = true)
+    var failureReason: String? = null
+        protected set
+
+    @Column(name = "failure_code", length = 64, nullable = true)
+    var failureCode: String? = null
+        protected set
+
+    @Column(name = "metadata_json", columnDefinition = "JSONB", nullable = true)
+    var metadataJson: String? = metadataJson
+        protected set
+
+    @Column(name = "credit_plan_id", length = 16, nullable = true)
+    var creditPlanId: String? = creditPlanId
+        protected set
+
+    @Column(name = "credits_to_add", nullable = false)
+    var creditsToAdd: Int = creditsToAdd
+        protected set
+
+    fun confirm(providerPaymentId: String, paymentProvider: String) {
+        this.status = "COMPLETED"
+        this.providerPaymentId = providerPaymentId
+        this.paymentProvider = paymentProvider
+        this.paidAt = LocalDateTime.now()
     }
 
-    fun updatePaidAmount(paidAmount: BigDecimal) {
-        this.paidAmount = paidAmount
+    fun fail(failureReason: String?, failureCode: String? = null) {
+        this.status = "FAILED"
+        this.failureReason = failureReason
+        this.failureCode = failureCode
+    }
+
+    fun refund(refundAmount: BigDecimal, refundReason: String?) {
+        this.status = "REFUNDED"
+        this.refundAmount = refundAmount
+        this.refundReason = refundReason
+        this.refundedAt = LocalDateTime.now()
     }
 }

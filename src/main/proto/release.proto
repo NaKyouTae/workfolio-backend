@@ -12,35 +12,3 @@ message ReleaseNoticeListResponse {
   repeated Notice notices = 1;
 }
 
-message ReleasePlanSubscription {
-  string id = 1;
-  string duration_months = 2;
-  uint64 total_price = 3;
-  uint64 monthly_equivalent = 4;
-  uint64 savings_amount = 5;
-  uint32 discount_rate = 6;
-  uint32 priority = 7;
-
-  uint64 created_at = 98;
-  uint64 updated_at = 99;
-}
-
-message ReleasePlanDetail {
-  string id = 1;
-  string name = 2;
-  Plan.PlanType type = 3;
-  uint64 price = 4;
-  string currency = 5;
-  int32 priority = 6;
-  optional string description = 7;
-
-  repeated ReleasePlanSubscription plan_subscriptions = 50;
-
-  uint64 created_at = 98;
-  uint64 updated_at = 99;
-}
-
-message ReleasePlanListResponse {
-  repeated ReleasePlanDetail plans = 1;
-}
-

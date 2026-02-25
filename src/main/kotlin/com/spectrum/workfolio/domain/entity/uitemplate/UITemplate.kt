@@ -15,8 +15,10 @@ class UITemplate(
     name: String,
     description: String? = null,
     type: UITemplateType,
+    label: String? = null,
     price: Int,
     durationDays: Int,
+    urlPath: String? = null,
     isActive: Boolean = true,
     isPopular: Boolean = false,
     displayOrder: Int = 0,
@@ -35,12 +37,20 @@ class UITemplate(
     var type: UITemplateType = type
         protected set
 
+    @Column(name = "label", length = 64, nullable = true)
+    var label: String? = label
+        protected set
+
     @Column(name = "price", nullable = false)
     var price: Int = price
         protected set
 
     @Column(name = "duration_days", nullable = false)
     var durationDays: Int = durationDays
+        protected set
+
+    @Column(name = "url_path", length = 128, nullable = true)
+    var urlPath: String? = urlPath
         protected set
 
     @Column(name = "is_active", nullable = false)
@@ -62,16 +72,22 @@ class UITemplate(
     fun changeInfo(
         name: String,
         description: String?,
+        type: UITemplateType,
+        label: String?,
         price: Int,
         durationDays: Int,
+        urlPath: String?,
         isActive: Boolean,
         isPopular: Boolean,
         displayOrder: Int,
     ) {
         this.name = name
         this.description = description
+        this.type = type
+        this.label = label
         this.price = price
         this.durationDays = durationDays
+        this.urlPath = urlPath
         this.isActive = isActive
         this.isPopular = isPopular
         this.displayOrder = displayOrder

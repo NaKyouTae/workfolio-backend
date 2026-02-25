@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository
 interface UITemplateImageRepository : JpaRepository<UITemplateImage, String> {
     fun findByUiTemplateIdOrderByDisplayOrderAsc(uiTemplateId: String): List<UITemplateImage>
     fun findByUiTemplateIdAndImageTypeOrderByDisplayOrderAsc(uiTemplateId: String, imageType: UITemplateImageType): List<UITemplateImage>
+    fun deleteByUiTemplateId(uiTemplateId: String)
 }

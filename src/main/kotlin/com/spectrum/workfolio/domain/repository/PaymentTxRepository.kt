@@ -8,7 +8,5 @@ import org.springframework.stereotype.Repository
 interface PaymentTxRepository : JpaRepository<PaymentTx, String> {
     fun findByPaymentIdOrderByCreatedAtDesc(paymentId: String): List<PaymentTx>
     fun findByPaymentIdAndStatus(paymentId: String, status: String): List<PaymentTx>
-    fun findByPgTxId(pgTxId: String): PaymentTx?
-    fun findByParentTxId(parentTxId: String): List<PaymentTx>
-    fun findByCustomerId(customerId: String): List<PaymentTx>
+    fun findByTransactionId(transactionId: String): PaymentTx?
 }

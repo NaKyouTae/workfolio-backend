@@ -10,4 +10,5 @@ interface UITemplateRepository : JpaRepository<UITemplate, String> {
     fun findByIdAndIsActiveTrue(id: String): UITemplate?
     fun findAllByIsActiveTrueOrderByDisplayOrderAsc(): List<UITemplate>
     fun findAllByTypeAndIsActiveTrueOrderByDisplayOrderAsc(type: UITemplateType): List<UITemplate>
+    fun findAllByOrderByDisplayOrderAsc(): List<UITemplate>
 }

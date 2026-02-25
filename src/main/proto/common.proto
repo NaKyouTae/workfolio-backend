@@ -694,97 +694,6 @@ message Notice {
   uint64 updated_at = 99;
 }
 
-message Plan {
-  enum PlanType {
-    UNKNOWN = 0;
-    FREE = 1;
-    PREMIUM = 2;
-  }
-
-  string id = 1;
-  string name = 2;
-  PlanType type = 3;
-  uint64 price = 4;
-  string currency = 5;
-  int32 priority = 6;
-  optional string description = 7;
-
-  uint64 created_at = 98;
-  uint64 updated_at = 99;
-}
-
-message PlanSubscription {
-  string id = 1;
-  string duration_months = 2;
-  uint64 total_price = 3;
-  uint64 monthly_equivalent = 4;
-  uint64 savings_amount = 5;
-  uint32 discount_rate = 6;
-  uint32 priority = 7;
-
-  Plan plan = 50;
-
-  uint64 created_at = 98;
-  uint64 updated_at = 99;
-}
-
-message Feature {
-  string id = 1;
-  string name = 2;
-  string domain = 3;
-  string action = 4;
-
-  uint64 created_at = 98;
-  uint64 updated_at = 99;
-}
-
-message WorkerSubscription {
-  enum SubscriptionStatus {
-    UNKNOWN = 0;
-    ACTIVE = 1;
-    EXPIRED = 2;
-    CANCELLED = 3;
-  }
-
-  string id = 1;
-  string plan_name = 2;
-  Plan.PlanType plan_type = 3;
-  SubscriptionStatus status = 4;
-  uint64 started_at = 5;
-  uint64 ended_at = 6;
-  optional uint64 cancelled_at = 7;
-  optional string cancel_reason = 8;
-
-  Worker worker = 50;
-
-  uint64 created_at = 98;
-  uint64 updated_at = 99;
-}
-
-message WorkerFeatureUsage {
-  string id = 1;
-  uint32 current_count = 2;
-  optional uint32 limit_count = 3;
-  uint64 last_used_at = 4;
-
-  Worker worker = 50;
-
-  uint64 created_at = 98;
-  uint64 updated_at = 99;
-}
-
-message PlanFeature {
-  string id = 1;
-
-  Plan plan = 50;
-  Feature feature = 51;
-  int32 limit_count = 52;
-  string description = 53;
-
-  uint64 created_at = 98;
-  uint64 updated_at = 99;
-}
-
 message Payment {
   enum PaymentStatus {
     UNKNOWN = 0;
@@ -821,7 +730,7 @@ message Payment {
   uint64 updated_at = 99;
 }
 
-message PaymentTransaction {
+message PaymentTx {
   enum TransactionType {
     TYPE_UNKNOWN = 0;
     PAYMENT = 1;
@@ -934,6 +843,8 @@ message UITemplate {
   UITemplateType type = 4;
   int32 price = 5;
   int32 duration_days = 6;
+  optional string url_path = 7;
+  optional string label = 8;
   bool is_active = 10;
   bool is_popular = 11;
   int32 display_order = 12;

@@ -4,7 +4,9 @@ import com.spectrum.workfolio.domain.entity.primary.Account
 import com.spectrum.workfolio.domain.entity.record.RecordGroup
 import com.spectrum.workfolio.domain.entity.record.WorkerRecordGroup
 import com.spectrum.workfolio.domain.entity.resume.Resume
+import com.spectrum.workfolio.domain.entity.uitemplate.UITemplate
 import com.spectrum.workfolio.domain.enums.Gender
+import com.spectrum.workfolio.domain.enums.UITemplateType
 import com.spectrum.workfolio.domain.enums.WorkerStatus
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
@@ -13,6 +15,8 @@ import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
 import jakarta.persistence.FetchType
 import jakarta.persistence.Index
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import jakarta.persistence.Version
@@ -75,6 +79,16 @@ class Worker(
     var creditVersion: Long = 0
         protected set
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "default_url_ui_template_id", nullable = true)
+    var defaultUrlUiTemplate: UITemplate? = null
+        protected set
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "default_pdf_ui_template_id", nullable = true)
+    var defaultPdfUiTemplate: UITemplate? = null
+        protected set
+
     @OneToMany(mappedBy = "worker", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
     private var mutableResumes: MutableList<Resume> = mutableListOf()
     val resumes: List<Resume> get() = mutableResumes.toList()
@@ -121,4 +135,19 @@ class Worker(
     }
 
     fun hasEnoughCredits(amount: Int): Boolean = this.credit >= amount
+
+    fun setDefaultUiTemplate(template: UITemplate?) {
+        if (template == null) return
+        when (template.type) {
+            UITemplateType.URL -> this.defaultUrlUiTemplate = template
+            UITemplateType.PDF -> this.defaultPdfUiTemplate = template
+        }
+    }
+
+    fun clearDefaultUiTemplate(type: UITemplateType) {
+        when (type) {
+            UITemplateType.URL -> this.defaultUrlUiTemplate = null
+            UITemplateType.PDF -> this.defaultPdfUiTemplate = null
+        }
+    }
 }

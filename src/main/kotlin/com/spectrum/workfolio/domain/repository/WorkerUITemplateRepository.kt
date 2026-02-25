@@ -14,14 +14,39 @@ import java.time.LocalDateTime
 
 @Repository
 interface WorkerUITemplateRepository : JpaRepository<WorkerUITemplate, String> {
-    fun findByWorkerAndIsActiveTrue(worker: Worker): List<WorkerUITemplate>
-
-    fun findByWorkerAndIsActiveTrueOrderByPurchasedAtDesc(worker: Worker, pageable: Pageable): Page<WorkerUITemplate>
-
-    fun findByWorkerAndUiTemplateAndIsActiveTrue(worker: Worker, uiTemplate: UITemplate): WorkerUITemplate?
+    @Query("""
+        SELECT wt FROM WorkerUITemplate wt
+        JOIN FETCH wt.worker
+        JOIN FETCH wt.uiTemplate
+        WHERE wt.worker = :worker AND wt.isActive = true
+    """)
+    fun findByWorkerAndIsActiveTrue(@Param("worker") worker: Worker): List<WorkerUITemplate>
 
     @Query("""
         SELECT wt FROM WorkerUITemplate wt
+        JOIN FETCH wt.worker
+        JOIN FETCH wt.uiTemplate
+        WHERE wt.worker = :worker AND wt.isActive = true
+        ORDER BY wt.purchasedAt DESC
+    """,
+    countQuery = """
+        SELECT COUNT(wt) FROM WorkerUITemplate wt
+        WHERE wt.worker = :worker AND wt.isActive = true
+    """)
+    fun findByWorkerAndIsActiveTrueOrderByPurchasedAtDesc(@Param("worker") worker: Worker, pageable: Pageable): Page<WorkerUITemplate>
+
+    @Query("""
+        SELECT wt FROM WorkerUITemplate wt
+        JOIN FETCH wt.worker
+        JOIN FETCH wt.uiTemplate
+        WHERE wt.worker = :worker AND wt.uiTemplate = :uiTemplate AND wt.isActive = true
+    """)
+    fun findByWorkerAndUiTemplateAndIsActiveTrue(@Param("worker") worker: Worker, @Param("uiTemplate") uiTemplate: UITemplate): WorkerUITemplate?
+
+    @Query("""
+        SELECT wt FROM WorkerUITemplate wt
+        JOIN FETCH wt.worker
+        JOIN FETCH wt.uiTemplate
         WHERE wt.worker = :worker
         AND wt.isActive = true
         AND wt.expiredAt > :now
@@ -33,6 +58,8 @@ interface WorkerUITemplateRepository : JpaRepository<WorkerUITemplate, String> {
 
     @Query("""
         SELECT wt FROM WorkerUITemplate wt
+        JOIN FETCH wt.worker
+        JOIN FETCH wt.uiTemplate
         WHERE wt.worker = :worker
         AND wt.uiTemplate = :uiTemplate
         AND wt.isActive = true
@@ -46,7 +73,8 @@ interface WorkerUITemplateRepository : JpaRepository<WorkerUITemplate, String> {
 
     @Query("""
         SELECT wt FROM WorkerUITemplate wt
-        JOIN wt.uiTemplate t
+        JOIN FETCH wt.worker
+        JOIN FETCH wt.uiTemplate t
         WHERE wt.worker = :worker
         AND t.type = :type
         AND wt.isActive = true

@@ -128,4 +128,20 @@ class CreditService(
     fun getHistoryByType(workerId: String, txType: CreditTxType, pageable: Pageable): Page<CreditHistory> {
         return creditHistoryRepository.findByWorkerIdAndTxTypeOrderByCreatedAtDesc(workerId, txType, pageable)
     }
+
+    @Transactional(readOnly = true)
+    fun getAllHistory(pageable: Pageable): Page<CreditHistory> {
+        return creditHistoryRepository.findAllByOrderByCreatedAtDesc(pageable)
+    }
+
+    @Transactional(readOnly = true)
+    fun getAllHistoryByType(txType: CreditTxType, pageable: Pageable): Page<CreditHistory> {
+        return creditHistoryRepository.findByTxTypeOrderByCreatedAtDesc(txType, pageable)
+    }
+
+    @Transactional(readOnly = true)
+    fun getHistoryById(id: String): CreditHistory {
+        return creditHistoryRepository.findById(id)
+            .orElseThrow { WorkfolioException("크레딧 내역을 찾을 수 없습니다.") }
+    }
 }

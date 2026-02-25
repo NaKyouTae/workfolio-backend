@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface PaymentRepository : JpaRepository<Payment, String> {
-    fun findByOrderIdOrderByCreatedAtDesc(orderId: String, pageable: Pageable): Page<Payment>
-    fun findByOrderIdAndStatusOrderByCreatedAtDesc(orderId: String, status: String, pageable: Pageable): Page<Payment>
+    fun findByWorkerIdOrderByCreatedAtDesc(workerId: String, pageable: Pageable): Page<Payment>
+    fun findByWorkerIdAndStatusOrderByCreatedAtDesc(workerId: String, status: String, pageable: Pageable): Page<Payment>
     fun findByStatusOrderByCreatedAtDesc(status: String, pageable: Pageable): Page<Payment>
 }
