@@ -89,6 +89,36 @@ class CreditService(
     }
 
     @Transactional
+    fun adjustCreditsByAdmin(
+        workerId: String,
+        amount: Int,
+        action: String,
+        description: String? = null,
+    ): CreditHistory {
+        if (amount <= 0) {
+            throw WorkfolioException("크레딧은 1 이상이어야 합니다.")
+        }
+
+        return when (action.trim().uppercase()) {
+            "ADD" -> addCredits(
+                workerId = workerId,
+                amount = amount,
+                txType = CreditTxType.ADMIN_ADD,
+                referenceType = "ADMIN_MANUAL",
+                description = description,
+            )
+            "DEDUCT" -> deductCredits(
+                workerId = workerId,
+                amount = amount,
+                txType = CreditTxType.ADMIN_DEDUCT,
+                referenceType = "ADMIN_MANUAL",
+                description = description,
+            )
+            else -> throw WorkfolioException("지원하지 않는 크레딧 조정 유형입니다.")
+        }
+    }
+
+    @Transactional
     fun refundCredits(
         workerId: String,
         amount: Int,
@@ -109,6 +139,41 @@ class CreditService(
         val history = CreditHistory(
             worker = worker,
             txType = CreditTxType.REFUND,
+            amount = -amount,
+            balanceBefore = balanceBefore,
+            balanceAfter = worker.credit,
+            referenceType = referenceType,
+            referenceId = referenceId,
+            description = description,
+        )
+        return creditHistoryRepository.save(history)
+    }
+
+    @Transactional
+    fun deductCredits(
+        workerId: String,
+        amount: Int,
+        txType: CreditTxType = CreditTxType.USE,
+        referenceType: String? = null,
+        referenceId: String? = null,
+        description: String? = null,
+    ): CreditHistory {
+        if (amount <= 0) {
+            throw WorkfolioException("차감할 크레딧은 1 이상이어야 합니다.")
+        }
+
+        val worker = getWorkerById(workerId)
+        if (!worker.hasEnoughCredits(amount)) {
+            throw WorkfolioException("크레딧이 부족합니다.")
+        }
+
+        val balanceBefore = worker.credit
+        worker.useCredits(amount)
+        workerRepository.save(worker)
+
+        val history = CreditHistory(
+            worker = worker,
+            txType = txType,
             amount = -amount,
             balanceBefore = balanceBefore,
             balanceAfter = worker.credit,
@@ -143,5 +208,11 @@ class CreditService(
     fun getHistoryById(id: String): CreditHistory {
         return creditHistoryRepository.findById(id)
             .orElseThrow { WorkfolioException("크레딧 내역을 찾을 수 없습니다.") }
+    }
+
+    @Transactional
+    fun deleteHistory(id: String) {
+        val history = getHistoryById(id)
+        creditHistoryRepository.delete(history)
     }
 }

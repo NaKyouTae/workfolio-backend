@@ -26,9 +26,11 @@ class AwsS3Config(
             supabaseConfig.secretKey,
         )
 
-        // S3 Configuration (Path-style access 설정)
+        // S3 Configuration (Supabase Storage 호환 설정)
         val s3Configuration = S3Configuration.builder()
-            .pathStyleAccessEnabled(true) // Path-style access 활성화
+            .pathStyleAccessEnabled(true)
+            .checksumValidationEnabled(false)
+            .chunkedEncodingEnabled(false)
             .build()
 
         // S3 클라이언트 빌드

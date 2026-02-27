@@ -89,3 +89,21 @@ message AdminUITemplateUpdateRequest {
 message AdminUITemplateImageListResponse {
   repeated UITemplateImage images = 1;
 }
+
+// Admin Plan CRUD
+message AdminUiTemplatePlanCreateRequest {
+  int32 duration_days = 1;
+  int32 price = 2;
+  int32 display_order = 3;
+}
+
+message AdminUiTemplatePlanUpdateRequest {
+  string id = 1;
+  int32 duration_days = 2;
+  int32 price = 3;
+  int32 display_order = 4;
+}
+
+message AdminUiTemplatePlanGetResponse {
+  UiTemplatePlan plan = 1;
+}

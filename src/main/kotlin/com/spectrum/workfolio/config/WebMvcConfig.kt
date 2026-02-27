@@ -41,7 +41,8 @@ class WebMvcConfig(
             .ignoreAcceptHeader(false)
     }
 
-    override fun configureMessageConverters(converters: MutableList<HttpMessageConverter<*>>) {
-        converters.add(protobufHttpMessageConverter)
+    override fun extendMessageConverters(converters: MutableList<HttpMessageConverter<*>>) {
+        // Protobuf 응답이 Jackson으로 처리되지 않도록 JSON 컨버터보다 우선시한다.
+        converters.add(0, protobufHttpMessageConverter)
     }
 }

@@ -107,4 +107,44 @@ class AdminUITemplateController(
         uiTemplateService.deleteTemplateImage(imageId)
         return SuccessResponse.newBuilder().setIsSuccess(true).build()
     }
+
+    // ==================== Plan CRUD ====================
+
+    @PostMapping("/{id}/plans")
+    fun createPlan(
+        @PathVariable id: String,
+        @RequestBody request: AdminUiTemplatePlanCreateRequest,
+    ): AdminUiTemplatePlanGetResponse {
+        val plan = uiTemplateService.createPlan(
+            uiTemplateId = id,
+            durationDays = request.durationDays,
+            price = request.price,
+            displayOrder = request.displayOrder,
+        )
+        return AdminUiTemplatePlanGetResponse.newBuilder()
+            .setPlan(plan.toProto())
+            .build()
+    }
+
+    @PutMapping("/plans/{planId}")
+    fun updatePlan(
+        @PathVariable planId: String,
+        @RequestBody request: AdminUiTemplatePlanUpdateRequest,
+    ): AdminUiTemplatePlanGetResponse {
+        val plan = uiTemplateService.updatePlan(
+            planId = planId,
+            durationDays = request.durationDays,
+            price = request.price,
+            displayOrder = request.displayOrder,
+        )
+        return AdminUiTemplatePlanGetResponse.newBuilder()
+            .setPlan(plan.toProto())
+            .build()
+    }
+
+    @DeleteMapping("/plans/{planId}")
+    fun deletePlan(@PathVariable planId: String): SuccessResponse {
+        uiTemplateService.deletePlan(planId)
+        return SuccessResponse.newBuilder().setIsSuccess(true).build()
+    }
 }

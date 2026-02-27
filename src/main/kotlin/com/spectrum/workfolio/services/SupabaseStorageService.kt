@@ -8,7 +8,7 @@ import org.springframework.web.multipart.MultipartFile
 import software.amazon.awssdk.core.sync.RequestBody
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest
-import software.amazon.awssdk.services.s3.model.ObjectCannedACL
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
 import java.util.*
 
@@ -49,11 +49,10 @@ class SupabaseStorageService(
                 .key(filePath)
                 .contentType(file.contentType ?: "application/octet-stream")
                 .contentLength(file.size)
-                .acl(ObjectCannedACL.PUBLIC_READ) // Public 접근 권한 설정
                 .build()
 
-            // RequestBody 생성
-            val requestBody = RequestBody.fromInputStream(file.inputStream, file.size)
+            // RequestBody 생성 (바이트 배열로 변환하여 chunked encoding 방지)
+            val requestBody = RequestBody.fromBytes(file.bytes)
 
             // S3에 파일 업로드
             val result = s3Client.putObject(putObjectRequest, requestBody)
@@ -101,6 +100,25 @@ class SupabaseStorageService(
     }
 
     /**
+     * Public URL 기준 파일 크기 조회
+     */
+    fun getFileSizeByUrl(fileUrl: String): Long {
+        if (fileUrl.isBlank()) return 0L
+        return try {
+            val filePath = extractFilePathFromUrl(fileUrl)
+            val request = HeadObjectRequest.builder()
+                .bucket(bucket)
+                .key(filePath)
+                .build()
+            val response = s3Client.headObject(request)
+            response.contentLength() ?: 0L
+        } catch (e: Exception) {
+            logger.warn("Failed to read file size from storage: url=$fileUrl, error=${e.message}")
+            0L
+        }
+    }
+
+    /**
      * Supabase Storage에서 파일 복사 (다운로드 후 재업로드 방식)
      * @param sourceFileUrl 원본 파일의 Public URL
      * @param destinationFileName 새로운 파일 이름
@@ -138,7 +156,6 @@ class SupabaseStorageService(
                 .key(destinationFilePath)
                 .contentType(contentType ?: "application/octet-stream")
                 .contentLength(fileBytes.size.toLong())
-                .acl(ObjectCannedACL.PUBLIC_READ)
                 .build()
 
             val requestBody = RequestBody.fromBytes(fileBytes)

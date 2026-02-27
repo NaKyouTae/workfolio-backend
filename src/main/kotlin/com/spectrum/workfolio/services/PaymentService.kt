@@ -98,4 +98,10 @@ class PaymentService(
 
         return payment
     }
+
+    @Transactional
+    fun deletePayment(id: String) {
+        val payment = getPaymentById(id)
+        paymentRepository.delete(payment)
+    }
 }

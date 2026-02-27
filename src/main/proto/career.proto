@@ -49,6 +49,13 @@ message CareerListResponse {
   repeated Career careers = 1;
 }
 
+message AdminCareerListResponse {
+  repeated Career careers = 1;
+  int32 total_elements = 2;
+  int32 total_pages = 3;
+  int32 current_page = 4;
+}
+
 message CareerResponse {
   Career career = 1;
 }

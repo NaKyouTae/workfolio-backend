@@ -11,9 +11,3 @@ databaseChangeLog:
       file: db/primary/0005-ui-templates-pdf-sample-data.yaml
   - include:
       file: db/primary/0006-ui-template-plans.yaml
-  - include:
-      file: db/primary/0007-add-url-path-and-default-templates.yaml
-  - include:
-      file: db/primary/0008-drop-plan-feature-tables.yaml
-  - include:
-      file: db/primary/0009-add-label-to-ui-templates.yaml

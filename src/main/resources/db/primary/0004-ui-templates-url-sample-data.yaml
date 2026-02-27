@@ -33,6 +33,12 @@ databaseChangeLog:
                   name: is_popular
                   valueBoolean: true
               - column:
+                  name: url_path
+                  value: ''
+              - column:
+                  name: label
+                  value: 'URL 템플릿'
+              - column:
                   name: display_order
                   valueNumeric: 0
               - column:
@@ -69,6 +75,12 @@ databaseChangeLog:
               - column:
                   name: is_popular
                   valueBoolean: false
+              - column:
+                  name: url_path
+                  value: 'vertical-2'
+              - column:
+                  name: label
+                  value: 'URL 템플릿'
               - column:
                   name: display_order
                   valueNumeric: 1
@@ -107,6 +119,12 @@ databaseChangeLog:
                   name: is_popular
                   valueBoolean: false
               - column:
+                  name: url_path
+                  value: 'horizontal-1'
+              - column:
+                  name: label
+                  value: 'URL 템플릿'
+              - column:
                   name: display_order
                   valueNumeric: 2
               - column:
@@ -143,6 +161,12 @@ databaseChangeLog:
               - column:
                   name: is_popular
                   valueBoolean: false
+              - column:
+                  name: url_path
+                  value: 'horizontal-2'
+              - column:
+                  name: label
+                  value: 'URL 템플릿'
               - column:
                   name: display_order
                   valueNumeric: 3

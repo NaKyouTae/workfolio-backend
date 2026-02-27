@@ -25,6 +25,7 @@ message Worker {
   string email = 4;
   optional uint64 birth_date = 5;
   optional Gender gender = 6;
+  int32 credit = 7;
 
   WorkerStatus status = 97;
   uint64 created_at = 98;

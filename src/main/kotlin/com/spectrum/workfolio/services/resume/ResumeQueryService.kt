@@ -5,11 +5,13 @@ import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.extensions.toDetailProto
 import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.ResumeRepository
+import com.spectrum.workfolio.proto.resume.AdminResumeListResponse
 import com.spectrum.workfolio.proto.resume.ResumeDetailListResponse
 import com.spectrum.workfolio.proto.resume.ResumeListResponse
 import com.spectrum.workfolio.services.AttachmentQueryService
 import com.spectrum.workfolio.utils.TimeUtil
 import com.spectrum.workfolio.utils.WorkfolioException
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -44,6 +46,20 @@ class ResumeQueryService(
             .build()
     }
 
+    fun listAdminResumesByWorkerId(workerId: String, page: Int, size: Int): AdminResumeListResponse {
+        val safePage = page.coerceAtLeast(0)
+        val safeSize = size.coerceIn(1, 200)
+        val pageable = PageRequest.of(safePage, safeSize)
+        val resumesPage = resumeRepository.findByWorkerIdOrderByIsDefaultDescUpdatedAtDesc(workerId, pageable)
+
+        return AdminResumeListResponse.newBuilder()
+            .addAllResumes(resumesPage.content.map { it.toProto() })
+            .setTotalElements(resumesPage.totalElements.toInt())
+            .setTotalPages(resumesPage.totalPages)
+            .setCurrentPage(safePage)
+            .build()
+    }
+
     fun listResumeDetailsResult(workerId: String): ResumeDetailListResponse {
         val resumes = resumeRepository.findByWorkerIdOrderByIsDefaultDescUpdatedAtDesc(workerId)
         val resumeIds = resumes.map { it.id }
@@ -52,6 +68,12 @@ class ResumeQueryService(
         return ResumeDetailListResponse.newBuilder()
             .addAllResumes(resumes.map { it.toDetailProto(attachments) })
             .build()
+    }
+
+    fun getResumeDetailResult(id: String): com.spectrum.workfolio.proto.common.ResumeDetail {
+        val resume = getResume(id)
+        val attachments = attachmentQueryService.listAttachments(listOf(resume.id))
+        return resume.toDetailProto(attachments)
     }
 
     fun getPublicResumeDetailByPublicId(publicId: String): com.spectrum.workfolio.proto.common.ResumeDetail? {

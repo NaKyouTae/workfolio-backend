@@ -98,4 +98,6 @@ interface WorkerUITemplateRepository : JpaRepository<WorkerUITemplate, String> {
         @Param("uiTemplate") uiTemplate: UITemplate,
         @Param("now") now: LocalDateTime = LocalDateTime.now()
     ): Boolean
+
+    fun deleteByUiTemplateId(uiTemplateId: String): Long
 }

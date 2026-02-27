@@ -48,6 +48,13 @@ message ListRecordResponse {
   repeated Record records = 1;
 }
 
+message AdminRecordListResponse {
+  repeated Record records = 1;
+  int32 total_elements = 2;
+  int32 total_pages = 3;
+  int32 current_page = 4;
+}
+
 message RecordResponse {
   Record record = 1;
 }

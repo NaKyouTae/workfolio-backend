@@ -22,6 +22,7 @@ import com.spectrum.workfolio.proto.attachment.AttachmentRequest
 import com.spectrum.workfolio.proto.common.Attachment
 import com.spectrum.workfolio.proto.turn_over.TurnOverDetailListResponse
 import com.spectrum.workfolio.proto.turn_over.TurnOverDetailResponse
+import com.spectrum.workfolio.proto.turn_over.AdminTurnOverListResponse
 import com.spectrum.workfolio.proto.turn_over.TurnOverListResponse
 import com.spectrum.workfolio.proto.turn_over.TurnOverUpsertRequest
 import com.spectrum.workfolio.services.AttachmentCommandService
@@ -34,6 +35,7 @@ import com.spectrum.workfolio.utils.EnumUtils.convertProtoEnumSafe
 import com.spectrum.workfolio.utils.FileUtil
 import com.spectrum.workfolio.utils.TimeUtil
 import com.spectrum.workfolio.utils.WorkfolioException
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -116,6 +118,21 @@ class TurnOverService(
         val turnOvers = turnOverRepository.findByWorkerId(workerId)
         return TurnOverListResponse.newBuilder()
             .addAllTurnOvers(turnOvers.map { it.toProto() })
+            .build()
+    }
+
+    @Transactional(readOnly = true)
+    fun listAdminTurnOversResult(workerId: String, page: Int, size: Int): AdminTurnOverListResponse {
+        val safePage = page.coerceAtLeast(0)
+        val safeSize = size.coerceIn(1, 200)
+        val pageable = PageRequest.of(safePage, safeSize)
+        val turnOversPage = turnOverRepository.findByWorkerIdOrderByCreatedAtDesc(workerId, pageable)
+
+        return AdminTurnOverListResponse.newBuilder()
+            .addAllTurnOvers(turnOversPage.content.map { it.toProto() })
+            .setTotalElements(turnOversPage.totalElements.toInt())
+            .setTotalPages(turnOversPage.totalPages)
+            .setCurrentPage(safePage)
             .build()
     }
 

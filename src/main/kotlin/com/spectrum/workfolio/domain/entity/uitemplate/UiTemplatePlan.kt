@@ -33,4 +33,10 @@ class UiTemplatePlan(
     @Column(name = "display_order", nullable = false)
     var displayOrder: Int = displayOrder
         protected set
+
+    fun changeInfo(durationDays: Int, price: Int, displayOrder: Int) {
+        this.durationDays = durationDays
+        this.price = price
+        this.displayOrder = displayOrder
+    }
 }

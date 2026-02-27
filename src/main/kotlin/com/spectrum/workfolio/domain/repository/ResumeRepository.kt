@@ -1,6 +1,8 @@
 package com.spectrum.workfolio.domain.repository
 
 import com.spectrum.workfolio.domain.entity.resume.Resume
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
@@ -11,6 +13,7 @@ import java.time.LocalDate
 @Repository
 interface ResumeRepository : JpaRepository<Resume, String> {
     fun findByWorkerIdOrderByIsDefaultDescUpdatedAtDesc(workerId: String): List<Resume>
+    fun findByWorkerIdOrderByIsDefaultDescUpdatedAtDesc(workerId: String, pageable: Pageable): Page<Resume>
 
     @Query(
         """

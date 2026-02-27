@@ -7,12 +7,14 @@ import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.CareerRepository
 import com.spectrum.workfolio.proto.career.CareerCreateRequest
+import com.spectrum.workfolio.proto.career.AdminCareerListResponse
 import com.spectrum.workfolio.proto.career.CareerListResponse
 import com.spectrum.workfolio.proto.career.CareerUpdateRequest
 import com.spectrum.workfolio.proto.resume.ResumeUpdateRequest
 import com.spectrum.workfolio.utils.EnumUtils.convertProtoEnumSafe
 import com.spectrum.workfolio.utils.TimeUtil
 import com.spectrum.workfolio.utils.WorkfolioException
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -32,6 +34,21 @@ class CareerService(
         val careers = careerRepository.findByResumeIdOrderByPriorityAscStartedAtDescEndedAtDesc(workerId)
         return CareerListResponse.newBuilder()
             .addAllCareers(careers.map { it.toProto() })
+            .build()
+    }
+
+    @Transactional(readOnly = true)
+    fun listAdminCareersByWorkerId(workerId: String, page: Int, size: Int): AdminCareerListResponse {
+        val safePage = page.coerceAtLeast(0)
+        val safeSize = size.coerceIn(1, 200)
+        val pageable = PageRequest.of(safePage, safeSize)
+        val careersPage = careerRepository.findAdminCareersByWorkerIdNative(workerId, pageable)
+
+        return AdminCareerListResponse.newBuilder()
+            .addAllCareers(careersPage.content.map { it.toProto() })
+            .setTotalElements(careersPage.totalElements.toInt())
+            .setTotalPages(careersPage.totalPages)
+            .setCurrentPage(safePage)
             .build()
     }
 

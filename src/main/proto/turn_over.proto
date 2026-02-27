@@ -117,6 +117,13 @@ message TurnOverListResponse {
   repeated TurnOver turn_overs = 1;
 }
 
+message AdminTurnOverListResponse {
+  repeated TurnOver turn_overs = 1;
+  int32 total_elements = 2;
+  int32 total_pages = 3;
+  int32 current_page = 4;
+}
+
 message TurnOverDetailListResponse {
   repeated TurnOverDetail turn_overs = 1;
 }

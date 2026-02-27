@@ -8,6 +8,8 @@ import com.spectrum.workfolio.proto.record.ListRecordResponse
 import com.spectrum.workfolio.proto.record.RecordResponse
 import com.spectrum.workfolio.utils.TimeUtil
 import com.spectrum.workfolio.utils.WorkfolioException
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -56,6 +58,10 @@ class RecordQueryService(
         val startDate = TimeUtil.dateStart(weekStartDate)
         val endDate = TimeUtil.dateEnd(weekEndDate)
         return getRecordByDateRange(startDate, endDate, recordGroupIds)
+    }
+
+    fun listAllRecords(recordGroupIds: List<String>, pageable: Pageable): Page<Record> {
+        return recordRepository.findAllByRecordGroupIds(recordGroupIds, pageable)
     }
 
     private fun getRecordByDateRange(

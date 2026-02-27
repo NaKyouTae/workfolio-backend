@@ -11,6 +11,7 @@ fun Worker.toProto(): com.spectrum.workfolio.proto.common.Worker {
     builder.setNickName(this.nickName)
     builder.setEmail(this.email)
     builder.setPhone(this.phone)
+    builder.setCredit(this.credit)
 
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))

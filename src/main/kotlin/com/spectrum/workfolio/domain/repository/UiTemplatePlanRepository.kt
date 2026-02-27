@@ -10,4 +10,5 @@ interface UiTemplatePlanRepository : JpaRepository<UiTemplatePlan, String> {
     fun findByUiTemplateOrderByDisplayOrderAsc(uiTemplate: UITemplate): List<UiTemplatePlan>
     fun findByUiTemplateIdOrderByDisplayOrderAsc(uiTemplateId: String): List<UiTemplatePlan>
     fun findByIdAndUiTemplateId(id: String, uiTemplateId: String): UiTemplatePlan?
+    fun deleteByUiTemplateId(uiTemplateId: String): Long
 }

@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 @Service
@@ -33,6 +34,7 @@ class UITemplateService(
     private val creditService: CreditService,
     private val supabaseStorageService: SupabaseStorageService,
 ) {
+    private val periodFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
 
     // ==================== Public API (No Auth Required) ====================
 
@@ -73,6 +75,7 @@ class UITemplateService(
     fun purchaseUITemplate(workerId: String, uiTemplateId: String, planId: String? = null): WorkerUITemplate {
         val worker = getWorkerById(workerId)
         val uiTemplate = getUITemplateById(uiTemplateId)
+        val now = LocalDateTime.now()
 
         val (price: Int, durationDays: Int) = if (planId != null) {
             val plan = uiTemplatePlanRepository.findByIdAndUiTemplateId(planId, uiTemplateId)
@@ -81,6 +84,17 @@ class UITemplateService(
         } else {
             Pair(uiTemplate.price, uiTemplate.durationDays)
         }
+
+        // Check if already owns valid template → extend expiration
+        val existingTemplate = workerUITemplateRepository.findValidByWorkerAndUITemplate(
+            worker, uiTemplate, now
+        )
+
+        val periodStart = existingTemplate?.expiredAt ?: now
+        val periodEnd = periodStart.plusDays(durationDays.toLong())
+        val actionText = if (existingTemplate != null) "연장" else "구매"
+        val creditHistoryDescription =
+            "${uiTemplate.name} 템플릿 $actionText (${durationDays}일, ${periodStart.format(periodFormatter)} ~ ${periodEnd.format(periodFormatter)})"
 
         // Check and use credits
         if (!worker.hasEnoughCredits(price)) {
@@ -93,12 +107,7 @@ class UITemplateService(
             amount = price,
             referenceType = "UI_TEMPLATE",
             referenceId = uiTemplateId,
-            description = "${uiTemplate.name} 템플릿 구매"
-        )
-
-        // Check if already owns valid template → extend expiration
-        val existingTemplate = workerUITemplateRepository.findValidByWorkerAndUITemplate(
-            worker, uiTemplate, LocalDateTime.now()
+            description = creditHistoryDescription,
         )
         if (existingTemplate != null) {
             existingTemplate.extendExpiration(durationDays)
@@ -106,7 +115,6 @@ class UITemplateService(
         }
 
         // Create worker ui template
-        val now = LocalDateTime.now()
         val workerUITemplate = WorkerUITemplate(
             worker = worker,
             uiTemplate = uiTemplate,
@@ -300,8 +308,49 @@ class UITemplateService(
     @Transactional
     fun deleteUITemplate(uiTemplateId: String) {
         val uiTemplate = getUITemplateByIdForAdmin(uiTemplateId)
-        uiTemplate.deactivate()
-        uiTemplateRepository.save(uiTemplate)
+        workerRepository.clearDefaultUrlTemplateByUiTemplateId(uiTemplateId)
+        workerRepository.clearDefaultPdfTemplateByUiTemplateId(uiTemplateId)
+
+        val images = uiTemplateImageRepository.findByUiTemplateIdOrderByDisplayOrderAsc(uiTemplateId)
+        images.forEach { image ->
+            supabaseStorageService.deleteFileByUrl(image.imageUrl)
+        }
+        if (images.isNotEmpty()) {
+            uiTemplateImageRepository.deleteAllInBatch(images)
+        }
+
+        uiTemplatePlanRepository.deleteByUiTemplateId(uiTemplateId)
+        workerUITemplateRepository.deleteByUiTemplateId(uiTemplateId)
+        uiTemplateRepository.delete(uiTemplate)
+    }
+
+    // ==================== Admin Plan CRUD ====================
+
+    @Transactional
+    fun createPlan(uiTemplateId: String, durationDays: Int, price: Int, displayOrder: Int): UiTemplatePlan {
+        val uiTemplate = getUITemplateByIdForAdmin(uiTemplateId)
+        val plan = UiTemplatePlan(
+            uiTemplate = uiTemplate,
+            durationDays = durationDays,
+            price = price,
+            displayOrder = displayOrder,
+        )
+        return uiTemplatePlanRepository.save(plan)
+    }
+
+    @Transactional
+    fun updatePlan(planId: String, durationDays: Int, price: Int, displayOrder: Int): UiTemplatePlan {
+        val plan = uiTemplatePlanRepository.findById(planId)
+            .orElseThrow { WorkfolioException("플랜을 찾을 수 없습니다.") }
+        plan.changeInfo(durationDays, price, displayOrder)
+        return uiTemplatePlanRepository.save(plan)
+    }
+
+    @Transactional
+    fun deletePlan(planId: String) {
+        val plan = uiTemplatePlanRepository.findById(planId)
+            .orElseThrow { WorkfolioException("플랜을 찾을 수 없습니다.") }
+        uiTemplatePlanRepository.delete(plan)
     }
 
     @Transactional

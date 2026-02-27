@@ -1,6 +1,8 @@
 package com.spectrum.workfolio.domain.repository
 
 import com.spectrum.workfolio.domain.entity.record.Record
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
@@ -23,6 +25,18 @@ interface RecordRepository : JpaRepository<Record, String> {
         @Param("startDate") startDate: LocalDateTime,
         @Param("endDate") endDate: LocalDateTime,
     ): List<Record>
+
+    @Query(
+        """
+       SELECT r
+         FROM Record r
+        WHERE r.recordGroup.id in (:recordGroupIds)
+    """,
+    )
+    fun findAllByRecordGroupIds(
+        @Param("recordGroupIds") recordGroupIds: List<String>,
+        pageable: Pageable,
+    ): Page<Record>
 
     // Full-Text Search - 기본 검색
     @Query(
