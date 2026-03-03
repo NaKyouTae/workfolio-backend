@@ -1,6 +1,7 @@
 package com.spectrum.workfolio.domain.enums
 
-enum class UITemplateImageType {
+enum class ImageExtType {
     THUMBNAIL,
     DETAIL,
+    PROFILE,
 }

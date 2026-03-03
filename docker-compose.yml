@@ -6,6 +6,11 @@ services:
       - "9000:9000"
     env_file:
       - docker-compose.env
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "5"
     depends_on:
       postgres:
         condition: service_healthy
@@ -82,29 +87,75 @@ services:
       retries: 3
       start_period: 30s
 
-#  prometheus:
-#    image: prom/prometheus:latest
-#    container_name: prometheus
-#    volumes:
-#      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-#    command:
-#      - '--config.file=/etc/prometheus/prometheus.yml'
-#    ports:
-#      - "9090:9090"
-#    networks:
-#      - workfolio-network
-#
-#  grafana:
-#    image: grafana/grafana:latest
-#    container_name: grafana
-#    ports:
-#      - "3000:3000"
-#    networks:
-#      - workfolio-network
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - "8003:9090"
+    depends_on:
+      workfolio-server:
+        condition: service_started
+    networks:
+      - workfolio-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./docker/grafana/provisioning:/etc/grafana/provisioning
+    ports:
+      - "8002:3000"
+    depends_on:
+      - prometheus
+      - loki
+    networks:
+      - workfolio-network
+
+  loki:
+    image: grafana/loki:3.4.2
+    container_name: loki
+    volumes:
+      - ./docker/loki/config.yml:/etc/loki/config.yml:ro
+      - loki-data:/tmp/loki
+    command: -config.file=/etc/loki/config.yml
+    ports:
+      - "3100:3100"
+    networks:
+      - workfolio-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3100/ready || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  promtail:
+    image: grafana/promtail:3.4.2
+    container_name: promtail
+    volumes:
+      - ./docker/promtail/config.yml:/etc/promtail/config.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      loki:
+        condition: service_healthy
+    networks:
+      - workfolio-network
 
 volumes:
   postgres-data:
   redis-data:
+  prometheus-data:
+  grafana-data:
+  loki-data:
 
 networks:
   workfolio-network:

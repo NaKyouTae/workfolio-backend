@@ -1,0 +1,47 @@
+# ── Build Stage ──
+FROM amazoncorretto:21-alpine-jdk AS builder
+
+RUN apk add --no-cache findutils
+
+WORKDIR /build
+
+# Gradle wrapper (캐시 레이어)
+COPY gradlew .
+COPY gradle gradle
+RUN chmod +x gradlew
+
+# 빌드 설정 (의존성 캐시 레이어)
+COPY build.gradle.kts .
+COPY settings.gradle.kts .
+RUN ./gradlew dependencies --no-daemon 2>/dev/null || true
+
+# 소스 코드 복사 및 빌드
+COPY src src
+RUN ./gradlew bootJar --no-daemon -x test -x ktlintCheck -x detekt
+
+# ── Runtime Stage ──
+FROM amazoncorretto:21-alpine-jdk
+
+RUN apk add --no-cache tzdata curl
+
+ENV TZ=Asia/Seoul
+
+RUN addgroup -g 1001 -S appgroup && \
+    adduser -u 1001 -S appuser -G appgroup
+
+WORKDIR /app
+
+COPY --from=builder /build/build/libs/workfolio-server.jar /app/app.jar
+COPY config/script/run-java.sh /opt/run-java.sh
+RUN chmod +x /opt/run-java.sh
+
+RUN chown -R appuser:appgroup /app
+
+USER appuser
+
+EXPOSE 9000
+
+ENV JAVA_APP_JAR=/app/app.jar
+ENV JAVA_OPTIONS="-Djava.security.egd=file:/dev/./urandom"
+
+ENTRYPOINT ["/opt/run-java.sh"]

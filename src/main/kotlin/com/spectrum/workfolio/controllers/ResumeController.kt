@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -60,6 +61,17 @@ class ResumeController(
         @PathVariable id: String,
     ): SuccessResponse {
         resumeCommandService.changeDefaultResume(workerId, id)
+        return SuccessResponse.newBuilder().setIsSuccess(true).build()
+    }
+
+    @PatchMapping("/{id}/public")
+    fun togglePublicResume(
+        @AuthenticatedUser workerId: String,
+        @PathVariable id: String,
+        @RequestBody body: Map<String, Boolean>,
+    ): SuccessResponse {
+        val isPublic = body["isPublic"] ?: throw IllegalArgumentException("isPublic is required")
+        resumeCommandService.togglePublicResume(id, isPublic)
         return SuccessResponse.newBuilder().setIsSuccess(true).build()
     }
 

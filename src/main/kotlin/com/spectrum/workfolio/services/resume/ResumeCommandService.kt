@@ -3,11 +3,13 @@ package com.spectrum.workfolio.services.resume
 import com.spectrum.workfolio.domain.entity.resume.Resume
 import com.spectrum.workfolio.domain.enums.AttachmentTargetType
 import com.spectrum.workfolio.domain.enums.Gender
+import com.spectrum.workfolio.domain.enums.ImageTargetType
 import com.spectrum.workfolio.domain.repository.ResumeRepository
 import com.spectrum.workfolio.proto.attachment.AttachmentRequest
 import com.spectrum.workfolio.proto.resume.ResumeUpdateRequest
 import com.spectrum.workfolio.services.AttachmentCommandService
 import com.spectrum.workfolio.services.AttachmentQueryService
+import com.spectrum.workfolio.services.ImageService
 import com.spectrum.workfolio.services.WorkerService
 import com.spectrum.workfolio.utils.EnumUtils.convertProtoEnumSafe
 import com.spectrum.workfolio.utils.TimeUtil
@@ -36,6 +38,7 @@ class ResumeCommandService(
     private val languageSkillService: LanguageSkillService,
     private val attachmentQueryService: AttachmentQueryService,
     private val attachmentCommandService: AttachmentCommandService,
+    private val imageService: ImageService,
 ) {
 
     fun createResume(workerId: String, request: ResumeUpdateRequest): Resume {
@@ -111,6 +114,12 @@ class ResumeCommandService(
         val storagePath = "resumes/attachments"
         attachmentCommandService.createBulkAttachmentFromEntity(savedResume, storagePath, originalAttachments)
 
+        // 3-7. 프로필 이미지 복제
+        val profileImages = imageService.getImagesByTarget(ImageTargetType.PROFILE, originalResume.id)
+        profileImages.firstOrNull()?.let { originalImage ->
+            imageService.copyProfileImage(originalImage, savedResume.id)
+        }
+
         return savedResume
     }
 
@@ -121,6 +130,13 @@ class ResumeCommandService(
         resume.changeDefault(true)
 
         resumeRepository.updateAllDefaultToFalse(workerId, resumeId)
+        resumeRepository.save(resume)
+    }
+
+    @Transactional
+    fun togglePublicResume(resumeId: String, isPublic: Boolean) {
+        val resume = resumeQueryService.getResume(resumeId)
+        resume.changePublic(isPublic)
         resumeRepository.save(resume)
     }
 
@@ -138,6 +154,7 @@ class ResumeCommandService(
         updateActivities(resume.id, request.activitiesList) // 활동 처리
         updateAttachments(AttachmentTargetType.ENTITY_RESUME, resume.id, request.attachmentsList) // 첨부파일 처리
         updateLanguageSkills(resume.id, request.languagesList) // 언어 능력 처리
+        updateProfileImage(resume.id, request) // 프로필 이미지 처리
 
         return resumeRepository.save(resume)
     }
@@ -145,6 +162,7 @@ class ResumeCommandService(
     @Transactional
     fun deleteResume(id: String) {
         val resume = resumeQueryService.getResume(id)
+        imageService.deleteImagesByTarget(ImageTargetType.PROFILE, resume.id)
         resumeRepository.delete(resume)
     }
 
@@ -354,5 +372,23 @@ class ResumeCommandService(
                 languageTestService.updateBulkLanguageTest(languageSkill.id, updateTestRequests)
             }
         }
+    }
+
+    private fun updateProfileImage(resumeId: String, request: ResumeUpdateRequest) {
+        val hasNewImageData = request.hasProfileImageData() && !request.profileImageData.isEmpty
+        val hasExistingUrl = request.hasProfileImageUrl() && request.profileImageUrl.isNotBlank()
+
+        if (hasNewImageData) {
+            // 새 이미지 업로드 (기존 이미지가 있으면 ImageService에서 자동 삭제)
+            imageService.uploadProfileImage(
+                targetId = resumeId,
+                imageData = request.profileImageData,
+                fileName = "profile.jpg",
+            )
+        } else if (!hasExistingUrl) {
+            // URL도 없고 새 이미지도 없으면 → 기존 프로필 이미지 삭제
+            imageService.deleteImagesByTarget(ImageTargetType.PROFILE, resumeId)
+        }
+        // hasExistingUrl && !hasNewImageData → 기존 이미지 유지 (아무 것도 하지 않음)
     }
 }

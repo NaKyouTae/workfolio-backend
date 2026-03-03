@@ -151,6 +151,10 @@ class Resume(
         this.isDefault = isDefault
     }
 
+    fun changePublic(isPublic: Boolean) {
+        this.isPublic = isPublic
+    }
+
     companion object {
         fun generatePublicId(): String {
             return StringUtil.generateRandomString(16)

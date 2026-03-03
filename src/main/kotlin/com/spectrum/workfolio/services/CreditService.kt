@@ -6,6 +6,7 @@ import com.spectrum.workfolio.domain.enums.CreditTxType
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.repository.CreditHistoryRepository
 import com.spectrum.workfolio.domain.repository.WorkerRepository
+import com.spectrum.workfolio.utils.BusinessEventLogger
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -54,7 +55,22 @@ class CreditService(
             referenceId = referenceId,
             description = description,
         )
-        return creditHistoryRepository.save(history)
+        val saved = creditHistoryRepository.save(history)
+
+        BusinessEventLogger.logEvent(
+            eventType = "CREDIT_ADDED",
+            message = "크레딧 추가: workerId=$workerId, amount=$amount",
+            workerId = workerId,
+            amount = amount,
+            status = "SUCCESS",
+            txType = txType.name,
+            balanceBefore = balanceBefore,
+            balanceAfter = worker.credit,
+            referenceId = referenceId,
+            referenceType = referenceType,
+        )
+
+        return saved
     }
 
     @Transactional
@@ -85,7 +101,22 @@ class CreditService(
             referenceId = referenceId,
             description = description,
         )
-        return creditHistoryRepository.save(history)
+        val saved = creditHistoryRepository.save(history)
+
+        BusinessEventLogger.logEvent(
+            eventType = "CREDIT_USED",
+            message = "크레딧 사용: workerId=$workerId, amount=$amount",
+            workerId = workerId,
+            amount = amount,
+            status = "SUCCESS",
+            txType = CreditTxType.USE.name,
+            balanceBefore = balanceBefore,
+            balanceAfter = worker.credit,
+            referenceId = referenceId,
+            referenceType = referenceType,
+        )
+
+        return saved
     }
 
     @Transactional
@@ -98,6 +129,14 @@ class CreditService(
         if (amount <= 0) {
             throw WorkfolioException("크레딧은 1 이상이어야 합니다.")
         }
+
+        BusinessEventLogger.logEvent(
+            eventType = "CREDIT_ADMIN_ADJUST",
+            message = "관리자 크레딧 조정: workerId=$workerId, action=$action, amount=$amount",
+            workerId = workerId,
+            amount = amount,
+            txType = "ADMIN_${action.trim().uppercase()}",
+        )
 
         return when (action.trim().uppercase()) {
             "ADD" -> addCredits(
@@ -146,7 +185,22 @@ class CreditService(
             referenceId = referenceId,
             description = description,
         )
-        return creditHistoryRepository.save(history)
+        val saved = creditHistoryRepository.save(history)
+
+        BusinessEventLogger.logEvent(
+            eventType = "CREDIT_REFUNDED",
+            message = "크레딧 환불: workerId=$workerId, amount=$amount",
+            workerId = workerId,
+            amount = amount,
+            status = "SUCCESS",
+            txType = CreditTxType.REFUND.name,
+            balanceBefore = balanceBefore,
+            balanceAfter = worker.credit,
+            referenceId = referenceId,
+            referenceType = referenceType,
+        )
+
+        return saved
     }
 
     @Transactional

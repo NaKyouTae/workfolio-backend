@@ -1,19 +1,20 @@
 package com.spectrum.workfolio.services.uitemplate
 
+import com.spectrum.workfolio.domain.entity.Image
 import com.spectrum.workfolio.domain.entity.Worker
 import com.spectrum.workfolio.domain.entity.uitemplate.UiTemplatePlan
 import com.spectrum.workfolio.domain.entity.uitemplate.UITemplate
-import com.spectrum.workfolio.domain.entity.uitemplate.UITemplateImage
 import com.spectrum.workfolio.domain.entity.uitemplate.WorkerUITemplate
-import com.spectrum.workfolio.domain.enums.UITemplateImageType
+import com.spectrum.workfolio.domain.enums.ImageExtType
+import com.spectrum.workfolio.domain.enums.ImageTargetType
 import com.spectrum.workfolio.domain.enums.UITemplateType
 import com.spectrum.workfolio.domain.repository.UiTemplatePlanRepository
 import com.spectrum.workfolio.domain.repository.UITemplateRepository
-import com.spectrum.workfolio.domain.repository.UITemplateImageRepository
 import com.spectrum.workfolio.domain.repository.WorkerRepository
 import com.spectrum.workfolio.domain.repository.WorkerUITemplateRepository
 import com.spectrum.workfolio.services.CreditService
-import com.spectrum.workfolio.services.SupabaseStorageService
+import com.spectrum.workfolio.services.ImageService
+import com.spectrum.workfolio.utils.BusinessEventLogger
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -22,17 +23,15 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.UUID
 
 @Service
 class UITemplateService(
     private val uiTemplateRepository: UITemplateRepository,
     private val uiTemplatePlanRepository: UiTemplatePlanRepository,
-    private val uiTemplateImageRepository: UITemplateImageRepository,
     private val workerUITemplateRepository: WorkerUITemplateRepository,
     private val workerRepository: WorkerRepository,
     private val creditService: CreditService,
-    private val supabaseStorageService: SupabaseStorageService,
+    private val imageService: ImageService,
 ) {
     private val periodFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
 
@@ -60,13 +59,13 @@ class UITemplateService(
     }
 
     @Transactional(readOnly = true)
-    fun getImagesByUiTemplateId(uiTemplateId: String): List<UITemplateImage> {
-        return uiTemplateImageRepository.findByUiTemplateIdOrderByDisplayOrderAsc(uiTemplateId)
+    fun getImagesByUiTemplateId(uiTemplateId: String): List<Image> {
+        return imageService.getImagesByTarget(ImageTargetType.UI_TEMPLATE, uiTemplateId)
     }
 
     @Transactional(readOnly = true)
-    fun getImagesByUiTemplateIdAndType(uiTemplateId: String, imageType: UITemplateImageType): List<UITemplateImage> {
-        return uiTemplateImageRepository.findByUiTemplateIdAndImageTypeOrderByDisplayOrderAsc(uiTemplateId, imageType)
+    fun getImagesByUiTemplateIdAndType(uiTemplateId: String, extType: ImageExtType): List<Image> {
+        return imageService.getImagesByTargetAndExtType(ImageTargetType.UI_TEMPLATE, uiTemplateId, extType)
     }
 
     // ==================== Authenticated API ====================
@@ -90,9 +89,18 @@ class UITemplateService(
             worker, uiTemplate, now
         )
 
+        // Check if there's an expired template → reactivate instead of creating new row
+        val expiredTemplate = if (existingTemplate == null) {
+            workerUITemplateRepository.findExpiredByWorkerAndUITemplate(worker, uiTemplate, now)
+        } else null
+
         val periodStart = existingTemplate?.expiredAt ?: now
         val periodEnd = periodStart.plusDays(durationDays.toLong())
-        val actionText = if (existingTemplate != null) "연장" else "구매"
+        val actionText = when {
+            existingTemplate != null -> "연장"
+            expiredTemplate != null -> "재구매"
+            else -> "구매"
+        }
         val creditHistoryDescription =
             "${uiTemplate.name} 템플릿 $actionText (${durationDays}일, ${periodStart.format(periodFormatter)} ~ ${periodEnd.format(periodFormatter)})"
 
@@ -111,7 +119,33 @@ class UITemplateService(
         )
         if (existingTemplate != null) {
             existingTemplate.extendExpiration(durationDays)
-            return workerUITemplateRepository.save(existingTemplate)
+            val saved = workerUITemplateRepository.save(existingTemplate)
+            BusinessEventLogger.logEvent(
+                eventType = "TEMPLATE_PURCHASED",
+                message = "템플릿 연장: templateId=$uiTemplateId, workerId=$workerId",
+                workerId = workerId,
+                templateId = uiTemplateId,
+                amount = price,
+                status = "EXTENDED",
+                extra = mapOf("duration_days" to durationDays.toString(), "template_name" to uiTemplate.name),
+            )
+            return saved
+        }
+
+        // Reactivate expired template
+        if (expiredTemplate != null) {
+            expiredTemplate.reactivate(now, durationDays, price)
+            val saved = workerUITemplateRepository.save(expiredTemplate)
+            BusinessEventLogger.logEvent(
+                eventType = "TEMPLATE_PURCHASED",
+                message = "템플릿 재구매: templateId=$uiTemplateId, workerId=$workerId",
+                workerId = workerId,
+                templateId = uiTemplateId,
+                amount = price,
+                status = "REACTIVATED",
+                extra = mapOf("duration_days" to durationDays.toString(), "template_name" to uiTemplate.name),
+            )
+            return saved
         }
 
         // Create worker ui template
@@ -121,16 +155,26 @@ class UITemplateService(
             purchasedAt = now,
             expiredAt = now.plusDays(durationDays.toLong()),
             creditsUsed = price,
-            isActive = true
+            templateType = uiTemplate.type,
         )
 
-        return workerUITemplateRepository.save(workerUITemplate)
+        val saved = workerUITemplateRepository.save(workerUITemplate)
+        BusinessEventLogger.logEvent(
+            eventType = "TEMPLATE_PURCHASED",
+            message = "템플릿 신규 구매: templateId=$uiTemplateId, workerId=$workerId",
+            workerId = workerId,
+            templateId = uiTemplateId,
+            amount = price,
+            status = "NEW_PURCHASE",
+            extra = mapOf("duration_days" to durationDays.toString(), "template_name" to uiTemplate.name),
+        )
+        return saved
     }
 
     @Transactional(readOnly = true)
     fun getMyUITemplates(workerId: String, pageable: Pageable): Page<WorkerUITemplate> {
         val worker = getWorkerById(workerId)
-        return workerUITemplateRepository.findByWorkerAndIsActiveTrueOrderByPurchasedAtDesc(worker, pageable)
+        return workerUITemplateRepository.findByWorkerAndStatusActiveOrderByPurchasedAtDesc(worker, pageable)
     }
 
     @Transactional(readOnly = true)
@@ -185,8 +229,12 @@ class UITemplateService(
             throw WorkfolioException("만료되었거나 비활성화된 템플릿입니다.")
         }
 
-        worker.setDefaultUiTemplate(uiTemplate)
-        workerRepository.save(worker)
+        // Clear existing default for this worker + type
+        workerUITemplateRepository.clearDefaultByWorkerAndType(worker, uiTemplate.type)
+
+        // Set new default
+        ownership.markAsDefault()
+        workerUITemplateRepository.save(ownership)
 
         return fetchDefaultUITemplates(worker)
     }
@@ -197,13 +245,10 @@ class UITemplateService(
         return fetchDefaultUITemplates(worker)
     }
 
-    /**
-     * Worker의 기본 템플릿을 트랜잭션 내에서 명시적으로 조회하여 LazyInitializationException 방지
-     */
     private fun fetchDefaultUITemplates(worker: Worker): Pair<UITemplate?, UITemplate?> {
-        val urlTemplate = worker.defaultUrlUiTemplate?.let { uiTemplateRepository.findById(it.id).orElse(null) }
-        val pdfTemplate = worker.defaultPdfUiTemplate?.let { uiTemplateRepository.findById(it.id).orElse(null) }
-        return Pair(urlTemplate, pdfTemplate)
+        val urlDefault = workerUITemplateRepository.findDefaultByWorkerAndType(worker, UITemplateType.URL)
+        val pdfDefault = workerUITemplateRepository.findDefaultByWorkerAndType(worker, UITemplateType.PDF)
+        return Pair(urlDefault?.uiTemplate, pdfDefault?.uiTemplate)
     }
 
     @Transactional
@@ -215,22 +260,11 @@ class UITemplateService(
             throw WorkfolioException("해당 템플릿에 대한 접근 권한이 없습니다.")
         }
 
-        // Clear default template if this template was set as default
-        val worker = workerUITemplate.worker
-        val uiTemplate = workerUITemplate.uiTemplate
-        val isDefaultUrl = worker.defaultUrlUiTemplate?.id == uiTemplate.id
-        val isDefaultPdf = worker.defaultPdfUiTemplate?.id == uiTemplate.id
-
-        if (isDefaultUrl) {
-            worker.clearDefaultUiTemplate(UITemplateType.URL)
-            workerRepository.save(worker)
-        }
-        if (isDefaultPdf) {
-            worker.clearDefaultUiTemplate(UITemplateType.PDF)
-            workerRepository.save(worker)
+        if (workerUITemplate.isDefault) {
+            workerUITemplate.clearDefault()
         }
 
-        workerUITemplate.deactivate()
+        workerUITemplate.softDelete()
         workerUITemplateRepository.save(workerUITemplate)
     }
 
@@ -257,7 +291,6 @@ class UITemplateService(
         durationDays: Int,
         urlPath: String?,
         isActive: Boolean,
-        isPopular: Boolean,
         displayOrder: Int,
     ): UITemplate {
         val uiTemplate = UITemplate(
@@ -269,7 +302,6 @@ class UITemplateService(
             durationDays = durationDays,
             urlPath = urlPath,
             isActive = isActive,
-            isPopular = isPopular,
             displayOrder = displayOrder,
         )
         return uiTemplateRepository.save(uiTemplate)
@@ -286,7 +318,6 @@ class UITemplateService(
         durationDays: Int,
         urlPath: String?,
         isActive: Boolean,
-        isPopular: Boolean,
         displayOrder: Int,
     ): UITemplate {
         val uiTemplate = getUITemplateByIdForAdmin(uiTemplateId)
@@ -299,7 +330,6 @@ class UITemplateService(
             durationDays = durationDays,
             urlPath = urlPath,
             isActive = isActive,
-            isPopular = isPopular,
             displayOrder = displayOrder,
         )
         return uiTemplateRepository.save(uiTemplate)
@@ -308,16 +338,9 @@ class UITemplateService(
     @Transactional
     fun deleteUITemplate(uiTemplateId: String) {
         val uiTemplate = getUITemplateByIdForAdmin(uiTemplateId)
-        workerRepository.clearDefaultUrlTemplateByUiTemplateId(uiTemplateId)
-        workerRepository.clearDefaultPdfTemplateByUiTemplateId(uiTemplateId)
+        workerUITemplateRepository.clearDefaultByUiTemplateId(uiTemplateId)
 
-        val images = uiTemplateImageRepository.findByUiTemplateIdOrderByDisplayOrderAsc(uiTemplateId)
-        images.forEach { image ->
-            supabaseStorageService.deleteFileByUrl(image.imageUrl)
-        }
-        if (images.isNotEmpty()) {
-            uiTemplateImageRepository.deleteAllInBatch(images)
-        }
+        imageService.deleteImagesByTarget(ImageTargetType.UI_TEMPLATE, uiTemplateId)
 
         uiTemplatePlanRepository.deleteByUiTemplateId(uiTemplateId)
         workerUITemplateRepository.deleteByUiTemplateId(uiTemplateId)
@@ -357,33 +380,20 @@ class UITemplateService(
     fun uploadTemplateImages(
         uiTemplateId: String,
         files: List<MultipartFile>,
-        imageType: UITemplateImageType,
-    ): List<UITemplateImage> {
-        val uiTemplate = getUITemplateByIdForAdmin(uiTemplateId)
-        val existingImages = uiTemplateImageRepository.findByUiTemplateIdOrderByDisplayOrderAsc(uiTemplateId)
-        var nextOrder = if (existingImages.isEmpty()) 0 else existingImages.maxOf { it.displayOrder } + 1
-
-        return files.map { file ->
-            val fileName = "${UUID.randomUUID()}_${file.originalFilename}"
-            val storagePath = "ui-templates/$uiTemplateId"
-            val imageUrl = supabaseStorageService.uploadFile(file, fileName, storagePath)
-
-            val image = UITemplateImage(
-                uiTemplate = uiTemplate,
-                imageType = imageType,
-                imageUrl = imageUrl,
-                displayOrder = nextOrder++,
-            )
-            uiTemplateImageRepository.save(image)
-        }
+        extType: ImageExtType,
+    ): List<Image> {
+        getUITemplateByIdForAdmin(uiTemplateId) // validate template exists
+        return imageService.uploadImages(
+            targetType = ImageTargetType.UI_TEMPLATE,
+            targetId = uiTemplateId,
+            extType = extType,
+            files = files,
+        )
     }
 
     @Transactional
     fun deleteTemplateImage(imageId: String) {
-        val image = uiTemplateImageRepository.findById(imageId)
-            .orElseThrow { WorkfolioException("이미지를 찾을 수 없습니다.") }
-        supabaseStorageService.deleteFileByUrl(image.imageUrl)
-        uiTemplateImageRepository.delete(image)
+        imageService.deleteImage(imageId)
     }
 
     private fun getWorkerById(workerId: String): Worker {

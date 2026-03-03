@@ -62,6 +62,7 @@ class SecurityConfig(
         }
         .authorizeHttpRequests {
             it
+                .requestMatchers("/actuator/**").permitAll()
                 .requestMatchers("/api/oauth2/**", "/api/staffs/login", "/api/token/reissue").permitAll()
                 .requestMatchers("/api/release/**").permitAll()
                 .requestMatchers("/api/anonymous/**").permitAll()

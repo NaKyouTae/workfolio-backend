@@ -69,6 +69,7 @@ message Resume {
   optional bool is_public = 9;
   optional bool is_default = 10;
   string description = 11;
+  optional string profile_image_url = 12;
 
   Worker worker = 50;
 
@@ -91,6 +92,7 @@ message ResumeDetail {
   optional bool is_default = 10;
   string public_id = 11;
   string description = 12;
+  optional string profile_image_url = 13;
 
   Worker worker = 50;
 
@@ -589,6 +591,7 @@ message TurnOverRetrospective {
   optional uint64 joined_at = 11;
   string work_type = 12;
   optional EmploymentType employment_type = 13;
+  optional uint64 ended_at = 14;
 
   uint64 created_at = 98;
   uint64 updated_at = 99;
@@ -616,6 +619,7 @@ message TurnOverRetrospectiveDetail {
   optional uint64 joined_at = 11;
   string work_type = 12;
   optional EmploymentType employment_type = 13;
+  optional uint64 ended_at = 14;
 
   repeated Memo memos = 51;
   repeated Attachment attachments = 52;
@@ -847,7 +851,6 @@ message UITemplate {
   optional string url_path = 7;
   optional string label = 8;
   bool is_active = 10;
-  bool is_popular = 11;
   int32 display_order = 12;
   repeated UiTemplatePlan plans = 13;
   repeated UITemplateImage images = 14;
@@ -861,9 +864,11 @@ message WorkerUITemplate {
   uint64 purchased_at = 2;
   uint64 expired_at = 3;
   int32 credits_used = 4;
-  bool is_active = 5;
+  string status = 5;
   bool is_expired = 6;
   bool is_valid = 7;
+  bool is_default = 8;
+  string template_type = 9;
 
   Worker worker = 50;
   UITemplate ui_template = 51;

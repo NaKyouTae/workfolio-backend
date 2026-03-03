@@ -63,16 +63,6 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: default_url_ui_template_id
-                  type: VARCHAR(16)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: default_pdf_ui_template_id
-                  type: VARCHAR(16)
-                  constraints:
-                    nullable: true
-              - column:
                   name: updated_at
                   type: TIMESTAMP(6)
                   constraints:
@@ -1170,6 +1160,11 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: retrospective_ended_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: true
+              - column:
                   name: started_at
                   type: TIMESTAMP(6)
                   constraints:
@@ -1647,12 +1642,6 @@ databaseChangeLog:
                   name: display_order
                   type: INTEGER
                   defaultValueNumeric: 0
-                  constraints:
-                    nullable: false
-              - column:
-                  name: is_popular
-                  type: BOOLEAN
-                  defaultValueBoolean: false
                   constraints:
                     nullable: false
               - column:
@@ -2145,33 +2134,49 @@ databaseChangeLog:
                   name: display_order
 
         - createTable:
-            tableName: ui_template_images
+            tableName: images
             columns:
               - column:
                   name: id
-                  type: VARCHAR(16)
+                  type: VARCHAR(28)
                   constraints:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: ui_template_id
-                  type: VARCHAR(16)
+                  autoIncrement: true
+                  name: idx
+                  type: BIGINT
                   constraints:
+                    unique: true
                     nullable: false
               - column:
-                  name: image_type
+                  name: status
                   type: VARCHAR(32)
                   constraints:
                     nullable: false
               - column:
-                  name: image_url
+                  name: target_type
+                  type: VARCHAR(32)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: target_id
+                  type: VARCHAR(28)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: ext_type
+                  type: VARCHAR(32)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: url
                   type: TEXT
                   constraints:
                     nullable: false
               - column:
-                  name: display_order
-                  type: INTEGER
-                  defaultValueNumeric: 0
+                  name: priority
+                  type: INT
                   constraints:
                     nullable: false
               - column:
@@ -2185,15 +2190,15 @@ databaseChangeLog:
                   constraints:
                     nullable: false
         - createIndex:
-            indexName: idx_ui_template_images_template_type_order
-            tableName: ui_template_images
+            indexName: idx_images_target
+            tableName: images
             columns:
               - column:
-                  name: ui_template_id
+                  name: target_type
               - column:
-                  name: image_type
+                  name: target_id
               - column:
-                  name: display_order
+                  name: priority
 
         - createTable:
             tableName: worker_ui_templates
@@ -2230,9 +2235,25 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: is_active
+                  name: status
+                  type: VARCHAR(32)
+                  defaultValue: "ACTIVE"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: deleted_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: template_type
+                  type: VARCHAR(32)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_default
                   type: BOOLEAN
-                  defaultValueBoolean: true
+                  defaultValueBoolean: false
                   constraints:
                     nullable: false
               - column:
@@ -2245,13 +2266,18 @@ databaseChangeLog:
                   type: TIMESTAMP(6)
                   constraints:
                     nullable: false
+        - sql:
+            sql: |
+              CREATE UNIQUE INDEX idx_worker_default_per_type
+              ON worker_ui_templates (worker_id, template_type)
+              WHERE is_default = true;
         - createIndex:
             columns:
               - column:
                   name: worker_id
               - column:
-                  name: is_active
-            indexName: idx_worker_ui_templates_worker_active
+                  name: status
+            indexName: idx_worker_ui_templates_worker_status
             tableName: worker_ui_templates
         - createIndex:
             columns:

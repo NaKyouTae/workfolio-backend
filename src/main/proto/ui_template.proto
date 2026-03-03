@@ -68,7 +68,6 @@ message AdminUITemplateCreateRequest {
   int32 duration_days = 6;
   optional string url_path = 7;
   bool is_active = 8;
-  bool is_popular = 9;
   int32 display_order = 10;
 }
 
@@ -82,7 +81,6 @@ message AdminUITemplateUpdateRequest {
   int32 duration_days = 7;
   optional string url_path = 8;
   bool is_active = 9;
-  bool is_popular = 10;
   int32 display_order = 11;
 }
 

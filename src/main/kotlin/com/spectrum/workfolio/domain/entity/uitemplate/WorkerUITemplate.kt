@@ -2,6 +2,8 @@ package com.spectrum.workfolio.domain.entity.uitemplate
 
 import com.spectrum.workfolio.domain.entity.BaseEntity
 import com.spectrum.workfolio.domain.entity.Worker
+import com.spectrum.workfolio.domain.enums.UITemplateType
+import com.spectrum.workfolio.domain.enums.WorkerUITemplateStatus
 import jakarta.persistence.*
 import java.time.LocalDateTime
 
@@ -9,7 +11,7 @@ import java.time.LocalDateTime
 @Table(
     name = "worker_ui_templates",
     indexes = [
-        Index(name = "idx_worker_ui_templates_worker_active", columnList = "worker_id, is_active"),
+        Index(name = "idx_worker_ui_templates_worker_status", columnList = "worker_id, status"),
         Index(name = "idx_worker_ui_templates_worker_template_expired", columnList = "worker_id, template_id, expired_at"),
         Index(name = "idx_worker_ui_templates_expired", columnList = "expired_at"),
     ],
@@ -20,7 +22,9 @@ class WorkerUITemplate(
     purchasedAt: LocalDateTime,
     expiredAt: LocalDateTime,
     creditsUsed: Int,
-    isActive: Boolean = true,
+    templateType: UITemplateType,
+    status: WorkerUITemplateStatus = WorkerUITemplateStatus.ACTIVE,
+    isDefault: Boolean = false,
 ) : BaseEntity("WU") {
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -45,8 +49,22 @@ class WorkerUITemplate(
     var creditsUsed: Int = creditsUsed
         protected set
 
-    @Column(name = "is_active", nullable = false)
-    var isActive: Boolean = isActive
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", length = 32, nullable = false)
+    var status: WorkerUITemplateStatus = status
+        protected set
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "template_type", length = 32, nullable = false)
+    var templateType: UITemplateType = templateType
+        protected set
+
+    @Column(name = "is_default", nullable = false)
+    var isDefault: Boolean = isDefault
+        protected set
+
+    @Column(name = "deleted_at")
+    var deletedAt: LocalDateTime? = null
         protected set
 
     fun isExpired(): Boolean {
@@ -54,14 +72,29 @@ class WorkerUITemplate(
     }
 
     fun isValid(): Boolean {
-        return isActive && !isExpired()
+        return status == WorkerUITemplateStatus.ACTIVE && !isExpired()
     }
 
-    fun deactivate() {
-        this.isActive = false
+    fun softDelete() {
+        this.status = WorkerUITemplateStatus.DELETED
+        this.deletedAt = LocalDateTime.now()
     }
 
     fun extendExpiration(additionalDays: Int) {
         this.expiredAt = this.expiredAt.plusDays(additionalDays.toLong())
+    }
+
+    fun reactivate(now: LocalDateTime, durationDays: Int, price: Int) {
+        this.purchasedAt = now
+        this.expiredAt = now.plusDays(durationDays.toLong())
+        this.creditsUsed = price
+    }
+
+    fun markAsDefault() {
+        this.isDefault = true
+    }
+
+    fun clearDefault() {
+        this.isDefault = false
     }
 }

@@ -21,6 +21,7 @@ class TurnOverRetrospective(
     joinedAt: LocalDate? = null, // 입사년월
     workType: String, // 근무 형태
     employmentType: EmploymentType? = null, // 재직 형태
+    endedAt: LocalDate? = null, // 이직 종료일
 ) {
     @Column(name = "retrospective_name", length = 1024, nullable = false)
     var name: String = name
@@ -71,6 +72,10 @@ class TurnOverRetrospective(
     var workType: String = workType
         protected set
 
+    @Column(name = "retrospective_ended_at", nullable = true)
+    var endedAt: LocalDate? = endedAt
+        protected set
+
     fun changeInfo(
         name: String, // 회사명
         salary: Int, // 연봉
@@ -84,6 +89,7 @@ class TurnOverRetrospective(
         joinedAt: LocalDate? = null, // 입사년월
         workType: String, // 근무 형태
         employmentType: EmploymentType? = null, // 재직 형태
+        endedAt: LocalDate? = null, // 이직 종료일
     ) {
         this.name = name
         this.salary = salary
@@ -97,5 +103,6 @@ class TurnOverRetrospective(
         this.joinedAt = joinedAt
         this.workType = workType
         this.employmentType = employmentType
+        this.endedAt = endedAt
     }
 }

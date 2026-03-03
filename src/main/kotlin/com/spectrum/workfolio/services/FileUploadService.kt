@@ -11,17 +11,36 @@ import java.util.Base64
 class FileUploadService(
     private val supabaseStorageService: SupabaseStorageService,
 ) {
+    companion object {
+        private const val MAX_FILE_SIZE = 10L * 1024 * 1024 // 10MB
+        private val ALLOWED_EXTENSIONS = setOf(
+            "pdf", "doc", "docx", "xlsx", "pptx", "hwp", "txt",
+            "png", "jpg", "jpeg", "gif", "webp"
+        )
+    }
+
     fun uploadFileToStorage(
         fileData: ByteString,
         fileName: String,
         storagePath: String,
     ): String {
         try {
+            // 파일 크기 검증
+            if (fileData.size() > MAX_FILE_SIZE) {
+                throw WorkfolioException("파일 크기는 10MB 이하만 가능합니다.")
+            }
+
+            // 파일 확장자 검증
+            val extension = fileName.substringAfterLast(".", "").lowercase()
+            if (extension.isBlank() || extension !in ALLOWED_EXTENSIONS) {
+                throw WorkfolioException("허용되지 않는 파일 형식입니다. (허용: ${ALLOWED_EXTENSIONS.joinToString(", ")})")
+            }
+
             // ByteString을 Base64로 인코딩
             val base64Data = Base64.getEncoder().encodeToString(fileData.toByteArray())
 
             // MIME 타입 추론 (확장자 기반)
-            val contentType = when (fileName.substringAfterLast(".", "").lowercase()) {
+            val contentType = when (extension) {
                 "png" -> "image/png"
                 "jpg", "jpeg" -> "image/jpeg"
                 "gif" -> "image/gif"
@@ -29,6 +48,10 @@ class FileUploadService(
                 "pdf" -> "application/pdf"
                 "doc" -> "application/msword"
                 "docx" -> "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                "xlsx" -> "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                "pptx" -> "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+                "hwp" -> "application/x-hwp"
+                "txt" -> "text/plain"
                 else -> "application/octet-stream"
             }
 

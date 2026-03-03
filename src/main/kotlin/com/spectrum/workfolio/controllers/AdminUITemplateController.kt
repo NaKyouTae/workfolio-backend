@@ -1,11 +1,14 @@
 package com.spectrum.workfolio.controllers
 
-import com.spectrum.workfolio.domain.enums.UITemplateImageType
+import com.spectrum.workfolio.domain.enums.ImageExtType
 import com.spectrum.workfolio.domain.enums.UITemplateType
 import com.spectrum.workfolio.domain.extensions.toProto
+import com.spectrum.workfolio.domain.extensions.toUITemplateImageProto
 import com.spectrum.workfolio.proto.common.SuccessResponse
 import com.spectrum.workfolio.proto.uitemplate.*
 import com.spectrum.workfolio.services.uitemplate.UITemplateService
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 
@@ -25,6 +28,34 @@ class AdminUITemplateController(
                 t.toProto(plans, images)
             })
             .build()
+    }
+
+    @GetMapping("/owned")
+    fun getOwnedTemplates(
+        @RequestParam workerId: String,
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "20") size: Int,
+    ): WorkerUITemplateListResponse {
+        val pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "purchasedAt"))
+        val workerUITemplatesPage = uiTemplateService.getMyUITemplates(workerId, pageable)
+
+        return WorkerUITemplateListResponse.newBuilder()
+            .addAllWorkerUiTemplates(workerUITemplatesPage.content.map { it.toProto() })
+            .setTotalElements(workerUITemplatesPage.totalElements.toInt())
+            .setTotalPages(workerUITemplatesPage.totalPages)
+            .setCurrentPage(page)
+            .build()
+    }
+
+    @GetMapping("/worker-defaults")
+    fun getWorkerDefaultTemplates(
+        @RequestParam workerId: String,
+    ): DefaultUITemplateResponse {
+        val (urlTemplate, pdfTemplate) = uiTemplateService.getDefaultUITemplates(workerId)
+        val builder = DefaultUITemplateResponse.newBuilder()
+        urlTemplate?.let { builder.setDefaultUrlUiTemplate(it.toProto()) }
+        pdfTemplate?.let { builder.setDefaultPdfUiTemplate(it.toProto()) }
+        return builder.build()
     }
 
     @GetMapping("/{id}")
@@ -49,7 +80,6 @@ class AdminUITemplateController(
             durationDays = request.durationDays,
             urlPath = if (request.hasUrlPath()) request.urlPath else null,
             isActive = request.isActive,
-            isPopular = request.isPopular,
             displayOrder = request.displayOrder,
         )
         return UITemplateGetResponse.newBuilder()
@@ -73,7 +103,6 @@ class AdminUITemplateController(
             durationDays = request.durationDays,
             urlPath = if (request.hasUrlPath()) request.urlPath else null,
             isActive = request.isActive,
-            isPopular = request.isPopular,
             displayOrder = request.displayOrder,
         )
         val plans = uiTemplateService.getPlansByUiTemplateId(id)
@@ -95,10 +124,10 @@ class AdminUITemplateController(
         @RequestParam("files") files: List<MultipartFile>,
         @RequestParam(defaultValue = "DETAIL") imageType: String,
     ): AdminUITemplateImageListResponse {
-        val type = UITemplateImageType.valueOf(imageType)
-        val images = uiTemplateService.uploadTemplateImages(id, files, type)
+        val extType = ImageExtType.valueOf(imageType)
+        val images = uiTemplateService.uploadTemplateImages(id, files, extType)
         return AdminUITemplateImageListResponse.newBuilder()
-            .addAllImages(images.map { it.toProto() })
+            .addAllImages(images.map { it.toUITemplateImageProto() })
             .build()
     }
 

@@ -9,6 +9,7 @@ import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import com.spectrum.workfolio.utils.BusinessEventLogger
 import org.springframework.transaction.annotation.Transactional
 import java.math.BigDecimal
 
@@ -54,6 +55,18 @@ class PaymentService(
         )
         val savedPayment = paymentRepository.save(payment)
 
+        BusinessEventLogger.logEvent(
+            eventType = "PAYMENT_CREATED",
+            message = "결제 생성: paymentId=${savedPayment.id}",
+            workerId = workerId,
+            paymentId = savedPayment.id,
+            amount = savedPayment.amount.toInt(),
+            status = "PENDING",
+            referenceId = creditPlanId,
+            referenceType = "CREDIT_PLAN",
+            extra = mapOf("payment_method" to paymentMethod),
+        )
+
         val tx = PaymentTx(
             paymentId = savedPayment.id,
             transactionType = "PAYMENT",
@@ -82,6 +95,17 @@ class PaymentService(
         }
 
         paymentRepository.save(payment)
+
+        BusinessEventLogger.logEvent(
+            eventType = "PAYMENT_CONFIRMED",
+            message = "결제 확인 완료: paymentId=$paymentId",
+            workerId = payment.workerId,
+            paymentId = paymentId,
+            amount = payment.amount.toInt(),
+            status = "COMPLETED",
+            referenceId = providerPaymentId,
+            referenceType = "TOSS",
+        )
 
         // 크레딧 추가 → CreditHistory 자동 생성
         val baseCredits = payment.creditsToAdd

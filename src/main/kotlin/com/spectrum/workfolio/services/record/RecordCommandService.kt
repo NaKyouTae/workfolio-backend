@@ -71,12 +71,19 @@ class RecordCommandService(
         val startedAt = TimeUtil.ofEpochMilli(request.startedAt)
         val endedAt = TimeUtil.ofEpochMilli(request.endedAt)
 
+        val newRecordGroup = if (request.recordGroupId.isNotBlank()) {
+            recordGroupService.getRecordGroup(request.recordGroupId)
+        } else {
+            null
+        }
+
         record.changeInfo(
             title = request.title,
             description = request.description,
             type = generateRecordType(startedAt, endedAt),
             startedAt = startedAt,
             endedAt = endedAt,
+            recordGroup = newRecordGroup,
         )
 
         val updatedRecord = recordRepository.save(record)

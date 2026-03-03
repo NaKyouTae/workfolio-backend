@@ -1,0 +1,32 @@
+# Git
+.git
+.gitignore
+
+# Build output (JAR만 허용)
+build/
+!build/libs/
+!build/libs/*.jar
+.gradle/
+out/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Docker
+docker-compose*.yml
+docker-compose.env
+Dockerfile
+Dockerfile.render
+
+# Scripts & Config (런타임에 불필요)
+scripts/
+
+# Docs
+*.md
+LICENSE
+
+# Env
+.env
+*.pem

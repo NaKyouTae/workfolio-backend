@@ -20,7 +20,6 @@ class UITemplate(
     durationDays: Int,
     urlPath: String? = null,
     isActive: Boolean = true,
-    isPopular: Boolean = false,
     displayOrder: Int = 0,
 ) : BaseEntity("UT") {
 
@@ -57,16 +56,8 @@ class UITemplate(
     var isActive: Boolean = isActive
         protected set
 
-    @Column(name = "is_popular", nullable = false)
-    var isPopular: Boolean = isPopular
-        protected set
-
     @Column(name = "display_order", nullable = false)
     var displayOrder: Int = displayOrder
-        protected set
-
-    @OneToMany(mappedBy = "uiTemplate", fetch = FetchType.LAZY)
-    var images: MutableList<UITemplateImage> = mutableListOf()
         protected set
 
     fun changeInfo(
@@ -78,7 +69,6 @@ class UITemplate(
         durationDays: Int,
         urlPath: String?,
         isActive: Boolean,
-        isPopular: Boolean,
         displayOrder: Int,
     ) {
         this.name = name
@@ -89,7 +79,6 @@ class UITemplate(
         this.durationDays = durationDays
         this.urlPath = urlPath
         this.isActive = isActive
-        this.isPopular = isPopular
         this.displayOrder = displayOrder
     }
 

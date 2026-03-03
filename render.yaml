@@ -1,0 +1,37 @@
+services:
+  # ── Spring Boot Backend ──
+  - type: web
+    name: workfolio-server
+    env: docker
+    region: singapore
+    plan: standard
+    dockerfilePath: ./Dockerfile.render
+    healthCheckPath: /actuator/health
+    envVars:
+      # Render 포트 설정 (Spring Boot server.port=9000과 일치)
+      - key: PORT
+        value: "9000"
+      # Spring 프로파일
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      # Supabase DB 비밀번호 (Dashboard에서 직접 입력)
+      - key: DB_PASSWORD
+        sync: false
+      # Supabase Storage 키 (Dashboard에서 직접 입력)
+      - key: SUPABASE_ACCESS_KEY
+        sync: false
+      - key: SUPABASE_SECRET_KEY
+        sync: false
+      # Redis 연결 (Key Value 서비스에서 자동 주입)
+      - key: SPRING_DATA_REDIS_URL
+        fromService:
+          name: workfolio-redis
+          type: redis
+          property: connectionString
+
+  # ── Redis (Key Value Store) ──
+  - type: redis
+    name: workfolio-redis
+    region: singapore
+    plan: free
+    maxmemoryPolicy: allkeys-lru

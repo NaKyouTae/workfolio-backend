@@ -8,7 +8,7 @@ import com.spectrum.workfolio.utils.TimeUtil
  * Resume 엔티티를 Proto 메시지로 변환하는 Extension 함수들
  */
 
-fun Resume.toProto(): com.spectrum.workfolio.proto.common.Resume {
+fun Resume.toProto(profileImageUrl: String? = null): com.spectrum.workfolio.proto.common.Resume {
     val builder = com.spectrum.workfolio.proto.common.Resume.newBuilder()
 
     builder.setId(this.id)
@@ -20,6 +20,10 @@ fun Resume.toProto(): com.spectrum.workfolio.proto.common.Resume {
     builder.setIsPublic(this.isPublic)
     builder.setIsDefault(this.isDefault)
     builder.setDescription(this.description)
+
+    if (!profileImageUrl.isNullOrBlank()) {
+        builder.setProfileImageUrl(profileImageUrl)
+    }
 
     builder.setWorker(this.worker.toProto())
 
@@ -38,7 +42,7 @@ fun Resume.toProto(): com.spectrum.workfolio.proto.common.Resume {
     return builder.build()
 }
 
-fun Resume.toDetailProto(attachments: List<Attachment>): com.spectrum.workfolio.proto.common.ResumeDetail {
+fun Resume.toDetailProto(attachments: List<Attachment>, profileImageUrl: String? = null): com.spectrum.workfolio.proto.common.ResumeDetail {
     val builder = com.spectrum.workfolio.proto.common.ResumeDetail.newBuilder()
 
     builder.setId(this.id)
@@ -51,6 +55,10 @@ fun Resume.toDetailProto(attachments: List<Attachment>): com.spectrum.workfolio.
     builder.setIsPublic(this.isPublic)
     builder.setIsDefault(this.isDefault)
     builder.setDescription(this.description)
+
+    if (!profileImageUrl.isNullOrBlank()) {
+        builder.setProfileImageUrl(profileImageUrl)
+    }
 
     builder.setWorker(this.worker.toProto())
 

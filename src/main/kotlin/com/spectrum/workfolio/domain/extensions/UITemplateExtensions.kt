@@ -1,10 +1,10 @@
 package com.spectrum.workfolio.domain.extensions
 
+import com.spectrum.workfolio.domain.entity.Image
 import com.spectrum.workfolio.domain.entity.uitemplate.UiTemplatePlan
 import com.spectrum.workfolio.domain.entity.uitemplate.UITemplate
-import com.spectrum.workfolio.domain.entity.uitemplate.UITemplateImage
 import com.spectrum.workfolio.domain.entity.uitemplate.WorkerUITemplate
-import com.spectrum.workfolio.domain.enums.UITemplateImageType
+import com.spectrum.workfolio.domain.enums.ImageExtType
 import com.spectrum.workfolio.domain.enums.UITemplateType
 import com.spectrum.workfolio.utils.TimeUtil
 
@@ -17,25 +17,26 @@ fun UiTemplatePlan.toProto(): com.spectrum.workfolio.proto.common.UiTemplatePlan
         .build()
 }
 
-fun UITemplateImage.toProto(): com.spectrum.workfolio.proto.common.UITemplateImage {
+fun Image.toUITemplateImageProto(): com.spectrum.workfolio.proto.common.UITemplateImage {
     val builder = com.spectrum.workfolio.proto.common.UITemplateImage.newBuilder()
     builder.setId(this.id)
-    builder.setImageType(this.imageType.toProtoImageType())
-    builder.setImageUrl(this.imageUrl)
-    builder.setDisplayOrder(this.displayOrder)
+    builder.setImageType(this.extType.toProtoImageType())
+    builder.setImageUrl(this.url)
+    builder.setDisplayOrder(this.priority)
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))
     return builder.build()
 }
 
-fun UITemplateImageType.toProtoImageType(): com.spectrum.workfolio.proto.common.UITemplateImage.UITemplateImageType {
+fun ImageExtType.toProtoImageType(): com.spectrum.workfolio.proto.common.UITemplateImage.UITemplateImageType {
     return when (this) {
-        UITemplateImageType.THUMBNAIL -> com.spectrum.workfolio.proto.common.UITemplateImage.UITemplateImageType.THUMBNAIL
-        UITemplateImageType.DETAIL -> com.spectrum.workfolio.proto.common.UITemplateImage.UITemplateImageType.DETAIL
+        ImageExtType.THUMBNAIL -> com.spectrum.workfolio.proto.common.UITemplateImage.UITemplateImageType.THUMBNAIL
+        ImageExtType.DETAIL -> com.spectrum.workfolio.proto.common.UITemplateImage.UITemplateImageType.DETAIL
+        else -> com.spectrum.workfolio.proto.common.UITemplateImage.UITemplateImageType.IMAGE_TYPE_UNKNOWN
     }
 }
 
-fun UITemplate.toProto(plans: List<UiTemplatePlan>? = null, images: List<UITemplateImage>? = null): com.spectrum.workfolio.proto.common.UITemplate {
+fun UITemplate.toProto(plans: List<UiTemplatePlan>? = null, images: List<Image>? = null): com.spectrum.workfolio.proto.common.UITemplate {
     val builder = com.spectrum.workfolio.proto.common.UITemplate.newBuilder()
 
     builder.setId(this.id)
@@ -53,13 +54,12 @@ fun UITemplate.toProto(plans: List<UiTemplatePlan>? = null, images: List<UITempl
         builder.setLabel(this.label)
     }
     builder.setIsActive(this.isActive)
-    builder.setIsPopular(this.isPopular)
     builder.setDisplayOrder(this.displayOrder)
     if (!plans.isNullOrEmpty()) {
         builder.addAllPlans(plans.map { it.toProto() })
     }
     if (!images.isNullOrEmpty()) {
-        builder.addAllImages(images.map { it.toProto() })
+        builder.addAllImages(images.map { it.toUITemplateImageProto() })
     }
 
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
@@ -82,9 +82,11 @@ fun WorkerUITemplate.toProto(): com.spectrum.workfolio.proto.common.WorkerUITemp
     builder.setPurchasedAt(TimeUtil.toEpochMilli(this.purchasedAt))
     builder.setExpiredAt(TimeUtil.toEpochMilli(this.expiredAt))
     builder.setCreditsUsed(this.creditsUsed)
-    builder.setIsActive(this.isActive)
+    builder.setStatus(this.status.name)
     builder.setIsExpired(this.isExpired())
     builder.setIsValid(this.isValid())
+    builder.setIsDefault(this.isDefault)
+    builder.setTemplateType(this.templateType.name)
 
     builder.setWorker(this.worker.toProto())
     builder.setUiTemplate(this.uiTemplate.toProto())

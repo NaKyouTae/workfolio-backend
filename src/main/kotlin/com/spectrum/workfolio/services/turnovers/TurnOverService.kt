@@ -236,6 +236,7 @@ class TurnOverService(
                 joinedAt = TimeUtil.ofEpochMilliNullable(request.turnOverRetrospective.joinedAt)?.toLocalDate(),
                 workType = request.turnOverRetrospective.workType,
                 employmentType = convertProtoEnumSafe<EmploymentType>(request.turnOverRetrospective.employmentType),
+                endedAt = TimeUtil.ofEpochMilliNullable(request.turnOverRetrospective.endedAt)?.toLocalDate(),
             )
 
             // Upsert collections
@@ -285,6 +286,7 @@ class TurnOverService(
                 joinedAt = TimeUtil.ofEpochMilliNullable(request.turnOverRetrospective.joinedAt)?.toLocalDate(),
                 workType = request.turnOverRetrospective.workType,
                 employmentType = convertProtoEnumSafe<EmploymentType>(request.turnOverRetrospective.employmentType),
+                endedAt = TimeUtil.ofEpochMilliNullable(request.turnOverRetrospective.endedAt)?.toLocalDate(),
             )
 
             val turnOver = TurnOver(
@@ -552,6 +554,7 @@ class TurnOverService(
             joinedAt = originalTurnOver.turnOverRetrospective.joinedAt,
             workType = originalTurnOver.turnOverRetrospective.workType,
             employmentType = originalTurnOver.turnOverRetrospective.employmentType,
+            endedAt = originalTurnOver.turnOverRetrospective.endedAt,
         )
 
         // 3. 새로운 TurnOver 생성

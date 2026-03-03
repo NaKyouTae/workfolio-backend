@@ -1,0 +1,44 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: workfolio-server
+    docker_sd_configs:
+      - host: unix:///var/run/docker.sock
+        refresh_interval: 5s
+        filters:
+          - name: name
+            values: ["workfolio-server"]
+    relabel_configs:
+      - source_labels: ['__meta_docker_container_name']
+        regex: '/(.*)'
+        target_label: 'container'
+      - source_labels: ['__meta_docker_container_log_stream']
+        target_label: 'logstream'
+      - source_labels: ['__meta_docker_container_label_com_docker_compose_service']
+        target_label: 'service'
+    pipeline_stages:
+      - docker: {}
+      - json:
+          expressions:
+            level: level
+            logger_name: logger_name
+            event_type: event_type
+            application: application
+      - labels:
+          level:
+          logger_name:
+          event_type:
+          application:
+      - timestamp:
+          source: "@timestamp"
+          format: "2006-01-02T15:04:05.000Z07:00"
+          fallback_formats:
+            - "2006-01-02T15:04:05.000Z"

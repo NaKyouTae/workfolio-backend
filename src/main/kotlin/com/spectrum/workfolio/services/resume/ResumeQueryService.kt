@@ -9,6 +9,7 @@ import com.spectrum.workfolio.proto.resume.AdminResumeListResponse
 import com.spectrum.workfolio.proto.resume.ResumeDetailListResponse
 import com.spectrum.workfolio.proto.resume.ResumeListResponse
 import com.spectrum.workfolio.services.AttachmentQueryService
+import com.spectrum.workfolio.services.ImageService
 import com.spectrum.workfolio.utils.TimeUtil
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.data.domain.PageRequest
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional
 class ResumeQueryService(
     private val resumeRepository: ResumeRepository,
     private val attachmentQueryService: AttachmentQueryService,
+    private val imageService: ImageService,
 ) {
 
     fun getResume(id: String): Resume {
@@ -41,8 +43,11 @@ class ResumeQueryService(
 
     fun listResumesResult(workerId: String): ResumeListResponse {
         val resumes = resumeRepository.findByWorkerIdOrderByIsDefaultDescUpdatedAtDesc(workerId)
+        val resumeIds = resumes.map { it.id }
+        val profileImageUrls = imageService.getProfileImageUrls(resumeIds)
+
         return ResumeListResponse.newBuilder()
-            .addAllResumes(resumes.map { it.toProto() })
+            .addAllResumes(resumes.map { it.toProto(profileImageUrls[it.id]) })
             .build()
     }
 
@@ -52,8 +57,11 @@ class ResumeQueryService(
         val pageable = PageRequest.of(safePage, safeSize)
         val resumesPage = resumeRepository.findByWorkerIdOrderByIsDefaultDescUpdatedAtDesc(workerId, pageable)
 
+        val resumeIds = resumesPage.content.map { it.id }
+        val profileImageUrls = imageService.getProfileImageUrls(resumeIds)
+
         return AdminResumeListResponse.newBuilder()
-            .addAllResumes(resumesPage.content.map { it.toProto() })
+            .addAllResumes(resumesPage.content.map { it.toProto(profileImageUrls[it.id]) })
             .setTotalElements(resumesPage.totalElements.toInt())
             .setTotalPages(resumesPage.totalPages)
             .setCurrentPage(safePage)
@@ -64,16 +72,18 @@ class ResumeQueryService(
         val resumes = resumeRepository.findByWorkerIdOrderByIsDefaultDescUpdatedAtDesc(workerId)
         val resumeIds = resumes.map { it.id }
         val attachments = attachmentQueryService.listAttachments(resumeIds)
+        val profileImageUrls = imageService.getProfileImageUrls(resumeIds)
 
         return ResumeDetailListResponse.newBuilder()
-            .addAllResumes(resumes.map { it.toDetailProto(attachments) })
+            .addAllResumes(resumes.map { it.toDetailProto(attachments, profileImageUrls[it.id]) })
             .build()
     }
 
     fun getResumeDetailResult(id: String): com.spectrum.workfolio.proto.common.ResumeDetail {
         val resume = getResume(id)
         val attachments = attachmentQueryService.listAttachments(listOf(resume.id))
-        return resume.toDetailProto(attachments)
+        val profileImageUrl = imageService.getProfileImageUrl(resume.id)
+        return resume.toDetailProto(attachments, profileImageUrl)
     }
 
     fun getPublicResumeDetailByPublicId(publicId: String): com.spectrum.workfolio.proto.common.ResumeDetail? {
@@ -81,6 +91,7 @@ class ResumeQueryService(
         val resume = resumeRepository.findByPublicIdAndIsPublicTrue(publicId, today) ?: return null
 
         val attachments = attachmentQueryService.listAttachments(listOf(resume.id))
-        return resume.toDetailProto(attachments)
+        val profileImageUrl = imageService.getProfileImageUrl(resume.id)
+        return resume.toDetailProto(attachments, profileImageUrl)
     }
 }

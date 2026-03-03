@@ -23,6 +23,9 @@ fun TurnOverRetrospective.toProto(turnOverId: String): com.spectrum.workfolio.pr
     if (this.joinedAt != null) {
         builder.setJoinedAt(TimeUtil.toEpochMilli(this.joinedAt!!))
     }
+    if (this.endedAt != null) {
+        builder.setEndedAt(TimeUtil.toEpochMilli(this.endedAt!!))
+    }
     if (this.employmentType != null) {
         builder.setEmploymentType(
             com.spectrum.workfolio.proto.common.TurnOverRetrospective.EmploymentType.valueOf(this.employmentType!!.name),
@@ -52,6 +55,9 @@ fun TurnOverRetrospective.toDetailProto(memos: List<Memo>, attachments: List<Att
 
     if (this.joinedAt != null) {
         builder.setJoinedAt(TimeUtil.toEpochMilli(this.joinedAt!!))
+    }
+    if (this.endedAt != null) {
+        builder.setEndedAt(TimeUtil.toEpochMilli(this.endedAt!!))
     }
     if (this.employmentType != null) {
         builder.setEmploymentType(

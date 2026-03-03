@@ -76,12 +76,16 @@ class Record(
         type: RecordType,
         startedAt: LocalDateTime,
         endedAt: LocalDateTime? = null,
+        recordGroup: RecordGroup? = null,
     ) {
         this.title = title
         this.description = description
         this.type = type
         this.startedAt = startedAt
         this.endedAt = endedAt
+        if (recordGroup != null) {
+            this.recordGroup = recordGroup
+        }
     }
 
     companion object {
