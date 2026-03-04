@@ -1,0 +1,351 @@
+apiVersion: 1
+
+groups:
+  # ============================================
+  # CRITICAL - 즉시 대응 (Slack)
+  # ============================================
+  - orgId: 1
+    name: critical-alerts
+    folder: Workfolio Alerts
+    interval: 10s
+    rules:
+      # 서버 다운
+      - uid: server-down
+        title: "[${ENV}] 서버 다운"
+        noDataState: OK
+        execErrState: OK
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: Prometheus
+            model:
+              expr: up{job="workfolio-api"}
+              refId: A
+          - refId: B
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: __expr__
+            model:
+              type: reduce
+              expression: A
+              reducer: last
+              refId: B
+          - refId: C
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: __expr__
+            model:
+              type: threshold
+              expression: B
+              conditions:
+                - evaluator: { type: lt, params: [1] }
+              refId: C
+        for: 0s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Workfolio API 서버가 다운되었습니다"
+          description: "서버가 응답하지 않습니다. 즉시 확인이 필요합니다."
+
+      # 에러율 5% 초과
+      - uid: high-error-rate
+        title: "[${ENV}] 에러율 급증 (5xx > 5%)"
+        noDataState: OK
+        execErrState: OK
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: Prometheus
+            model:
+              expr: sum(rate(http_server_requests_seconds_count{job="workfolio-api",status=~"5.."}[5m])) / (sum(rate(http_server_requests_seconds_count{job="workfolio-api"}[5m])) > 0)
+              refId: A
+          - refId: B
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: __expr__
+            model:
+              type: reduce
+              expression: A
+              reducer: last
+              refId: B
+          - refId: C
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: __expr__
+            model:
+              type: threshold
+              expression: B
+              conditions:
+                - evaluator: { type: gt, params: [0.05] }
+              refId: C
+        for: 0s
+        labels:
+          severity: critical
+        annotations:
+          summary: "HTTP 5xx 에러율이 5%를 초과했습니다"
+          description: "현재 에러율: {{ $values.B }}. 서비스에 심각한 문제가 발생했을 수 있습니다."
+
+      # HikariCP 커넥션 풀 고갈
+      - uid: hikaricp-exhausted
+        title: "[${ENV}] DB 커넥션 풀 고갈"
+        noDataState: OK
+        execErrState: OK
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: Prometheus
+            model:
+              expr: max(hikaricp_connections_active{job="workfolio-api"} / (hikaricp_connections_max{job="workfolio-api"} > 0))
+              refId: A
+          - refId: B
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: __expr__
+            model:
+              type: reduce
+              expression: A
+              reducer: last
+              refId: B
+          - refId: C
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: __expr__
+            model:
+              type: threshold
+              expression: B
+              conditions:
+                - evaluator: { type: gt, params: [0.9] }
+              refId: C
+        for: 0s
+        labels:
+          severity: critical
+        annotations:
+          summary: "HikariCP 커넥션 풀이 90% 이상 사용 중입니다"
+          description: "DB 커넥션이 곧 고갈됩니다. 커넥션 누수 또는 슬로우 쿼리를 확인하세요."
+
+      # OOM 위험 (Heap 90% 이상)
+      - uid: jvm-heap-critical
+        title: "[${ENV}] JVM Heap 메모리 위험"
+        noDataState: OK
+        execErrState: OK
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: Prometheus
+            model:
+              expr: jvm_memory_used_bytes{job="workfolio-api",id="G1 Old Gen"} / jvm_memory_max_bytes{job="workfolio-api",id="G1 Old Gen"}
+              refId: A
+          - refId: B
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: __expr__
+            model:
+              type: reduce
+              expression: A
+              reducer: last
+              refId: B
+          - refId: C
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: __expr__
+            model:
+              type: threshold
+              expression: B
+              conditions:
+                - evaluator: { type: gt, params: [0.9] }
+              refId: C
+        for: 0s
+        labels:
+          severity: critical
+        annotations:
+          summary: "JVM Heap Old Gen 메모리가 90%를 초과했습니다"
+          description: "OOM 위험이 있습니다. 메모리 누수를 점검하세요."
+
+  # ============================================
+  # WARNING - 주의 필요 (Slack)
+  # ============================================
+  - orgId: 1
+    name: warning-alerts
+    folder: Workfolio Alerts
+    interval: 2m
+    rules:
+      # 응답시간 느림
+      - uid: slow-response
+        title: "[${ENV}] 응답시간 느림 (p95 > 1s)"
+        noDataState: OK
+        execErrState: OK
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange: { from: 600, to: 0 }
+            datasourceUid: Prometheus
+            model:
+              expr: histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{job="workfolio-api"}[5m])) by (le)) > 0
+              refId: A
+          - refId: B
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: __expr__
+            model:
+              type: reduce
+              expression: A
+              reducer: last
+              refId: B
+          - refId: C
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: __expr__
+            model:
+              type: threshold
+              expression: B
+              conditions:
+                - evaluator: { type: gt, params: [1] }
+              refId: C
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "응답시간 p95가 1초를 초과했습니다"
+          description: "현재 p95: {{ $values.B }}s. 느린 API를 확인하세요."
+
+      # 에러율 1% 초과
+      - uid: elevated-error-rate
+        title: "[${ENV}] 에러율 상승 (5xx > 1%)"
+        noDataState: OK
+        execErrState: OK
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: Prometheus
+            model:
+              expr: sum(rate(http_server_requests_seconds_count{job="workfolio-api",status=~"5.."}[5m])) / (sum(rate(http_server_requests_seconds_count{job="workfolio-api"}[5m])) > 0)
+              refId: A
+          - refId: B
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: __expr__
+            model:
+              type: reduce
+              expression: A
+              reducer: last
+              refId: B
+          - refId: C
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: __expr__
+            model:
+              type: threshold
+              expression: B
+              conditions:
+                - evaluator: { type: gt, params: [0.01] }
+              refId: C
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "HTTP 5xx 에러율이 1%를 초과했습니다"
+          description: "현재 에러율: {{ $values.B }}. 에러 로그를 확인하세요."
+
+      # JVM Heap 70% 초과
+      - uid: jvm-heap-warning
+        title: "[${ENV}] JVM Heap 메모리 주의"
+        noDataState: OK
+        execErrState: OK
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: Prometheus
+            model:
+              expr: jvm_memory_used_bytes{job="workfolio-api",id="G1 Old Gen"} / jvm_memory_max_bytes{job="workfolio-api",id="G1 Old Gen"}
+              refId: A
+          - refId: B
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: __expr__
+            model:
+              type: reduce
+              expression: A
+              reducer: last
+              refId: B
+          - refId: C
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: __expr__
+            model:
+              type: threshold
+              expression: B
+              conditions:
+                - evaluator: { type: gt, params: [0.7] }
+              refId: C
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "JVM Heap Old Gen 메모리가 70%를 초과했습니다"
+          description: "메모리 사용량이 증가 추세입니다. 모니터링을 강화하세요."
+
+      # Tomcat 스레드 풀 80% 초과
+      - uid: tomcat-threads-high
+        title: "[${ENV}] Tomcat 스레드 부족"
+        noDataState: OK
+        execErrState: OK
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: Prometheus
+            model:
+              expr: tomcat_threads_busy_threads{job="workfolio-api"} / (tomcat_threads_config_max_threads{job="workfolio-api"} > 0)
+              refId: A
+          - refId: B
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: __expr__
+            model:
+              type: reduce
+              expression: A
+              reducer: last
+              refId: B
+          - refId: C
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: __expr__
+            model:
+              type: threshold
+              expression: B
+              conditions:
+                - evaluator: { type: gt, params: [0.8] }
+              refId: C
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Tomcat 스레드 사용률이 80%를 초과했습니다"
+          description: "요청 처리 용량이 부족해질 수 있습니다."
+
+      # GC Pause 길어짐
+      - uid: gc-pause-high
+        title: "[${ENV}] GC Pause 시간 증가"
+        noDataState: OK
+        execErrState: OK
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: Prometheus
+            model:
+              expr: sum(rate(jvm_gc_pause_seconds_sum{job="workfolio-api"}[5m]))
+              refId: A
+          - refId: B
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: __expr__
+            model:
+              type: reduce
+              expression: A
+              reducer: last
+              refId: B
+          - refId: C
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: __expr__
+            model:
+              type: threshold
+              expression: B
+              conditions:
+                - evaluator: { type: gt, params: [0.05] }
+              refId: C
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "GC Pause 시간이 비정상적으로 길어지고 있습니다"
+          description: "JVM 힙 메모리 부족 또는 메모리 누수 가능성이 있습니다."

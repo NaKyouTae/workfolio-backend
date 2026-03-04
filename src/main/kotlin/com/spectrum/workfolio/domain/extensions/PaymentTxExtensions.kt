@@ -12,7 +12,7 @@ fun PaymentTx.toProto(): com.spectrum.workfolio.proto.common.PaymentTx {
             com.spectrum.workfolio.proto.common.PaymentTx.TransactionType.valueOf(this.transactionType)
         } catch (e: IllegalArgumentException) {
             com.spectrum.workfolio.proto.common.PaymentTx.TransactionType.TYPE_UNKNOWN
-        }
+        },
     )
     builder.setStatus(this.status)
     builder.setAmount(this.amount.toLong())

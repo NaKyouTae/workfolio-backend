@@ -2,14 +2,14 @@ package com.spectrum.workfolio.services.uitemplate
 
 import com.spectrum.workfolio.domain.entity.Image
 import com.spectrum.workfolio.domain.entity.Worker
-import com.spectrum.workfolio.domain.entity.uitemplate.UiTemplatePlan
 import com.spectrum.workfolio.domain.entity.uitemplate.UITemplate
+import com.spectrum.workfolio.domain.entity.uitemplate.UiTemplatePlan
 import com.spectrum.workfolio.domain.entity.uitemplate.WorkerUITemplate
 import com.spectrum.workfolio.domain.enums.ImageExtType
 import com.spectrum.workfolio.domain.enums.ImageTargetType
 import com.spectrum.workfolio.domain.enums.UITemplateType
-import com.spectrum.workfolio.domain.repository.UiTemplatePlanRepository
 import com.spectrum.workfolio.domain.repository.UITemplateRepository
+import com.spectrum.workfolio.domain.repository.UiTemplatePlanRepository
 import com.spectrum.workfolio.domain.repository.WorkerRepository
 import com.spectrum.workfolio.domain.repository.WorkerUITemplateRepository
 import com.spectrum.workfolio.services.CreditService
@@ -86,13 +86,17 @@ class UITemplateService(
 
         // Check if already owns valid template → extend expiration
         val existingTemplate = workerUITemplateRepository.findValidByWorkerAndUITemplate(
-            worker, uiTemplate, now
+            worker,
+            uiTemplate,
+            now,
         )
 
         // Check if there's an expired template → reactivate instead of creating new row
         val expiredTemplate = if (existingTemplate == null) {
             workerUITemplateRepository.findExpiredByWorkerAndUITemplate(worker, uiTemplate, now)
-        } else null
+        } else {
+            null
+        }
 
         val periodStart = existingTemplate?.expiredAt ?: now
         val periodEnd = periodStart.plusDays(durationDays.toLong())
@@ -102,7 +106,11 @@ class UITemplateService(
             else -> "구매"
         }
         val creditHistoryDescription =
-            "${uiTemplate.name} 템플릿 $actionText (${durationDays}일, ${periodStart.format(periodFormatter)} ~ ${periodEnd.format(periodFormatter)})"
+            "${uiTemplate.name} 템플릿 $actionText (${durationDays}일, ${periodStart.format(periodFormatter)} ~ ${
+                periodEnd.format(
+                    periodFormatter,
+                )
+            })"
 
         // Check and use credits
         if (!worker.hasEnoughCredits(price)) {
@@ -221,9 +229,9 @@ class UITemplateService(
         val uiTemplate = getUITemplateById(uiTemplateId)
 
         // Verify ownership
-        val ownership = workerUITemplateRepository.findValidByWorkerAndUITemplate(
-            worker, uiTemplate, LocalDateTime.now()
-        ) ?: throw WorkfolioException("해당 템플릿을 보유하고 있지 않습니다.")
+        val ownership = workerUITemplateRepository
+            .findValidByWorkerAndUITemplate(worker, uiTemplate, LocalDateTime.now())
+            ?: throw WorkfolioException("해당 템플릿을 보유하고 있지 않습니다.")
 
         if (!ownership.isValid()) {
             throw WorkfolioException("만료되었거나 비활성화된 템플릿입니다.")

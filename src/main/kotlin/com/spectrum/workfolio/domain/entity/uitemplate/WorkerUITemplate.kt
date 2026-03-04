@@ -4,7 +4,15 @@ import com.spectrum.workfolio.domain.entity.BaseEntity
 import com.spectrum.workfolio.domain.entity.Worker
 import com.spectrum.workfolio.domain.enums.UITemplateType
 import com.spectrum.workfolio.domain.enums.WorkerUITemplateStatus
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
+import jakarta.persistence.FetchType
+import jakarta.persistence.Index
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.Table
 import java.time.LocalDateTime
 
 @Entity
@@ -12,7 +20,10 @@ import java.time.LocalDateTime
     name = "worker_ui_templates",
     indexes = [
         Index(name = "idx_worker_ui_templates_worker_status", columnList = "worker_id, status"),
-        Index(name = "idx_worker_ui_templates_worker_template_expired", columnList = "worker_id, template_id, expired_at"),
+        Index(
+            name = "idx_worker_ui_templates_worker_template_expired",
+            columnList = "worker_id, template_id, expired_at",
+        ),
         Index(name = "idx_worker_ui_templates_expired", columnList = "expired_at"),
     ],
 )

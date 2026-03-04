@@ -15,49 +15,64 @@ import java.time.LocalDateTime
 
 @Repository
 interface WorkerUITemplateRepository : JpaRepository<WorkerUITemplate, String> {
-    @Query("""
+    @Query(
+        """
         SELECT wt FROM WorkerUITemplate wt
         JOIN FETCH wt.worker
         JOIN FETCH wt.uiTemplate
         WHERE wt.worker = :worker AND wt.status = com.spectrum.workfolio.domain.enums.WorkerUITemplateStatus.ACTIVE
-    """)
+    """,
+    )
     fun findByWorkerAndStatusActive(@Param("worker") worker: Worker): List<WorkerUITemplate>
 
-    @Query("""
+    @Query(
+        """
         SELECT wt FROM WorkerUITemplate wt
         JOIN FETCH wt.worker
         JOIN FETCH wt.uiTemplate
         WHERE wt.worker = :worker AND wt.status = com.spectrum.workfolio.domain.enums.WorkerUITemplateStatus.ACTIVE
         ORDER BY wt.purchasedAt DESC
     """,
-    countQuery = """
+        countQuery = """
         SELECT COUNT(wt) FROM WorkerUITemplate wt
         WHERE wt.worker = :worker AND wt.status = com.spectrum.workfolio.domain.enums.WorkerUITemplateStatus.ACTIVE
-    """)
-    fun findByWorkerAndStatusActiveOrderByPurchasedAtDesc(@Param("worker") worker: Worker, pageable: Pageable): Page<WorkerUITemplate>
+    """,
+    )
+    fun findByWorkerAndStatusActiveOrderByPurchasedAtDesc(
+        @Param("worker") worker: Worker,
+        pageable: Pageable,
+    ): Page<WorkerUITemplate>
 
-    @Query("""
+    @Query(
+        """
         SELECT wt FROM WorkerUITemplate wt
         JOIN FETCH wt.worker
         JOIN FETCH wt.uiTemplate
         WHERE wt.worker = :worker AND wt.uiTemplate = :uiTemplate AND wt.status = com.spectrum.workfolio.domain.enums.WorkerUITemplateStatus.ACTIVE
-    """)
-    fun findByWorkerAndUiTemplateAndStatusActive(@Param("worker") worker: Worker, @Param("uiTemplate") uiTemplate: UITemplate): WorkerUITemplate?
+    """,
+    )
+    fun findByWorkerAndUiTemplateAndStatusActive(
+        @Param("worker") worker: Worker,
+        @Param("uiTemplate") uiTemplate: UITemplate,
+    ): WorkerUITemplate?
 
-    @Query("""
+    @Query(
+        """
         SELECT wt FROM WorkerUITemplate wt
         JOIN FETCH wt.worker
         JOIN FETCH wt.uiTemplate
         WHERE wt.worker = :worker
         AND wt.status = com.spectrum.workfolio.domain.enums.WorkerUITemplateStatus.ACTIVE
         AND wt.expiredAt > :now
-    """)
+    """,
+    )
     fun findActiveByWorker(
         @Param("worker") worker: Worker,
-        @Param("now") now: LocalDateTime = LocalDateTime.now()
+        @Param("now") now: LocalDateTime = LocalDateTime.now(),
     ): List<WorkerUITemplate>
 
-    @Query("""
+    @Query(
+        """
         SELECT wt FROM WorkerUITemplate wt
         JOIN FETCH wt.worker
         JOIN FETCH wt.uiTemplate
@@ -65,14 +80,16 @@ interface WorkerUITemplateRepository : JpaRepository<WorkerUITemplate, String> {
         AND wt.uiTemplate = :uiTemplate
         AND wt.status = com.spectrum.workfolio.domain.enums.WorkerUITemplateStatus.ACTIVE
         AND wt.expiredAt > :now
-    """)
+    """,
+    )
     fun findValidByWorkerAndUITemplate(
         @Param("worker") worker: Worker,
         @Param("uiTemplate") uiTemplate: UITemplate,
-        @Param("now") now: LocalDateTime = LocalDateTime.now()
+        @Param("now") now: LocalDateTime = LocalDateTime.now(),
     ): WorkerUITemplate?
 
-    @Query("""
+    @Query(
+        """
         SELECT wt FROM WorkerUITemplate wt
         JOIN FETCH wt.worker
         JOIN FETCH wt.uiTemplate t
@@ -80,14 +97,16 @@ interface WorkerUITemplateRepository : JpaRepository<WorkerUITemplate, String> {
         AND t.type = :type
         AND wt.status = com.spectrum.workfolio.domain.enums.WorkerUITemplateStatus.ACTIVE
         AND wt.expiredAt > :now
-    """)
+    """,
+    )
     fun findValidByWorkerAndType(
         @Param("worker") worker: Worker,
         @Param("type") type: UITemplateType,
-        @Param("now") now: LocalDateTime = LocalDateTime.now()
+        @Param("now") now: LocalDateTime = LocalDateTime.now(),
     ): List<WorkerUITemplate>
 
-    @Query("""
+    @Query(
+        """
         SELECT wt FROM WorkerUITemplate wt
         JOIN FETCH wt.worker
         JOIN FETCH wt.uiTemplate
@@ -97,61 +116,70 @@ interface WorkerUITemplateRepository : JpaRepository<WorkerUITemplate, String> {
         AND wt.expiredAt <= :now
         ORDER BY wt.expiredAt DESC
         LIMIT 1
-    """)
+    """,
+    )
     fun findExpiredByWorkerAndUITemplate(
         @Param("worker") worker: Worker,
         @Param("uiTemplate") uiTemplate: UITemplate,
-        @Param("now") now: LocalDateTime = LocalDateTime.now()
+        @Param("now") now: LocalDateTime = LocalDateTime.now(),
     ): WorkerUITemplate?
 
-    @Query("""
+    @Query(
+        """
         SELECT COUNT(wt) > 0 FROM WorkerUITemplate wt
         WHERE wt.worker = :worker
         AND wt.uiTemplate = :uiTemplate
         AND wt.status = com.spectrum.workfolio.domain.enums.WorkerUITemplateStatus.ACTIVE
         AND wt.expiredAt > :now
-    """)
+    """,
+    )
     fun hasValidUITemplate(
         @Param("worker") worker: Worker,
         @Param("uiTemplate") uiTemplate: UITemplate,
-        @Param("now") now: LocalDateTime = LocalDateTime.now()
+        @Param("now") now: LocalDateTime = LocalDateTime.now(),
     ): Boolean
 
     fun deleteByUiTemplateId(uiTemplateId: String): Long
 
-    @Query("""
+    @Query(
+        """
         SELECT wt FROM WorkerUITemplate wt
         JOIN FETCH wt.uiTemplate
         WHERE wt.worker = :worker
         AND wt.templateType = :templateType
         AND wt.isDefault = true
         AND wt.status = com.spectrum.workfolio.domain.enums.WorkerUITemplateStatus.ACTIVE
-    """)
+    """,
+    )
     fun findDefaultByWorkerAndType(
         @Param("worker") worker: Worker,
         @Param("templateType") templateType: UITemplateType,
     ): WorkerUITemplate?
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)
-    @Query("""
+    @Query(
+        """
         UPDATE WorkerUITemplate wt
         SET wt.isDefault = false
         WHERE wt.worker = :worker
         AND wt.templateType = :templateType
         AND wt.isDefault = true
-    """)
+    """,
+    )
     fun clearDefaultByWorkerAndType(
         @Param("worker") worker: Worker,
         @Param("templateType") templateType: UITemplateType,
     ): Int
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)
-    @Query("""
+    @Query(
+        """
         UPDATE WorkerUITemplate wt
         SET wt.isDefault = false
         WHERE wt.uiTemplate.id = :uiTemplateId
         AND wt.isDefault = true
-    """)
+    """,
+    )
     fun clearDefaultByUiTemplateId(
         @Param("uiTemplateId") uiTemplateId: String,
     ): Int

@@ -6,7 +6,8 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import java.util.*
+import java.util.Base64
+import java.util.Optional
 
 // 예시로 CookieUtil에 대한 직렬화 및 역직렬화 구현
 object CookieUtils {

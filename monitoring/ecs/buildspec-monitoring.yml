@@ -1,0 +1,73 @@
+version: 0.2
+
+# 모니터링 스택(Prometheus, Grafana, Loki) ECS 배포용 빌드스펙
+# 설정 파일을 EFS에 동기화하고 ECS 서비스를 업데이트합니다.
+
+env:
+  variables:
+    AWS_DEFAULT_REGION: ap-northeast-2
+    ECS_CLUSTER: taghere-dev
+    ECS_SERVICE: taghere-dev-monitoring
+    TASK_FAMILY: taghere-dev-monitoring
+    EFS_FILE_SYSTEM_ID: "<EFS_FILE_SYSTEM_ID>"
+
+phases:
+  install:
+    commands:
+      - echo "시간대 설정"
+      - export TZ=Asia/Seoul
+
+  pre_build:
+    commands:
+      - echo "EFS 마운트"
+      - mkdir -p /mnt/efs
+      - mount -t efs ${EFS_FILE_SYSTEM_ID}:/ /mnt/efs || echo "EFS 마운트 실패 - 수동으로 확인 필요"
+
+      - echo "모니터링 설정 파일을 EFS에 동기화"
+      - mkdir -p /mnt/efs/monitoring/prometheus/config
+      - mkdir -p /mnt/efs/monitoring/prometheus/data
+      - mkdir -p /mnt/efs/monitoring/grafana/provisioning/datasources
+      - mkdir -p /mnt/efs/monitoring/grafana/provisioning/dashboards
+      - mkdir -p /mnt/efs/monitoring/grafana/dashboards
+      - mkdir -p /mnt/efs/monitoring/grafana/data
+      - mkdir -p /mnt/efs/monitoring/loki/config
+      - mkdir -p /mnt/efs/monitoring/loki/data
+      - mkdir -p /mnt/efs/monitoring/promtail/config
+
+      - echo "Prometheus 설정 복사"
+      - cp monitoring/prometheus/prometheus.yml /mnt/efs/monitoring/prometheus/config/prometheus.yml
+
+      - echo "Grafana 설정 복사"
+      - cp monitoring/grafana/provisioning/datasources/datasources.yml /mnt/efs/monitoring/grafana/provisioning/datasources/
+      - cp monitoring/grafana/provisioning/dashboards/dashboards.yml /mnt/efs/monitoring/grafana/provisioning/dashboards/
+      - cp monitoring/grafana/dashboards/spring-boot.json /mnt/efs/monitoring/grafana/dashboards/
+
+      - echo "Loki 설정 복사"
+      - cp monitoring/loki/loki-config.yml /mnt/efs/monitoring/loki/config/config.yml
+
+      - echo "Promtail 설정 복사"
+      - cp monitoring/promtail/promtail-config.yml /mnt/efs/monitoring/promtail/config/config.yml
+
+  build:
+    commands:
+      - echo "ECS 태스크 정의 등록"
+      - |
+        # EFS ID를 태스크 정의에 주입
+        sed -i "s/<EFS_FILE_SYSTEM_ID>/${EFS_FILE_SYSTEM_ID}/g" monitoring/ecs/monitoring-task-definition.json
+
+      - echo "새 태스크 정의 등록"
+      - NEW_TASK_ARN=$(aws ecs register-task-definition --cli-input-json file://monitoring/ecs/monitoring-task-definition.json | jq -r '.taskDefinition.taskDefinitionArn')
+      - echo "새 태스크 정의 ARN: $NEW_TASK_ARN"
+
+  post_build:
+    commands:
+      - echo "ECS 서비스 업데이트"
+      - aws ecs update-service --cluster ${ECS_CLUSTER} --service ${ECS_SERVICE} --task-definition "$NEW_TASK_ARN" --force-new-deployment
+      - echo "서비스 안정화 대기"
+      - aws ecs wait services-stable --cluster ${ECS_CLUSTER} --services ${ECS_SERVICE}
+      - echo "모니터링 스택 배포 완료!"
+
+artifacts:
+  files:
+    - monitoring/ecs/monitoring-task-definition.json
+  discard-paths: no

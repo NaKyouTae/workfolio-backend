@@ -1,0 +1,37 @@
+apiVersion: 1
+
+contactPoints:
+  - orgId: 1
+    name: slack-critical
+    receivers:
+      - uid: slack-critical
+        type: slack
+        settings:
+          url: ${SLACK_WEBHOOK_URL}
+          color: "#C0392B"
+          title: |
+            [{{ .Status | toUpper }}] {{ .CommonLabels.alertname }}
+          text: |
+            {{ range .Alerts }}
+            *{{ .Labels.alertname }}* ({{ .Labels.severity }})
+            {{ .Annotations.summary }}
+            {{ .Annotations.description }}
+            {{ end }}
+
+  - orgId: 1
+    name: slack-warning
+    receivers:
+      - uid: slack-warning
+        type: slack
+        settings:
+          url: ${SLACK_WEBHOOK_URL}
+          color: "#F1C40F"
+          title: |
+            [{{ .Status | toUpper }}] {{ .CommonLabels.alertname }}
+          text: |
+            {{ range .Alerts }}
+            *{{ .Labels.alertname }}* ({{ .Labels.severity }})
+            {{ .Annotations.summary }}
+            {{ .Annotations.description }}
+            {{ end }}
+

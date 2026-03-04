@@ -32,7 +32,8 @@ class AdminDashboardService(
 ) {
     fun getStats(): AdminDashboardStatsResponse {
         val totalPaymentAmount = paymentRepository.sumAmountByStatuses(listOf("COMPLETED", "REFUNDED")).toLong()
-        val totalCreditUsedAmount = creditHistoryRepository.sumAmountByTxTypes(listOf(CreditTxType.USE, CreditTxType.ADMIN_DEDUCT))
+        val totalCreditUsedAmount =
+            creditHistoryRepository.sumAmountByTxTypes(listOf(CreditTxType.USE, CreditTxType.ADMIN_DEDUCT))
 
         return AdminDashboardStatsResponse(
             totalRecordGroups = recordGroupRepository.count(),

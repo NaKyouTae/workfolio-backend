@@ -22,11 +22,11 @@ interface ResumeRepository : JpaRepository<Resume, String> {
         AND r.isPublic = true
         AND (r.publicStartDate IS NULL OR r.publicStartDate <= :today)
         AND (r.publicEndDate IS NULL OR r.publicEndDate >= :today)
-        """
+        """,
     )
     fun findByPublicIdAndIsPublicTrue(
         @Param("publicId") publicId: String,
-        @Param("today") today: LocalDate
+        @Param("today") today: LocalDate,
     ): Resume?
 
     @Modifying

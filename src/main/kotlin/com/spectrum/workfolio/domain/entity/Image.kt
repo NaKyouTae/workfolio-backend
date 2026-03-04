@@ -3,7 +3,12 @@ package com.spectrum.workfolio.domain.entity
 import com.spectrum.workfolio.domain.enums.ImageExtType
 import com.spectrum.workfolio.domain.enums.ImageStatus
 import com.spectrum.workfolio.domain.enums.ImageTargetType
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
+import jakarta.persistence.Index
+import jakarta.persistence.Table
 
 @Entity
 @Table(

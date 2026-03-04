@@ -1,7 +1,6 @@
 package com.spectrum.workfolio.services
 
 import com.spectrum.workfolio.domain.entity.payments.CreditPlan
-import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.repository.CreditPlanRepository
 import com.spectrum.workfolio.utils.WorkfolioException
 import org.springframework.stereotype.Service

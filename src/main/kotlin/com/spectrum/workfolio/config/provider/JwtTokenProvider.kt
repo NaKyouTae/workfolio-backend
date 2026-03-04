@@ -19,7 +19,9 @@ import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Component
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import java.util.*
+import java.util.Base64
+import java.util.Date
+import java.util.UUID
 import javax.crypto.SecretKey
 
 @Component

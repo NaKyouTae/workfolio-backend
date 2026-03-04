@@ -1,0 +1,24 @@
+apiVersion: 1
+
+policies:
+  - orgId: 1
+    receiver: slack-critical
+    group_by:
+      - alertname
+      - severity
+    group_wait: 5s
+    group_interval: 1m
+    repeat_interval: 1m
+    routes:
+      # Critical 알림 → Slack (빨강)
+      - receiver: slack-critical
+        matchers:
+          - severity = critical
+        continue: false
+        repeat_interval: 1m
+
+      # Warning 알림 → Slack (노랑)
+      - receiver: slack-warning
+        matchers:
+          - severity = warning
+        repeat_interval: 1h

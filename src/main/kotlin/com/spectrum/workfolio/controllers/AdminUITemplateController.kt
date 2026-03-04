@@ -5,11 +5,28 @@ import com.spectrum.workfolio.domain.enums.UITemplateType
 import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.extensions.toUITemplateImageProto
 import com.spectrum.workfolio.proto.common.SuccessResponse
-import com.spectrum.workfolio.proto.uitemplate.*
+import com.spectrum.workfolio.proto.uitemplate.AdminUITemplateCreateRequest
+import com.spectrum.workfolio.proto.uitemplate.AdminUITemplateImageListResponse
+import com.spectrum.workfolio.proto.uitemplate.AdminUITemplateUpdateRequest
+import com.spectrum.workfolio.proto.uitemplate.AdminUiTemplatePlanCreateRequest
+import com.spectrum.workfolio.proto.uitemplate.AdminUiTemplatePlanGetResponse
+import com.spectrum.workfolio.proto.uitemplate.AdminUiTemplatePlanUpdateRequest
+import com.spectrum.workfolio.proto.uitemplate.DefaultUITemplateResponse
+import com.spectrum.workfolio.proto.uitemplate.UITemplateGetResponse
+import com.spectrum.workfolio.proto.uitemplate.UITemplateListResponse
+import com.spectrum.workfolio.proto.uitemplate.WorkerUITemplateListResponse
 import com.spectrum.workfolio.services.uitemplate.UITemplateService
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 
 @RestController
@@ -22,11 +39,13 @@ class AdminUITemplateController(
     fun getAllUITemplates(): UITemplateListResponse {
         val uiTemplates = uiTemplateService.getAllUITemplatesForAdmin()
         return UITemplateListResponse.newBuilder()
-            .addAllUiTemplates(uiTemplates.map { t ->
-                val plans = uiTemplateService.getPlansByUiTemplateId(t.id)
-                val images = uiTemplateService.getImagesByUiTemplateId(t.id)
-                t.toProto(plans, images)
-            })
+            .addAllUiTemplates(
+                uiTemplates.map { t ->
+                    val plans = uiTemplateService.getPlansByUiTemplateId(t.id)
+                    val images = uiTemplateService.getImagesByUiTemplateId(t.id)
+                    t.toProto(plans, images)
+                },
+            )
             .build()
     }
 

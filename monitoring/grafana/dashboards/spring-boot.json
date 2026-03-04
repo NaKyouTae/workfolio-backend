@@ -1,0 +1,480 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "links": [],
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "id": 100,
+      "title": "Overview",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "green", "value": 1 }
+            ]
+          },
+          "mappings": [
+            { "options": { "0": { "text": "DOWN" }, "1": { "text": "UP" } }, "type": "value" }
+          ]
+        }
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 1 },
+      "id": 1,
+      "options": { "colorMode": "background", "graphMode": "none", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "title": "Application Status",
+      "targets": [
+        { "expr": "up{job=\"workfolio-api\"}", "refId": "A" }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 60 },
+              { "color": "red", "value": 300 }
+            ]
+          }
+        }
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 1 },
+      "id": 2,
+      "options": { "colorMode": "value", "graphMode": "none", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "title": "Uptime",
+      "targets": [
+        { "expr": "process_uptime_seconds{job=\"workfolio-api\"}", "refId": "A" }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 100 },
+              { "color": "red", "value": 500 }
+            ]
+          }
+        }
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 8, "y": 1 },
+      "id": 3,
+      "options": { "colorMode": "value", "graphMode": "area", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "title": "Request Rate",
+      "targets": [
+        { "expr": "sum(rate(http_server_requests_seconds_count{job=\"workfolio-api\"}[1m]))", "refId": "A" }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 0.01 },
+              { "color": "red", "value": 0.05 }
+            ]
+          }
+        }
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 12, "y": 1 },
+      "id": 4,
+      "options": { "colorMode": "value", "graphMode": "area", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "title": "Error Rate (5xx)",
+      "targets": [
+        { "expr": "sum(rate(http_server_requests_seconds_count{job=\"workfolio-api\",status=~\"5..\"}[5m])) / sum(rate(http_server_requests_seconds_count{job=\"workfolio-api\"}[5m]))", "refId": "A" }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 0.3 },
+              { "color": "red", "value": 0.5 }
+            ]
+          }
+        }
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 16, "y": 1 },
+      "id": 5,
+      "options": { "colorMode": "value", "graphMode": "area", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "title": "Response Time (p95)",
+      "targets": [
+        { "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{job=\"workfolio-api\"}[5m])) by (le))", "refId": "A" }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 0.5 },
+              { "color": "red", "value": 1.0 }
+            ]
+          }
+        }
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 20, "y": 1 },
+      "id": 6,
+      "options": { "colorMode": "value", "graphMode": "area", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "title": "Response Time (p99)",
+      "targets": [
+        { "expr": "histogram_quantile(0.99, sum(rate(http_server_requests_seconds_bucket{job=\"workfolio-api\"}[5m])) by (le))", "refId": "A" }
+      ],
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 5 },
+      "id": 101,
+      "title": "HTTP Requests",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" }, "unit": "reqps", "custom": { "lineWidth": 2, "fillOpacity": 10 } }
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 6 },
+      "id": 10,
+      "title": "Request Rate by URI",
+      "targets": [
+        { "expr": "sum(rate(http_server_requests_seconds_count{job=\"workfolio-api\"}[1m])) by (uri)", "legendFormat": "{{uri}}", "refId": "A" }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" }, "unit": "s", "custom": { "lineWidth": 2, "fillOpacity": 10 } }
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 6 },
+      "id": 11,
+      "title": "Response Time by URI (p95)",
+      "targets": [
+        { "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{job=\"workfolio-api\"}[5m])) by (le, uri))", "legendFormat": "{{uri}}", "refId": "A" }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" }, "unit": "reqps", "custom": { "lineWidth": 2, "fillOpacity": 10 } }
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 14 },
+      "id": 12,
+      "title": "Request Rate by Status Code",
+      "targets": [
+        { "expr": "sum(rate(http_server_requests_seconds_count{job=\"workfolio-api\"}[1m])) by (status)", "legendFormat": "HTTP {{status}}", "refId": "A" }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" }, "unit": "reqps", "custom": { "lineWidth": 2, "fillOpacity": 10 } }
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 14 },
+      "id": 13,
+      "title": "Request Rate by Method",
+      "targets": [
+        { "expr": "sum(rate(http_server_requests_seconds_count{job=\"workfolio-api\"}[1m])) by (method)", "legendFormat": "{{method}}", "refId": "A" }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" }, "unit": "s", "custom": { "lineWidth": 2, "fillOpacity": 10, "drawStyle": "bars", "barAlignment": 0, "stacking": { "mode": "none" } } }
+      },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 22 },
+      "id": 14,
+      "title": "Response Time Distribution (Histogram)",
+      "targets": [
+        { "expr": "histogram_quantile(0.50, sum(rate(http_server_requests_seconds_bucket{job=\"workfolio-api\"}[5m])) by (le))", "legendFormat": "p50", "refId": "A" },
+        { "expr": "histogram_quantile(0.90, sum(rate(http_server_requests_seconds_bucket{job=\"workfolio-api\"}[5m])) by (le))", "legendFormat": "p90", "refId": "B" },
+        { "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{job=\"workfolio-api\"}[5m])) by (le))", "legendFormat": "p95", "refId": "C" },
+        { "expr": "histogram_quantile(0.99, sum(rate(http_server_requests_seconds_bucket{job=\"workfolio-api\"}[5m])) by (le))", "legendFormat": "p99", "refId": "D" }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 30 },
+      "id": 106,
+      "title": "Tomcat & Logback",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" }, "custom": { "lineWidth": 2, "fillOpacity": 20 } }
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 31 },
+      "id": 60,
+      "title": "Tomcat Thread Pool",
+      "targets": [
+        { "expr": "tomcat_threads_current_threads{job=\"workfolio-api\"}", "legendFormat": "Current", "refId": "A" },
+        { "expr": "tomcat_threads_busy_threads{job=\"workfolio-api\"}", "legendFormat": "Busy", "refId": "B" },
+        { "expr": "tomcat_threads_config_max_threads{job=\"workfolio-api\"}", "legendFormat": "Max", "refId": "C" }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" }, "custom": { "lineWidth": 2, "fillOpacity": 10 } }
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 31 },
+      "id": 61,
+      "title": "Logback Events (per minute)",
+      "targets": [
+        { "expr": "rate(logback_events_total{job=\"workfolio-api\",level=\"error\"}[1m])", "legendFormat": "ERROR", "refId": "A" },
+        { "expr": "rate(logback_events_total{job=\"workfolio-api\",level=\"warn\"}[1m])", "legendFormat": "WARN", "refId": "B" },
+        { "expr": "rate(logback_events_total{job=\"workfolio-api\",level=\"info\"}[1m])", "legendFormat": "INFO", "refId": "C" }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 39 },
+      "id": 102,
+      "title": "JVM Memory",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" }, "unit": "bytes", "custom": { "lineWidth": 2, "fillOpacity": 20 } }
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 23 },
+      "id": 20,
+      "title": "JVM Heap Memory",
+      "targets": [
+        { "expr": "jvm_memory_used_bytes{job=\"workfolio-api\",area=\"heap\"}", "legendFormat": "Used - {{id}}", "refId": "A" },
+        { "expr": "jvm_memory_max_bytes{job=\"workfolio-api\",area=\"heap\"}", "legendFormat": "Max - {{id}}", "refId": "B" },
+        { "expr": "jvm_memory_committed_bytes{job=\"workfolio-api\",area=\"heap\"}", "legendFormat": "Committed - {{id}}", "refId": "C" }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" }, "unit": "bytes", "custom": { "lineWidth": 2, "fillOpacity": 20 } }
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 23 },
+      "id": 21,
+      "title": "JVM Non-Heap Memory",
+      "targets": [
+        { "expr": "jvm_memory_used_bytes{job=\"workfolio-api\",area=\"nonheap\"}", "legendFormat": "Used - {{id}}", "refId": "A" },
+        { "expr": "jvm_memory_committed_bytes{job=\"workfolio-api\",area=\"nonheap\"}", "legendFormat": "Committed - {{id}}", "refId": "B" }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 31 },
+      "id": 103,
+      "title": "JVM GC & Threads",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" }, "unit": "s", "custom": { "lineWidth": 2, "fillOpacity": 10 } }
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 32 },
+      "id": 30,
+      "title": "GC Pause Duration",
+      "targets": [
+        { "expr": "rate(jvm_gc_pause_seconds_sum{job=\"workfolio-api\"}[1m])", "legendFormat": "{{action}} - {{cause}}", "refId": "A" }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" }, "custom": { "lineWidth": 2, "fillOpacity": 10 } }
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 32 },
+      "id": 31,
+      "title": "JVM Threads",
+      "targets": [
+        { "expr": "jvm_threads_live_threads{job=\"workfolio-api\"}", "legendFormat": "Live", "refId": "A" },
+        { "expr": "jvm_threads_daemon_threads{job=\"workfolio-api\"}", "legendFormat": "Daemon", "refId": "B" },
+        { "expr": "jvm_threads_peak_threads{job=\"workfolio-api\"}", "legendFormat": "Peak", "refId": "C" }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 40 },
+      "id": 104,
+      "title": "HikariCP Connection Pool",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" }, "custom": { "lineWidth": 2, "fillOpacity": 20 } }
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 41 },
+      "id": 40,
+      "title": "HikariCP Active Connections",
+      "targets": [
+        { "expr": "hikaricp_connections_active{job=\"workfolio-api\"}", "legendFormat": "Active - {{pool}}", "refId": "A" },
+        { "expr": "hikaricp_connections_idle{job=\"workfolio-api\"}", "legendFormat": "Idle - {{pool}}", "refId": "B" },
+        { "expr": "hikaricp_connections{job=\"workfolio-api\"}", "legendFormat": "Total - {{pool}}", "refId": "C" },
+        { "expr": "hikaricp_connections_max{job=\"workfolio-api\"}", "legendFormat": "Max - {{pool}}", "refId": "D" }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" }, "unit": "s", "custom": { "lineWidth": 2, "fillOpacity": 10 } }
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 41 },
+      "id": 41,
+      "title": "HikariCP Connection Acquire Time",
+      "targets": [
+        { "expr": "rate(hikaricp_connections_acquire_seconds_sum{job=\"workfolio-api\"}[5m]) / rate(hikaricp_connections_acquire_seconds_count{job=\"workfolio-api\"}[5m])", "legendFormat": "Avg - {{pool}}", "refId": "A" },
+        { "expr": "hikaricp_connections_acquire_seconds_max{job=\"workfolio-api\"}", "legendFormat": "Max - {{pool}}", "refId": "B" }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 49 },
+      "id": 105,
+      "title": "System",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" }, "unit": "percentunit", "min": 0, "max": 1, "custom": { "lineWidth": 2, "fillOpacity": 20 } }
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 50 },
+      "id": 50,
+      "title": "CPU Usage",
+      "targets": [
+        { "expr": "system_cpu_usage{job=\"workfolio-api\"}", "legendFormat": "System CPU", "refId": "A" },
+        { "expr": "process_cpu_usage{job=\"workfolio-api\"}", "legendFormat": "Process CPU", "refId": "B" }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" }, "unit": "decbytes", "custom": { "lineWidth": 2, "fillOpacity": 10 } }
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 50 },
+      "id": 51,
+      "title": "Disk Space",
+      "targets": [
+        { "expr": "disk_total_bytes{job=\"workfolio-api\"}", "legendFormat": "Total", "refId": "A" },
+        { "expr": "disk_total_bytes{job=\"workfolio-api\"} - disk_free_bytes{job=\"workfolio-api\"}", "legendFormat": "Used", "refId": "B" }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 58 },
+      "id": 107,
+      "title": "JVM Buffer & File Descriptors",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" }, "unit": "bytes", "custom": { "lineWidth": 2, "fillOpacity": 20 } }
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 59 },
+      "id": 70,
+      "title": "JVM Buffer Pool Memory",
+      "targets": [
+        { "expr": "jvm_buffer_memory_used_bytes{job=\"workfolio-api\"}", "legendFormat": "Used - {{id}}", "refId": "A" },
+        { "expr": "jvm_buffer_total_capacity_bytes{job=\"workfolio-api\"}", "legendFormat": "Capacity - {{id}}", "refId": "B" }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" }, "custom": { "lineWidth": 2, "fillOpacity": 10 } }
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 59 },
+      "id": 71,
+      "title": "Process Open File Descriptors",
+      "targets": [
+        { "expr": "process_files_open_files{job=\"workfolio-api\"}", "legendFormat": "Open", "refId": "A" },
+        { "expr": "process_files_max_files{job=\"workfolio-api\"}", "legendFormat": "Max", "refId": "B" }
+      ],
+      "type": "timeseries"
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": ["spring-boot", "workfolio"],
+  "templating": {
+    "list": [
+      {
+        "current": { "selected": false, "text": "Prometheus", "value": "Prometheus" },
+        "hide": 0,
+        "includeAll": false,
+        "name": "datasource",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 1,
+        "type": "datasource"
+      }
+    ]
+  },
+  "time": { "from": "now-1h", "to": "now" },
+  "timepicker": {},
+  "timezone": "Asia/Seoul",
+  "title": "Workfolio API - Spring Boot",
+  "uid": "workfolio-spring-boot",
+  "version": 1
+}

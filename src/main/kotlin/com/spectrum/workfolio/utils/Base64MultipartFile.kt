@@ -4,7 +4,7 @@ import org.springframework.web.multipart.MultipartFile
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.InputStream
-import java.util.*
+import java.util.Base64
 
 /**
  * Base64로 인코딩된 문자열을 MultipartFile로 변환하는 유틸리티 클래스

@@ -15,7 +15,7 @@ class FileUploadService(
         private const val MAX_FILE_SIZE = 10L * 1024 * 1024 // 10MB
         private val ALLOWED_EXTENSIONS = setOf(
             "pdf", "doc", "docx", "xlsx", "pptx", "hwp", "txt",
-            "png", "jpg", "jpeg", "gif", "webp"
+            "png", "jpg", "jpeg", "gif", "webp",
         )
     }
 

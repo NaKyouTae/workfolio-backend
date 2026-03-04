@@ -1,8 +1,8 @@
 package com.spectrum.workfolio.controllers
 
 import com.spectrum.workfolio.config.annotation.AuthenticatedUser
-import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.enums.CreditTxType
+import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.proto.credit.CreditBalanceResponse
 import com.spectrum.workfolio.proto.credit.CreditHistoryListResponse
 import com.spectrum.workfolio.proto.credit.CreditUseRequest

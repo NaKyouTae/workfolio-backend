@@ -15,7 +15,7 @@ fun Payment.toProto(): com.spectrum.workfolio.proto.common.Payment {
             com.spectrum.workfolio.proto.common.Payment.PaymentMethod.valueOf(this.paymentMethod)
         } catch (e: IllegalArgumentException) {
             com.spectrum.workfolio.proto.common.Payment.PaymentMethod.METHOD_UNKNOWN
-        }
+        },
     )
     builder.setPaymentProvider(this.paymentProvider)
     builder.setProviderPaymentId(this.providerPaymentId)

@@ -1,8 +1,8 @@
 package com.spectrum.workfolio.domain.extensions
 
 import com.spectrum.workfolio.domain.entity.Image
-import com.spectrum.workfolio.domain.entity.uitemplate.UiTemplatePlan
 import com.spectrum.workfolio.domain.entity.uitemplate.UITemplate
+import com.spectrum.workfolio.domain.entity.uitemplate.UiTemplatePlan
 import com.spectrum.workfolio.domain.entity.uitemplate.WorkerUITemplate
 import com.spectrum.workfolio.domain.enums.ImageExtType
 import com.spectrum.workfolio.domain.enums.UITemplateType

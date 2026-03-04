@@ -4,12 +4,26 @@ import com.spectrum.workfolio.config.annotation.AuthenticatedUser
 import com.spectrum.workfolio.domain.enums.UITemplateType
 import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.proto.common.SuccessResponse
-import com.spectrum.workfolio.proto.uitemplate.*
+import com.spectrum.workfolio.proto.uitemplate.ActiveUITemplatesResponse
+import com.spectrum.workfolio.proto.uitemplate.DefaultUITemplateResponse
+import com.spectrum.workfolio.proto.uitemplate.UITemplateOwnershipResponse
+import com.spectrum.workfolio.proto.uitemplate.UITemplatePurchaseRequest
+import com.spectrum.workfolio.proto.uitemplate.UITemplatePurchaseResponse
+import com.spectrum.workfolio.proto.uitemplate.WorkerUITemplateGetResponse
+import com.spectrum.workfolio.proto.uitemplate.WorkerUITemplateListResponse
 import com.spectrum.workfolio.services.CreditService
 import com.spectrum.workfolio.services.uitemplate.UITemplateService
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/ui-templates")
@@ -127,5 +141,4 @@ class UITemplateController(
         uiTemplateService.deleteMyUITemplate(workerId, workerUITemplateId)
         return SuccessResponse.newBuilder().setIsSuccess(true).build()
     }
-
 }

@@ -8,7 +8,7 @@ fun CreditHistory.toProto(includeWorker: Boolean = false): com.spectrum.workfoli
 
     builder.setId(this.id)
     builder.setTxType(
-        com.spectrum.workfolio.proto.common.CreditHistory.CreditTxType.valueOf(this.txType.name)
+        com.spectrum.workfolio.proto.common.CreditHistory.CreditTxType.valueOf(this.txType.name),
     )
     builder.setAmount(this.amount)
     builder.setBalanceBefore(this.balanceBefore)

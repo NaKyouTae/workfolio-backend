@@ -6,8 +6,8 @@ import com.spectrum.workfolio.domain.enums.EmploymentType
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.CareerRepository
-import com.spectrum.workfolio.proto.career.CareerCreateRequest
 import com.spectrum.workfolio.proto.career.AdminCareerListResponse
+import com.spectrum.workfolio.proto.career.CareerCreateRequest
 import com.spectrum.workfolio.proto.career.CareerListResponse
 import com.spectrum.workfolio.proto.career.CareerUpdateRequest
 import com.spectrum.workfolio.proto.resume.ResumeUpdateRequest

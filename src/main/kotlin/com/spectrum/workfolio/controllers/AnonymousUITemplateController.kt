@@ -29,11 +29,13 @@ class AnonymousUITemplateController(
         }
 
         return UITemplateListResponse.newBuilder()
-            .addAllUiTemplates(uiTemplates.map { t ->
-                val plans = uiTemplateService.getPlansByUiTemplateId(t.id)
-                val images = uiTemplateService.getImagesByUiTemplateId(t.id)
-                t.toProto(plans, images)
-            })
+            .addAllUiTemplates(
+                uiTemplates.map { t ->
+                    val plans = uiTemplateService.getPlansByUiTemplateId(t.id)
+                    val images = uiTemplateService.getImagesByUiTemplateId(t.id)
+                    t.toProto(plans, images)
+                },
+            )
             .build()
     }
 

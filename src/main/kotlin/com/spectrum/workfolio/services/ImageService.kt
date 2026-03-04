@@ -22,7 +22,9 @@ class ImageService(
     @Transactional(readOnly = true)
     fun getImagesByTarget(targetType: ImageTargetType, targetId: String): List<Image> {
         return imageRepository.findByTargetTypeAndTargetIdAndStatusOrderByPriorityAsc(
-            targetType, targetId, ImageStatus.ACTIVE,
+            targetType,
+            targetId,
+            ImageStatus.ACTIVE,
         )
     }
 
@@ -33,7 +35,10 @@ class ImageService(
         extType: ImageExtType,
     ): List<Image> {
         return imageRepository.findByTargetTypeAndTargetIdAndExtTypeAndStatusOrderByPriorityAsc(
-            targetType, targetId, extType, ImageStatus.ACTIVE,
+            targetType,
+            targetId,
+            extType,
+            ImageStatus.ACTIVE,
         )
     }
 
@@ -41,7 +46,9 @@ class ImageService(
     fun getImagesByTargetIds(targetType: ImageTargetType, targetIds: List<String>): List<Image> {
         if (targetIds.isEmpty()) return emptyList()
         return imageRepository.findByTargetTypeAndTargetIdInAndStatusOrderByPriorityAsc(
-            targetType, targetIds, ImageStatus.ACTIVE,
+            targetType,
+            targetIds,
+            ImageStatus.ACTIVE,
         )
     }
 
