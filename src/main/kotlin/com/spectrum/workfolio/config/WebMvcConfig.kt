@@ -23,7 +23,12 @@ class WebMvcConfig(
     override fun addCorsMappings(registry: CorsRegistry) {
         registry
             .addMapping("/**") // 모든 요청에 대해 CORS 설정을 허용
-            .allowedOrigins(frontendUrl, "http://127.0.0.1:3000") // 프론트엔드의 도메인 명시
+            .allowedOrigins(
+                "https://www.workfolio.kr",
+                "https://admin.workfolio.kr",
+                "http://localhost:4000",
+                "http://localhost:8001",
+            )
             .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // 허용할 HTTP 메서드 설정
             .allowedHeaders("*") // 허용할 헤더에 'Authorization' 명시
             .allowCredentials(true) // 쿠키나 인증 헤더를 허용

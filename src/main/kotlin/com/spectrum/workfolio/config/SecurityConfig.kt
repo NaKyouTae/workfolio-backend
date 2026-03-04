@@ -110,8 +110,12 @@ class SecurityConfig(
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration()
 
-        // 프로덕션에서는 https://www.workfolio.kr, 로컬에서는 http://localhost:4000
-        configuration.allowedOrigins = listOf(frontendUrl, "http://127.0.0.1:4000")
+        configuration.allowedOrigins = listOf(
+            "https://www.workfolio.kr",
+            "https://admin.workfolio.kr",
+            "http://localhost:4000",
+            "http://localhost:8001",
+        )
         configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
         configuration.allowedHeaders = listOf("*")
         configuration.allowCredentials = true
