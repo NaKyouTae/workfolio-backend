@@ -1,0 +1,48 @@
+databaseChangeLog:
+  - changeSet:
+      id: 4
+      author: kyutae
+      changes:
+        - createTable:
+            tableName: notice_reads
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: worker_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_notice_reads_worker_id
+                    references: workers(id)
+              - column:
+                  name: notice_id
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_notice_reads_notice_id
+                    references: notices(id)
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            tableName: notice_reads
+            columnNames: worker_id, notice_id
+            constraintName: uk_notice_reads_worker_notice
+        - createIndex:
+            tableName: notice_reads
+            columns:
+              - column:
+                  name: worker_id
+            indexName: idx_notice_reads_worker_id

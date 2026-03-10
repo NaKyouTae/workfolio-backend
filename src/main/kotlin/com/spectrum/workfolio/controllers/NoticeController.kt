@@ -1,9 +1,11 @@
 package com.spectrum.workfolio.controllers
 
+import com.spectrum.workfolio.config.annotation.AuthenticatedUser
 import com.spectrum.workfolio.proto.common.SuccessResponse
 import com.spectrum.workfolio.proto.notice.NoticeCreateRequest
 import com.spectrum.workfolio.proto.notice.NoticeGetResponse
 import com.spectrum.workfolio.proto.notice.NoticeListResponse
+import com.spectrum.workfolio.proto.notice.NoticeUnreadCountResponse
 import com.spectrum.workfolio.proto.notice.NoticeUpdateRequest
 import com.spectrum.workfolio.services.NoticeService
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -55,5 +57,21 @@ class NoticeController(
     ): SuccessResponse {
         noticeService.deleteNotice(id)
         return SuccessResponse.newBuilder().setIsSuccess(true).build()
+    }
+
+    @PostMapping("/{id}/read")
+    fun markAsRead(
+        @AuthenticatedUser workerId: String,
+        @PathVariable id: String,
+    ): SuccessResponse {
+        noticeService.markAsRead(workerId, id)
+        return SuccessResponse.newBuilder().setIsSuccess(true).build()
+    }
+
+    @GetMapping("/unread-count")
+    fun getUnreadCount(
+        @AuthenticatedUser workerId: String,
+    ): NoticeUnreadCountResponse {
+        return noticeService.getUnreadCount(workerId)
     }
 }

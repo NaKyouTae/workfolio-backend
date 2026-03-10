@@ -5,3 +5,5 @@ databaseChangeLog:
       file: db/primary/0002-add-idx-full-search-text.yaml
   - include:
       file: db/primary/0003-initial-data.yaml
+  - include:
+      file: db/primary/0004-add-notice-reads-table.yaml

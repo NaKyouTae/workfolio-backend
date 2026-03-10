@@ -7,7 +7,12 @@ import com.spectrum.workfolio.domain.enums.Gender
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.AccountRepository
+import com.spectrum.workfolio.domain.repository.CreditHistoryRepository
+import com.spectrum.workfolio.domain.repository.NoticeReadRepository
+import com.spectrum.workfolio.domain.repository.SystemConfigRepository
+import com.spectrum.workfolio.domain.repository.TurnOverRepository
 import com.spectrum.workfolio.domain.repository.WorkerRepository
+import com.spectrum.workfolio.domain.repository.WorkerUITemplateRepository
 import com.spectrum.workfolio.proto.worker.WorkerGetResponse
 import com.spectrum.workfolio.proto.worker.WorkerListResponse
 import com.spectrum.workfolio.proto.worker.WorkerUpdateRequest
@@ -22,6 +27,11 @@ import org.springframework.transaction.annotation.Transactional
 class WorkerService(
     private val workerRepository: WorkerRepository,
     private val accountRepository: AccountRepository,
+    private val noticeReadRepository: NoticeReadRepository,
+    private val creditHistoryRepository: CreditHistoryRepository,
+    private val workerUITemplateRepository: WorkerUITemplateRepository,
+    private val turnOverRepository: TurnOverRepository,
+    private val systemConfigRepository: SystemConfigRepository,
     private val kakaoApiProvider: KakaoApiProvider,
 ) {
 
@@ -117,7 +127,14 @@ class WorkerService(
                 }
             }
 
-            // 3. Worker 삭제 (나머지 관련 데이터는 Cascade로 자동 삭제)
+            // Cascade에 포함되지 않은 연관 데이터 먼저 삭제
+            noticeReadRepository.deleteAllByWorkerId(workerId)
+            creditHistoryRepository.deleteAllByWorkerId(workerId)
+            workerUITemplateRepository.deleteAllByWorkerId(workerId)
+            turnOverRepository.deleteAll(turnOverRepository.findAllByWorkerId(workerId))
+            systemConfigRepository.deleteAllByWorkerId(workerId)
+
+            // Worker 삭제 (나머지 관련 데이터는 Cascade로 자동 삭제)
             workerRepository.delete(worker)
             logger.info("Worker 및 관련 데이터 삭제 완료: workerId={}", workerId)
 

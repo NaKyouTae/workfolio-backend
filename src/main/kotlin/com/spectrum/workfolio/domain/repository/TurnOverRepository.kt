@@ -23,4 +23,6 @@ interface TurnOverRepository : JpaRepository<TurnOver, String> {
     """,
     )
     fun findByWorkerIdWithCollections(@Param("workerId") workerId: String): List<TurnOver>
+
+    fun findAllByWorkerId(workerId: String): List<TurnOver>
 }

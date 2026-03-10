@@ -18,4 +18,6 @@ interface CreditHistoryRepository : JpaRepository<CreditHistory, String> {
 
     @Query("SELECT COALESCE(SUM(c.amount), 0) FROM CreditHistory c WHERE c.txType IN :txTypes")
     fun sumAmountByTxTypes(@Param("txTypes") txTypes: List<CreditTxType>): Long
+
+    fun deleteAllByWorkerId(workerId: String)
 }

@@ -183,4 +183,6 @@ interface WorkerUITemplateRepository : JpaRepository<WorkerUITemplate, String> {
     fun clearDefaultByUiTemplateId(
         @Param("uiTemplateId") uiTemplateId: String,
     ): Int
+
+    fun deleteAllByWorkerId(workerId: String)
 }

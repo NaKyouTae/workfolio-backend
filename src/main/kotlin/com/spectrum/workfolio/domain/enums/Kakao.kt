@@ -34,7 +34,7 @@ data class KakaoDTO(
 
 data class KakaoAccount(
     val profile: Profile, // 프로필 정보
-    val name: String, // 카카오계정 이름
+    val name: String? = null, // 카카오계정 이름
     @JsonProperty("phone_number")
     val phoneNumber: String? = null, // 전화번호
     val email: String? = null, // 카카오계정 이메일
@@ -54,7 +54,7 @@ data class KakaoAccount(
     @JsonProperty("name_needs_agreement")
     val nameNeedsAgreement: Boolean? = null, // 이름 동의 여부
     @JsonProperty("has_email")
-    val hasEmail: Boolean, // 이메일 보유 여부
+    val hasEmail: Boolean? = null, // 이메일 보유 여부
     @JsonProperty("email_needs_agreement")
     val emailNeedsAgreement: Boolean? = null, // 이메일 동의 여부
     @JsonProperty("is_email_valid")
@@ -62,15 +62,15 @@ data class KakaoAccount(
     @JsonProperty("is_email_verified")
     val isEmailVerified: Boolean? = null, // 이메일 인증 여부
     @JsonProperty("has_phone_number")
-    val hasPhoneNumber: Boolean, // 전화번호 보유 여부
+    val hasPhoneNumber: Boolean? = null, // 전화번호 보유 여부
     @JsonProperty("phone_number_needs_agreement")
     val phoneNumberNeedsAgreement: Boolean? = null, // 전화번호 동의 여부
     @JsonProperty("has_birthyear")
-    val hasBirthyear: Boolean, // 출생 연도 보유 여부
+    val hasBirthyear: Boolean? = null, // 출생 연도 보유 여부
     @JsonProperty("birthyear_needs_agreement")
     val birthyearNeedsAgreement: Boolean? = null, // 출생 연도 동의 여부
     @JsonProperty("has_birthday")
-    val hasBirthday: Boolean, // 생일 보유 여부
+    val hasBirthday: Boolean? = null, // 생일 보유 여부
     @JsonProperty("birthday_needs_agreement")
     val birthdayNeedsAgreement: Boolean? = null, // 생일 동의 여부
     @JsonProperty("birthday_type")
@@ -78,7 +78,7 @@ data class KakaoAccount(
     @JsonProperty("is_leap_month")
     val isLeapMonth: Boolean? = null, // 윤달 여부
     @JsonProperty("has_gender")
-    val hasGender: Boolean, // 성별 보유 여부
+    val hasGender: Boolean? = null, // 성별 보유 여부
     @JsonProperty("gender_needs_agreement")
     val genderNeedsAgreement: Boolean? = null, // 성별 동의 여부
     @JsonProperty("age_range_needs_agreement")

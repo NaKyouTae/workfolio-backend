@@ -29,3 +29,7 @@ message NoticeUpdateRequest {
   bool is_pinned = 4;
 }
 
+message NoticeUnreadCountResponse {
+  int32 unread_count = 1;
+}
+

@@ -9,4 +9,6 @@ import java.util.Optional
 @Repository
 interface SystemConfigRepository : JpaRepository<SystemConfig, String> {
     fun findByTypeAndWorkerId(type: SystemConfigType, workerId: String): Optional<SystemConfig>
+
+    fun deleteAllByWorkerId(workerId: String)
 }
