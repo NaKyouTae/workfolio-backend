@@ -8,9 +8,11 @@ import com.spectrum.workfolio.domain.repository.RecordGroupRepository
 import com.spectrum.workfolio.domain.repository.RecordRepository
 import com.spectrum.workfolio.domain.repository.ResumeRepository
 import com.spectrum.workfolio.domain.repository.TurnOverRepository
+import com.spectrum.workfolio.domain.repository.WorkerRepository
 import org.springframework.stereotype.Service
 
 data class AdminDashboardStatsResponse(
+    val totalWorkers: Long,
     val totalRecordGroups: Long,
     val totalRecords: Long,
     val totalTurnOvers: Long,
@@ -22,6 +24,7 @@ data class AdminDashboardStatsResponse(
 
 @Service
 class AdminDashboardService(
+    private val workerRepository: WorkerRepository,
     private val recordGroupRepository: RecordGroupRepository,
     private val recordRepository: RecordRepository,
     private val turnOverRepository: TurnOverRepository,
@@ -36,6 +39,7 @@ class AdminDashboardService(
             creditHistoryRepository.sumAmountByTxTypes(listOf(CreditTxType.USE, CreditTxType.ADMIN_DEDUCT))
 
         return AdminDashboardStatsResponse(
+            totalWorkers = workerRepository.count(),
             totalRecordGroups = recordGroupRepository.count(),
             totalRecords = recordRepository.count(),
             totalTurnOvers = turnOverRepository.count(),
