@@ -19,6 +19,7 @@ message RecordCreateRequest {
   int64 started_at = 3;
   int64 ended_at = 4;
   repeated Attachment attachments = 5;
+  string template_type = 6;
 
   string record_group_id = 99;
 }
@@ -35,6 +36,7 @@ message RecordUpdateRequest {
   int64 ended_at = 4;
   repeated Attachment attachments = 5;
   string record_group_id = 6;
+  string template_type = 7;
 
   string id = 99;
 }

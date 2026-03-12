@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - changeSet:
+      id: 5
+      author: kyutae
+      changes:
+        - addColumn:
+            tableName: record_groups
+            columns:
+              - column:
+                  name: category
+                  type: VARCHAR(32)
+                  defaultValue: "GENERAL"
+                  constraints:
+                    nullable: false
+        - addColumn:
+            tableName: records
+            columns:
+              - column:
+                  name: template_type
+                  type: VARCHAR(64)
+                  defaultValue: ""
+                  constraints:
+                    nullable: false

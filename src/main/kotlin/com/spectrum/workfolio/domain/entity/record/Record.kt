@@ -30,6 +30,7 @@ class Record(
     title: String,
     description: String,
     type: RecordType,
+    templateType: String = "",
     startedAt: LocalDateTime,
     endedAt: LocalDateTime? = null,
     recordGroup: RecordGroup,
@@ -45,6 +46,10 @@ class Record(
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
     var type: RecordType = type
+        protected set
+
+    @Column(name = "template_type", nullable = false)
+    var templateType: String = templateType
         protected set
 
     @Column(name = "started_at", nullable = false)
@@ -74,6 +79,7 @@ class Record(
         title: String,
         description: String,
         type: RecordType,
+        templateType: String = "",
         startedAt: LocalDateTime,
         endedAt: LocalDateTime? = null,
         recordGroup: RecordGroup? = null,
@@ -81,6 +87,7 @@ class Record(
         this.title = title
         this.description = description
         this.type = type
+        this.templateType = templateType
         this.startedAt = startedAt
         this.endedAt = endedAt
         if (recordGroup != null) {

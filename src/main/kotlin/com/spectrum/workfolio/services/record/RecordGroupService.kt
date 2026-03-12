@@ -3,6 +3,7 @@ package com.spectrum.workfolio.services.record
 import com.spectrum.workfolio.domain.entity.record.RecordGroup
 import com.spectrum.workfolio.domain.enums.MsgKOR
 import com.spectrum.workfolio.domain.enums.RecordGroupRole
+import com.spectrum.workfolio.domain.enums.RecordGroupCategory
 import com.spectrum.workfolio.domain.enums.RecordGroupType
 import com.spectrum.workfolio.domain.extensions.toProto
 import com.spectrum.workfolio.domain.repository.RecordGroupRepository
@@ -83,6 +84,7 @@ class RecordGroupService(
         val worker = workerService.getWorker(workerId)
         val recordGroup = RecordGroup(
             type = RecordGroupType.valueOf(request.type.name),
+            category = RecordGroupCategory.valueOf(request.category.name),
             title = request.title,
             color = request.color,
             isDefault = isDefault,
@@ -114,7 +116,12 @@ class RecordGroupService(
     ): RecordGroupResponse {
         val recordGroup = this.getRecordGroup(recordGroupId)
 
-        recordGroup.changeRecordGroup(request.title, request.color, request.priority)
+        val category = if (request.category != com.spectrum.workfolio.proto.common.RecordGroup.RecordGroupCategory.CATEGORY_UNKNOWN) {
+            RecordGroupCategory.valueOf(request.category.name)
+        } else {
+            null
+        }
+        recordGroup.changeRecordGroup(request.title, request.color, request.priority, category)
 
         val updatedRecordGroup = recordGroupRepository.save(recordGroup)
 

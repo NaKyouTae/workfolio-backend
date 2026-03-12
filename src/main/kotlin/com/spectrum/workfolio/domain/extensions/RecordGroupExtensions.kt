@@ -18,6 +18,9 @@ fun RecordGroup.toProto(): com.spectrum.workfolio.proto.common.RecordGroup {
     builder.setDefaultRole(
         com.spectrum.workfolio.proto.common.RecordGroup.RecordGroupRole.valueOf(this.defaultRole.name),
     )
+    builder.setCategory(
+        com.spectrum.workfolio.proto.common.RecordGroup.RecordGroupCategory.valueOf(this.category.name),
+    )
     builder.setWorker(this.worker.toProto())
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))
     builder.setUpdatedAt(TimeUtil.toEpochMilli(this.updatedAt))

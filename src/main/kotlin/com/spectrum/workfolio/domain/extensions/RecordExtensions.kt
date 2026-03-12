@@ -10,6 +10,7 @@ fun Record.toProto(): com.spectrum.workfolio.proto.common.Record {
     builder.setTitle(this.title)
     builder.setType(com.spectrum.workfolio.proto.common.Record.RecordType.valueOf(this.type.name))
     builder.setDescription(this.description)
+    builder.setTemplateType(this.templateType)
     builder.setStartedAt(TimeUtil.toEpochMilli(this.startedAt))
     builder.setRecordGroup(this.recordGroup.toProto())
     builder.setCreatedAt(TimeUtil.toEpochMilli(this.createdAt))

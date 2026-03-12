@@ -301,6 +301,7 @@ message Record {
   string description = 4;
   uint64 started_at = 5;
   uint64 ended_at = 6;
+  string template_type = 7;
 
   Worker worker = 50;
   RecordGroup record_group = 51;
@@ -329,7 +330,14 @@ message RecordGroup {
   bool is_default = 4;
   string public_id = 5;
   string color = 6;
+  enum RecordGroupCategory {
+    CATEGORY_UNKNOWN = 0;
+    GENERAL = 1;
+    PROJECT = 2;
+  }
+
   RecordGroupRole default_role = 7;
+  RecordGroupCategory category = 8;
 
   uint64 priority = 30;
 

@@ -3,6 +3,7 @@ package com.spectrum.workfolio.domain.entity.record
 import com.spectrum.workfolio.domain.entity.BaseEntity
 import com.spectrum.workfolio.domain.entity.Worker
 import com.spectrum.workfolio.domain.enums.RecordGroupRole
+import com.spectrum.workfolio.domain.enums.RecordGroupCategory
 import com.spectrum.workfolio.domain.enums.RecordGroupType
 import com.spectrum.workfolio.utils.StringUtil
 import jakarta.persistence.CascadeType
@@ -34,6 +35,7 @@ class RecordGroup(
     isDefault: Boolean,
     publicId: String,
     type: RecordGroupType,
+    category: RecordGroupCategory,
     defaultRole: RecordGroupRole,
     priority: Long,
     worker: Worker,
@@ -57,6 +59,11 @@ class RecordGroup(
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
     var type: RecordGroupType = type
+        protected set
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "category", nullable = false)
+    var category: RecordGroupCategory = category
         protected set
 
     @Enumerated(EnumType.STRING)
@@ -86,10 +93,14 @@ class RecordGroup(
         title: String,
         color: String,
         priority: Long,
+        category: RecordGroupCategory? = null,
     ) {
         this.title = title
         this.color = color
         this.priority = priority
+        if (category != null) {
+            this.category = category
+        }
     }
 
     fun changeType(

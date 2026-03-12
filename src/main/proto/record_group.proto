@@ -12,6 +12,7 @@ message CreateRecordGroupRequest {
   string title = 1;
   string color = 2;
   RecordGroup.RecordGroupType type = 3;
+  RecordGroup.RecordGroupCategory category = 4;
   uint64 priority = 100;
 }
 
@@ -45,6 +46,7 @@ message RecordGroupUpdateRequest {
   string title = 1;
   string color = 2;
   uint64 priority = 3;
+  RecordGroup.RecordGroupCategory category = 4;
 }
 
 message RecordGroupResponse {
