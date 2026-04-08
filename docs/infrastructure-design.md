@@ -19,7 +19,7 @@ Workfolio 서비스의 프로덕션 인프라 구성을 정의한다.
 
 | 도메인 | 대상 | 용도 |
 |--------|------|------|
-| `www.workfolio.kr` | Vercel | 프론트엔드 |
+| `workfolio.spectrify.kr` | Vercel | 프론트엔드 |
 | `api.workfolio.kr` | Render | 백엔드 API |
 
 ---
@@ -31,7 +31,7 @@ Workfolio 서비스의 프로덕션 인프라 구성을 정의한다.
                          │        DNS (workfolio.kr)     │
                          └──────┬───────────┬───────────┘
                                 │           │
-                    www.workfolio.kr    api.workfolio.kr
+                    workfolio.spectrify.kr    api.workfolio.kr
                                 │           │
                     ┌───────────▼──┐  ┌─────▼───────────┐
                     │              │  │                  │
@@ -83,7 +83,7 @@ Workfolio 서비스의 프로덕션 인프라 구성을 정의한다.
 ### 3.4 커스텀 도메인
 
 - `workfolio.kr` → Vercel에 A/CNAME 레코드 연결
-- `www.workfolio.kr` → CNAME → `cname.vercel-dns.com`
+- `workfolio.spectrify.kr` → CNAME → `cname.vercel-dns.com`
 - SSL 인증서 자동 발급 (Let's Encrypt)
 
 ---
@@ -250,7 +250,7 @@ S3Client.builder()
 
 ```kotlin
 // SecurityConfig.kt
-allowedOrigins = ["https://www.workfolio.kr"]
+allowedOrigins = ["https://workfolio.spectrify.kr"]
 allowedMethods = ["GET", "POST", "PUT", "DELETE", "PATCH"]
 allowCredentials = true
 ```

@@ -111,7 +111,7 @@ class SecurityConfig(
         val configuration = CorsConfiguration()
 
         configuration.allowedOrigins = listOf(
-            "https://www.workfolio.kr",
+            "https://workfolio.spectrify.kr",
             "https://admin.workfolio.kr",
             "http://localhost:4000",
             "http://localhost:8001",

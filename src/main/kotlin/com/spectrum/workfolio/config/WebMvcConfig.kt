@@ -24,7 +24,7 @@ class WebMvcConfig(
         registry
             .addMapping("/**") // 모든 요청에 대해 CORS 설정을 허용
             .allowedOrigins(
-                "https://www.workfolio.kr",
+                "https://workfolio.spectrify.kr",
                 "https://admin.workfolio.kr",
                 "http://localhost:4000",
                 "http://localhost:8001",
